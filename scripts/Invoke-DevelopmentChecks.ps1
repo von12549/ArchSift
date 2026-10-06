@@ -4,14 +4,16 @@ param(
     [ValidateSet('Debug', 'Release')][string] $Configuration = 'Debug',
     [switch] $InitializeLocks,
     [switch] $VerifyContracts,
-    [switch] $MeasurePerformance
+    [switch] $MeasurePerformance,
+    [string] $LabRoot = 'D:\ArchSift-lab'
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runId = [Guid]::NewGuid().ToString('N')
-$runRoot = Join-Path $repositoryRoot "artifacts/development/$runId"
+$runRoot = Join-Path ([IO.Path]::GetFullPath($LabRoot)) "runs/development-$runId"
+if ($runRoot.StartsWith($repositoryRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Evidence output must be outside source.' }
 $localFeedPath = [IO.Path]::GetFullPath($LocalFeed)
 if (-not [IO.Directory]::Exists($localFeedPath)) { throw 'The explicit local NuGet feed does not exist.' }
 

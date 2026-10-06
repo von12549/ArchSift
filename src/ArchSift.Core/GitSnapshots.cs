@@ -10,7 +10,9 @@ public static class GitSnapshots
     private static readonly string[] Options = ["--no-replace-objects", "-c", "core.fsmonitor=false"];
     private static async Task<string> Git(string root, string[] args, string home, CancellationToken token)
     {
-        var result = await SafeProcess.RunAsync("git", root, [.. Options, .. args], home, null, token);
+        ProcessResult result;
+        try { result = await SafeProcess.RunAsync("git", root, [.. Options, .. args], home, null, token); }
+        catch (System.ComponentModel.Win32Exception error) { throw new IOException("Git is required for changes and was not available.", error); }
         if (result.ExitCode != 0 || result.Output.Contains("[output truncated]", StringComparison.Ordinal))
             throw new ConfigurationException("Git operation failed: " + result.Error.Trim());
         return result.Output;

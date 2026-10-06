@@ -1,0 +1,51 @@
+name: ArchSift verification
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: '0'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: |
+            10.0.303
+            9.0.314
+            8.0.x
+      - name: Explicit CI restore followed by offline, hash-checked regression
+        shell: pwsh
+        env:
+          DOTNET_CLI_HOME: ${{ runner.temp }}/archsift-dotnet-home
+        run: |
+          . ./scripts/HostState.ps1
+          $before = Get-ArchSiftHostHash
+          $feed = Join-Path $env:RUNNER_TEMP 'archsift-ci-feed'
+          try {
+            & dotnet restore ArchSift.slnx --locked-mode --configfile NuGet.Config --source https://api.nuget.org/v3/index.json --packages $feed -p:NuGetAudit=false
+            if ($LASTEXITCODE -ne 0) { throw 'Explicit CI restore failed' }
+            if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift after restore' }
+            & ./scripts/Invoke-DevelopmentChecks.ps1 -LocalFeed $feed -LabRoot (Join-Path $env:RUNNER_TEMP 'archsift-evidence') -Configuration Release -VerifyContracts
+          } finally {
+            $equal = (Get-ArchSiftHostHash) -ceq $before
+            Write-Output "CI final host-state-equal=$equal"
+            if (-not $equal) { throw 'Host drift; no repair performed' }
+          }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: regression-${{ matrix.os }}
+          path: ${{ runner.temp }}/archsift-evidence
+          if-no-files-found: warn

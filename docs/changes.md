@@ -4,6 +4,8 @@
 
 显式比较：`archsift changes --config config.json --base HEAD~1 --head HEAD`。两端必须同时提供且能解析为本地 commit；不 fetch、不猜 upstream、不 checkout、不修改目标或索引。TargetRoot 可以是仓库内子目录。UI 的“变更比较”使用同一个 Core 服务。
 
+changes 需要本地 Git（普通声明分析不需要）；缺失 Git 返回可观察的执行错误 3。Windows 自包含包无需 SDK 路径，但不会把 Git 一并安装或自动修复 PATH。
+
 ## 输入与规则
 
 快照和报告位于外置 output 下的独立 run ID 目录。历史内容直接从 Git blobs 读取，不受 export-ignore、export-subst、checkout filters 或 hooks 改写。Git 链接、submodule、平台路径碰撞和越界路径保守拒绝；限制 100000 文件、128MiB/文件、512MiB/tree。工作区输入在复制后和比较结束时再次校验，默认 HEAD 也再次检查。

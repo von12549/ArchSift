@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W09 已完成；2026-10-07 W09 比较、CLI/UI 与回归通过；W10 开始准备，尚未验收。用户已授权 W09/W10 与后续发布，并选择 ArchSift MIT 许可。
+状态：FORMAL — W00–W10 已完成；2026-10-07 W10 的 Windows/Linux、SARIF、CI 样例与候选验收通过；正式 0.2.0 发布包待独立构建/固定/校验。用户已授权发布并选择 MIT。W11 仅登记，未启动。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -397,7 +397,7 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 
 ## 参考资料
 
-2026-10-07：用户授权开始 W09/W10、继续逐阶段完成后提交，并授权后续发布；明确选择 MIT 许可证。W09 完成证据见 [比较验收](../acceptance/20261007-w09-comparison.md)，106 项回归通过。W08 候选及历史验收不改写；正式发布仍以 W10 跨平台/包门禁为前置。
+2026-10-07：用户授权开始 W09/W10、继续逐阶段完成后提交，并授权后续发布；明确选择 MIT 许可证。W09 完成提交 `0286b75`，106 项回归通过；W10 预算先冻结为 `63419d4`。[W10 验收](../acceptance/20261007-w10-report-integration.md)记录 Windows 109 项、Linux 107 项、核心 parity、SARIF 官方 schema、真实包/浏览器与 CI 样例。正式包独立构建/校验后才能发布，不上传未提交源码原型；W08 候选及历史验收不改写。
 
 - [Draft 历史](20261006-dotnet-architecture-analyzer-draft.md)。
 - [Guard 项目发现](C:/Users/von12/OneDrive/Desktop/Guard/core/host/V4.Guards.Host/ProfileRuntime.cs)。

@@ -28,7 +28,7 @@ public sealed class AnalysisCommandTests
             File.WriteAllText(rules, JsonSerializer.Serialize(set, JsonContract.Options), new UTF8Encoding(false));
             File.WriteAllText(config, JsonSerializer.Serialize(new RunConfiguration
             {
-                SchemaVersion = 1, Target = new() { Root = "source" }, Rulesets = ["rules.json"], Output = new() { Directory = "output" }
+                SchemaVersion = 1, Target = new() { Root = "source" }, Rulesets = ["rules.json"], Output = new() { Directory = "output", Formats = ["json", "html", "sarif"] }
             }, JsonContract.Options), new UTF8Encoding(false));
             var analyze = await Run(root, "analyze", "--config", config);
             Assert.Equal(0, analyze.ExitCode);
@@ -40,6 +40,7 @@ public sealed class AnalysisCommandTests
             Assert.Equal("noncompliant", report.Compliance);
             Assert.Contains("生效目标", verify.Error);
             Assert.True(File.Exists(Path.Combine(output, report.RunMetadata.RunId, "report.html")));
+            Assert.Equal("2.1.0", JsonNode.Parse(File.ReadAllText(Path.Combine(output, report.RunMetadata.RunId, "report.sarif")))!["version"]!.GetValue<string>());
             var direct = await new AnalysisService().RunAsync(ConfigLoader.Load(config), "verify");
             Assert.Equal(direct.Report.Findings.Select(f => f.Id), report.Findings.Select(f => f.Id));
             Assert.Equal(0, (await Run(root, "analyze", "--config", config, "--configuration", "Debug", "--tfm", "net10.0")).ExitCode);

@@ -71,6 +71,7 @@ public sealed class WebWorkbenchTests
                 Assert.Equal(direct.ExitCode, job.RootElement.GetProperty("exitCode").GetInt32());
             }
             Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + id + "/report/json", timeout.Token)).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + id + "/report/sarif", timeout.Token)).StatusCode);
             // Compare the same source over the authenticated HTTP surface and reject stale downloads after failure.
             async Task Git(params string[] arguments)
             {
@@ -98,6 +99,7 @@ public sealed class WebWorkbenchTests
                 Assert.Equal("completed", comparison.Status);
                 Assert.Equal(directFindingIds(comparison.Target!), directFindingIds(comparison.Baseline!));
                 Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + compared.RootElement.GetProperty("id").GetString() + "/report/html", timeout.Token)).StatusCode);
+                Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + compared.RootElement.GetProperty("id").GetString() + "/report/sarif", timeout.Token)).StatusCode);
             }
             using (var failed = await Compare(new { @base = "not-a-local-ref", head = "HEAD" }))
             {

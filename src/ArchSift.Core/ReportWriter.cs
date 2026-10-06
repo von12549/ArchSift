@@ -45,6 +45,8 @@ public static class ReportWriter
             WriteNew(Path.Combine(directory, "report.json"), Json(report));
         if (config.Output.Formats.Contains("html", StringComparer.Ordinal))
             WriteNew(Path.Combine(directory, "report.html"), Html(report));
+        if (config.Output.Formats.Contains("sarif", StringComparer.Ordinal))
+            WriteNew(Path.Combine(directory, "report.sarif"), SarifWriter.Json(report));
     }
 
     private static void WriteNew(string path, string text)

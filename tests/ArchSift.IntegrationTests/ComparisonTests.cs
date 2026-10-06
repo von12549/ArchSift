@@ -111,6 +111,7 @@ public sealed class ComparisonTests
         Assert.Equal(0, result.ExitCode); var report = JsonSerializer.Deserialize<ComparisonReport>(result.Output, JsonContract.Options)!;
         Assert.Single(report.Added); Assert.Equal((await fixture.Compare()).Report.Added.Select(f => f.Id), report.Added.Select(f => f.Id));
         Assert.True(File.Exists(Path.Combine(fixture.Output, report.RunMetadata.RunId, "comparison.html")));
+        Assert.True(File.Exists(Path.Combine(fixture.Output, report.RunMetadata.RunId, "comparison.sarif")));
         var invalid = await SafeProcess.RunAsync(SafeProcess.Dotnet, directory.FullName, [cli, "changes", "--config", config, "--head", "HEAD"], Path.Combine(fixture.Root, "home"), null, default);
         Assert.Equal(2, invalid.ExitCode);
     }
@@ -122,7 +123,7 @@ internal sealed class GitFixture : IDisposable
     public string Source => Path.Combine(Root, "source");
     public string Output => Path.Combine(Root, "output");
     public RunConfiguration Config => new() { SchemaVersion = 1, Target = new() { Root = Source },
-        Rulesets = [Path.Combine(Source, "policy.json")], Output = new() { Directory = Output } };
+        Rulesets = [Path.Combine(Source, "policy.json")], Output = new() { Directory = Output, Formats = ["json", "html", "sarif"] } };
     public async Task Initialize() { Directory.CreateDirectory(Source); await Git("init"); }
     public async Task<string> Git(params string[] args)
     {

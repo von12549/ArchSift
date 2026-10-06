@@ -37,11 +37,11 @@ public static class ComparisonWriter
     {
         PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
         var root = PathSafety.Under(config.Output.Directory, report.RunMetadata.RunId); Directory.CreateDirectory(root);
-        foreach (var format in config.Output.Formats.Where(f => f is "json" or "html"))
+        foreach (var format in config.Output.Formats.Where(f => f is "json" or "html" or "sarif"))
         {
             var path = PathSafety.Under(root, "comparison." + format);
             using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
-            using var writer = new StreamWriter(stream, new UTF8Encoding(false)); writer.Write(format == "json" ? Json(report) : Html(report));
+            using var writer = new StreamWriter(stream, new UTF8Encoding(false)); writer.Write(format == "json" ? Json(report) : format == "html" ? Html(report) : SarifWriter.Json(report));
         }
     }
 }

@@ -1,0 +1,54 @@
+# Opt in by copying to your own .github/workflows. Does not register a required check.
+name: ArchSift report (opt-in)
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Released ArchSift version
+        required: true
+        default: '0.2.0'
+      sha256:
+        description: Expected ZIP SHA-256 from the reviewed release
+        required: true
+      config:
+        description: Repository-relative ArchSift config path
+        required: true
+        default: 'archsift.json'
+permissions:
+  contents: read
+jobs:
+  report:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Download and verify the pinned release ZIP
+        shell: pwsh
+        env:
+          ARCHSIFT_VERSION: ${{ inputs.version }}
+          ARCHSIFT_SHA256: ${{ inputs.sha256 }}
+        run: |
+          if ($env:ARCHSIFT_VERSION -notmatch '^\d+\.\d+\.\d+$' -or $env:ARCHSIFT_SHA256 -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid release identity' }
+          $zip = Join-Path $env:RUNNER_TEMP 'archsift.zip'
+          Invoke-WebRequest -Uri "https://github.com/von12549/ArchSift/releases/download/v$env:ARCHSIFT_VERSION/archsift-$env:ARCHSIFT_VERSION-win-x64.zip" -OutFile $zip
+          if ((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash -ine $env:ARCHSIFT_SHA256) { throw 'ZIP identity mismatch' }
+          Expand-Archive -LiteralPath $zip -DestinationPath (Join-Path $env:RUNNER_TEMP 'archsift-tool')
+      - name: Run report (violations exit 0; tool errors remain nonzero)
+        shell: pwsh
+        env:
+          ARCHSIFT_CONFIG: ${{ inputs.config }}
+          DOTNET_CLI_HOME: ${{ runner.temp }}/archsift-dotnet-home
+          DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: '0'
+        run: |
+          $output = Join-Path $env:RUNNER_TEMP 'archsift-reports'
+          New-Item -ItemType Directory -Path $output -Force | Out-Null
+          & (Join-Path $env:RUNNER_TEMP 'archsift-tool/archsift.exe') verify --config $env:ARCHSIFT_CONFIG --target $env:GITHUB_WORKSPACE --output $output > (Join-Path $output 'cli.json')
+          $code = $LASTEXITCODE
+          [IO.File]::WriteAllText((Join-Path $output 'exit-code.txt'), [string]$code)
+          Write-Output "ArchSift exit code: $code (0 includes rule violations; 2/3/4/130 are not success)"
+          if ($code -ne 0) { exit $code }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: archsift-reports
+          path: ${{ runner.temp }}/archsift-reports
+          if-no-files-found: warn

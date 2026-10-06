@@ -99,7 +99,8 @@
           "items": {
             "enum": [
               "json",
-              "html"
+              "html",
+              "sarif"
             ]
           },
           "minItems": 1

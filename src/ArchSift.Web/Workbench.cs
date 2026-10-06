@@ -146,6 +146,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             {
                 "json" => Results.Text(ComparisonWriter.Json(comparison), "application/json", Encoding.UTF8),
                 "html" => Results.Text(ComparisonWriter.Html(comparison), "text/html", Encoding.UTF8),
+                "sarif" => Results.Text(SarifWriter.Json(comparison), "application/sarif+json", Encoding.UTF8),
                 _ => Results.BadRequest()
             };
             if (job.Report is null) return Results.NotFound();
@@ -153,6 +154,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             {
                 "json" => Results.Text(ReportWriter.Json(job.Report), "application/json", Encoding.UTF8),
                 "html" => Results.Text(ReportWriter.Html(job.Report), "text/html", Encoding.UTF8),
+                "sarif" => Results.Text(SarifWriter.Json(job.Report), "application/sarif+json", Encoding.UTF8),
                 _ => Results.BadRequest()
             };
         });
