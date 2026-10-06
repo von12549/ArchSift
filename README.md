@@ -2,6 +2,8 @@
 
 独立的本地 .NET 架构与依赖分析工具。`0.2.0` 包含项目发现、六类规则、真实 ArchUnitNET、JSON/HTML/SARIF、Git 两端/工作区比较和 loopback UI。Windows x64 自包含分发，Linux CLI 已验证；无 Guard 安装前置。ArchSift 使用 [MIT 许可](LICENSE)，第三方许可单独保留。
 
+[下载 0.2.0](https://github.com/von12549/ArchSift/releases/tag/v0.2.0)；先核对 release 的 SHA256SUMS.txt。固定资产与下载回验见 [发布记录](docs/releases/0.2.0-publication.md)。
+
 ## 开发与验证
 
 本机检查需要 .NET 10 SDK、PowerShell 7、Git 和完整本地 NuGet feed。`global.json` 以 10.0.100 为基准并允许 latestFeature；Windows 验证 SDK 10.0.303，Linux 验证 SDK 10.0.401。net8/net9 构建 fixtures 另需 SDK 9.0.314 和对应 packs。
@@ -46,4 +48,4 @@ CLI 可用 analyze/verify/changes、rules validate/render/draft、ui --config、
 - [迁移来源与用户授权](docs/migration/source-inventory.json)
 - [项目操作与提交指令](AGENTS.md)
 
-W08 冻结 `0.1.0-dev` 候选与独立操作员证据保持原样；W09/W10 已关闭（Windows 109 项、Linux 107 项）。发布资产须以单独验收和固定哈希为准。网络漏洞审计未运行；NuGet tool 发布、allowlist/W11、Linux Web UI、fail-on 与强制 CI 未交付。
+W08 冻结 `0.1.0-dev` 候选与独立操作员证据保持原样；W09/W10 已关闭，最终远程 Windows/Linux 各 109 项通过。0.2.0 已发布并从远程下载回验通过。网络漏洞审计未运行；NuGet tool 发布、allowlist/W11、Linux Web UI、fail-on 与强制 CI 未交付。
