@@ -22,23 +22,25 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Download and verify the pinned release ZIP
-        shell: pwsh
+        shell: pwsh -NoProfile -NonInteractive -File {0}
         env:
           ARCHSIFT_VERSION: ${{ inputs.version }}
           ARCHSIFT_SHA256: ${{ inputs.sha256 }}
         run: |
+          $ErrorActionPreference = 'Stop'
           if ($env:ARCHSIFT_VERSION -notmatch '^\d+\.\d+\.\d+$' -or $env:ARCHSIFT_SHA256 -notmatch '^[a-fA-F0-9]{64}$') { throw 'Invalid release identity' }
           $zip = Join-Path $env:RUNNER_TEMP 'archsift.zip'
           Invoke-WebRequest -Uri "https://github.com/von12549/ArchSift/releases/download/v$env:ARCHSIFT_VERSION/archsift-$env:ARCHSIFT_VERSION-win-x64.zip" -OutFile $zip
           if ((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash -ine $env:ARCHSIFT_SHA256) { throw 'ZIP identity mismatch' }
           Expand-Archive -LiteralPath $zip -DestinationPath (Join-Path $env:RUNNER_TEMP 'archsift-tool')
       - name: Run report (violations exit 0; tool errors remain nonzero)
-        shell: pwsh
+        shell: pwsh -NoProfile -NonInteractive -File {0}
         env:
           ARCHSIFT_CONFIG: ${{ inputs.config }}
           DOTNET_CLI_HOME: ${{ runner.temp }}/archsift-dotnet-home
           DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: '0'
         run: |
+          $ErrorActionPreference = 'Stop'
           $output = Join-Path $env:RUNNER_TEMP 'archsift-reports'
           New-Item -ItemType Directory -Path $output -Force | Out-Null
           & (Join-Path $env:RUNNER_TEMP 'archsift-tool/archsift.exe') verify --config $env:ARCHSIFT_CONFIG --target $env:GITHUB_WORKSPACE --output $output > (Join-Path $output 'cli.json')

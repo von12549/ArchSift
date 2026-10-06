@@ -26,10 +26,11 @@ jobs:
             9.0.314
             8.0.x
       - name: Explicit CI restore followed by offline, hash-checked regression
-        shell: pwsh
+        shell: pwsh -NoProfile -NonInteractive -File {0}
         env:
           DOTNET_CLI_HOME: ${{ runner.temp }}/archsift-dotnet-home
         run: |
+          $ErrorActionPreference = 'Stop'
           . ./scripts/HostState.ps1
           $before = Get-ArchSiftHostHash
           $feed = Join-Path $env:RUNNER_TEMP 'archsift-ci-feed'
