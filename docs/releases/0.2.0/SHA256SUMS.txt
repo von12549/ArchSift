@@ -1,0 +1,1 @@
+ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8  archsift-0.2.0-win-x64.zip

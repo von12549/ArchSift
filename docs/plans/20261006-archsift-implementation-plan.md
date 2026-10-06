@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W09 已完成；W10 本地 Windows/Linux、SARIF、CI 样例与候选通过，但发布前首次远程 CI 发现 SDK patch fixture 假设不成立，补充修复中，正式发布暂停。用户已授权发布并选择 MIT。W11 仅登记，未启动。
+状态：FORMAL — W00–W10 已完成；0.2.0 最终源码、Windows/Linux 各 109 项 CI 与固定 ZIP/SARIF/安全门禁全部通过，准备上传已接受资产。用户已授权发布并选择 MIT。两轮 CI 失败历史保留。W11 仅登记，未启动。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 

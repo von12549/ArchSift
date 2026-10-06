@@ -6,6 +6,10 @@
 
 第二轮 [37509769540](https://github.com/von12549/ArchSift/actions/runs/37509769540)：两平台 net9 已通过，仅 net8 离线 restore 缺少固定 SDK 所需 8.0.27 targeting packs，准确失败而未回退联网。修复是在一次性 CI 的显式联网准备阶段，从实际 SDK 9.0.314 的 KnownFrameworkReferences 读取并固定所需 pack，下载到 runner temp feed；合成测试只读取该明确本地 feed，产品仍默认离线且不忽略失败。另按官方相对 URI 语义补充 SARIF originalUriBaseIds；schema 结构校验之外同时验证消费定位基准。
 
+补充修复最终通过：[37511008332](https://github.com/von12549/ArchSift/actions/runs/37511008332) 与最终 NoProfile 提交的 [37511164383](https://github.com/von12549/ArchSift/actions/runs/37511164383) 均 Windows/Linux 各 109/109，全部无失败/跳过，覆盖 net8/net9/net10。最终 TRX 已下载到 `D:\ArchSift-lab\evidence\github-ci-37511164383`；前两轮失败 artifacts 分别归档，不删除。最终本机 URI 修复回归为 `development-582cecc73cf04997840c72068c635f43`（109/109），Docker 为 `linux-c8d019cdce9b452c87e86a55613596df`（107/107、core parity=true），宿主哈希始终相等。
+
+正式固定资产源 commit `528ebb1237256018e3ca556919d25908c9b5c92d`，ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`；产物根 `release-bcb316f692f44725850ad6867c4bc6ab`、最终新解压 `smoke-b51e9d52f7e14f5783b452965f2cf627`。607 payload 条目 + manifest，逐字节/路径/文件集合/许可、native CLI/Worker/UI、无 SDK changes、普通/比较 SARIF 官方 schema 全通过；五次 113–130ms、231–263ms、约 27–34MiB，未超冻结阈值。整个 W09/W10 的 User/Machine、Process PATH 与四个 Profiles 同初始 W09 基线一致。包基于 committed 产品输入；另有未确认 W08 反馈文档未提交并保留，未纳入 ZIP，因此全仓 sourceDirty=true 而 productSourceDirty=false。最终接受状态由 [固定发布验收](../releases/0.2.0/acceptance.json)绑定，冻结 manifest 不改写。
+
 ## 当前源码验证
 
 - Windows x64 / SDK 10.0.303 / net10.0：Release 109/109（78 unit、29 integration、2 architecture），零编译警告/错误，运行 `development-76dcf0d5e3024406aa9b1350139c91df`；最终 Debug/静态安全复核同为 109/109，运行 `development-3e2011b369e84a97980c17b387bb2c88`。net8/net9 真实程序集 fixture 使用已安装 SDK 9.0.314/packs。

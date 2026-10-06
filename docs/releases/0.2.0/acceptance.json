@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "version": "0.2.0",
+  "status": "accepted",
+  "sourceCommit": "528ebb1237256018e3ca556919d25908c9b5c92d",
+  "productInputsSha256": "e0b8723035c91fb20fddfa1ca0cb37f9d894069dd3381879fbb837171e6a0718",
+  "productSourceDirty": false,
+  "uncommittedNonProductDocumentationPreserved": true,
+  "package": {
+    "file": "archsift-0.2.0-win-x64.zip",
+    "sha256": "ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8",
+    "rid": "win-x64",
+    "selfContained": true,
+    "manifestEntries": 607,
+    "manifestSelfHashOmitted": true,
+    "frozenManifestState": "candidate",
+    "smokeRun": "smoke-b51e9d52f7e14f5783b452965f2cf627",
+    "officialSarifSchemaPassed": true,
+    "nativeCliWorkerUiPassed": true,
+    "nativeChangesWithGitWithoutSdkPassed": true,
+    "performancePassed": true
+  },
+  "ci": {
+    "url": "https://github.com/von12549/ArchSift/actions/runs/37511164383",
+    "conclusion": "success",
+    "windowsPassed": 109,
+    "linuxPassed": 109,
+    "failed": 0,
+    "skipped": 0,
+    "earlierTfmSdk": "9.0.314",
+    "failedRunIdsRetained": [37509047659, 37509769540]
+  },
+  "hostStateEqualToW09Baseline": true,
+  "license": "MIT",
+  "thirdPartyNoticesPreserved": true,
+  "independentOperatorScoreFor02Recorded": false,
+  "limitations": [
+    "Git required only for changes; not bundled or installed automatically.",
+    "Target isolated builds need their SDK/packs and explicit offline feed or opt-in sources; not a full sandbox.",
+    "No Linux Web UI or Linux self-contained distribution claim.",
+    "No NuGet tool, allowlists/W11, transitive package/version checks, network vulnerability audit, fail-on or required checks."
+  ]
+}
