@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-07",
+  "reference": "100-project-chain",
+  "inputSha256": "2bf97daeb649bf56516c398017c9dec42ef7ad04aacd55a6dce634439d4a5eaf",
+  "projectCount": 100,
+  "configuration": "Debug",
+  "targetFramework": "net10.0",
+  "platform": "Windows x64",
+  "sdk": "10.0.303",
+  "cpu": "AMD Ryzen 5 9600X 6-Core Processor",
+  "logicalProcessors": 12,
+  "analysisMillisecondsLimit": 700,
+  "processWallMillisecondsLimit": 1000,
+  "sampledPeakWorkingSetBytesLimit": 67108864,
+  "measurementCount": 5,
+  "measurementSource": "reference-measurements.json",
+  "rationale": "Time ceilings are observed maxima x3 +250ms, rounded up to 100ms; memory is at least twice the sampled observed maximum, rounded to 64MiB. Reference checks exclude restore/build; a new process is used for each iteration. OS caches were not artificially purged; first-process is not claimed as cold-disk.",
+  "acceptanceBoundary": "Budget only covers the fixed declaration fixture and CLI wall/observed sampling; IFX, assembly worker, cold NuGet/build and cancellation evidence remain separately reported.",
+  "releasePassed": false
+}

@@ -1,0 +1,55 @@
+{
+  "fixture": "100-project-chain",
+  "configuration": "Debug",
+  "tfm": "net10.0",
+  "cpu": "AMD Ryzen 5 9600X 6-Core Processor             ",
+  "logicalProcessors": 12,
+  "sdk": "10.0.303",
+  "measurements": [
+    {
+      "iteration": 0,
+      "cache": "first-process/os-cache-unspecified",
+      "projectCount": 100,
+      "analysisMilliseconds": 114,
+      "processWallMilliseconds": 219,
+      "sampledPeakWorkingSetBytes": 31993856,
+      "inputSha256": "2bf97daeb649bf56516c398017c9dec42ef7ad04aacd55a6dce634439d4a5eaf"
+    },
+    {
+      "iteration": 1,
+      "cache": "warm-os-cache/new-process",
+      "projectCount": 100,
+      "analysisMilliseconds": 139,
+      "processWallMilliseconds": 242,
+      "sampledPeakWorkingSetBytes": 30666752,
+      "inputSha256": "2bf97daeb649bf56516c398017c9dec42ef7ad04aacd55a6dce634439d4a5eaf"
+    },
+    {
+      "iteration": 2,
+      "cache": "warm-os-cache/new-process",
+      "projectCount": 100,
+      "analysisMilliseconds": 117,
+      "processWallMilliseconds": 220,
+      "sampledPeakWorkingSetBytes": 30765056,
+      "inputSha256": "2bf97daeb649bf56516c398017c9dec42ef7ad04aacd55a6dce634439d4a5eaf"
+    },
+    {
+      "iteration": 3,
+      "cache": "warm-os-cache/new-process",
+      "projectCount": 100,
+      "analysisMilliseconds": 114,
+      "processWallMilliseconds": 216,
+      "sampledPeakWorkingSetBytes": 29585408,
+      "inputSha256": "2bf97daeb649bf56516c398017c9dec42ef7ad04aacd55a6dce634439d4a5eaf"
+    },
+    {
+      "iteration": 4,
+      "cache": "warm-os-cache/new-process",
+      "projectCount": 100,
+      "analysisMilliseconds": 125,
+      "processWallMilliseconds": 234,
+      "sampledPeakWorkingSetBytes": 30425088,
+      "inputSha256": "2bf97daeb649bf56516c398017c9dec42ef7ad04aacd55a6dce634439d4a5eaf"
+    }
+  ]
+}

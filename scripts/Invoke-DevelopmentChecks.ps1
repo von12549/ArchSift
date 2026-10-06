@@ -3,7 +3,8 @@ param(
     [string] $LocalFeed = (Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),
     [ValidateSet('Debug', 'Release')][string] $Configuration = 'Debug',
     [switch] $InitializeLocks,
-    [switch] $VerifyContracts
+    [switch] $VerifyContracts,
+    [switch] $MeasurePerformance
 )
 
 Set-StrictMode -Version Latest
@@ -75,20 +76,26 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
     $start.Environment['MSBUILDDISABLENODEREUSE'] = '1'
     $start.Environment['NUGET_PACKAGES'] = $packageCache
     $start.Environment['NUGET_CERT_REVOCATION_MODE'] = 'offline'
+    $timer = [Diagnostics.Stopwatch]::StartNew()
     $process = [Diagnostics.Process]::Start($start)
     try {
         $stdout = $process.StandardOutput.ReadToEndAsync()
         $stderr = $process.StandardError.ReadToEndAsync()
-        $timedOut = -not $process.WaitForExit(180000)
+        $peak = 0L
+        while (-not $process.WaitForExit(50) -and $timer.Elapsed.TotalSeconds -lt 180) {
+            try { $peak = [Math]::Max($peak, $process.PeakWorkingSet64) } catch { }
+        }
+        $timedOut = -not $process.HasExited
         if ($timedOut) { $process.Kill($true); $process.WaitForExit() }
         [Threading.Tasks.Task]::WaitAll($stdout, $stderr)
         [IO.File]::WriteAllText((Join-Path $runRoot "$Name.stdout.log"), $stdout.Result, [Text.UTF8Encoding]::new($false))
         [IO.File]::WriteAllText((Join-Path $runRoot "$Name.stderr.log"), $stderr.Result, [Text.UTF8Encoding]::new($false))
         $current = Capture-HostState
         $equal = (Hash-Text (ConvertTo-Json -InputObject $current -Depth 8 -Compress)) -ceq $baselineIdentity
-        $checks.Add([ordered]@{ name = $Name; arguments = $Arguments; exitCode = $process.ExitCode; timedOut = $timedOut; hostStateEqual = $equal })
+        $timer.Stop()
+        $checks.Add([ordered]@{ name = $Name; arguments = $Arguments; exitCode = $process.ExitCode; timedOut = $timedOut; hostStateEqual = $equal; elapsedMilliseconds = $timer.ElapsedMilliseconds; peakWorkingSetBytes = $peak })
         Save-Json $resultsPath ([ordered]@{ runId = $runId; configuration = $Configuration; networkRestoreEnabled = $false; childDotnetAddGlobalToolsToPath = '0'; checks = $checks.ToArray(); hostState = $current })
-        Write-Output $stdout.Result
+        if (-not $Name.StartsWith('performance-', [StringComparison]::Ordinal)) { Write-Output $stdout.Result }
         if ($stderr.Result) { Write-Output $stderr.Result }
         Write-Output ("$Name exit=$($process.ExitCode) host-state-equal=$equal")
         if (-not $equal) { throw 'Host environment/Profile drift detected; evidence retained. No repair performed.' }
@@ -114,6 +121,28 @@ try {
             Invoke-CheckedDotnet ("validate-" + $file.BaseName) @($cli, 'rules', 'validate', '--file', $file.FullName)
             Invoke-CheckedDotnet ("render-" + $file.BaseName) @($cli, 'rules', 'render', '--file', $file.FullName, '--output', (Join-Path $runRoot ($file.BaseName + '.md')))
         }
+    }
+    if ($MeasurePerformance) {
+        $fixture = Join-Path $runRoot 'performance-fixture'
+        [void][IO.Directory]::CreateDirectory($fixture)
+        for ($index = 0; $index -lt 100; $index++) {
+            $name = 'P' + $index.ToString('D3')
+            $directory = Join-Path $fixture $name
+            [void][IO.Directory]::CreateDirectory($directory)
+            $reference = if ($index -gt 0) { '<ItemGroup><ProjectReference Include="../P' + ($index - 1).ToString('D3') + '/P' + ($index - 1).ToString('D3') + '.csproj" /></ItemGroup>' } else { '' }
+            [IO.File]::WriteAllText((Join-Path $directory ($name + '.csproj')), '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>' + $reference + '</Project>')
+            [IO.File]::WriteAllText((Join-Path $directory ($name + '.cs')), 'namespace ' + $name + '; public class Marker {}')
+        }
+        $cli = Join-Path $repositoryRoot "src/ArchSift.Cli/bin/$Configuration/net10.0/archsift.dll"
+        $measurements = @()
+        for ($index = 0; $index -lt 5; $index++) {
+            $name = 'performance-' + $index
+            Invoke-CheckedDotnet $name @($cli, 'analyze', '--target', $fixture, '--output', (Join-Path $runRoot 'performance-reports'))
+            $report = Get-Content -LiteralPath (Join-Path $runRoot ($name + '.stdout.log')) -Raw | ConvertFrom-Json
+            $timing = $checks[$checks.Count - 1]
+            $measurements += [ordered]@{ iteration = $index; cache = $(if ($index -eq 0) {'first-process/os-cache-unspecified'} else {'warm-os-cache/new-process'}); projectCount = $report.coverage.projectCount; analysisMilliseconds = $report.runMetadata.elapsedMilliseconds; processWallMilliseconds = $timing.elapsedMilliseconds; sampledPeakWorkingSetBytes = $timing.peakWorkingSetBytes; inputSha256 = $report.inputIdentity.sha256 }
+        }
+        Save-Json (Join-Path $runRoot 'performance.json') ([ordered]@{ fixture = '100-project-chain'; configuration = $Configuration; tfm = 'net10.0'; cpu = (Get-CimInstance Win32_Processor | Select-Object -First 1 -ExpandProperty Name); logicalProcessors = [Environment]::ProcessorCount; sdk = '10.0.303'; measurements = $measurements })
     }
 }
 finally {
