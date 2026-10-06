@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — 2026-10-06 W00–W02 已完成并提交，W03 已完成；继续 W04。
+状态：FORMAL — 2026-10-06 W00–W03 已完成并提交，W04 已完成；继续 W05。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -365,6 +365,8 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-06 | W02 契约与模板 | 四份 schema、DTO、六类模板/Markdown、组合/例外/冲突校验、CLI rules 入口；56 项测试与独立 Test-Json/CLI 验证通过；见 [W02 验收](../acceptance/20261006-w02-contracts.md)；W02 COMPLETE |
 | 2026-10-06 | W02 本地提交 | `424ed1945fbc77cabd82fff8f0198d94b816a1a4`，附 Codex trailer |
 | 2026-10-06 | W03 输入与项目图 | 声明发现/根边界/来源身份与编辑器变化 fixtures；64 项测试通过，主机哈希不变；见 [W03 验收](../acceptance/20261006-w03-discovery.md)；W03 COMPLETE |
+| 2026-10-06 | W03 本地提交 | `31a3fdede0c93cdc6a235468516a3dea45816d24`，附 Codex trailer |
+| 2026-10-06 | W04 项目规则 | 项目规则/命名/例外/规则建议正负与缺失 fixtures，79 项测试通过；见 [W04 验收](../acceptance/20261006-w04-project-rules.md)；W04 COMPLETE |
 
 ## 参考资料
 
