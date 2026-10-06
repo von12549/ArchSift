@@ -22,6 +22,12 @@
 <p class="hint">源目标只读。规则编辑与报告仅写入明确的外置目录。</p>
 <div class="actions"><button id="analyze" type="button">发现项目</button><button id="verify" type="button" class="primary">验证规则</button><button id="cancel" type="button" disabled>取消本次运行</button></div>
 <button id="draft" type="button" class="subtle">生成待审查规则建议</button>
+<details><summary>变更比较</summary>
+<p class="hint">默认完整分析 HEAD 与磁盘工作区最终状态，含暂存、未暂存及选中的未跟踪输入。不切换工作区，也不自动 fetch。</p>
+<div class="pair"><label>基线 commit（默认 HEAD）<input id="change-base" placeholder="留空使用默认比较"></label><label>目标 commit（默认工作区）<input id="change-head" placeholder="显式比较需两端都填写"></label></div>
+<p class="hint">规则变化与覆盖不足不会被算作问题解决。</p>
+<button id="changes" type="button">比较两端完整结果</button>
+</details>
 </form></section>
 <section><h2>历史运行</h2><div id="history"><p class="hint">完成后在这里保留本次会话历史。</p></div></section>
 </aside>

@@ -38,6 +38,7 @@ CLI 可用 analyze/verify、rules validate/render/draft、ui --config、--versio
 - [W02 验收记录](docs/acceptance/20261006-w02-contracts.md)
 - [W07 工作台验收](docs/acceptance/20261007-w07-workbench.md)
 - [W08 完成报告](docs/acceptance/20261007-w08-completion.md)
+- [变更比较](docs/changes.md)与 [W09 验收](docs/acceptance/20261007-w09-comparison.md)
 - [CLI 使用与配置](docs/cli.md)
 - [规则与 schema 边界](docs/rules.md)
 - [已解析依赖与许可](docs/dependencies/w01/README.md)

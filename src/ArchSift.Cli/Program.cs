@@ -49,11 +49,12 @@ public static class Program
             }
             if (args is [] or ["--help"] or ["-h"])
             {
-                Console.WriteLine("ArchSift — .NET 架构与依赖分析工具；基于 W01，当前完成 W06 CLI。");
+                Console.WriteLine("ArchSift — .NET 架构与依赖分析工具。");
                 Console.WriteLine("--version / --help");
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
                 Console.WriteLine("rules validate --file <JSON>；rules render --file <JSON> --output <新 Markdown>");
-                Console.WriteLine("rules draft --config <JSON> --output <目录>；ui/changes 按后续计划实现。"); return 0;
+                Console.WriteLine("rules draft --config <JSON> --output <目录>；ui --config <JSON>");
+                Console.WriteLine("changes --config <JSON> [--base <本地 commit> --head <本地 commit>]；默认 HEAD 对磁盘工作区最终状态。"); return 0;
             }
             if (args.Length >= 2 && args[0] == "rules" && args[1] is "validate" or "render")
             {
@@ -68,6 +69,16 @@ public static class Program
                 writer.Write(RuleMarkdown.Render(loaded)); Console.WriteLine(output); return 0;
             }
             var draft = args.Length >= 2 && args[0] == "rules" && args[1] == "draft";
+            if (args.Length > 0 && args[0] == "changes")
+            {
+                var flags = Flags(args[1..], ["--config", "--target", "--entry", "--rules", "--output", "--tfm", "--configuration", "--base", "--head"]);
+                var ordinary = flags.Where(p => p.Key is not ("--base" or "--head")).SelectMany(p => p.Value.SelectMany(v => new[] { p.Key, v })).ToArray();
+                var config = Configuration(ordinary);
+                var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
+                var outcome = await new ComparisonService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config,
+                    new(flags.GetValueOrDefault("--base")?.Single(), flags.GetValueOrDefault("--head")?.Single()), cancel.Token);
+                ComparisonWriter.Save(config, outcome.Report); Console.WriteLine(ComparisonWriter.Json(outcome.Report)); return outcome.ExitCode;
+            }
             if (draft || args.Length > 0 && args[0] is "analyze" or "verify")
             {
                 var config = Configuration(args[(draft ? 2 : 1)..]);

@@ -71,12 +71,53 @@ public sealed class WebWorkbenchTests
                 Assert.Equal(direct.ExitCode, job.RootElement.GetProperty("exitCode").GetInt32());
             }
             Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + id + "/report/json", timeout.Token)).StatusCode);
+            // Compare the same source over the authenticated HTTP surface and reject stale downloads after failure.
+            async Task Git(params string[] arguments)
+            {
+                var result = await SafeProcess.RunAsync("git", source, arguments, Path.Combine(root, "git-home"), null, timeout.Token);
+                Assert.Equal(0, result.ExitCode);
+            }
+            await Git("init"); await Git("add", ".");
+            await Git("-c", "user.name=ArchSift Fixture", "-c", "user.email=fixture@archsift.invalid", "commit", "-m", "Synthetic HTTP fixture\n\nCo-Authored-By: Codex <noreply@openai.com>");
+            async Task<JsonDocument> Compare(object request)
+            {
+                var response = await client.PostAsJsonAsync("/api/run/changes", request, timeout.Token);
+                response.EnsureSuccessStatusCode();
+                using var first = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token));
+                var jobId = first.RootElement.GetProperty("jobId").GetString();
+                while (true)
+                {
+                    var json = JsonDocument.Parse(await client.GetStringAsync("/api/jobs/" + jobId, timeout.Token));
+                    if (json.RootElement.GetProperty("state").GetString() != "running") return json;
+                    json.Dispose(); await Task.Delay(50, timeout.Token);
+                }
+            }
+            using (var compared = await Compare(new { }))
+            {
+                var comparison = compared.RootElement.GetProperty("comparison").Deserialize<ComparisonReport>(JsonContract.Options)!;
+                Assert.Equal("completed", comparison.Status);
+                Assert.Equal(directFindingIds(comparison.Target!), directFindingIds(comparison.Baseline!));
+                Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + compared.RootElement.GetProperty("id").GetString() + "/report/html", timeout.Token)).StatusCode);
+            }
+            using (var failed = await Compare(new { @base = "not-a-local-ref", head = "HEAD" }))
+            {
+                Assert.Equal("failed", failed.RootElement.GetProperty("state").GetString());
+                Assert.Equal(JsonValueKind.Null, failed.RootElement.GetProperty("comparison").ValueKind);
+                Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/jobs/" + failed.RootElement.GetProperty("id").GetString() + "/report/json", timeout.Token)).StatusCode);
+            }
+            static string[] directFindingIds(AnalysisReport report) => report.Findings.Select(f => f.Id).ToArray();
             Assert.False(Directory.Exists(Path.Combine(source, "obj")));
         }
         finally
         {
             if (process is not null) { if (!process.HasExited) process.Kill(true); await process.WaitForExitAsync(); process.Dispose(); }
-            Directory.Delete(root, true);
+            if (Directory.Exists(root))
+            {
+                foreach (var file in Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories))
+                { PathSafety.EnsureNoLinks(file); File.SetAttributes(file, File.GetAttributes(file) & ~FileAttributes.ReadOnly); }
+                if (!PathSafety.IsUnder(root, Path.GetTempPath())) throw new InvalidOperationException("Fixture cleanup containment failed.");
+                Directory.Delete(root, true);
+            }
         }
     }
 }

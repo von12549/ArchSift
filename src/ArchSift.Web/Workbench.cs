@@ -83,9 +83,17 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             var loaded = RuleLoader.Load(RuleFile(name)); RuleLoader.Compose([loaded]);
             return Results.Text(RuleMarkdown.Render(loaded), "text/markdown", Encoding.UTF8);
         });
-        app.MapPost("/api/run/{operation}", async (string operation) =>
+        app.MapPost("/api/run/{operation}", async (string operation, HttpContext context) =>
         {
-            if (operation is not ("analyze" or "verify" or "draft")) return Results.BadRequest(new { error = "Unknown operation." });
+            if (operation is not ("analyze" or "verify" or "draft" or "changes")) return Results.BadRequest(new { error = "Unknown operation." });
+            ChangeRequest request = new();
+            if (operation == "changes")
+            {
+                using var document = await JsonDocument.ParseAsync(context.Request.Body);
+                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p => p.Name is not ("base" or "head")))
+                    throw new ConfigurationException("Comparison accepts only base/head local commit references.");
+                request = document.RootElement.Deserialize<ChangeRequest>(JsonContract.Options)!;
+            }
             if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "已有运行在进行；先取消或等待完成。" });
             var job = new Job(Guid.NewGuid().ToString("N"), operation); jobs[job.Id] = job;
             var config = current;
@@ -98,6 +106,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
                         var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, job.Cancel.Token);
                         job.Draft = RuleDraftService.Create(snapshot); job.ExitCode = 0; job.State = "completed";
                     }
+                    else if (operation == "changes")
+                    {
+                        var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
+                        var outcome = await new ComparisonService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config, request, job.Cancel.Token);
+                        job.Comparison = outcome.Report; job.ExitCode = outcome.ExitCode;
+                        ComparisonWriter.Save(config, outcome.Report); job.State = outcome.Report.Status == "completed" ? "completed" : outcome.Report.Status == "cancelled" ? "cancelled" : "partial";
+                    }
                     else
                     {
                         var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
@@ -107,7 +122,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
                     }
                 }
                 catch (OperationCanceledException) { job.State = "cancelled"; job.ExitCode = 130; }
-                catch (Exception error) { job.Error = error.Message; job.State = "failed"; job.ExitCode = error is ConfigurationException ? 2 : 3; job.Report = null; }
+                catch (Exception error) { job.Error = error.Message; job.State = "failed"; job.ExitCode = error is ConfigurationException ? 2 : 3; job.Report = null; job.Comparison = null; }
                 finally { gate.Release(); }
             });
             foreach (var old in jobs.Values.Where(j => j.State != "running").OrderBy(j => j.Created).Take(Math.Max(0, jobs.Count - 20)))
@@ -116,7 +131,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Report, job.Draft }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Report, job.Draft, job.Comparison }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -126,7 +141,14 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         });
         app.MapGet("/api/jobs/{id}/report/{format}", (string id, string format) =>
         {
-            if (!jobs.TryGetValue(id, out var job) || job.Report is null) return Results.NotFound();
+            if (!jobs.TryGetValue(id, out var job)) return Results.NotFound();
+            if (job.Comparison is { } comparison) return format switch
+            {
+                "json" => Results.Text(ComparisonWriter.Json(comparison), "application/json", Encoding.UTF8),
+                "html" => Results.Text(ComparisonWriter.Html(comparison), "text/html", Encoding.UTF8),
+                _ => Results.BadRequest()
+            };
+            if (job.Report is null) return Results.NotFound();
             return format switch
             {
                 "json" => Results.Text(ReportWriter.Json(job.Report), "application/json", Encoding.UTF8),
@@ -158,5 +180,6 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         public string? Error { get; set; }
         public AnalysisReport? Report { get; set; }
         public RuleDraft? Draft { get; set; }
+        public ComparisonReport? Comparison { get; set; }
     }
 }

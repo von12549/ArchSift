@@ -31,7 +31,8 @@ public sealed class EntrypointTests
     {
         var result = await Run("ArchSift.Cli", "archsift", "--help");
         Assert.Equal(0, result.Code);
-        Assert.Contains("W01", result.Output);
+        Assert.Contains("changes --config", result.Output);
+        Assert.DoesNotContain("已通过", result.Output);
         Assert.Contains("--version", result.Output);
         Assert.Empty(result.Error);
     }

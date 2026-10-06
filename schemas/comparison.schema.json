@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://archsift.local/schemas/comparison.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "operation", "toolVersion", "status", "baselineIdentity", "targetIdentity", "baseline", "target", "added", "existing", "resolved", "unclassified", "fileChanges", "policyChanges", "limitations", "executionErrors", "runMetadata"],
+  "properties": {
+    "schemaVersion": {"const": 1}, "operation": {"const": "changes"},
+    "toolVersion": {"type": "string", "minLength": 1},
+    "status": {"enum": ["completed", "inconclusive", "cancelled"]},
+    "baselineIdentity": {"$ref": "#/definitions/snapshot"}, "targetIdentity": {"$ref": "#/definitions/snapshot"},
+    "baseline": {"type": ["object", "null"]}, "target": {"type": ["object", "null"]},
+    "added": {"$ref": "#/definitions/findings"}, "existing": {"$ref": "#/definitions/findings"},
+    "resolved": {"$ref": "#/definitions/findings"}, "unclassified": {"$ref": "#/definitions/findings"},
+    "fileChanges": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "kind", "previousPath"], "properties": {
+      "path": {"type": "string"}, "kind": {"enum": ["added", "modified", "deleted", "renamed"]}, "previousPath": {"type": ["string", "null"]}
+    }}},
+    "policyChanges": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["ruleId", "kind"], "properties": {
+      "ruleId": {"type": "string"}, "kind": {"enum": ["added", "modified", "removed"]}
+    }}},
+    "limitations": {"$ref": "#/definitions/strings"}, "executionErrors": {"$ref": "#/definitions/strings"},
+    "runMetadata": {"type": "object", "additionalProperties": false, "required": ["runId", "startedUtc", "elapsedMilliseconds", "targetRoot"], "properties": {
+      "runId": {"type": "string"}, "startedUtc": {"type": "string"}, "elapsedMilliseconds": {"type": "integer", "minimum": 0}, "targetRoot": {"type": "string"}
+    }}
+  },
+  "definitions": {
+    "strings": {"type": "array", "items": {"type": "string"}},
+    "snapshot": {"type": "object", "additionalProperties": false, "required": ["kind", "commit", "inputs", "excludedFiles"], "properties": {
+      "kind": {"enum": ["commit", "worktree"]}, "commit": {"type": ["string", "null"]}, "excludedFiles": {"$ref": "#/definitions/strings"},
+      "inputs": {"type": "object", "additionalProperties": false, "required": ["sha256", "files"], "properties": {
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "files": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["path", "sha256", "length", "kind"], "properties": {
+            "path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "length": {"type": "integer", "minimum": 0}, "kind": {"type": "string"}
+          }
+        }}
+      }}
+    }},
+    "findings": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+      "required": ["id", "ruleId", "subjectKind", "subject", "message", "severity", "source", "target", "location", "exceptionId", "exceptionReason"],
+      "properties": {
+        "id": {"type": "string"}, "ruleId": {"type": "string"}, "subjectKind": {"type": "string"}, "subject": {"type": "string"}, "message": {"type": "string"},
+        "severity": {"enum": ["info", "warning", "error"]}, "source": {"type": ["string", "null"]}, "target": {"type": ["string", "null"]},
+        "location": {"type": ["string", "null"]}, "exceptionId": {"type": ["string", "null"]}, "exceptionReason": {"type": ["string", "null"]}
+      }
+    }}
+  }
+}
