@@ -77,6 +77,7 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
     $start.Environment['DOTNET_CLI_UI_LANGUAGE'] = 'en-US'
     $start.Environment['MSBUILDDISABLENODEREUSE'] = '1'
     $start.Environment['NUGET_PACKAGES'] = $packageCache
+    $start.Environment['ARCHSIFT_TEST_LOCAL_FEED'] = $localFeedPath
     $start.Environment['NUGET_CERT_REVOCATION_MODE'] = 'offline'
     $timer = [Diagnostics.Stopwatch]::StartNew()
     $process = [Diagnostics.Process]::Start($start)

@@ -12,6 +12,7 @@ public static class SarifWriter
     {
         var report = comparison.Target ?? comparison.Baseline;
         var run = report is null ? EmptyRun(comparison.ToolVersion) : Run(report);
+        SetSourceRoot(run, comparison.RunMetadata.TargetRoot);
         var results = run["results"]!.AsArray();
         // baselineState promises comprehensive comparison; partial/policy-changed runs must not make that claim.
         if (comparison.Status == "completed")
@@ -50,6 +51,7 @@ public static class SarifWriter
     private static JsonObject Run(AnalysisReport report)
     {
         var run = EmptyRun(report.ToolVersion);
+        SetSourceRoot(run, report.RunMetadata.TargetRoot);
         run["tool"]!["driver"]!["rules"] = new JsonArray(report.RuleResults.Select(r => (JsonNode)new JsonObject
         { ["id"] = r.RuleId, ["shortDescription"] = new JsonObject { ["text"] = r.RuleId }, ["properties"] = new JsonObject { ["archsiftStatus"] = r.Status } }).ToArray());
         run["results"] = new JsonArray(report.Findings.Select(f => (JsonNode)Result(f, report)).ToArray());
@@ -86,9 +88,14 @@ public static class SarifWriter
             var relative = path.Replace('\\', '/');
             if (report.InputIdentity.Files.Any(f => f.Path == relative))
                 result["locations"] = new JsonArray(new JsonObject { ["physicalLocation"] = new JsonObject {
-                    ["artifactLocation"] = new JsonObject { ["uri"] = string.Join('/', relative.Split('/').Select(Uri.EscapeDataString)) } } });
+                    ["artifactLocation"] = new JsonObject { ["uri"] = string.Join('/', relative.Split('/').Select(Uri.EscapeDataString)), ["uriBaseId"] = "%SRCROOT%" } } });
         }
         return result;
     }
     private static JsonObject Notification(string text, string level) => new() { ["level"] = level, ["message"] = new JsonObject { ["text"] = text } };
+    private static void SetSourceRoot(JsonObject run, string root)
+    {
+        var uri = new UriBuilder { Scheme = Uri.UriSchemeFile, Host = "", Path = Path.GetFullPath(root).Replace('\\', '/').TrimEnd('/') + "/" }.Uri.AbsoluteUri;
+        run["originalUriBaseIds"] = new JsonObject { ["%SRCROOT%"] = new JsonObject { ["uri"] = uri } };
+    }
 }

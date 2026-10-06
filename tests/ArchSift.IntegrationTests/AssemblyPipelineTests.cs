@@ -149,7 +149,8 @@ public sealed class AssemblyPipelineTests
         public RunConfiguration Config => new()
         {
             SchemaVersion = 1, Target = new() { Root = Source }, Output = new() { Directory = Output },
-            Build = new() { Mode = "isolated", TargetFramework = "net10.0", Configuration = "Debug" }
+            Build = new() { Mode = "isolated", TargetFramework = "net10.0", Configuration = "Debug",
+                LocalFeed = Environment.GetEnvironmentVariable("ARCHSIFT_TEST_LOCAL_FEED") }
         };
         public AssemblyWorkerClient Worker
         {

@@ -36,6 +36,7 @@ jobs:
           try {
             & dotnet restore ArchSift.slnx --locked-mode --configfile NuGet.Config --source https://api.nuget.org/v3/index.json --packages $feed -p:NuGetAudit=false
             if ($LASTEXITCODE -ne 0) { throw 'Explicit CI restore failed' }
+            & ./scripts/Prepare-CiFrameworkFeed.ps1 -Feed $feed
             if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift after restore' }
             & ./scripts/Invoke-DevelopmentChecks.ps1 -LocalFeed $feed -LabRoot (Join-Path $env:RUNNER_TEMP 'archsift-evidence') -Configuration Release -VerifyContracts
           } finally {

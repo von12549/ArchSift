@@ -13,6 +13,8 @@ public sealed class SarifTests
         var json = SarifWriter.Json(report); var run = JsonNode.Parse(json)!["runs"]![0]!;
         Assert.Equal("2.1.0", JsonNode.Parse(json)!["version"]!.GetValue<string>());
         Assert.Equal("src/A%20file.cs", run["results"]![0]!["locations"]![0]!["physicalLocation"]!["artifactLocation"]!["uri"]!.GetValue<string>());
+        Assert.Equal("%SRCROOT%", run["results"]![0]!["locations"]![0]!["physicalLocation"]!["artifactLocation"]!["uriBaseId"]!.GetValue<string>());
+        Assert.StartsWith("file:///", run["originalUriBaseIds"]!["%SRCROOT%"]!["uri"]!.GetValue<string>());
         Assert.Equal(Finding("src/A file.cs").Id, run["results"]![0]!["partialFingerprints"]!["archsiftFindingId/v1"]!.GetValue<string>());
         Assert.Null(run["results"]![1]!["locations"]); Assert.NotNull(run["results"]![1]!["suppressions"]);
         Assert.DoesNotContain("startLine", json); Assert.DoesNotContain("baselineState", json);
@@ -41,6 +43,7 @@ public sealed class SarifTests
         var run = JsonNode.Parse(SarifWriter.Json(comparison))!["runs"]![0]!;
         Assert.Equal("new", run["results"]![0]!["baselineState"]!.GetValue<string>());
         Assert.Equal("absent", run["results"]![1]!["baselineState"]!.GetValue<string>());
+        Assert.Equal("unused", new Uri(run["originalUriBaseIds"]!["%SRCROOT%"]!["uri"]!.GetValue<string>()).LocalPath.TrimEnd(Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar).Last());
         Assert.DoesNotContain("baselineState", SarifWriter.Json(comparison with { Status = "inconclusive", Limitations = ["policy-changed"] }));
     }
 

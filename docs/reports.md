@@ -17,3 +17,5 @@ report.schema.json 是 schemaVersion=1 权威契约。operation、源/规则/引
 invocations 记录 executionSuccessful 和执行/覆盖 notifications；properties 保留 execution、compliance、coverage、逐规则状态与输入身份。只有 completed 的全面比较才附 baselineState new/unchanged/absent；政策变化或部分比较不作该承诺。
 
 投影按 [OASIS SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html) 与 [GitHub SARIF 支持](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support) 核对。只有逻辑/程序集位置的结果可能不会显示为 GitHub 源码告警；默认仅上传 artifact，不擅自启用 code scanning。
+
+相对 artifact URI 显式关联 `%SRCROOT%` 和 originalUriBaseIds 的实际源码根 file URI；比较报告使用原始 TargetRoot，而不是一次性快照目录作为消费映射基准。此信息与已有 JSON 的 TargetRoot 一样属于本次输入定位，不是虚构源码映射。
