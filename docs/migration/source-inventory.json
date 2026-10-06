@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 1,
+  "inventoryId": "20261006-archsift-w00-sources",
+  "status": "prepared",
+  "date": "2026-10-06",
+  "sourceRoot": "C:/Users/von12/OneDrive/Desktop/Guard",
+  "authorization": {
+    "id": "GUARD-OWNER-20261006",
+    "status": "confirmed",
+    "confirmedBy": "human user in ArchSift project chat",
+    "date": "2026-10-06",
+    "userStatement": "Guard项目所有权完全属于我，确认拥有资产复用和分发的权利",
+    "scope": "The three candidate source files and four fixture metadata files named in the question; ownership statement also identifies Guard as entirely user-owned. Additional tracked Guard test/fixture files are inventoried as selective reuse references under that ownership and the approved migration plan.",
+    "permission": [
+      "selective-copy",
+      "adapt",
+      "redistribute-with-ArchSift"
+    ],
+    "thirdPartyLibraries": "Remain subject to their own licenses; owner statement does not replace third-party notices.",
+    "publicLicense": "No public license assigned to Guard or ArchSift by this record."
+  },
+  "sourceBaseline": {
+    "head": "40539d4610889483b4aed4637f8f3457098b1ff0",
+    "branch": "main",
+    "ordinaryStatusCount": 0,
+    "productVersion": "1.2.2"
+  },
+  "entries": [
+    {
+      "path": "modules/architecture-conformance/adapter.ps1",
+      "sha256": "d92df650fbda0a5f51a3dcde3e83de78ed29b218b44e56b90c64da2e9dc2781b",
+      "bytes": 46407,
+      "lastChange": "19e15628334d3f9a5981b2b2d0e9507e6c450a22|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-01",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-adaptation",
+      "selectedScope": [
+        "project/reference/package/literal framework analysis",
+        "root/evidence path validation",
+        "ArchUnitNET type dependency loading and traversal"
+      ],
+      "plannedTargetDirectories": [
+        "src/ArchSift.Core/",
+        "src/ArchSift.ArchUnit/"
+      ],
+      "validation": [
+        "W03 boundary and unsupported fixtures",
+        "W04 positive/negative project rules",
+        "W05 compiled type-dependency positive/negative fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "core/host/V4.Guards.Host/ProfileRuntime.cs",
+      "sha256": "6b89ee26fb9cdd0c4d6b20c0838949a1916a08412efeece343ea51655b5962ca",
+      "bytes": 77077,
+      "lastChange": "cc3b7eb6d5b78c6c6ca82f062ced82d0d9d43390|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-02",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-adaptation",
+      "selectedScope": [
+        "ObserveTarget/FrameworkFacts/AnalyzeFramework/AnalyzeFrameworkElements/SolutionProjects",
+        "root containment, no-link checks, file hashes"
+      ],
+      "plannedTargetDirectories": [
+        "src/ArchSift.Core/"
+      ],
+      "validation": [
+        "W03 discovery, solution membership, literal props, source-change fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "modules/build-evidence-provider/adapter.ps1",
+      "sha256": "12ec6b707043477fc0ef0e86cc62ab1671f8f33f9b028ad8958cece1df45c92e",
+      "bytes": 10067,
+      "lastChange": "c79f06f836c0ca30c95eb8af3ed4de9516b70d46|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-03",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-adaptation",
+      "selectedScope": [
+        "snapshot/hash binding",
+        "ProcessStartInfo.ArgumentList and child-only dotnet environment"
+      ],
+      "plannedTargetDirectories": [
+        "src/ArchSift.Core/",
+        "src/ArchSift.Cli/"
+      ],
+      "validation": [
+        "W05 manifest and isolated build fixtures",
+        "A09 host safety regression"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "modules/architecture-conformance/fixtures/manifest.json",
+      "sha256": "94b9339432e7b08e213853f1dbe49bfd601f38a0139132903a9b2eaba39573a2",
+      "bytes": 389,
+      "lastChange": "e75bf412b06ad501e7c256f1417401226ffd9447|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-04",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "reference-only",
+      "selectedScope": [
+        "historical coverage labels only; do not import the 12-claim Guard catalog"
+      ],
+      "plannedTargetDirectories": [],
+      "validation": [
+        "W02-W05 rebuild six-rule coverage matrix with executable fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "modules/architecture-conformance/fixtures/clean/fixture.json",
+      "sha256": "f52e13f73fa16a83fc866bb2e10dc7bf962b7d228d4ecf93239ec5bc5b8b4044",
+      "bytes": 363,
+      "lastChange": "e75bf412b06ad501e7c256f1417401226ffd9447|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-05",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "reference-only",
+      "selectedScope": [
+        "historical coverage labels only; do not import the 12-claim Guard catalog"
+      ],
+      "plannedTargetDirectories": [],
+      "validation": [
+        "W02-W05 rebuild six-rule coverage matrix with executable fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "modules/architecture-conformance/fixtures/violating/fixture.json",
+      "sha256": "c0e2c9d3d77dc4045207fb5651b644adb847f84f49bdc2d30e40b9ffff086954",
+      "bytes": 367,
+      "lastChange": "e75bf412b06ad501e7c256f1417401226ffd9447|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-06",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "reference-only",
+      "selectedScope": [
+        "historical coverage labels only; do not import the 12-claim Guard catalog"
+      ],
+      "plannedTargetDirectories": [],
+      "validation": [
+        "W02-W05 rebuild six-rule coverage matrix with executable fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "modules/architecture-conformance/fixtures/missing/fixture.json",
+      "sha256": "788cf1f0bee722f867e0ddbcf198c60f8e0dbe21b7868e340a15fe04576a4b30",
+      "bytes": 365,
+      "lastChange": "e75bf412b06ad501e7c256f1417401226ffd9447|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-07",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "reference-only",
+      "selectedScope": [
+        "historical coverage labels only; do not import the 12-claim Guard catalog"
+      ],
+      "plannedTargetDirectories": [],
+      "validation": [
+        "W02-W05 rebuild six-rule coverage matrix with executable fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/p4/Test-V4ProjectModel.ps1",
+      "sha256": "7ed79b66fe8fd1d970627dc901b7db824e00a71d65f01afca33a09a6fc87cac0",
+      "bytes": 10631,
+      "lastChange": "19e15628334d3f9a5981b2b2d0e9507e6c450a22|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-08",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "test-design-reference",
+      "selectedScope": [
+        "selected synthetic C#/project input cases only",
+        "rewrite tests to ArchSift contracts and safety boundaries; do not execute or port Guard harness"
+      ],
+      "plannedTargetDirectories": [
+        "tests/ArchSift.IntegrationTests/",
+        "tests/fixtures/"
+      ],
+      "validation": [
+        "W03/W04 project model positive/negative/missing/conditional fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/p4/Test-V4ArchUnitNetAdapter.ps1",
+      "sha256": "0aba044f541088ee039b9dcae0f6e333a5f19c9b7ebcd8f771508316360c3246",
+      "bytes": 10531,
+      "lastChange": "f2e5cf32397b392a212ffb4a4c87c9f1eb5e3e32|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-09",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "test-design-reference",
+      "selectedScope": [
+        "selected synthetic C#/project input cases only",
+        "rewrite tests to ArchSift contracts and safety boundaries; do not execute or port Guard harness"
+      ],
+      "plannedTargetDirectories": [
+        "tests/ArchSift.IntegrationTests/",
+        "tests/fixtures/"
+      ],
+      "validation": [
+        "W05 type dependency/zero-match/missing/hash-drift fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/p4/Test-V4BuildEvidence.ps1",
+      "sha256": "33f045eba754154848a6d6c7a17b25170ab41ecaf96fb242cf9580822f46af38",
+      "bytes": 14131,
+      "lastChange": "cc3b7eb6d5b78c6c6ca82f062ced82d0d9d43390|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-10",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "test-design-reference",
+      "selectedScope": [
+        "selected synthetic C#/project input cases only",
+        "rewrite tests to ArchSift contracts and safety boundaries; do not execute or port Guard harness"
+      ],
+      "plannedTargetDirectories": [
+        "tests/ArchSift.IntegrationTests/",
+        "tests/fixtures/"
+      ],
+      "validation": [
+        "W05/A09 isolated build/source drift/child environment fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/fixtures/ifx-like-central-props/Directory.Build.props",
+      "sha256": "505b85782246c5c88a4ade137e0e9df82d6c00da8ca44fc63384ab765f3f32a5",
+      "bytes": 105,
+      "lastChange": "cc3b7eb6d5b78c6c6ca82f062ced82d0d9d43390|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-11",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-fixture-adaptation",
+      "selectedScope": [
+        "tracked literal props/solution/project file only; exclude local bin/obj/generated files",
+        "keep multi-TFM and conditional variants as separate new fixtures"
+      ],
+      "plannedTargetDirectories": [
+        "tests/fixtures/ifx-like-central-props/"
+      ],
+      "validation": [
+        "W03/W04 literal inherited TFM and solution membership fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/fixtures/ifx-like-central-props/IFX.sln",
+      "sha256": "70f24edbec974bd0329653b119826aa8b96cad3930667a8bbacf8d128b358379",
+      "bytes": 390,
+      "lastChange": "cc3b7eb6d5b78c6c6ca82f062ced82d0d9d43390|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-12",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-fixture-adaptation",
+      "selectedScope": [
+        "tracked literal props/solution/project file only; exclude local bin/obj/generated files",
+        "keep multi-TFM and conditional variants as separate new fixtures"
+      ],
+      "plannedTargetDirectories": [
+        "tests/fixtures/ifx-like-central-props/"
+      ],
+      "validation": [
+        "W03/W04 literal inherited TFM and solution membership fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/fixtures/ifx-like-central-props/src/App/App.csproj",
+      "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3",
+      "bytes": 36,
+      "lastChange": "cc3b7eb6d5b78c6c6ca82f062ced82d0d9d43390|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-13",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-fixture-adaptation",
+      "selectedScope": [
+        "tracked literal props/solution/project file only; exclude local bin/obj/generated files",
+        "keep multi-TFM and conditional variants as separate new fixtures"
+      ],
+      "plannedTargetDirectories": [
+        "tests/fixtures/ifx-like-central-props/"
+      ],
+      "validation": [
+        "W03/W04 literal inherited TFM and solution membership fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    },
+    {
+      "path": "tests/fixtures/ifx-like-central-props/tests/App.Tests/App.Tests.csproj",
+      "sha256": "6022ae92062ba23a9f1abcadf4b2462f1814b4ae578abce3c22d9e3331965562",
+      "bytes": 134,
+      "lastChange": "cc3b7eb6d5b78c6c6ca82f062ced82d0d9d43390|Xiaolong Feng",
+      "noticeMarkers": [],
+      "id": "GUARD-14",
+      "repository": "https://github.com/von12549/Guard.git",
+      "sourceCommit": "40539d4610889483b4aed4637f8f3457098b1ff0",
+      "method": "selective-fixture-adaptation",
+      "selectedScope": [
+        "tracked literal props/solution/project file only; exclude local bin/obj/generated files",
+        "keep multi-TFM and conditional variants as separate new fixtures"
+      ],
+      "plannedTargetDirectories": [
+        "tests/fixtures/ifx-like-central-props/"
+      ],
+      "validation": [
+        "W03/W04 literal inherited TFM and solution membership fixtures"
+      ],
+      "ownerAuthorization": "GUARD-OWNER-20261006",
+      "thirdPartyReview": {
+        "kind": "marker scan and source/history inspection",
+        "noticeMarkers": [],
+        "conclusion": "No third-party license/copy/generated markers found in selected files. External libraries are references, covered separately by third-party inventory. Any newly identified embedded material requires its own provenance before adaptation."
+      },
+      "migrationExecuted": false
+    }
+  ],
+  "exclusions": [
+    "Guard Profile/Stage/onboarding/trust/promotion/runtime protocol and shell wrapper",
+    "Guard fixture metadata is not executable correctness evidence",
+    "Guard tests/fixtures local bin/obj and generated artifacts",
+    "Interface implementation location, broader Roslyn semantic claims and old 12-claim authority remain deferred",
+    "No IFX product source or P05 evidence copied"
+  ],
+  "executionRule": "Recheck commit and SHA-256 immediately before adaptation; update entries with actual target file hashes and tests at implementation time."
+}
