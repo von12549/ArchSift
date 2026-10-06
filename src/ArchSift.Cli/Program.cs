@@ -23,6 +23,30 @@ public static class Program
                 Console.WriteLine(JsonSerializer.Serialize(AssemblyWorker.Evaluate(request), JsonContract.Options)); return 0;
             }
             if (args is ["--version"]) { Console.WriteLine($"archsift {RuntimeInfo.ProductVersion}"); return 0; }
+            if (args is ["ui", "--config", var uiConfig])
+            {
+                var configPath = Path.GetFullPath(uiConfig); ConfigLoader.Load(configPath);
+                var web = Path.Combine(AppContext.BaseDirectory, "web", "ArchSift.Web.dll");
+                if (!File.Exists(web))
+                {
+                    var directory = new DirectoryInfo(AppContext.BaseDirectory);
+                    while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "ArchSift.slnx"))) directory = directory.Parent;
+                    var configuration = typeof(Program).Assembly.GetCustomAttributes(false).OfType<System.Reflection.AssemblyConfigurationAttribute>().Single().Configuration;
+                    if (directory is not null) web = Path.Combine(directory.FullName, "src", "ArchSift.Web", "bin", configuration, "net10.0", "ArchSift.Web.dll");
+                }
+                if (!File.Exists(web)) throw new IOException("Web payload is missing; use the complete local package.");
+                var native = Path.ChangeExtension(web, OperatingSystem.IsWindows() ? ".exe" : null);
+                var start = new System.Diagnostics.ProcessStartInfo
+                { FileName = File.Exists(native) ? native : SafeProcess.Dotnet, UseShellExecute = false, CreateNoWindow = true };
+                if (!File.Exists(native)) start.ArgumentList.Add(web);
+                start.ArgumentList.Add("--config"); start.ArgumentList.Add(configPath);
+                start.Environment["DOTNET_CLI_HOME"] = Path.Combine(Path.GetTempPath(), "archsift-ui-home-" + Guid.NewGuid().ToString("N"));
+                start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
+                using var process = System.Diagnostics.Process.Start(start)!;
+                try { await process.WaitForExitAsync(cancel.Token); }
+                catch (OperationCanceledException) { if (!process.HasExited) process.Kill(true); throw; }
+                return process.ExitCode;
+            }
             if (args is [] or ["--help"] or ["-h"])
             {
                 Console.WriteLine("ArchSift — .NET 架构与依赖分析工具；基于 W01，当前完成 W06 CLI。");

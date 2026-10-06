@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ArchSift 架构工作台</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<header><div class="brand"><span class="mark" aria-hidden="true">▦</span><div><h1>ArchSift</h1><p>.NET 架构工作台</p></div></div><div id="status" role="status" aria-live="polite">准备配置本次检查</div></header>
+<main>
+<aside>
+<section><h2>本次检查范围</h2><form id="config-form">
+<label>目标源码根目录<input id="target" required placeholder="D:\项目"></label>
+<label>Solution / 项目入口（根内相对路径）<input id="entry" placeholder="Sample.slnx"></label>
+<div class="pair"><label>目标框架<select id="tfm"><option value="">单框架自动识别</option><option>net8.0</option><option>net9.0</option><option>net10.0</option></select></label><label>配置<select id="configuration"><option>Debug</option><option>Release</option></select></label></div>
+<label>规则 JSON 路径（每行一个）<textarea id="rules-paths" rows="2"></textarea></label>
+<label>报告输出目录（目标根外）<input id="output" required></label>
+<details><summary>程序集与构建</summary>
+<label>产物模式<select id="build-mode"><option value="existing">已有产物；不自动构建</option><option value="isolated">外置快照构建</option></select></label>
+<p id="build-note">已有 DLL 没有来源清单时，仅报告程序集证据。</p>
+<label>Assembly manifest 路径<input id="manifest"></label>
+<label>未绑定 DLL 路径（每行一个）<textarea id="assemblies" rows="2"></textarea></label>
+<label>离线 NuGet feed<input id="feed"></label>
+<label class="toggle"><input id="network" type="checkbox">显式允许联网 restore</label>
+<label>联网 NuGet sources（每行一个）<textarea id="sources" rows="2"></textarea></label>
+</details>
+<p class="hint">源目标只读。规则编辑与报告仅写入明确的外置目录。</p>
+<div class="actions"><button id="analyze" type="button">发现项目</button><button id="verify" type="button" class="primary">验证规则</button><button id="cancel" type="button" disabled>取消本次运行</button></div>
+<button id="draft" type="button" class="subtle">生成待审查规则建议</button>
+</form></section>
+<section><h2>历史运行</h2><div id="history"><p class="hint">完成后在这里保留本次会话历史。</p></div></section>
+</aside>
+<div class="workspace">
+<section class="scope"><div class="section-head"><h2 id="result-title">项目与结果</h2><div id="downloads"></div></div><div id="results"><p class="empty">选取目标并发现项目。这里会显示检查范围、项目引用、规则违规与尚无法判断的项目。</p></div><div id="graph"></div></section>
+<section class="editor">
+<div class="section-head"><h2>规则集编辑</h2><span id="rules-directory" class="path"></span></div>
+<div class="pair"><label>已有文件<select id="rule-files"><option value="">新建规则集</option></select></label><label>保存文件名<input id="filename" value="architecture.json"></label></div>
+<div class="pair"><label>规则集 ID<input id="ruleset-id" value="architecture"></label><label>版本<input id="ruleset-version" value="1.0.0"></label></div>
+<label>说明<input id="ruleset-description" value="请审查并填写架构约束"></label>
+<div id="rule-list"></div>
+<div class="actions"><select id="template"><option value="">选择标准模板</option></select><button id="add-rule" type="button">添加规则</button></div>
+<details><summary>例外（保留原 finding，填写规则 ID、范围与理由）</summary><div id="exception-list"></div><button id="add-exception" type="button" class="subtle">添加例外</button></details>
+<div class="actions"><button id="save-rule" class="primary" type="button">校验并保存规则</button><button id="export-md" type="button">导出只读 Markdown</button></div>
+<p id="editor-message" role="status"></p>
+</section>
+</div>
+</main><footer>声明模型与程序集证据分开呈现。覆盖不足显示无法判定，历史结果保留其原始运行身份。</footer>
+</body></html>

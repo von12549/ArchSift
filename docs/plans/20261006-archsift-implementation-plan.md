@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — 2026-10-06 W00–W05 已完成并提交，W06 已完成；继续 W07。
+状态：FORMAL — W00–W06 已完成并提交，2026-10-07 W07 已完成；进入 W08。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -371,6 +371,8 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-06 | W05 程序集与构建 | 真实 ArchUnitNET 正负及 module initializer 未执行、isolated/manifest/Worker/闭包负例，83 项回归通过；保守 snapshot/unsupported build 范围明确；见 [W05 验收](../acceptance/20261006-w05-assemblies.md)；W05 COMPLETE |
 | 2026-10-06 | W05 本地提交 | `304e1623468c610a2c98d1eae8aa1cc70cc674cc`，附 Codex trailer |
 | 2026-10-06 | W06 报告和 CLI | 共享服务/JSON/HTML/CLI/取消/部分结果，89 项测试通过；见 [W06 验收](../acceptance/20261006-w06-reports-cli.md)；W06 COMPLETE |
+| 2026-10-06 | W06 本地提交 | `9f7c24dcf0c9d33301e68212b7bd22a187708ee0`，附 Codex trailer |
+| 2026-10-07 | W07 本机 UI | 90 项回归、真实 HTTP 安全/parity、浏览器模板/违规/失败旧状态清理与桌面/窄屏验证；见 [W07 验收](../acceptance/20261007-w07-workbench.md)；W07 COMPLETE；独立操作员 A10 尚未执行 |
 
 ## 参考资料
 

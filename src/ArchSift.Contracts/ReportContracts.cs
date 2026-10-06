@@ -23,6 +23,7 @@ public sealed record AnalysisReport
     public required InputIdentity InputIdentity { get; init; }
     public RulesetIdentity[] RulesetIdentities { get; init; } = [];
     public required AnalysisScope Scope { get; init; }
+    public ProjectModel[] Projects { get; init; } = [];
     public required BuildContext BuildContext { get; init; }
     public Dictionary<string, string> EngineVersions { get; init; } = new(StringComparer.Ordinal);
     public required string Execution { get; init; }

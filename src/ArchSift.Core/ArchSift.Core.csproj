@@ -2,5 +2,6 @@
   <ItemGroup>
     <ProjectReference Include="../ArchSift.Contracts/ArchSift.Contracts.csproj" />
     <EmbeddedResource Include="../../schemas/*.schema.json" Link="Schemas/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../templates/rules/*.json" Link="Templates/%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

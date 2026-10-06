@@ -110,6 +110,7 @@ public sealed class AnalysisService(
             Operation = operation, InputIdentity = runIdentity,
             RulesetIdentities = bundle.Documents.Select(d => d.Identity).ToArray(),
             Scope = snapshot?.Scope ?? new([], [], [], [], ["No source snapshot was captured."]),
+            Projects = snapshot?.Projects ?? [],
             BuildContext = new(config.Build.Mode, framework, config.Build.Configuration, sdk, binding),
             EngineVersions = engines, Execution = execution, Compliance = compliance,
             RuleResults = results.OrderBy(r => r.RuleId, StringComparer.Ordinal).ToArray(),

@@ -1,6 +1,6 @@
 # ArchSift
 
-独立的本地 .NET 架构与依赖分析工具。当前已完成 W02 契约与规则模板，版本为 `0.1.0-dev`；项目发现、六类规则求值、报告和本机 Web UI 按后续工作包实现。
+独立的本地 .NET 架构与依赖分析工具。当前已完成 W07 CLI/本机工作台，版本为 `0.1.0-dev`；项目发现、六类规则、真实 ArchUnitNET、JSON/HTML 和 loopback UI 已实现，W08 产品验收正在准备。
 
 ## 开发与验证
 
@@ -16,7 +16,7 @@ pwsh -NoProfile -File scripts/Invoke-DevelopmentChecks.ps1
 
 检查脚本对 .NET 子进程设置独立 `DOTNET_CLI_HOME` 和 `DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0`；执行前后比较 User/Machine 环境、Process PATH 与四个 PowerShell Profile，只保存哈希。每次检查的日志和 TRX 位于忽略的 `artifacts/development/<run-id>`。这些是 ArchSift 自身开发产物；真实分析目标的快照/报告仍须外置。
 
-当前 CLI 可用 `--version`、`--help`、`rules validate --file` 与 `rules render --file --output`；未实现的命令返回配置错误 2。Web 项目只提供版本入口，暂不监听端口。W02 验证八个项目编译成功、零警告/错误、56 项测试通过；六类模板 JSON/Markdown 可校验。真实 ArchUnitNET 规则验收在 W05。
+CLI 可用 analyze/verify、rules validate/render/draft、ui --config、--version/--help。Web 工作台只绑定 loopback 随机端口并使用会话 token；规则 JSON 和报告写入明确的目标外目录。W07 验证八个项目编译成功、零警告/错误、90 项回归；真实类型依赖、未绑定/旧 DLL、部分报告与浏览器失败状态均有证据。消费违规默认 exit 0，无法判定/配置/执行错误分别可见。
 
 ## 项目结构
 
@@ -36,6 +36,8 @@ pwsh -NoProfile -File scripts/Invoke-DevelopmentChecks.ps1
 - [W00 完成记录](docs/acceptance/20261006-w00-completion.md)
 - [W01 验收记录](docs/acceptance/20261006-w01-foundation.md)
 - [W02 验收记录](docs/acceptance/20261006-w02-contracts.md)
+- [W07 工作台验收](docs/acceptance/20261007-w07-workbench.md)
+- [CLI 使用与配置](docs/cli.md)
 - [规则与 schema 边界](docs/rules.md)
 - [已解析依赖与许可](docs/dependencies/w01/README.md)
 - [迁移来源与用户授权](docs/migration/source-inventory.json)

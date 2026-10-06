@@ -1,19 +1,54 @@
+using System.Net;
+using System.Text.Json;
+using ArchSift.ArchUnit;
+using ArchSift.Contracts;
 using ArchSift.Core;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 
 namespace ArchSift.Web;
 
 public static class Program
 {
-    public static int Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-        if (args is ["--version"])
+        if (args is ["--version"]) { Console.WriteLine($"archsift-web {RuntimeInfo.ProductVersion}"); return 0; }
+        if (args is ["__worker"])
         {
-            Console.WriteLine($"archsift-web {RuntimeInfo.ProductVersion}");
-            return 0;
+            try
+            {
+                var input = await Console.In.ReadToEndAsync();
+                if (input.Length > 16 * 1024 * 1024) return 2;
+                var request = JsonSerializer.Deserialize<WorkerRequest>(input, JsonContract.Options)!;
+                Console.WriteLine(JsonSerializer.Serialize(AssemblyWorker.Evaluate(request), JsonContract.Options)); return 0;
+            }
+            catch (Exception error) { Console.Error.WriteLine(error.Message); return 3; }
         }
-
-        Console.Error.WriteLine("本机 Web UI 尚未实现；按正式计划在 W07 提供 loopback 服务。");
-        return 2;
+        if (args is not ["--config", var configFile])
+        { Console.Error.WriteLine("W07 本机 UI：使用 --config <JSON>；或 --version。"); return 2; }
+        try
+        {
+            var config = ConfigLoader.Load(configFile);
+            PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
+            var rulesDirectory = config.RulesDirectory ?? Path.Combine(config.Output.Directory, "rules");
+            PathSafety.EnsureDisjoint(config.Target.Root, rulesDirectory);
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [], ContentRootPath = AppContext.BaseDirectory });
+            builder.WebHost.UseSetting(WebHostDefaults.PreventHostingStartupKey, "true");
+            builder.WebHost.ConfigureKestrel(server =>
+            {
+                server.Listen(IPAddress.Loopback, 0);
+                server.Limits.MaxRequestBodySize = 4 * 1024 * 1024;
+            });
+            var app = builder.Build();
+            var workbench = new Workbench(config, rulesDirectory); workbench.Map(app);
+            await app.StartAsync();
+            var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            Console.WriteLine("ARCHSIFT_UI=" + address + "/#session=" + workbench.Token);
+            await app.WaitForShutdownAsync(); return 0;
+        }
+        catch (ConfigurationException error) { Console.Error.WriteLine(error.Message); return 2; }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
+        { Console.Error.WriteLine(error.Message); return 3; }
     }
 }

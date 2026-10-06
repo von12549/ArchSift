@@ -2,5 +2,6 @@
   <ItemGroup>
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
+    <Content Update="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

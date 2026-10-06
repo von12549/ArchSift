@@ -415,6 +415,135 @@
         "elapsedMilliseconds",
         "targetRoot"
       ]
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assemblyName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supported": {
+            "type": "boolean"
+          },
+          "frameworks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "frameworkSource": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "frameworkComplete": {
+            "type": "boolean"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "include": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "targetId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "enum": [
+                    "resolved",
+                    "missing",
+                    "external",
+                    "unsupported"
+                  ]
+                }
+              },
+              "required": [
+                "include",
+                "targetId",
+                "status"
+              ]
+            }
+          },
+          "referencesComplete": {
+            "type": "boolean"
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "enum": [
+                    "declared",
+                    "unsupported"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "status"
+              ]
+            }
+          },
+          "packagesComplete": {
+            "type": "boolean"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "assemblyName",
+          "supported",
+          "frameworks",
+          "frameworkSource",
+          "frameworkComplete",
+          "references",
+          "referencesComplete",
+          "packages",
+          "packagesComplete",
+          "limitations"
+        ]
+      }
     }
   },
   "required": [
@@ -433,7 +562,8 @@
     "coverage",
     "limitations",
     "executionErrors",
-    "runMetadata"
+    "runMetadata",
+    "projects"
   ],
   "definitions": {}
 }
