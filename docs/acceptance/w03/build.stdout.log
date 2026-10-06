@@ -1,0 +1,14 @@
+  ArchSift.Contracts -> D:\ArchSift\src\ArchSift.Contracts\bin\Debug\net10.0\ArchSift.Contracts.dll
+  ArchSift.Core -> D:\ArchSift\src\ArchSift.Core\bin\Debug\net10.0\ArchSift.Core.dll
+  ArchSift.ArchUnit -> D:\ArchSift\src\ArchSift.ArchUnit\bin\Debug\net10.0\ArchSift.ArchUnit.dll
+  ArchSift.Cli -> D:\ArchSift\src\ArchSift.Cli\bin\Debug\net10.0\archsift.dll
+  ArchSift.UnitTests -> D:\ArchSift\tests\ArchSift.UnitTests\bin\Debug\net10.0\ArchSift.UnitTests.dll
+  ArchSift.ArchitectureTests -> D:\ArchSift\tests\ArchSift.ArchitectureTests\bin\Debug\net10.0\ArchSift.ArchitectureTests.dll
+  ArchSift.Web -> D:\ArchSift\src\ArchSift.Web\bin\Debug\net10.0\ArchSift.Web.dll
+  ArchSift.IntegrationTests -> D:\ArchSift\tests\ArchSift.IntegrationTests\bin\Debug\net10.0\ArchSift.IntegrationTests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.29
