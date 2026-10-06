@@ -1,0 +1,128 @@
+{
+  "packageRoot": "D:\\ArchSift-lab\\packages\\smoke-8492698999f94ea9a535a42263fc417f\\unpacked",
+  "zipSha256": "61d5e5df7e87858a0086691f7284925407977304d84d861c4fae93661435f23a",
+  "checks": [
+    {
+      "name": "cli-version",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 145,
+      "sampledPeakBytes": 17645568
+    },
+    {
+      "name": "web-version",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 152,
+      "sampledPeakBytes": 12738560
+    },
+    {
+      "name": "analyze-performance",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 373,
+      "sampledPeakBytes": 32169984
+    },
+    {
+      "name": "performance-1",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 225,
+      "sampledPeakBytes": 33484800
+    },
+    {
+      "name": "performance-2",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 232,
+      "sampledPeakBytes": 29614080
+    },
+    {
+      "name": "performance-3",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 225,
+      "sampledPeakBytes": 32641024
+    },
+    {
+      "name": "performance-4",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 238,
+      "sampledPeakBytes": 28315648
+    },
+    {
+      "name": "nonblocking-violation",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true,
+      "wallMilliseconds": 242,
+      "sampledPeakBytes": 30613504
+    },
+    {
+      "name": "configuration-error",
+      "exitCode": 2,
+      "expected": 2,
+      "hostStateEqual": true,
+      "wallMilliseconds": 63,
+      "sampledPeakBytes": 0
+    },
+    {
+      "name": "worker-without-sdk",
+      "exitCode": 4,
+      "expected": 4,
+      "hostStateEqual": true,
+      "wallMilliseconds": 2828,
+      "sampledPeakBytes": 31117312
+    },
+    {
+      "name": "offline-native-ui",
+      "exitCode": 0,
+      "expected": 0,
+      "hostStateEqual": true
+    }
+  ],
+  "performancePassed": true,
+  "performance": [
+    {
+      "iteration": 0,
+      "analysisMilliseconds": 243,
+      "processWallMilliseconds": 373,
+      "sampledPeakBytes": 32169984
+    },
+    {
+      "iteration": 1,
+      "analysisMilliseconds": 109,
+      "processWallMilliseconds": 225,
+      "sampledPeakBytes": 33484800
+    },
+    {
+      "iteration": 2,
+      "analysisMilliseconds": 114,
+      "processWallMilliseconds": 232,
+      "sampledPeakBytes": 29614080
+    },
+    {
+      "iteration": 3,
+      "analysisMilliseconds": 108,
+      "processWallMilliseconds": 225,
+      "sampledPeakBytes": 32641024
+    },
+    {
+      "iteration": 4,
+      "analysisMilliseconds": 115,
+      "processWallMilliseconds": 238,
+      "sampledPeakBytes": 28315648
+    }
+  ],
+  "noSdkPathUsed": true,
+  "hostStateEqual": true,
+  "w08Accepted": false
+}

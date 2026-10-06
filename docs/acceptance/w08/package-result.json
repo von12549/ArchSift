@@ -1,0 +1,30 @@
+{
+  "zipPath": "D:\\ArchSift-lab\\packages\\w08-0488c7a30a8943c9b97ff3c61a2913bf\\archsift-0.1.0-dev-win-x64.zip",
+  "zipSha256": "61d5e5df7e87858a0086691f7284925407977304d84d861c4fae93661435f23a",
+  "payloadRoot": "D:\\ArchSift-lab\\packages\\w08-0488c7a30a8943c9b97ff3c61a2913bf\\payload",
+  "runRoot": "D:\\ArchSift-lab\\packages\\w08-0488c7a30a8943c9b97ff3c61a2913bf",
+  "checks": [
+    {
+      "name": "restore-Cli",
+      "exitCode": 0,
+      "hostStateEqual": true
+    },
+    {
+      "name": "publish-Cli",
+      "exitCode": 0,
+      "hostStateEqual": true
+    },
+    {
+      "name": "restore-Web",
+      "exitCode": 0,
+      "hostStateEqual": true
+    },
+    {
+      "name": "publish-Web",
+      "exitCode": 0,
+      "hostStateEqual": true
+    }
+  ],
+  "hostStateEqual": true,
+  "w08Accepted": false
+}

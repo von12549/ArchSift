@@ -1,0 +1,302 @@
+{
+  "runId": "d06ebcc0ad514ed899092262e4f05b57",
+  "configuration": "Debug",
+  "networkRestoreEnabled": false,
+  "childDotnetAddGlobalToolsToPath": "0",
+  "checks": [
+    {
+      "name": "sdk",
+      "arguments": [
+        "--version"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 113,
+      "peakWorkingSetBytes": 32354304
+    },
+    {
+      "name": "restore",
+      "arguments": [
+        "restore",
+        "ArchSift.slnx",
+        "--configfile",
+        "NuGet.Config",
+        "--source",
+        "C:\\Users\\von12\\.nuget\\packages",
+        "--packages",
+        "D:\\ArchSift\\artifacts\\development\\packages",
+        "--disable-parallel",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "--verbosity",
+        "minimal",
+        "--locked-mode"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 1184,
+      "peakWorkingSetBytes": 33619968
+    },
+    {
+      "name": "build",
+      "arguments": [
+        "build",
+        "ArchSift.slnx",
+        "--no-restore",
+        "--disable-build-servers",
+        "-p:UseSharedCompilation=false",
+        "-c",
+        "Debug",
+        "--verbosity",
+        "minimal"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 6431,
+      "peakWorkingSetBytes": 32595968
+    },
+    {
+      "name": "test",
+      "arguments": [
+        "test",
+        "ArchSift.slnx",
+        "--no-build",
+        "--no-restore",
+        "--disable-build-servers",
+        "-c",
+        "Debug",
+        "--logger",
+        "trx",
+        "--results-directory",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\test-results"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 17726,
+      "peakWorkingSetBytes": 28983296
+    },
+    {
+      "name": "validate-graph-integrity",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\graph-integrity.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 83,
+      "peakWorkingSetBytes": 32997376
+    },
+    {
+      "name": "render-graph-integrity",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\graph-integrity.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\graph-integrity.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 94,
+      "peakWorkingSetBytes": 33464320
+    },
+    {
+      "name": "validate-naming",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\naming.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 78,
+      "peakWorkingSetBytes": 0
+    },
+    {
+      "name": "render-naming",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\naming.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\naming.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 86,
+      "peakWorkingSetBytes": 0
+    },
+    {
+      "name": "validate-nuget-denylist",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\nuget-denylist.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 80,
+      "peakWorkingSetBytes": 31588352
+    },
+    {
+      "name": "render-nuget-denylist",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\nuget-denylist.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\nuget-denylist.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 84,
+      "peakWorkingSetBytes": 0
+    },
+    {
+      "name": "validate-project-reference",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\project-reference.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 86,
+      "peakWorkingSetBytes": 31002624
+    },
+    {
+      "name": "render-project-reference",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\project-reference.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\project-reference.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 95,
+      "peakWorkingSetBytes": 30359552
+    },
+    {
+      "name": "validate-target-framework",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\target-framework.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 80,
+      "peakWorkingSetBytes": 31899648
+    },
+    {
+      "name": "render-target-framework",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\target-framework.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\target-framework.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 83,
+      "peakWorkingSetBytes": 30945280
+    },
+    {
+      "name": "validate-type-dependency",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\type-dependency.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 83,
+      "peakWorkingSetBytes": 32268288
+    },
+    {
+      "name": "render-type-dependency",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\type-dependency.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\d06ebcc0ad514ed899092262e4f05b57\\type-dependency.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 86,
+      "peakWorkingSetBytes": 30924800
+    }
+  ],
+  "hostState": {
+    "userEnvironmentSha256": "19db620b974ce9b8a2cf7615308ba52f0ad576b000af54631a55d2cc7a13aa4d",
+    "machineEnvironmentSha256": "001015a96d9c7e68e488c21678f0a80a82876ceec7bfaa07539c43d323fc034f",
+    "processPathSha256": "91e94c05dfc3396b29c63c0a2f7b835f21df15b5006294a606bb1a8ccaa31eca",
+    "profiles": [
+      {
+        "name": "AllUsersAllHosts",
+        "exists": false,
+        "sha256": null
+      },
+      {
+        "name": "AllUsersCurrentHost",
+        "exists": false,
+        "sha256": null
+      },
+      {
+        "name": "CurrentUserAllHosts",
+        "exists": true,
+        "sha256": "bf4cbaa6e4809e600943a8040ef29e0a912de713324e9a705e0681860d20752b"
+      },
+      {
+        "name": "CurrentUserCurrentHost",
+        "exists": false,
+        "sha256": null
+      }
+    ]
+  }
+}

@@ -43,4 +43,4 @@ CLI 可用 analyze/verify、rules validate/render/draft、ui --config、--versio
 - [迁移来源与用户授权](docs/migration/source-inventory.json)
 - [项目操作与提交指令](AGENTS.md)
 
-当前提供的是基础开发项目，尚未通过 0.1.0 产品验收。网络漏洞审计、本地 ZIP、真实 IFX 集成与操作员可用性验收在对应工作包执行。
+已生成并自动验证本地 Windows x64 自包含开发候选 ZIP，92 项回归通过；[W08 准备/候选信息](docs/acceptance/20261007-w08-readiness.md)记录位置与 SHA-256。真实 IFX/独立操作员及现场安全清理仍待人工验收，0.1.0 尚未标为完成。网络漏洞审计未运行，Linux/SARIF/变更比较在 W09/W10。

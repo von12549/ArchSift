@@ -1,0 +1,110 @@
+{
+  "runId": "946c253a8ba24c1797b784b4432b956d",
+  "configuration": "Debug",
+  "networkRestoreEnabled": false,
+  "childDotnetAddGlobalToolsToPath": "0",
+  "checks": [
+    {
+      "name": "sdk",
+      "arguments": [
+        "--version"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 105,
+      "peakWorkingSetBytes": 33243136
+    },
+    {
+      "name": "restore",
+      "arguments": [
+        "restore",
+        "ArchSift.slnx",
+        "--configfile",
+        "NuGet.Config",
+        "--source",
+        "C:\\Users\\von12\\.nuget\\packages",
+        "--packages",
+        "D:\\ArchSift\\artifacts\\development\\packages",
+        "--disable-parallel",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "--verbosity",
+        "minimal",
+        "--locked-mode"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 1062,
+      "peakWorkingSetBytes": 30851072
+    },
+    {
+      "name": "build",
+      "arguments": [
+        "build",
+        "ArchSift.slnx",
+        "--no-restore",
+        "--disable-build-servers",
+        "-p:UseSharedCompilation=false",
+        "-c",
+        "Debug",
+        "--verbosity",
+        "minimal"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 1624,
+      "peakWorkingSetBytes": 32055296
+    },
+    {
+      "name": "test",
+      "arguments": [
+        "test",
+        "ArchSift.slnx",
+        "--no-build",
+        "--no-restore",
+        "--disable-build-servers",
+        "-c",
+        "Debug",
+        "--logger",
+        "trx",
+        "--results-directory",
+        "D:\\ArchSift\\artifacts\\development\\946c253a8ba24c1797b784b4432b956d\\test-results"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true,
+      "elapsedMilliseconds": 17418,
+      "peakWorkingSetBytes": 32722944
+    }
+  ],
+  "hostState": {
+    "userEnvironmentSha256": "19db620b974ce9b8a2cf7615308ba52f0ad576b000af54631a55d2cc7a13aa4d",
+    "machineEnvironmentSha256": "001015a96d9c7e68e488c21678f0a80a82876ceec7bfaa07539c43d323fc034f",
+    "processPathSha256": "91e94c05dfc3396b29c63c0a2f7b835f21df15b5006294a606bb1a8ccaa31eca",
+    "profiles": [
+      {
+        "name": "AllUsersAllHosts",
+        "exists": false,
+        "sha256": null
+      },
+      {
+        "name": "AllUsersCurrentHost",
+        "exists": false,
+        "sha256": null
+      },
+      {
+        "name": "CurrentUserAllHosts",
+        "exists": true,
+        "sha256": "bf4cbaa6e4809e600943a8040ef29e0a912de713324e9a705e0681860d20752b"
+      },
+      {
+        "name": "CurrentUserCurrentHost",
+        "exists": false,
+        "sha256": null
+      }
+    ]
+  }
+}

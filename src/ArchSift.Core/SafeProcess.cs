@@ -18,6 +18,14 @@ public static class SafeProcess
             StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8, CreateNoWindow = true
         };
         foreach (var argument in arguments) start.ArgumentList.Add(argument);
+        // A parent test/build host can pin SDK 10 task paths while global.json selects SDK 9.
+        var inheritedSdkPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "MSBUILD_EXE_PATH", "MSBuildSDKsPath", "MSBuildExtensionsPath", "MSBuildExtensionsPath32",
+            "MSBuildToolsPath", "MSBuildBinPath", "DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR",
+            "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR", "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_VER"
+        };
+        foreach (var key in start.Environment.Keys.Where(inheritedSdkPaths.Contains).ToArray()) start.Environment.Remove(key);
         start.Environment["DOTNET_CLI_HOME"] = cliHome;
         start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
         start.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";

@@ -8,6 +8,7 @@
     <VersionPrefix>0.1.0</VersionPrefix>
     <VersionSuffix>dev</VersionSuffix>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <NuGetLockFilePath Condition="'$(RuntimeIdentifier)' != ''">$(MSBuildProjectDirectory)/packages.$(RuntimeIdentifier).lock.json</NuGetLockFilePath>
     <RestoreIgnoreFailedSources>false</RestoreIgnoreFailedSources>
     <!-- Offline development checks cannot query vulnerability feeds. -->
     <NuGetAudit>false</NuGetAudit>

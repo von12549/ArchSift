@@ -103,6 +103,24 @@ public sealed class AssemblyPipelineTests
         return RuleLoader.Compose([new(set, new(set.Id, set.Version, ContentHash.Text(json), "fixture.json"))]);
     }
 
+    [Theory]
+    [InlineData("net8.0")]
+    [InlineData("net9.0")]
+    public async Task SupportedEarlierTfmsBuildAndAnalyzeRealArtifacts(string tfm)
+    {
+        using var fixture = new Fixture(); fixture.CreateSource(false);
+        fixture.Write("global.json", "{\"sdk\":{\"version\":\"9.0.314\",\"rollForward\":\"latestPatch\",\"allowPrerelease\":false}}");
+        foreach (var file in Directory.GetFiles(fixture.Source, "*.csproj", SearchOption.AllDirectories))
+            File.WriteAllText(file, File.ReadAllText(file).Replace("net10.0", tfm, StringComparison.Ordinal));
+        var config = fixture.Config with { Build = fixture.Config.Build with { TargetFramework = tfm } };
+        var inputs = await IsolatedBuild.BuildAsync(config, ProjectDiscovery.Discover(fixture.Source), CancellationToken.None);
+        Assert.True(inputs.SourceBound);
+        Assert.Equal("9.0.314", inputs.Sdk);
+        var result = await fixture.Worker.EvaluateAsync(inputs, Rules(), fixture.Output, CancellationToken.None);
+        Assert.Equal("pass", Assert.Single(result.Results).Status);
+        Assert.Empty(result.Errors);
+    }
+
     private static RuleBundle NamingRules(bool violating)
     {
         var set = new Ruleset

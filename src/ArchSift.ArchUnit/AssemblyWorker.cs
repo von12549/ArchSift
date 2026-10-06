@@ -34,6 +34,22 @@ public static class AssemblyWorker
             }
             var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             var frameworkNames = Directory.GetFiles(runtimeDirectory, "*.dll").Select(Path.GetFileNameWithoutExtension).ToHashSet(StringComparer.Ordinal);
+            var ownDeps = Path.ChangeExtension(System.Reflection.Assembly.GetEntryAssembly()!.Location, ".deps.json");
+            if (File.Exists(ownDeps))
+            {
+                using var deps = JsonDocument.Parse(File.ReadAllBytes(ownDeps));
+                var target = deps.RootElement.GetProperty("runtimeTarget").GetProperty("name").GetString()!;
+                var packs = deps.RootElement.GetProperty("targets").GetProperty(target).EnumerateObject()
+                    .Where(p => p.Name.StartsWith("runtimepack.Microsoft.NETCore.App.", StringComparison.Ordinal) ||
+                        p.Name.StartsWith("runtimepack.Microsoft.AspNetCore.App.", StringComparison.Ordinal)).ToArray();
+                if (packs.Length > 0)
+                {
+                    frameworkNames.Clear();
+                    foreach (var pack in packs)
+                        if (pack.Value.TryGetProperty("runtime", out var runtime))
+                            frameworkNames.UnionWith(runtime.EnumerateObject().Select(p => Path.GetFileNameWithoutExtension(p.Name)));
+                }
+            }
             var shared = Path.GetDirectoryName(Path.GetDirectoryName(runtimeDirectory.TrimEnd(Path.DirectorySeparatorChar)))!;
             var aspnet = Path.Combine(shared, "Microsoft.AspNetCore.App");
             if (Directory.Exists(aspnet))
