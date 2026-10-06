@@ -1,0 +1,21 @@
+{
+  "step": "archsift-w08-a10-follow-up-attestation",
+  "date": "2026-10-07",
+  "operatorIndependentOfImplementation": true,
+  "evidenceRuns": [
+    "D:\\ArchSift-lab\\runs\\ifx-w08-independent-ui-0a627f4afd8d45a4a960e3d0a6c99f10",
+    "D:\\ArchSift-lab\\runs\\ifx-w08-real-ifx-ui-ecd8d4bf1c664945b20665714d8258cd"
+  ],
+  "initialConfidence": 3,
+  "finalConfidence": 4,
+  "highestHelpLevel": "L2",
+  "helpLevelRationale": "Conservative combined rating: the operator received a clarified target and one follow-up task after the first run, but no step-by-step field or click guidance and no proxy operation.",
+  "operatorAssessment": "The first operation retained some uncertainty, but the observed results matched the task description. Compared with the Guard project, the UI information was simpler and clearer.",
+  "recordingBasis": "User clarification supplied in the Codex acceptance conversation after the real IFX UI review; the earlier run artifacts remain unchanged.",
+  "thresholds": {
+    "independentOperator": true,
+    "confidenceAtLeastFour": true,
+    "helpLevelAtMostL2": true
+  },
+  "a10Result": "pass"
+}

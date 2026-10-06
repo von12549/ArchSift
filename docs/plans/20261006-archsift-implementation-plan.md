@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W07 已完成并提交；2026-10-07 W08 自动部分通过，等待真实 IFX/独立操作员验收；W09/W10 未开始。
+状态：FORMAL — W00–W08 已完成；2026-10-07 W08 的自动、真实 IFX、独立操作员和最终安全清理全部通过；W09/W10 未开始。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -375,7 +375,8 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-07 | W07 本机 UI | 90 项回归、真实 HTTP 安全/parity、浏览器模板/违规/失败旧状态清理与桌面/窄屏验证；见 [W07 验收](../acceptance/20261007-w07-workbench.md)；W07 COMPLETE；独立操作员 A10 尚未执行 |
 | 2026-10-07 | W07 本地提交 | `a9f17338a253289ad3d55dac3b35618617426800`，附 Codex trailer |
 | 2026-10-07 | W08 性能冻结 | `64b6e238513a94d98f0f04d78cfd3dc47c1eb9f3` 先提交实测参考与预算，再测候选包 |
-| 2026-10-07 | W08 自动验收/人工入口 | 92 项回归、host safety、五次候选性能、self-contained CLI/Worker/UI 无 SDK 路径 smoke 通过；候选 ZIP/hash/许可已归档；见 [W08 准备](../acceptance/20261007-w08-readiness.md)；A10 和现场安全/清理仍 WAITING；未标 W08 COMPLETE，W09/W10 依赖未满足 |
+| 2026-10-07 | W08 自动验收/人工入口 | 92 项回归、host safety、五次候选性能、self-contained CLI/Worker/UI 无 SDK 路径 smoke 通过；候选 ZIP/hash/许可已归档；见 [W08 准备](../acceptance/20261007-w08-readiness.md) |
+| 2026-10-07 | W08 真实 IFX/A10/最终清理 | 105 项目声明发现、已知引用违规、fixture 与真实 IFX UI、独立操作员 confidence 4/5（最高 L2）及最终零残留审计通过；见 [W08 完成报告](../acceptance/20261007-w08-completion.md)；W08 COMPLETE，W09/W10 依赖已满足但尚未开始 |
 
 ## 参考资料
 
