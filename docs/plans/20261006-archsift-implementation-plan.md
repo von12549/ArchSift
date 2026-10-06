@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — 2026-10-06 W00–W03 已完成并提交，W04 已完成；继续 W05。
+状态：FORMAL — 2026-10-06 W00–W04 已完成并提交，W05 已完成；继续 W06。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -158,7 +158,7 @@ TargetRoot 必填；入口为根内显式 solution/project，或在无入口时�
 
 已有产物模式为默认。assembly-manifest 包含 schemaVersion、源码/构建输入哈希、项目与程序集映射、SDK、TFM、Configuration、生成方式与程序集 SHA-256。普通 DLL 无来源绑定时可作 assemblies-only 报告；选中需要验证当前源码的规则则 inconclusive，并说明无法证明对应关系。时间戳不能替代输入绑定。
 
-显式 build.mode=isolated 时生成根外快照及构建产物；默认 Debug。生成清单只绑定实际参与构建和最终分析的输入；restore/build 参数、SDK、TFM 和程序集闭包均记录。分析程序集通过独立 Worker 进程运行，避免不同版本程序集加载相互污染；不调用目标入口和业务方法。
+显式 build.mode=isolated 时生成根外快照及构建产物；默认 Debug。生成清单绑定本次构建的保守根内输入快照与最终分析 assembly，记录 SDK/TFM/Configuration/生成方式和程序集闭包；不宣称精确 MSBuild 文件访问轨迹。首期标准 SDK 的安全隔离不包含未审查自定义任务、Import、输出路径、条件/表达式和包构建脚本/生成器，遇到这些情况拒绝或标明无法绑定当前源，完整求值继续 defer。分析程序集通过独立 Worker 进程运行，避免不同版本程序集加载相互污染；不调用目标入口和业务方法。
 
 restore 默认 offline，只使用明确缓存和本地 feed。配置 allowNetwork=true 后才使用显式 NuGet sources；不能把忽略源失败或过期产物当作构建成功。缓存可删除、非权威；缓存命中仍需校验输入身份和字节哈希。
 
@@ -367,6 +367,8 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-06 | W03 输入与项目图 | 声明发现/根边界/来源身份与编辑器变化 fixtures；64 项测试通过，主机哈希不变；见 [W03 验收](../acceptance/20261006-w03-discovery.md)；W03 COMPLETE |
 | 2026-10-06 | W03 本地提交 | `31a3fdede0c93cdc6a235468516a3dea45816d24`，附 Codex trailer |
 | 2026-10-06 | W04 项目规则 | 项目规则/命名/例外/规则建议正负与缺失 fixtures，79 项测试通过；见 [W04 验收](../acceptance/20261006-w04-project-rules.md)；W04 COMPLETE |
+| 2026-10-06 | W04 本地提交 | `b86c326e497e0d6ea680d3fbb4b8d0025f3c82ea`，附 Codex trailer |
+| 2026-10-06 | W05 程序集与构建 | 真实 ArchUnitNET 正负及 module initializer 未执行、isolated/manifest/Worker/闭包负例，83 项回归通过；保守 snapshot/unsupported build 范围明确；见 [W05 验收](../acceptance/20261006-w05-assemblies.md)；W05 COMPLETE |
 
 ## 参考资料
 

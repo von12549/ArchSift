@@ -7,6 +7,19 @@ public static class Program
     public static int Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+        if (args is ["__worker"])
+        {
+            try
+            {
+                var input = Console.In.ReadToEnd();
+                if (input.Length > 16 * 1024 * 1024) return 2;
+                var request = System.Text.Json.JsonSerializer.Deserialize<ArchSift.Contracts.WorkerRequest>(input, ArchSift.Contracts.JsonContract.Options)!;
+                var result = ArchSift.ArchUnit.AssemblyWorker.Evaluate(request);
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result, ArchSift.Contracts.JsonContract.Options));
+                return 0;
+            }
+            catch (Exception error) { Console.Error.WriteLine(error.Message); return 3; }
+        }
         if (args is ["--version"])
         {
             Console.WriteLine($"archsift {RuntimeInfo.ProductVersion}");

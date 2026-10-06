@@ -12,7 +12,7 @@ public static class InputCapture
     public static readonly HashSet<string> ExcludedDirectories = new(StringComparer.OrdinalIgnoreCase)
     { ".git", ".vs", ".idea", "bin", "obj", "artifacts", ".archsift" };
     private static readonly HashSet<string> Extensions = new(StringComparer.OrdinalIgnoreCase)
-    { ".cs", ".csproj", ".fsproj", ".vbproj", ".sln", ".slnx", ".props", ".targets", ".resx" };
+    { ".cs", ".cshtml", ".razor", ".json", ".csproj", ".fsproj", ".vbproj", ".sln", ".slnx", ".props", ".targets", ".resx" };
 
     public static InputIdentity Capture(string root, CancellationToken cancellationToken = default)
     {
@@ -22,7 +22,7 @@ public static class InputCapture
         var selected = new HashSet<string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         foreach (var file in Walk(root, false, cancellationToken))
             if (Extensions.Contains(Path.GetExtension(file)) ||
-                Path.GetFileName(file) is "global.json" or "NuGet.Config" or "nuget.config")
+                Path.GetFileName(file) is "global.json" or "packages.lock.json" or "NuGet.Config" or "nuget.config")
                 selected.Add(file);
         foreach (var project in selected.Where(p => Path.GetExtension(p).Equals(".csproj", StringComparison.OrdinalIgnoreCase)).ToArray())
         {

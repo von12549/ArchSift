@@ -111,6 +111,9 @@ public static class ProjectDiscovery
         if (!sdkStyle) limits.Add("Only SDK-style C# is supported.");
         var imports = xml.Descendants().Any(n => n.Name.LocalName == "Import");
         if (imports) limits.Add("Explicit Import is not evaluated.");
+        if (xml.Descendants().Any(n => n.Attribute("Condition") is not null || n.Attributes().Any(a => a.Value.Contains("$(", StringComparison.Ordinal)) ||
+                (!n.HasElements && n.Value.Contains("$(", StringComparison.Ordinal))))
+            limits.Add("Build context contains unevaluated conditions/expressions.");
         var framework = Framework(root, path, xml, limits);
         var assemblyNodes = xml.Descendants().Where(n => n.Name.LocalName == "AssemblyName").ToArray();
         var assemblyName = assemblyNodes.Length == 1 && Literal(assemblyNodes[0]) ? assemblyNodes[0].Value.Trim() : name;
@@ -167,6 +170,9 @@ public static class ProjectDiscovery
             try { settings = InputCapture.ReadXml(configPath); } catch (XmlException) { limits.Add("Invalid ancestor build XML."); referencesComplete = packagesComplete = false; continue; }
             if (settings.Descendants().Any(n => n.Name.LocalName is "ProjectReference" or "PackageReference" or "Import"))
             { limits.Add("Ancestor build items/imports are not evaluated."); referencesComplete = packagesComplete = false; }
+            if (settings.Descendants().Any(n => n.Attribute("Condition") is not null || n.Attributes().Any(a => a.Value.Contains("$(", StringComparison.Ordinal)) ||
+                    (!n.HasElements && n.Value.Contains("$(", StringComparison.Ordinal))))
+                limits.Add("Build context contains unevaluated conditions/expressions.");
         }
         return new(id, name, assemblyName, sdkStyle, framework.Values, framework.Source, framework.Complete && sdkStyle && !imports,
             refs.ToArray(), referencesComplete, packages.ToArray(), packagesComplete, limits.Distinct().ToArray());
@@ -217,7 +223,9 @@ public static class ProjectDiscovery
                     string.Equals((string?)n.Attribute("Include"), id, StringComparison.OrdinalIgnoreCase)).ToArray();
                 if (entries.Length != 1 || !Unconditional(entries[0])) { limits.Add("Central package version missing/conditional/ambiguous: " + id); return null; }
                 var version = (string?)entries[0].Attribute("Version") ?? entries[0].Elements().FirstOrDefault(n => n.Name.LocalName == "Version")?.Value;
-                return version is not null && LiteralText(version) ? version : null;
+                if (version is not null && LiteralText(version)) return version;
+                limits.Add("Build context contains an unevaluated central package version expression.");
+                return null;
             }
             catch (XmlException) { limits.Add("Central package XML is invalid."); return null; }
         }

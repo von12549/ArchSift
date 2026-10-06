@@ -10,4 +10,4 @@ TFM 采用项目 unconditional literal 声明，或根内最近的 Directory.Bui
 
 运行开始/结束可重复 Capture 并 VerifyUnchanged，相关源码新增或保存使身份失效，返回 source-changed-during-analysis；IDE 或普通生成目录变化不影响无关身份。所有路径均检查链接/重解析点，XML 禁用 DTD 与外部 entity resolver。扫描上限为 100000 个文件，超限准确报错，不 silently truncate。
 
-这些 API 构成后续 W04 项目规则和 W05 产物绑定的基础。W05 会另记录 build/evidence inputs、实际 SDK/TFM/Configuration、程序集 SHA-256 与生成方式；W06 再加入规则/引擎/上下文的完整运行身份和报告。当前源身份不能独立证明现有 DLL 对应当前源码。
+W05 已另记录构建快照输入、实际 SDK/TFM/Configuration、程序集 SHA-256 与生成方式，Worker 验证 assembly 版本/token 闭包并区分 assemblies-only 与 source-bound。Razor/JSON/lock 也参加保守快照；未求值的构建条件/表达式不会被标为当前源已绑定。标准 SDK isolated 模式不支持未审查任务/导入/自定义输出/包构建脚本或生成器；完整 MSBuild 输入访问轨迹仍 defer。W06 将加入规则/引擎/上下文的完整运行身份和报告。单独源身份仍不能证明任意现有 DLL 对应当前源码。

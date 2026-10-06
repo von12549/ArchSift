@@ -1,0 +1,15 @@
+Test run for D:\ArchSift\tests\ArchSift.IntegrationTests\bin\Debug\net10.0\ArchSift.IntegrationTests.dll (.NETCoreApp,Version=v10.0)
+Test run for D:\ArchSift\tests\ArchSift.ArchitectureTests\bin\Debug\net10.0\ArchSift.ArchitectureTests.dll (.NETCoreApp,Version=v10.0)
+Test run for D:\ArchSift\tests\ArchSift.UnitTests\bin\Debug\net10.0\ArchSift.UnitTests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+Results File: D:\ArchSift\artifacts\development\529a15adc1c646cab192010b2379a7a8\test-results\von12_DESKTOP-OVPKDKR_2026-10-06_23_31_19_net10.0.trx
+
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 137 ms - ArchSift.ArchitectureTests.dll (net10.0)
+Results File: D:\ArchSift\artifacts\development\529a15adc1c646cab192010b2379a7a8\test-results\von12_DESKTOP-OVPKDKR_2026-10-06_23_31_19_net10.0[1].trx
+
+Passed!  - Failed:     0, Passed:    65, Skipped:     0, Total:    65, Duration: 695 ms - ArchSift.UnitTests.dll (net10.0)
+Results File: D:\ArchSift\artifacts\development\529a15adc1c646cab192010b2379a7a8\test-results\von12_DESKTOP-OVPKDKR_2026-10-06_23_31_20_net10.0.trx
+
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16, Duration: 11 s - ArchSift.IntegrationTests.dll (net10.0)
