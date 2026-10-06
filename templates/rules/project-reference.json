@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "template-project-reference",
+  "version": "1.0.0",
+  "description": "project-reference 模板；启用前调整选择器和理由。",
+  "rules": [
+    {
+      "id": "project-reference-01",
+      "type": "project-reference",
+      "enabled": true,
+      "scope": {
+        "kind": "project",
+        "match": "glob",
+        "value": "**"
+      },
+      "parameters": {
+        "source": {
+          "kind": "project",
+          "match": "glob",
+          "value": "src/Domain/**"
+        },
+        "target": {
+          "kind": "project",
+          "match": "glob",
+          "value": "src/Infrastructure/**"
+        }
+      },
+      "severity": "warning",
+      "reason": "请按实际架构政策填写约束理由。"
+    }
+  ],
+  "exceptions": []
+}

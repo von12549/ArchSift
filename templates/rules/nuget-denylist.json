@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "template-nuget-denylist",
+  "version": "1.0.0",
+  "description": "nuget-denylist 模板；启用前调整选择器和理由。",
+  "rules": [
+    {
+      "id": "nuget-denylist-01",
+      "type": "nuget-denylist",
+      "enabled": true,
+      "scope": {
+        "kind": "project",
+        "match": "glob",
+        "value": "**"
+      },
+      "parameters": {
+        "forbiddenPackageIds": [
+          "Forbidden.Package"
+        ]
+      },
+      "severity": "warning",
+      "reason": "请按实际架构政策填写约束理由。"
+    }
+  ],
+  "exceptions": []
+}

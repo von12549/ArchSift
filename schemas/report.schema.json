@@ -1,0 +1,439 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:report:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "operation": {
+      "enum": [
+        "analyze",
+        "verify",
+        "draft"
+      ]
+    },
+    "toolVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "inputIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "length": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kind": {
+                "enum": [
+                  "analysis",
+                  "build",
+                  "evidence"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "length",
+              "kind"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "sha256",
+        "files"
+      ]
+    },
+    "rulesetIdentities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "sha256",
+          "path"
+        ]
+      },
+      "minItems": 0
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "includedProjects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unlistedProjects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "externalReferences": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unresolvedReferences": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unsupportedConstructs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "model": {
+          "const": "declared"
+        }
+      },
+      "required": [
+        "includedProjects",
+        "unlistedProjects",
+        "externalReferences",
+        "unresolvedReferences",
+        "unsupportedConstructs",
+        "model"
+      ]
+    },
+    "buildContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "existing",
+            "isolated"
+          ]
+        },
+        "targetFramework": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "configuration": {
+          "enum": [
+            "Debug",
+            "Release"
+          ]
+        },
+        "sdk": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "binding": {
+          "enum": [
+            "none",
+            "assemblies-only",
+            "source-bound"
+          ]
+        }
+      },
+      "required": [
+        "mode",
+        "targetFramework",
+        "configuration",
+        "sdk",
+        "binding"
+      ]
+    },
+    "engineVersions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "execution": {
+      "enum": [
+        "completed",
+        "partial",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "compliance": {
+      "enum": [
+        "compliant",
+        "noncompliant",
+        "inconclusive",
+        "not-applicable",
+        null
+      ]
+    },
+    "ruleResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "violation",
+              "inconclusive",
+              "not-applicable",
+              "error"
+            ]
+          },
+          "matched": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "findingIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "minItems": 0
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "ruleId",
+          "status",
+          "matched",
+          "findingIds",
+          "limitations"
+        ]
+      },
+      "minItems": 0
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "ruleId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subjectKind": {
+            "enum": [
+              "project",
+              "assembly",
+              "namespace",
+              "type",
+              "source-file"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exceptionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exceptionReason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "ruleId",
+          "subjectKind",
+          "subject",
+          "message",
+          "severity",
+          "source",
+          "target",
+          "location",
+          "exceptionId",
+          "exceptionReason"
+        ]
+      },
+      "minItems": 0
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "projectCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assemblyCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceBound": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "projectCount",
+        "assemblyCount",
+        "sourceBound"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "executionErrors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "runMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startedUtc": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elapsedMilliseconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "targetRoot": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "runId",
+        "startedUtc",
+        "elapsedMilliseconds",
+        "targetRoot"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "operation",
+    "toolVersion",
+    "inputIdentity",
+    "rulesetIdentities",
+    "scope",
+    "buildContext",
+    "engineVersions",
+    "execution",
+    "compliance",
+    "ruleResults",
+    "findings",
+    "coverage",
+    "limitations",
+    "executionErrors",
+    "runMetadata"
+  ],
+  "definitions": {}
+}

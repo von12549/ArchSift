@@ -1,0 +1,270 @@
+{
+  "runId": "f0b6d97c778b4769af23338d2805d345",
+  "configuration": "Debug",
+  "networkRestoreEnabled": false,
+  "childDotnetAddGlobalToolsToPath": "0",
+  "checks": [
+    {
+      "name": "sdk",
+      "arguments": [
+        "--version"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "restore",
+      "arguments": [
+        "restore",
+        "ArchSift.slnx",
+        "--configfile",
+        "NuGet.Config",
+        "--source",
+        "C:\\Users\\von12\\.nuget\\packages",
+        "--packages",
+        "D:\\ArchSift\\artifacts\\development\\packages",
+        "--disable-parallel",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "--verbosity",
+        "minimal",
+        "--locked-mode"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "build",
+      "arguments": [
+        "build",
+        "ArchSift.slnx",
+        "--no-restore",
+        "--disable-build-servers",
+        "-p:UseSharedCompilation=false",
+        "-c",
+        "Debug",
+        "--verbosity",
+        "minimal"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "test",
+      "arguments": [
+        "test",
+        "ArchSift.slnx",
+        "--no-build",
+        "--no-restore",
+        "--disable-build-servers",
+        "-c",
+        "Debug",
+        "--logger",
+        "trx",
+        "--results-directory",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\test-results"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "validate-graph-integrity",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\graph-integrity.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "render-graph-integrity",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\graph-integrity.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\graph-integrity.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "validate-naming",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\naming.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "render-naming",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\naming.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\naming.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "validate-nuget-denylist",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\nuget-denylist.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "render-nuget-denylist",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\nuget-denylist.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\nuget-denylist.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "validate-project-reference",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\project-reference.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "render-project-reference",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\project-reference.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\project-reference.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "validate-target-framework",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\target-framework.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "render-target-framework",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\target-framework.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\target-framework.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "validate-type-dependency",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "validate",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\type-dependency.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    },
+    {
+      "name": "render-type-dependency",
+      "arguments": [
+        "D:\\ArchSift\\src\\ArchSift.Cli\\bin\\Debug\\net10.0\\archsift.dll",
+        "rules",
+        "render",
+        "--file",
+        "D:\\ArchSift\\templates\\rules\\type-dependency.json",
+        "--output",
+        "D:\\ArchSift\\artifacts\\development\\f0b6d97c778b4769af23338d2805d345\\type-dependency.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false,
+      "hostStateEqual": true
+    }
+  ],
+  "hostState": {
+    "userEnvironmentSha256": "19db620b974ce9b8a2cf7615308ba52f0ad576b000af54631a55d2cc7a13aa4d",
+    "machineEnvironmentSha256": "001015a96d9c7e68e488c21678f0a80a82876ceec7bfaa07539c43d323fc034f",
+    "processPathSha256": "91e94c05dfc3396b29c63c0a2f7b835f21df15b5006294a606bb1a8ccaa31eca",
+    "profiles": [
+      {
+        "name": "AllUsersAllHosts",
+        "exists": false,
+        "sha256": null
+      },
+      {
+        "name": "AllUsersCurrentHost",
+        "exists": false,
+        "sha256": null
+      },
+      {
+        "name": "CurrentUserAllHosts",
+        "exists": true,
+        "sha256": "bf4cbaa6e4809e600943a8040ef29e0a912de713324e9a705e0681860d20752b"
+      },
+      {
+        "name": "CurrentUserCurrentHost",
+        "exists": false,
+        "sha256": null
+      }
+    ]
+  }
+}

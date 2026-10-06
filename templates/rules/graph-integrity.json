@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "template-graph-integrity",
+  "version": "1.0.0",
+  "description": "graph-integrity 模板；启用前调整选择器和理由。",
+  "rules": [
+    {
+      "id": "graph-integrity-01",
+      "type": "graph-integrity",
+      "enabled": true,
+      "scope": {
+        "kind": "project",
+        "match": "glob",
+        "value": "**"
+      },
+      "parameters": {
+        "check": "resolved-references"
+      },
+      "severity": "warning",
+      "reason": "请按实际架构政策填写约束理由。"
+    }
+  ],
+  "exceptions": []
+}

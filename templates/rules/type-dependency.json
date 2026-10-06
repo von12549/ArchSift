@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "template-type-dependency",
+  "version": "1.0.0",
+  "description": "type-dependency 模板；启用前调整选择器和理由。",
+  "rules": [
+    {
+      "id": "type-dependency-01",
+      "type": "type-dependency",
+      "enabled": true,
+      "scope": {
+        "kind": "namespace",
+        "match": "glob",
+        "value": "*"
+      },
+      "parameters": {
+        "source": {
+          "kind": "namespace",
+          "match": "glob",
+          "value": "Sample.Domain*"
+        },
+        "forbiddenTarget": {
+          "kind": "namespace",
+          "match": "glob",
+          "value": "Sample.Infrastructure*"
+        }
+      },
+      "severity": "warning",
+      "reason": "请按实际架构政策填写约束理由。"
+    }
+  ],
+  "exceptions": []
+}

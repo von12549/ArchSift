@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="../ArchSift.Contracts/ArchSift.Contracts.csproj" />
+    <EmbeddedResource Include="../../schemas/*.schema.json" Link="Schemas/%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

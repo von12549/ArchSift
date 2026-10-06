@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:config:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entry": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "root"
+      ]
+    },
+    "rulesets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "existing",
+            "isolated"
+          ]
+        },
+        "targetFramework": {
+          "enum": [
+            "net8.0",
+            "net9.0",
+            "net10.0"
+          ]
+        },
+        "configuration": {
+          "enum": [
+            "Debug",
+            "Release"
+          ]
+        },
+        "assemblyManifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assemblyPaths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allowNetwork": {
+          "type": "boolean"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "localFeed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cacheDirectory": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": []
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "json",
+              "html"
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "directory",
+        "formats"
+      ]
+    },
+    "rulesDirectory": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "target",
+    "output"
+  ],
+  "definitions": {}
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "template-target-framework",
+  "version": "1.0.0",
+  "description": "target-framework 模板；启用前调整选择器和理由。",
+  "rules": [
+    {
+      "id": "target-framework-01",
+      "type": "target-framework",
+      "enabled": true,
+      "scope": {
+        "kind": "project",
+        "match": "glob",
+        "value": "**"
+      },
+      "parameters": {
+        "allowedFrameworks": [
+          "net8.0",
+          "net9.0",
+          "net10.0"
+        ]
+      },
+      "severity": "warning",
+      "reason": "请按实际架构政策填写约束理由。"
+    }
+  ],
+  "exceptions": []
+}

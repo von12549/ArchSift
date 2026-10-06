@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — 2026-10-06 W00 已完成并提交，W01 已完成；W02 未开始。
+状态：FORMAL — 2026-10-06 W00/W01 已完成并提交，W02 已完成；继续 W03。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -361,6 +361,8 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-06 | W00 实施入口关闭 | 用户 Guard 权属/复用/分发授权已记录；14 项来源清单、7 项第三方许可清单/归档、项目 AGENTS 与交付验证完成；W00 COMPLETE，W01 NOT STARTED |
 | 2026-10-06 | W00 本地提交与 W01 授权 | 用户要求“提交，然后开始W01”；W00 commit `5c378153abde38540dd81184706f92306091c53c`，保留人类主作者并附 Codex trailer；W01 IN PROGRESS |
 | 2026-10-06 | W01 基础项目验收 | 八项目离线恢复/locked restore/Debug 编译及 9 项测试通过；主机哈希不变；W01 COMPLETE，W02 NOT STARTED；W01 修改未提交 |
+| 2026-10-06 | W01 提交及后续执行授权 | W01 commit `62bace39cf6acad76c79327ec2ec91ea1c19772d`；用户授权继续后续计划，每阶段完成后提交；推送仍未授权 |
+| 2026-10-06 | W02 契约与模板 | 四份 schema、DTO、六类模板/Markdown、组合/例外/冲突校验、CLI rules 入口；56 项测试与独立 Test-Json/CLI 验证通过；见 [W02 验收](../acceptance/20261006-w02-contracts.md)；W02 COMPLETE |
 
 ## 参考资料
 

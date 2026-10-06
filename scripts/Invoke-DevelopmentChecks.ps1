@@ -2,7 +2,8 @@
 param(
     [string] $LocalFeed = (Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),
     [ValidateSet('Debug', 'Release')][string] $Configuration = 'Debug',
-    [switch] $InitializeLocks
+    [switch] $InitializeLocks,
+    [switch] $VerifyContracts
 )
 
 Set-StrictMode -Version Latest
@@ -104,6 +105,16 @@ try {
     if ($InitializeLocks) { Invoke-CheckedDotnet 'restore-locked' ($restore + '--locked-mode') }
     Invoke-CheckedDotnet 'build' @('build', 'ArchSift.slnx', '--no-restore', '--disable-build-servers', '-p:UseSharedCompilation=false', '-c', $Configuration, '--verbosity', 'minimal')
     Invoke-CheckedDotnet 'test' @('test', 'ArchSift.slnx', '--no-build', '--no-restore', '--disable-build-servers', '-c', $Configuration, '--logger', 'trx', '--results-directory', (Join-Path $runRoot 'test-results'))
+    if ($VerifyContracts) {
+        $cli = Join-Path $repositoryRoot "src/ArchSift.Cli/bin/$Configuration/net10.0/archsift.dll"
+        foreach ($file in Get-ChildItem -LiteralPath (Join-Path $repositoryRoot 'templates/rules') -Filter '*.json' -File) {
+            if (-not (Test-Json -LiteralPath $file.FullName -SchemaFile (Join-Path $repositoryRoot 'schemas/ruleset.schema.json'))) {
+                throw 'Independent PowerShell schema validation failed.'
+            }
+            Invoke-CheckedDotnet ("validate-" + $file.BaseName) @($cli, 'rules', 'validate', '--file', $file.FullName)
+            Invoke-CheckedDotnet ("render-" + $file.BaseName) @($cli, 'rules', 'render', '--file', $file.FullName, '--output', (Join-Path $runRoot ($file.BaseName + '.md')))
+        }
+    }
 }
 finally {
     $final = Capture-HostState
