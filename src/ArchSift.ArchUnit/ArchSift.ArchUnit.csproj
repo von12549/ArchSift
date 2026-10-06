@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
+    <PackageReference Include="TngTech.ArchUnitNET" />
+    <AssemblyMetadata Include="ArchUnitNetPackageVersion" Value="$(ArchUnitNetPackageVersion)" />
+  </ItemGroup>
+</Project>

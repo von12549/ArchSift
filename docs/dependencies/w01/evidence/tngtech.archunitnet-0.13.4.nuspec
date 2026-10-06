@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>TngTech.ArchUnitNET</id>
+    <version>0.13.4</version>
+    <title>ArchUnit C#</title>
+    <authors>ArchUnitNET</authors>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
+    <readme>README.md</readme>
+    <description>C# Version of ArchUnit (see: archunit.org)</description>
+    <tags>test arch archunit xunit nunit</tags>
+    <repository type="git" url="https://github.com/TNG/ArchUnitNET" commit="1ab5943d761d48f86b42f45ef047130dc9aff1c6" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="CycleDetection" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="JetBrains.Annotations" version="2026.2.0" exclude="Build,Analyzers" />
+        <dependency id="Mono.Cecil" version="0.11.6" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="13.0.4" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.6.2" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="CycleDetection" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="JetBrains.Annotations" version="2026.2.0" exclude="Build,Analyzers" />
+        <dependency id="Mono.Cecil" version="0.11.6" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="13.0.4" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.6.2" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

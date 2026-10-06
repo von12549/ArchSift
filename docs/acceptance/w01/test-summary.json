@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "runId": "b5cc04a62542430da23d92c053397edc",
+  "configuration": "Debug",
+  "tfm": "net10.0",
+  "results": [
+    {
+      "name": "von12_DESKTOP-OVPKDKR_2026-10-06_21_58_04_net10.0.trx",
+      "sha256": "f44876a88838dd1d8e202821ad0d52e62838d12f88031ac25305ef73c47d2afb",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "ArchSift.ArchitectureTests.DependencyDirectionTests.EveryProductionProjectReferenceFollowsTheApprovedDirection",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ArchSift.ArchitectureTests.DependencyDirectionTests.CompiledCoreAndContractsHaveNoEntrypointOrGuardDependencies",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "von12_DESKTOP-OVPKDKR_2026-10-06_21_58_04_net10.0[1].trx",
+      "sha256": "496e52896f4534432ce3d12297a266415f4d818e64e3708985a5c0755ba71488",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "ArchSift.UnitTests.ProductIdentityTests.ProductAssembliesShareTheVersionReportedByEntrypoints",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ArchSift.UnitTests.ProductIdentityTests.EngineIdentityDistinguishesPinnedPackageFromLoadedAssembly",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "von12_DESKTOP-OVPKDKR_2026-10-06_21_58_04_net10.0[2].trx",
+      "sha256": "7e7aa5e39fb72200b3331212083735bddda1c2494ad395fbd1c56791fee654ca",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "ArchSift.IntegrationTests.EntrypointTests.HelpDoesNotClaimAnalysisWasPerformed",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ArchSift.IntegrationTests.EntrypointTests.UnimplementedCliCommandFailsWithConfigurationError",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ArchSift.IntegrationTests.EntrypointTests.VersionEntrypointsReportTheSharedVersion(project: \"ArchSift.Cli\", assembly: \"archsift\", name: \"archsift\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ArchSift.IntegrationTests.EntrypointTests.WebWithoutVersionDoesNotStartAnUnimplementedServer",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ArchSift.IntegrationTests.EntrypointTests.VersionEntrypointsReportTheSharedVersion(project: \"ArchSift.Web\", assembly: \"ArchSift.Web\", name: \"archsift-web\")",
+          "outcome": "Passed"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ArchSift.Contracts/ArchSift.Contracts.csproj" />
+    <Project Path="src/ArchSift.Core/ArchSift.Core.csproj" />
+    <Project Path="src/ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
+    <Project Path="src/ArchSift.Cli/ArchSift.Cli.csproj" />
+    <Project Path="src/ArchSift.Web/ArchSift.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj" />
+    <Project Path="tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj" />
+    <Project Path="tests/ArchSift.ArchitectureTests/ArchSift.ArchitectureTests.csproj" />
+  </Folder>
+</Solution>

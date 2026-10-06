@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.Contracts/ArchSift.Contracts.csproj" />
+  </ItemGroup>
+</Project>

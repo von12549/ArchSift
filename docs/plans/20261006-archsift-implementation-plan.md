@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — 设计决议已确定；2026-10-06 W00 已完成，W01 未开始。
+状态：FORMAL — 2026-10-06 W00 已完成并提交，W01 已完成；W02 未开始。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -14,7 +14,7 @@ ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发�
 
 首个完整版本为 0.1.0，覆盖六类规则、项目分析、项目验证、ArchUnitNET 程序集依赖检查、CLI、本机 Web UI、JSON/HTML 报告和本地 Windows x64 ZIP。后续 0.2.0 覆盖变更验证、SARIF、Linux CLI 验证与非阻断 CI 样例；各版本均以验收结果交付，不预设日期。
 
-本次授权交付为正式计划文档。仓库初始化或复用、代码迁移、实现与测试属于计划后续执行；远程仓库创建、发布包、修改旧 Guard 或消费项目 CI 应按相应执行请求开展。
+最初授权交付为正式计划文档，随后用户已授权完成 W00、本地提交 W00 并开始 W01。后续工作按对应执行请求开展；远程仓库创建、推送、发布包、修改旧 Guard 或消费项目 CI 仍按相应授权执行。
 
 ## 已冻结的产品决议
 
@@ -270,6 +270,14 @@ Guard 迁移仅涉及分析算法、fixture、发现/框架解析与环境隔离
 
 当前结论为 `W00 COMPLETE / W01 NOT STARTED`。本轮只读核对 7 个候选缓存包及其 33 个 DLL 与本地 nupkg 字节均一致；不把它等同于新项目 restore/build、完整 NuGet 解析闭包或发布验收。来源清单标记 migrationExecuted=false，代码适配时再次复核并补实际目标哈希；W01 固定真实 lock/新增包，W08 核对实际分发资产与 runtime notices。未运行 Guard 安装或 IFX 集成，未创建 W01–W10 产品代码，也未提交、推送或修改远程。
 
+以上为 W00 关闭时点记录。W00 随后已提交为 `5c378153abde38540dd81184706f92306091c53c`，历史 artifact manifest 继续保持该阶段快照。
+
+### W01 完成状态
+
+2026-10-06 已创建 solution、五个产品项目、三个测试项目、独立 SDK/中央包/显式离线源配置、八份 lock、开发检查脚本及 README。Windows x64 / SDK 10.0.303 / net10.0 / Debug 的离线首次恢复与 locked restore、八项目编译通过，零警告/错误；版本、CLI/Web 基础进程入口、项目和编译依赖方向共 9 项测试通过。每次命令后及最终 User/Machine environment、Process PATH、四个 Profile 哈希一致。
+
+验收及修复历史见 [W01 基础项目验收](../acceptance/20261006-w01-foundation.md)，真实已解析包与新增许可见 [W01 依赖记录](../dependencies/w01/README.md)。当前 `W01 COMPLETE / W02 NOT STARTED`；W01 工作区尚未另行提交，未推送。引擎包身份与 DLL 身份已区分，真实 ArchUnitNET 架构规则仍由 W05 验收；没有开始 W02–W10 功能。
+
 ## 验证入口与完成条件
 
 以下入口属于 W01–W08 要创建并实现的验证命令，现在不宣称其已存在或运行通过。新项目内部 fixture 回归可自动化；Guard × IFX 或本工作区真实现场集成继续采用人工一次一块已审查命令流程。
@@ -351,6 +359,8 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-06 | 用户确认 D:\ArchSift 为其新建的空 Git 仓库，并已创建 Codex Local Project ArchSift | 实施入口确定为目标 Project；计划在目标 Project 导入并持续维护 |
 | 2026-10-06 | W00 接手复核 | 计划/Git/工具链/来源访问条件已复核；READY TO COMPLETE W00；迁移权利、逐文件来源与 notices 尚未关闭；W01 未开始 |
 | 2026-10-06 | W00 实施入口关闭 | 用户 Guard 权属/复用/分发授权已记录；14 项来源清单、7 项第三方许可清单/归档、项目 AGENTS 与交付验证完成；W00 COMPLETE，W01 NOT STARTED |
+| 2026-10-06 | W00 本地提交与 W01 授权 | 用户要求“提交，然后开始W01”；W00 commit `5c378153abde38540dd81184706f92306091c53c`，保留人类主作者并附 Codex trailer；W01 IN PROGRESS |
+| 2026-10-06 | W01 基础项目验收 | 八项目离线恢复/locked restore/Debug 编译及 9 项测试通过；主机哈希不变；W01 COMPLETE，W02 NOT STARTED；W01 修改未提交 |
 
 ## 参考资料
 

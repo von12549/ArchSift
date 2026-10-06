@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
+    <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
+  </ItemGroup>
+</Project>

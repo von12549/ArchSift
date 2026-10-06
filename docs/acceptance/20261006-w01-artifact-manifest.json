@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-06",
+  "stage": "W01",
+  "result": "complete",
+  "baseCommit": "5c378153abde38540dd81184706f92306091c53c",
+  "w01ChangesCommitted": false,
+  "sdk": "10.0.303",
+  "tfm": "net10.0",
+  "configuration": "Debug",
+  "finalDevelopmentRunId": "b5cc04a62542430da23d92c053397edc",
+  "testsPassed": 9,
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "bytes": 60,
+      "sha256": "608d65f58166cf1e688647a662990bcb97ab86c97d1fb5189517df8ccfd07986"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 65,
+      "sha256": "76d2c8e1d67be5f5cb062dfd5839a89817df9a60464ecbbe4efef408a50deeae"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 5793,
+      "sha256": "8f47ff9aa4c39231bd092636c695f8f6d80ee070270d68b7cfaa5e5c3e6a6ff4"
+    },
+    {
+      "path": "ArchSift.slnx",
+      "bytes": 673,
+      "sha256": "5789ae549369fb99e87ca45b960726a92607a05badba97f931239c3bbd040dcd"
+    },
+    {
+      "path": "Directory.Build.props",
+      "bytes": 601,
+      "sha256": "1c32753cf86523a9fb68a8d60c91e7a06a81b7b83940fc46d7b4b3183f227b83"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "bytes": 531,
+      "sha256": "12edb942d9a7bc1eb503aec64a67ea18f6dbade7a48290cd14de01b1fb153d96"
+    },
+    {
+      "path": "docs/acceptance/20261006-w01-foundation.md",
+      "bytes": 5159,
+      "sha256": "84278b6d024f3043baf32c122e97bb498868e63319f7267b15826f9f1737f913"
+    },
+    {
+      "path": "docs/acceptance/w01/build.stdout.log",
+      "bytes": 869,
+      "sha256": "6a36844fd9b5ff1e186c447a7e3dd036cf90c0c43890b70b93513e33d4a2aecc"
+    },
+    {
+      "path": "docs/acceptance/w01/checks.json",
+      "bytes": 2495,
+      "sha256": "dac9f33add8c7bf3995820f749ff5a639e317f1dc00cea28814719ebd27e14f6"
+    },
+    {
+      "path": "docs/acceptance/w01/host-baseline.json",
+      "bytes": 744,
+      "sha256": "e8d2df7c30902517e59e4f16ffb3bfceded99beeddb5543b91e74aa302f33522"
+    },
+    {
+      "path": "docs/acceptance/w01/host-final.json",
+      "bytes": 829,
+      "sha256": "d9cfc5814517361b4c88aedbe36a3698c8f6373888275044f2d94c48e984da16"
+    },
+    {
+      "path": "docs/acceptance/w01/test-summary.json",
+      "bytes": 2534,
+      "sha256": "3ef4c06bf7cd90c4036272a59f9a81f7e53ad226591d6f08ffa0624f7220551c"
+    },
+    {
+      "path": "docs/acceptance/w01/test.stdout.log",
+      "bytes": 1387,
+      "sha256": "a01ff0bff6281bb216d73244a1876b0bdabe9c2b63c4f7ae278cf63146cf5dcb"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/cycledetection-2.0.0.nuspec",
+      "bytes": 2240,
+      "sha256": "bf5f6118e62dc7d339e18d59d2f4d43d7726ab638ba7751f59f74e6f960403fa"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/jetbrains.annotations-2026.2.0.nuspec",
+      "bytes": 1702,
+      "sha256": "a35b0de55fb1337e56145fce54f8117313b7f6242b6aa637224c21c58f815dd7"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/microsoft.codecoverage-17.14.1.nuspec",
+      "bytes": 1140,
+      "sha256": "d983d9a89e51566f293724ab921366353d27baf319dfcfc5ff82afe29d6a1b48"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/microsoft.net.test.sdk-17.14.1.nuspec",
+      "bytes": 1351,
+      "sha256": "f66e88146d13195466b37085c9a2534dd4fec3136cb84c3f33aa191050102b12"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/microsoft.testplatform.objectmodel-17.14.1.nuspec",
+      "bytes": 2151,
+      "sha256": "2c1e717d13caac6cef489d45e41a0a808a6f3cc0dc8546ef096018dfa7b96f86"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/microsoft.testplatform.testhost-17.14.1.nuspec",
+      "bytes": 1222,
+      "sha256": "7065f736fabf62bb02643b406c0eb9adabe9aead6fccd6764cc4711336acb760"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/mono.cecil-0.11.6.nuspec",
+      "bytes": 1336,
+      "sha256": "0b85eb633eefaa390379503ec783593b778878a848a7abc0a899e9b445fef26f"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/newtonsoft.json-13.0.3.nuspec",
+      "bytes": 2371,
+      "sha256": "8a6acd104056366a36604bbf0d3e2f869fd4c9e6e3055e35e4afb3daacc82b8d"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/newtonsoft.json-13.0.4.nuspec",
+      "bytes": 2371,
+      "sha256": "2900fe8f16db57cfcb1ae666b8d00641ac87356f042078eb7429f091ed6efcf9"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/system.valuetuple-4.6.2.nuspec",
+      "bytes": 1285,
+      "sha256": "a0c45b2bc007d728b20fd49c46bc7519fdb3d5215eb220f24234408b3ea23859"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/tngtech.archunitnet-0.13.4.nuspec",
+      "bytes": 1717,
+      "sha256": "20d9943b9c45146a3a4ae5dabeaa60607bf0ba7565465dcd6a1547b14b4ea692"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit-2.9.3.nuspec",
+      "bytes": 1299,
+      "sha256": "edc7c74d990fc4a7d31c28046c747af5d805689f86263f3e318a130bfd437893"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.abstractions-2.0.3.nuspec",
+      "bytes": 1359,
+      "sha256": "5d6e049a6f85d6ed7fe4a4b9050ce592cd7a1bc3cfb0620d80a3ddb7b2630e11"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.analyzers-1.18.0.nuspec",
+      "bytes": 1340,
+      "sha256": "0222b6bc5959b51bb9b092a5b1e4af2065a45dc387ee9c52f918819a7df6e980"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.assert-2.9.3.nuspec",
+      "bytes": 1290,
+      "sha256": "dad8ec7c59f9fb24fff73a428c62d6c1ea28c5e27a3a5b4ed4c0623f538deeaa"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.core-2.9.3.nuspec",
+      "bytes": 1123,
+      "sha256": "aff87ccb24892292d1440018703c830a1bf7cc3b2d0b829401bf59d30b090fc9"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.extensibility.core-2.9.3.nuspec",
+      "bytes": 1542,
+      "sha256": "e7431d88fa1ef1c2d4bcf736cc1a105844e2016085bc0127c07d268a1901dd63"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.extensibility.execution-2.9.3.nuspec",
+      "bytes": 1515,
+      "sha256": "4245bcdc9f06c7da967c9f15312beb2e974e9bed9a06cb528adf849f0ce5b3af"
+    },
+    {
+      "path": "docs/dependencies/w01/evidence/xunit.runner.visualstudio-3.1.4.nuspec",
+      "bytes": 1484,
+      "sha256": "dfdfe4a48a4d0a00b42b64943eaec82a4c6b3316c409112f4ee5d1d289b2aced"
+    },
+    {
+      "path": "docs/dependencies/w01/licenses/Newtonsoft.Json-13.0.3-LICENSE.md",
+      "bytes": 1084,
+      "sha256": "d7f83bbea3264a8e23d7739e44d9db1a4994b357274df6f00876eb2e623827ad"
+    },
+    {
+      "path": "docs/dependencies/w01/licenses/Newtonsoft.Json-13.0.4-LICENSE.md",
+      "bytes": 1084,
+      "sha256": "d7f83bbea3264a8e23d7739e44d9db1a4994b357274df6f00876eb2e623827ad"
+    },
+    {
+      "path": "docs/dependencies/w01/licenses/vstest-17.14.1-LICENSE.txt",
+      "bytes": 1105,
+      "sha256": "4d0502953fdb7784a9ca9e1f7e93da5db076de7c52456d6a2a666327a1a9981d"
+    },
+    {
+      "path": "docs/dependencies/w01/licenses/xunit-2.9.3-LICENSE.txt",
+      "bytes": 2357,
+      "sha256": "e9dcf94cc4864ba47aeaaec879cfabaf3feadb813c77af480c3ad14c6de0ed79"
+    },
+    {
+      "path": "docs/dependencies/w01/package-inventory.json",
+      "bytes": 22043,
+      "sha256": "0f77d28f4de36b506faf522493be06183e8ab22651f8cdef533f991255f1658a"
+    },
+    {
+      "path": "docs/dependencies/w01/README.md",
+      "bytes": 4458,
+      "sha256": "96768f359ad55c3feaa7a99e297a14a2c35bf452511fe280517f9926e9458112"
+    },
+    {
+      "path": "docs/plans/20261006-archsift-implementation-plan.md",
+      "bytes": 36764,
+      "sha256": "1bbca33e6e0cdac8143100071bec55f1888ef355beee692cb7ed26242ec54445"
+    },
+    {
+      "path": "global.json",
+      "bytes": 111,
+      "sha256": "20c93ca7812d0a9825eef71217156f95ab2f4fe5aadfeb22ebc1c24b630018d3"
+    },
+    {
+      "path": "NuGet.Config",
+      "bytes": 282,
+      "sha256": "7a3fb084d7c0979cfe8d2014b64f0d3b64ace3317bbaa0f52cfed55f655ca931"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2764,
+      "sha256": "b35c549b12b1901b9e8e3c91da3f89b55a245edefb4c94c8441c0abe3008e577"
+    },
+    {
+      "path": "scripts/Invoke-DevelopmentChecks.ps1",
+      "bytes": 6369,
+      "sha256": "8cde00afa9f00ab6efc8a07c2344ad17b6fb5605441a0fe2c7033501416729d0"
+    },
+    {
+      "path": "src/ArchSift.ArchUnit/ArchSift.ArchUnit.csproj",
+      "bytes": 300,
+      "sha256": "e7d83c5af455b60206f34e6e45423a7e4b76f5756cf7cd886f3cacd8638b6cd2"
+    },
+    {
+      "path": "src/ArchSift.ArchUnit/ArchUnitEngine.cs",
+      "bytes": 695,
+      "sha256": "0dfe6e1c88c32b887ed6b753da93211cd4ef10108ec81f42fcd949841d40f0d6"
+    },
+    {
+      "path": "src/ArchSift.ArchUnit/packages.lock.json",
+      "bytes": 1864,
+      "sha256": "aee01f58a295e8e8a9d3c227c6ca1d29598b8f2d0c7a38484a2625ae69e15790"
+    },
+    {
+      "path": "src/ArchSift.Cli/ArchSift.Cli.csproj",
+      "bytes": 340,
+      "sha256": "9cd8d9afa8af1dd04d889b917ef7d17496d51ae3874e72108c7c16cc2f90c423"
+    },
+    {
+      "path": "src/ArchSift.Cli/packages.lock.json",
+      "bytes": 2079,
+      "sha256": "916023481116b2bf53b00b1dfd56267cfe469b2c4aeb2d2c3fc6f7a56c528583"
+    },
+    {
+      "path": "src/ArchSift.Cli/Program.cs",
+      "bytes": 857,
+      "sha256": "8d3bb3a3759866bc4ca5e0e8eb019be0be5b38cadfbb16fc2d9a20266331f838"
+    },
+    {
+      "path": "src/ArchSift.Contracts/ArchSift.Contracts.csproj",
+      "bytes": 36,
+      "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3"
+    },
+    {
+      "path": "src/ArchSift.Contracts/packages.lock.json",
+      "bytes": 66,
+      "sha256": "2241481b7e74dcdcd600303146b730ecc12cbd8e49aa55755ef95ee499fe229a"
+    },
+    {
+      "path": "src/ArchSift.Contracts/ToolIdentity.cs",
+      "bytes": 411,
+      "sha256": "0289edca229b4b642c3efdb5787b271e4058b7e444fa584ea1dc7b6632166f6f"
+    },
+    {
+      "path": "src/ArchSift.Core/ArchSift.Core.csproj",
+      "bytes": 157,
+      "sha256": "647f627aae4c47bf810c0340db586277e6724a95f3c7ae073fceda75e589e992"
+    },
+    {
+      "path": "src/ArchSift.Core/IAssemblyAnalysisEngine.cs",
+      "bytes": 218,
+      "sha256": "1576de72a1294342c75d02c8cfabc90ca23397588009d05fb8ab7c5015976a67"
+    },
+    {
+      "path": "src/ArchSift.Core/packages.lock.json",
+      "bytes": 139,
+      "sha256": "ae55c04793640abafe9ced47af9b6ae16c3ba86a9cbe9aa410de8997f610359c"
+    },
+    {
+      "path": "src/ArchSift.Core/RuntimeInfo.cs",
+      "bytes": 154,
+      "sha256": "015a1714bfa49254fcf737ea2a265963ad7cc82cbbe1412b388f9ea9f0a4f220"
+    },
+    {
+      "path": "src/ArchSift.Web/ArchSift.Web.csproj",
+      "bytes": 232,
+      "sha256": "31c7618f60ce4d76544ac22350067d980de8c4e6aa3d784e7d896b8aa78934fc"
+    },
+    {
+      "path": "src/ArchSift.Web/packages.lock.json",
+      "bytes": 2079,
+      "sha256": "916023481116b2bf53b00b1dfd56267cfe469b2c4aeb2d2c3fc6f7a56c528583"
+    },
+    {
+      "path": "src/ArchSift.Web/Program.cs",
+      "bytes": 480,
+      "sha256": "02572841463de73601de6f70e9c607de6b2a9efd6432e4288bfe6edd38a0061e"
+    },
+    {
+      "path": "tests/ArchSift.ArchitectureTests/ArchSift.ArchitectureTests.csproj",
+      "bytes": 242,
+      "sha256": "6e1766df102191d27216c85a5b3012de9ecc872fcf7d01df6011e1de3516f6ef"
+    },
+    {
+      "path": "tests/ArchSift.ArchitectureTests/DependencyDirectionTests.cs",
+      "bytes": 2758,
+      "sha256": "ccec45f91e004504f5dcf20aa8bc15e6c6f1759131a6532068fe3395708f2ba9"
+    },
+    {
+      "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
+      "bytes": 5577,
+      "sha256": "00eb104533931bda2eb83c57719635a0b418592a883c71cbb36abb29241d18d1"
+    },
+    {
+      "path": "tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj",
+      "bytes": 384,
+      "sha256": "3f58256c0e42022ad705a6903532d243b1e9b3d954309cc326b980de1074c369"
+    },
+    {
+      "path": "tests/ArchSift.IntegrationTests/EntrypointTests.cs",
+      "bytes": 3471,
+      "sha256": "147e005326dce5d83385be27e8426a96284904280b1199d2b4cad88fbe40b3a5"
+    },
+    {
+      "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
+      "bytes": 3852,
+      "sha256": "eef71907805cc188b17ffa3ffbbbd1ec05107392ac1840c230ab82048d4eb9bf"
+    },
+    {
+      "path": "tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj",
+      "bytes": 242,
+      "sha256": "6e1766df102191d27216c85a5b3012de9ecc872fcf7d01df6011e1de3516f6ef"
+    },
+    {
+      "path": "tests/ArchSift.UnitTests/packages.lock.json",
+      "bytes": 5577,
+      "sha256": "00eb104533931bda2eb83c57719635a0b418592a883c71cbb36abb29241d18d1"
+    },
+    {
+      "path": "tests/ArchSift.UnitTests/ProductIdentityTests.cs",
+      "bytes": 1225,
+      "sha256": "59b257b2de8c3aa1a7332f6604db15512b96572d869b47aaf627b2585099e58b"
+    },
+    {
+      "path": "tests/Directory.Build.props",
+      "bytes": 565,
+      "sha256": "04a2a0af7e14e727b32bbc454fd1f86f6771b9a28f7d9a0d04f6dfa5de3590bc"
+    }
+  ],
+  "selfHashOmitted": true
+}
