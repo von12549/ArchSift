@@ -109,7 +109,7 @@ public sealed class AssemblyPipelineTests
     public async Task SupportedEarlierTfmsBuildAndAnalyzeRealArtifacts(string tfm)
     {
         using var fixture = new Fixture(); fixture.CreateSource(false);
-        fixture.Write("global.json", "{\"sdk\":{\"version\":\"9.0.314\",\"rollForward\":\"latestPatch\",\"allowPrerelease\":false}}");
+        fixture.Write("global.json", "{\"sdk\":{\"version\":\"9.0.314\",\"rollForward\":\"disable\",\"allowPrerelease\":false}}");
         foreach (var file in Directory.GetFiles(fixture.Source, "*.csproj", SearchOption.AllDirectories))
             File.WriteAllText(file, File.ReadAllText(file).Replace("net10.0", tfm, StringComparison.Ordinal));
         var config = fixture.Config with { Build = fixture.Config.Build with { TargetFramework = tfm } };

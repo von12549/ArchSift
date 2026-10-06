@@ -2,6 +2,8 @@
 
 日期：2026-10-07（Australia/Sydney）。状态：COMPLETE / PASS；正式发布资产另行构建、校验和登记，不把工作区候选当作正式资产。
 
+发布前远程 CI 补充：首次 run [37509047659](https://github.com/von12549/ArchSift/actions/runs/37509047659) 在两平台均真实失败；仅 net8/net9 fixture 的 SDK 身份断言失败。GitHub runner 同时预装 9.0.318，fixture 的 latestPatch 正确选择了新 patch，而断言仍要求 9.0.314。修正为 fixture 内 rollForward=disable，以落实测试明确要求的固定 9.0.314；不改产品 global.json，不放宽结果断言，不更新宿主 SDK/PATH。两平台宿主哈希仍相等，失败日志/TRX/artifact 保留；发布暂停到修复后的远程检查通过。
+
 ## 当前源码验证
 
 - Windows x64 / SDK 10.0.303 / net10.0：Release 109/109（78 unit、29 integration、2 architecture），零编译警告/错误，运行 `development-76dcf0d5e3024406aa9b1350139c91df`；最终 Debug/静态安全复核同为 109/109，运行 `development-3e2011b369e84a97980c17b387bb2c88`。net8/net9 真实程序集 fixture 使用已安装 SDK 9.0.314/packs。
