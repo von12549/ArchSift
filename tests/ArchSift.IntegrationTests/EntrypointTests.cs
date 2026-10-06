@@ -20,7 +20,7 @@ public sealed class EntrypointTests
     [Fact]
     public async Task UnimplementedCliCommandFailsWithConfigurationError()
     {
-        var result = await Run("ArchSift.Cli", "archsift", "verify");
+        var result = await Run("ArchSift.Cli", "archsift", "not-implemented-command");
         Assert.Equal(2, result.Code);
         Assert.Empty(result.Output);
         Assert.Contains("当前阶段不支持", result.Error);
