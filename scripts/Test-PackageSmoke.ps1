@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([Parameter(Mandatory)][string]$ZipPath,[string]$LabRoot='D:\ArchSift-lab',[string]$BudgetFile=(Join-Path $PSScriptRoot '../docs/performance/w10-budget.json'),[string]$SarifSchema)
+param([Parameter(Mandatory)][string]$ZipPath,[string]$LabRoot='D:\ArchSift-lab',[string]$BudgetFile=(Join-Path $PSScriptRoot '../docs/performance/w11-budget.json'),[string]$SarifSchema)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
