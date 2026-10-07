@@ -42,9 +42,10 @@ public sealed class AnalysisServiceTests
         Assert.NotEqual(a.Report.RunMetadata.RunId, b.Report.RunMetadata.RunId);
         Assert.Equal(a.Report.Findings.Select(f => f.Id), b.Report.Findings.Select(f => f.Id));
         Assert.Equal(a.Report.InputIdentity, b.Report.InputIdentity, new IdentityComparer());
-        var evil = a.Report with { Findings = [a.Report.Findings[0] with { Subject = "<script>alert(1)</script>" }] };
+        var evil = a.Report with { Findings = [a.Report.Findings[0] with { Subject = "<script>alert(1)</script>", ExceptionId = "reviewed-edge", ExceptionReason = "Approved migration" }] };
         var html = ReportWriter.Html(evil);
         Assert.DoesNotContain("<script>", html); Assert.Contains("&lt;script&gt;", html);
+        Assert.Contains("reviewed-edge", html); Assert.Contains("Approved migration", html);
         ReportWriter.Save(fixture.Config, a.Report);
         Assert.True(File.Exists(Path.Combine(fixture.Output, a.Report.RunMetadata.RunId, "report.json")));
         Assert.False(Directory.Exists(Path.Combine(fixture.Source, "obj")));

@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W10 已完成，0.2.0 已正式发布并从远程下载回验通过；Windows/Linux 各 109 项 CI、固定 ZIP/SARIF/安全门禁全部通过。用户授权发布并选择 MIT。两轮 CI 失败历史保留。W11 仅登记，未启动。
+状态：FORMAL — W00–W11 已完成，0.2.0 已正式发布并通过发布后验收；Windows/Linux 各 109 项 CI、固定 ZIP/SARIF/真实 IFX/安全门禁均有证据。两轮 CI、验证器失败及 W11 人工流程/审计器失败历史保留。W11 的设计、实现、130 项自动回归、真实 IFX CLI、独立人工 UI 和最终安全审计均已通过；当前 `W11 COMPLETE`，用户已授权将该范围以 0.3.0 提交、推送和发布，正式资产尚待本次发布门禁固定。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -257,14 +257,15 @@ P5 添加 Linux CLI 验证、SARIF 与 opt-in CI 样例，上传报告 artifact�
 | W08 0.1.0 验收 | W07 | scripts smoke/safety/performance/ZIP；IFX 现场运行；人工任务和归档 | 首个完整版本 A01–A12 全部有证据 |
 | W09 变更比较 | W08 | Core comparison、schemas/comparison、CLI changes、UI 比较 | 两端与工作区、跨项目、基线失败、删除/重命名、规则变化 fixtures |
 | W10 0.2.0 报告接入 | W09 | SARIF exporter、Linux CLI 验证、samples/ci、文档和包验证 | 非阻断违规、可观察错误、跨平台核心结果一致 |
+| W11 允许策略与大范围 UI | W10、0.2.0 发布后验收 | 项目/NuGet allowlist、稳定例外归因、目标上下文、结果信息层级和 UI 生命周期 | 130 项回归、八模板、真实 IFX CLI/UI、独立操作员及最终安全审计 |
 
 W03 与模板文档等互不冲突任务可在工程允许时并行；本计划不要求开启子代理。W05 的真实 ArchUnitNET 检查必须在 0.1.0 内完成，不得用空壳或只有声明图代替。
 
 Guard 迁移仅涉及分析算法、fixture、发现/框架解析与环境隔离经验。实现位置规则、源码语义扩展可留在迁移清单，不自动成为已交付能力。旧 Guard stale UI 缺陷记录为独立维护项，不作为新产品构建前置，也不在本实施计划中修改旧源。
 
-### 当前计划完成后的下一目标
+### W11 发布后工作包
 
-以下内容登记为发布后后续工作包候选 `W11`，不改变 W09/W10 范围，也不授权现在实现。只有 W09、W10、对应版本发布及发布后独立验证全部完成，并形成固定发布资产身份和验收记录后，才可在新的执行请求中启动。输入来自 [W08 完成报告](../acceptance/20261007-w08-completion.md) 的操作员反馈及随后规则复核。
+以下内容最初登记为发布后候选 `W11`，不改变 W09/W10 历史范围。W09、W10、正式发布和 [0.2.0 发布后验收](../acceptance/20261007-0.2.0-post-release-verification.md) 已完成，用户于 2026-10-07 明确授权启动；设计、实现、自动门禁、真实 IFX CLI/UI 与最终安全审计现已完成，状态为 `W11 COMPLETE`，见 [W11 完成记录](../acceptance/20261007-w11-allowlists-ui.md)。输入来自 [W08 完成报告](../acceptance/20261007-w08-completion.md) 的操作员反馈及随后规则复核，组合语义和兼容性先冻结在 [W11 允许策略决议](../decisions/20261007-w11-policy-composition.md)。
 
 | 方向 | 后续目标 | 最低验收要求 |
 | --- | --- | --- |
@@ -395,10 +396,13 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-07 | W08 真实 IFX/A10/最终清理 | 105 项目声明发现、已知引用违规、fixture 与真实 IFX UI、独立操作员 confidence 4/5（最高 L2）及最终零残留审计通过；见 [W08 完成报告](../acceptance/20261007-w08-completion.md)；W08 COMPLETE，W09/W10 依赖已满足但尚未开始 |
 | 2026-10-07 | 发布后下一目标登记 | 用户要求将 W08 的目标上下文、操作等待/JSON 时机、残留 UI 进程、大范围展示与术语反馈，以及项目引用/NuGet 允许列表、冲突和例外确定性纳入后续；登记为 W11 候选，仅在 W09/W10、发布和发布后验证完成后另行启动 |
 | 2026-10-07 | 0.2.0 发布后验收 | 正式三资产、发布包行为、固定源码 Windows/Linux、最终托管 CI、合成 UI、真实 IFX 已知违规与人工 UI、三格式报告及最终零残留审计通过；验证器失败与 CI/partial 限制保留；见 [0.2.0 发布后验收](../acceptance/20261007-0.2.0-post-release-verification.md)；发布后验收 PASS，W11 仍未启动 |
+| 2026-10-07 | W11 启动与设计门禁 | 用户在发布后验收提交并推送后授权启动 W11；先冻结新增项目引用/NuGet allowlist、交集与 deny 优先、稳定例外归因、旧 schemaVersion 1 兼容及完整测试矩阵；见 [W11 允许策略决议](../decisions/20261007-w11-policy-composition.md) |
+| 2026-10-07 | W11 自动实现门禁 | schemaVersion 1 增加两个兼容分支及 JSON/Markdown/UI 模板；Core 支持封闭项目/NuGet 直接依赖策略和稳定例外归因；HTML/UI 显示例外 ID/理由；UI 固定每个 job 的目标快照并增加大范围筛选/折叠与安全关闭；首次 IFX UI 复核准确指出项目卡片已折叠但 105 条 coverage limitation 仍展开，保留为 NEEDS FIX 后改为可见计数/影响说明加按需展开；操作员随后要求进一步区分项目、规则结果、违规证据和覆盖限制，现已拆为四个结果语义区及独立项目清单区，桌面/480px 合成视觉验证通过且窄屏无横向溢出；SDK 10.0.303、Debug、离线 restore/build 0 警告错误，97 unit + 31 integration + 2 architecture 全通过，8 个模板独立校验/渲染通过，主机状态一致；最终自动证据 `D:\ArchSift-lab\runs\development-53b4733726dc4624a6a46b063d9f4997`；真实 IFX CLI 已通过，W11 等待新的短 UI 复核与最终安全审计 |
+| 2026-10-07 | W11 人工 UI 与最终关闭 | 真实 IFX 最终 UI 显示 105 项目、0 程序集、`partial / noncompliant / exit 4`、两条规则/两条 finding 与默认折叠的 105 条 limitation；信息区分、项目筛选、窄屏和三格式入口由独立操作员以 L1、confidence 4/5 通过。最终审计精确清理一个弃用会话残留 PID/端口后，自动/CLI/UI/report/SARIF、产品与 IFX 工作树、宿主环境、进程/端口/容器及 24 份关键证据全部通过；见 [W11 完成记录](../acceptance/20261007-w11-allowlists-ui.md)；W11 COMPLETE，未提交、推送或发布 |
 
 ## 参考资料
 
-2026-10-07：[0.2.0 发布记录](../releases/0.2.0-publication.md)已关闭：GitHub tag `v0.2.0` 指向 `528ebb1`；ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`，三资产 uploaded、digest/下载字节一致，发布后 native smoke 通过。W09 `0286b75`、W10 初始 `8dc363e`、补充修复 `26498f4` / `eb52640` / `528ebb1`、固定验收 `27a5719` 均保留原历史并附 Codex trailer；W11 没有新执行授权，不开始实现。
+2026-10-07：[0.2.0 发布记录](../releases/0.2.0-publication.md)已关闭：GitHub tag `v0.2.0` 指向 `528ebb1`；ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`，三资产 uploaded、digest/下载字节一致，发布后 native smoke 通过。W09 `0286b75`、W10 初始 `8dc363e`、补充修复 `26498f4` / `eb52640` / `528ebb1`、固定验收 `27a5719` 均保留原历史并附 Codex trailer。发布关闭时 W11 尚未授权；随后发布后验收通过，用户另行授权并完成独立 W11 范围。W11 当前尚未提交、推送或发布。
 
 2026-10-07：用户授权开始 W09/W10、继续逐阶段完成后提交，并授权后续发布；明确选择 MIT 许可证。W09 完成提交 `0286b75`，106 项回归通过；W10 预算先冻结为 `63419d4`。[W10 验收](../acceptance/20261007-w10-report-integration.md)记录 Windows 109 项、Linux 107 项、核心 parity、SARIF 官方 schema、真实包/浏览器与 CI 样例。正式包独立构建/校验后才能发布，不上传未提交源码原型；W08 候选及历史验收不改写。
 

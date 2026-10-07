@@ -17,6 +17,8 @@ public sealed class SarifTests
         Assert.StartsWith("file:///", run["originalUriBaseIds"]!["%SRCROOT%"]!["uri"]!.GetValue<string>());
         Assert.Equal(Finding("src/A file.cs").Id, run["results"]![0]!["partialFingerprints"]!["archsiftFindingId/v1"]!.GetValue<string>());
         Assert.Null(run["results"]![1]!["locations"]); Assert.NotNull(run["results"]![1]!["suppressions"]);
+        Assert.Equal("reviewed", run["results"]![1]!["properties"]!["exceptionId"]!.GetValue<string>());
+        Assert.Equal("Historical waiver", run["results"]![1]!["suppressions"]![0]!["justification"]!.GetValue<string>());
         Assert.DoesNotContain("startLine", json); Assert.DoesNotContain("baselineState", json);
         Assert.True(run["invocations"]![0]!["executionSuccessful"]!.GetValue<bool>());
     }

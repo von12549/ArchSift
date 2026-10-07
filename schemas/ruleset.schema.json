@@ -192,6 +192,65 @@
               "minLength": 1
             },
             "type": {
+              "const": "project-reference-allowlist"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "scope": {
+              "$ref": "#/definitions/selector"
+            },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "source": {
+                  "$ref": "#/definitions/projectSelector"
+                },
+                "allowedTargets": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/projectSelector"
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "source",
+                "allowedTargets"
+              ]
+            },
+            "severity": {
+              "enum": [
+                "info",
+                "warning",
+                "error"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "enabled",
+            "scope",
+            "parameters",
+            "severity",
+            "reason"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
               "const": "graph-integrity"
             },
             "enabled": {
@@ -213,6 +272,62 @@
               },
               "required": [
                 "check"
+              ]
+            },
+            "severity": {
+              "enum": [
+                "info",
+                "warning",
+                "error"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "enabled",
+            "scope",
+            "parameters",
+            "severity",
+            "reason"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "nuget-allowlist"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "scope": {
+              "$ref": "#/definitions/selector"
+            },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "allowedPackageIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "allowedPackageIds"
               ]
             },
             "severity": {

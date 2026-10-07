@@ -9,7 +9,10 @@ namespace ArchSift.UnitTests;
 public sealed class RuleContractTests
 {
     public static TheoryData<string> Types => new()
-    { "project-reference", "graph-integrity", "target-framework", "nuget-denylist", "type-dependency", "naming" };
+    {
+        "project-reference", "project-reference-allowlist", "graph-integrity", "target-framework",
+        "nuget-denylist", "nuget-allowlist", "type-dependency", "naming"
+    };
 
     [Theory]
     [MemberData(nameof(Types))]
@@ -99,6 +102,31 @@ public sealed class RuleContractTests
         b["rules"]![0]!["id"] = "other-naming";
         b["rules"]![0]!["parameters"]!["requiredName"]!["value"] = "Bar*";
         Assert.Throws<ConfigurationException>(() => RuleLoader.Compose([Loaded(a), Loaded(b)]));
+    }
+
+    [Fact]
+    public void EmptyAllowlistsAreValidAndMeanDenyAll()
+    {
+        var projects = JsonNode.Parse(File.ReadAllText(TemplatePath("project-reference-allowlist")))!;
+        projects["rules"]![0]!["parameters"]!["allowedTargets"] = new JsonArray();
+        Assert.Empty(Parse(projects).Rules[0].Parameters.GetProperty("allowedTargets").EnumerateArray());
+
+        var packages = JsonNode.Parse(File.ReadAllText(TemplatePath("nuget-allowlist")))!;
+        packages["rules"]![0]!["parameters"]!["allowedPackageIds"] = new JsonArray();
+        Assert.Empty(Parse(packages).Rules[0].Parameters.GetProperty("allowedPackageIds").EnumerateArray());
+    }
+
+    [Fact]
+    public void DuplicateAllowlistEntriesAreRejected()
+    {
+        var projects = JsonNode.Parse(File.ReadAllText(TemplatePath("project-reference-allowlist")))!;
+        var target = projects["rules"]![0]!["parameters"]!["allowedTargets"]![0]!.DeepClone();
+        projects["rules"]![0]!["parameters"]!["allowedTargets"]!.AsArray().Add(target);
+        Assert.Throws<ConfigurationException>(() => Parse(projects));
+
+        var packages = JsonNode.Parse(File.ReadAllText(TemplatePath("nuget-allowlist")))!;
+        packages["rules"]![0]!["parameters"]!["allowedPackageIds"] = new JsonArray("Sample.Package", "sample.package");
+        Assert.Throws<ConfigurationException>(() => Parse(packages));
     }
 
     [Fact]

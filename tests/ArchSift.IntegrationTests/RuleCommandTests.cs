@@ -6,9 +6,11 @@ public sealed class RuleCommandTests
 {
     [Theory]
     [InlineData("project-reference")]
+    [InlineData("project-reference-allowlist")]
     [InlineData("graph-integrity")]
     [InlineData("target-framework")]
     [InlineData("nuget-denylist")]
+    [InlineData("nuget-allowlist")]
     [InlineData("type-dependency")]
     [InlineData("naming")]
     public async Task CliValidatesAndRendersEveryTemplateWithoutMutatingTheSource(string type)

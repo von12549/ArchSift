@@ -45,6 +45,8 @@ public static class Program
             await app.StartAsync();
             var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
             Console.WriteLine("ARCHSIFT_UI=" + address + "/#session=" + workbench.Token);
+            Console.WriteLine("ARCHSIFT_PID=" + Environment.ProcessId);
+            Console.WriteLine("ARCHSIFT_STATE=waiting; reports are downloadable only after a job produces them; close safely in the UI or press Ctrl+C.");
             await app.WaitForShutdownAsync(); return 0;
         }
         catch (ConfigurationException error) { Console.Error.WriteLine(error.Message); return 2; }

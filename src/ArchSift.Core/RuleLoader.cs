@@ -98,9 +98,23 @@ public static class RuleSemantics
             {
                 if (p.Name is "source" or "target" or "forbiddenTarget")
                     ValidateSelector(p.Value.Deserialize<Selector>(JsonContract.Options)!);
-                if (p.Name is "allowedFrameworks" or "forbiddenPackageIds")
+                if (p.Name == "allowedTargets")
                 {
-                    var seen = new HashSet<string>(p.Name == "forbiddenPackageIds" ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+                    var seen = new HashSet<string>(StringComparer.Ordinal);
+                    foreach (var item in p.Value.EnumerateArray())
+                    {
+                        var selector = item.Deserialize<Selector>(JsonContract.Options)!;
+                        ValidateSelector(selector);
+                        if (selector.Kind != "project")
+                            throw new ConfigurationException("allowedTargets requires project selectors.");
+                        var key = string.Join('\0', selector.Kind, selector.Match, selector.Value, selector.AllowEmpty);
+                        if (!seen.Add(key)) throw new ConfigurationException("Duplicate value in allowedTargets");
+                    }
+                }
+                if (p.Name is "allowedFrameworks" or "forbiddenPackageIds" or "allowedPackageIds")
+                {
+                    var seen = new HashSet<string>(p.Name is "forbiddenPackageIds" or "allowedPackageIds"
+                        ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
                     foreach (var item in p.Value.EnumerateArray())
                     {
                         var text = item.GetString()!;

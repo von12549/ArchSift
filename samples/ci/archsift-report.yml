@@ -6,7 +6,7 @@ on:
       version:
         description: Released ArchSift version
         required: true
-        default: '0.2.0'
+        default: '0.3.0'
       sha256:
         description: Expected ZIP SHA-256 from the reviewed release
         required: true

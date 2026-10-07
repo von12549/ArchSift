@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$LabRoot='D:\ArchSift-lab',[string]$LocalFeed=(Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),[string]$Version='0.2.0',[switch]$RequireCommittedSource)
+param([string]$LabRoot='D:\ArchSift-lab',[string]$LocalFeed=(Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),[string]$Version='0.3.0',[switch]$RequireCommittedSource)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))

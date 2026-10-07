@@ -25,9 +25,9 @@ public static class ReportWriter
         text.Append("<h2>规则结果</h2><table><tr><th>规则</th><th>状态</th><th>匹配</th><th>限制</th></tr>");
         foreach (var rule in report.RuleResults)
             text.Append($"<tr><td>{E(rule.RuleId)}</td><td>{E(rule.Status)}</td><td>{rule.Matched}</td><td>{E(string.Join("; ", rule.Limitations))}</td></tr>");
-        text.Append("</table><h2>证据</h2><table><tr><th>规则 / 主体</th><th>证据</th><th>例外</th></tr>");
+        text.Append("</table><h2>证据</h2><table><tr><th>规则 / 主体</th><th>证据</th><th>例外 ID / 理由</th></tr>");
         foreach (var finding in report.Findings)
-            text.Append($"<tr><td>{E(finding.RuleId)}<br>{E(finding.Subject)}</td><td>{E(finding.Message)}<br>{E(finding.Source)} → {E(finding.Target)}<br>{E(finding.Location)}</td><td>{E(finding.ExceptionReason)}</td></tr>");
+            text.Append($"<tr><td>{E(finding.RuleId)}<br>{E(finding.Subject)}</td><td>{E(finding.Message)}<br>{E(finding.Source)} → {E(finding.Target)}<br>{E(finding.Location)}</td><td>{E(finding.ExceptionId)}<br>{E(finding.ExceptionReason)}</td></tr>");
         text.Append("</table><h2>范围与限制</h2><pre>");
         text.Append(E(string.Join("\n", report.Scope.ExternalReferences.Concat(report.Scope.UnresolvedReferences)
             .Concat(report.Scope.UnsupportedConstructs).Concat(report.Limitations).Concat(report.ExecutionErrors))));

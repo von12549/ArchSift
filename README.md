@@ -1,8 +1,8 @@
 # ArchSift
 
-独立的本地 .NET 架构与依赖分析工具。`0.2.0` 包含项目发现、六类规则、真实 ArchUnitNET、JSON/HTML/SARIF、Git 两端/工作区比较和 loopback UI。Windows x64 自包含分发，Linux CLI 已验证；无 Guard 安装前置。ArchSift 使用 [MIT 许可](LICENSE)，第三方许可单独保留。
+独立的本地 .NET 架构与依赖分析工具。`0.3.0` 包含项目发现、八类规则（含项目引用与 NuGet 直接包 allowlist）、真实 ArchUnitNET、JSON/HTML/SARIF、Git 两端/工作区比较和 loopback UI。Windows x64 自包含分发，Linux CLI 已验证；无 Guard 安装前置。ArchSift 使用 [MIT 许可](LICENSE)，第三方许可单独保留。
 
-[下载 0.2.0](https://github.com/von12549/ArchSift/releases/tag/v0.2.0)；先核对 release 的 SHA256SUMS.txt。固定资产与下载回验见 [发布记录](docs/releases/0.2.0-publication.md)。
+[下载 0.3.0](https://github.com/von12549/ArchSift/releases/tag/v0.3.0)；先核对 release 的 SHA256SUMS.txt。W11 实现与人工验收见 [0.3.0 范围记录](docs/acceptance/20261007-w11-allowlists-ui.md)，正式资产身份将在 [发布记录](docs/releases/0.3.0-publication.md) 中固定。
 
 ## 开发与验证
 
@@ -42,10 +42,11 @@ CLI 可用 analyze/verify/changes、rules validate/render/draft、ui --config、
 - [W08 完成报告](docs/acceptance/20261007-w08-completion.md)
 - [变更比较](docs/changes.md)与 [W09 验收](docs/acceptance/20261007-w09-comparison.md)
 - [W10 跨平台/SARIF 验收](docs/acceptance/20261007-w10-report-integration.md)
+- [W11 allowlist/UI 完成记录](docs/acceptance/20261007-w11-allowlists-ui.md)
 - [CLI 使用与配置](docs/cli.md)
 - [规则与 schema 边界](docs/rules.md)
 - [已解析依赖与许可](docs/dependencies/w01/README.md)
 - [迁移来源与用户授权](docs/migration/source-inventory.json)
 - [项目操作与提交指令](AGENTS.md)
 
-W08 冻结 `0.1.0-dev` 候选与独立操作员证据保持原样；W09/W10 已关闭，最终远程 Windows/Linux 各 109 项通过。0.2.0 已发布并从远程下载回验通过。网络漏洞审计未运行；NuGet tool 发布、allowlist/W11、Linux Web UI、fail-on 与强制 CI 未交付。
+W08 冻结 `0.1.0-dev` 候选与独立操作员证据保持原样；0.2.0 发布与发布后验收保持冻结。W11 已完成 130 项本地回归、真实 IFX CLI/UI、独立操作员和最终安全审计；0.3.0 发布使用单独的固定资产记录。网络漏洞审计未运行；NuGet tool、传递包/版本范围、Linux Web UI、fail-on 与强制 CI 仍未交付。

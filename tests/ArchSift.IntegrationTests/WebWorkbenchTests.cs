@@ -43,9 +43,28 @@ public sealed class WebWorkbenchTests
             client.DefaultRequestHeaders.Remove("Origin");
             var page = await client.GetAsync("/", timeout.Token); Assert.Equal(HttpStatusCode.OK, page.StatusCode);
             Assert.True(page.Headers.Contains("Content-Security-Policy"));
-            Assert.Contains("本次检查范围", await page.Content.ReadAsStringAsync(timeout.Token));
+            var pageText = await page.Content.ReadAsStringAsync(timeout.Token);
+            Assert.Contains("本次检查范围", pageText);
+            Assert.Contains("运行确认 · 当前编辑配置", pageText);
+            Assert.Contains("安全关闭 UI 服务", pageText);
+            Assert.Contains("项目与引用", pageText);
+            Assert.Contains("这些是被分析对象，不是规则结论、违规证据或覆盖限制", pageText);
+            var scriptText = await client.GetStringAsync("/app.js", timeout.Token);
+            Assert.Contains("执行完整性与规则合规是两个独立维度", scriptText);
+            Assert.Contains("逐规则结论", scriptText);
+            Assert.Contains("违规与例外", scriptText);
+            Assert.Contains("这些信息影响结果完整性，不是项目名称，也不是额外 finding", scriptText);
+            Assert.Contains("覆盖限制：存在时结果不会冒充完整合规", scriptText);
+            Assert.Contains("已折叠，展开查看全部", scriptText);
+            var styleText = await client.GetStringAsync("/style.css", timeout.Token);
+            Assert.Contains(".finding-region", styleText);
+            Assert.Contains(".coverage-region", styleText);
+            Assert.Contains(".project-region", styleText);
+            Assert.Contains(".finding-table td:nth-child(5)::before", styleText);
             var templateResponse = await client.GetAsync("/api/templates", timeout.Token);
             using var templates = JsonDocument.Parse(await templateResponse.Content.ReadAsStringAsync(timeout.Token));
+            Assert.True(templates.RootElement.TryGetProperty("project-reference-allowlist", out _));
+            Assert.True(templates.RootElement.TryGetProperty("nuget-allowlist", out _));
             var template = templates.RootElement.GetProperty("naming").GetRawText();
             var saved = await client.PostAsync("/api/rules/policy.json", new StringContent(template, Encoding.UTF8, "application/json"), timeout.Token);
             Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
@@ -65,6 +84,8 @@ public sealed class WebWorkbenchTests
             }
             using (job)
             {
+                Assert.Equal(source, job.RootElement.GetProperty("context").GetProperty("target").GetProperty("root").GetString());
+                Assert.Equal("real", job.RootElement.GetProperty("targetKind").GetString());
                 var report = job.RootElement.GetProperty("report").Deserialize<AnalysisReport>(JsonContract.Options)!;
                 var direct = await new AnalysisService().RunAsync(config with { Rulesets = [Path.Combine(rulesDirectory, "policy.json")] }, "verify");
                 Assert.Equal(direct.Report.Findings.Select(f => f.Id), report.Findings.Select(f => f.Id));
@@ -109,6 +130,10 @@ public sealed class WebWorkbenchTests
             }
             static string[] directFindingIds(AnalysisReport report) => report.Findings.Select(f => f.Id).ToArray();
             Assert.False(Directory.Exists(Path.Combine(source, "obj")));
+            var shutdown = await client.PostAsync("/api/shutdown", new StringContent("{}", Encoding.UTF8, "application/json"), timeout.Token);
+            Assert.Equal(HttpStatusCode.Accepted, shutdown.StatusCode);
+            await process.WaitForExitAsync(timeout.Token);
+            Assert.Equal(0, process.ExitCode);
         }
         finally
         {

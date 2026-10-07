@@ -8,7 +8,11 @@ namespace ArchSift.UnitTests;
 
 public sealed class ProjectRuleTests
 {
-    public static TheoryData<string> Types => new() { "project-reference", "graph-integrity", "target-framework", "nuget-denylist", "naming" };
+    public static TheoryData<string> Types => new()
+    {
+        "project-reference", "project-reference-allowlist", "graph-integrity", "target-framework",
+        "nuget-denylist", "nuget-allowlist", "naming"
+    };
 
     [Theory]
     [MemberData(nameof(Types))]
@@ -47,6 +51,115 @@ public sealed class ProjectRuleTests
     }
 
     [Fact]
+    public void NugetAllowlistIsIdOnlyAndCaseInsensitive()
+    {
+        using var fixture = new Fixture();
+        fixture.Write("Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include=\"ALLOWED.PACKAGE\" Version=\"$(Unknown)\"/></ItemGroup></Project>");
+        var result = ProjectRuleEvaluator.Evaluate(ProjectDiscovery.Discover(fixture.Root), Bundle("nuget-allowlist"));
+        Assert.Equal("pass", Assert.Single(result.Results).Status);
+        Assert.Empty(result.Findings);
+    }
+
+    [Fact]
+    public void EmptyProjectAllowlistMeansNoDirectReferencesAndNoReferencesCanPass()
+    {
+        using var fixture = new Fixture();
+        fixture.Write("Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        var empty = WithProjectPolicy(Bundle("project-reference-allowlist").Documents[0], "deny-all-project-refs",
+            "allowedTargets", Array.Empty<Selector>());
+        Assert.Equal("pass", Assert.Single(ProjectRuleEvaluator.Evaluate(ProjectDiscovery.Discover(fixture.Root), RuleLoader.Compose([empty])).Results).Status);
+
+        fixture.Write("Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><ProjectReference Include=\"Target.csproj\"/></ItemGroup></Project>");
+        fixture.Write("Target.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        var rejected = ProjectRuleEvaluator.Evaluate(ProjectDiscovery.Discover(fixture.Root), RuleLoader.Compose([empty]));
+        Assert.Equal("violation", Assert.Single(rejected.Results).Status);
+        Assert.Equal("Target.csproj", Assert.Single(rejected.Findings).Target);
+    }
+
+    [Fact]
+    public void ProjectAllowlistGlobMatchesResolvedEdgesButMissingEdgesStayInconclusive()
+    {
+        using var fixture = new Fixture();
+        fixture.Write("src/Application/App.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><ProjectReference Include=\"../Domain/Domain.csproj\"/></ItemGroup></Project>");
+        fixture.Write("src/Domain/Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        var glob = WithProjectPolicy(Bundle("project-reference-allowlist").Documents[0], "allow-glob", "source",
+            new Selector { Kind = "project", Match = "glob", Value = "src/Application/**" });
+        glob = WithProjectPolicy(glob, "allow-glob", "allowedTargets",
+            new[] { new Selector { Kind = "project", Match = "glob", Value = "src/Domain/**" } });
+        var policy = RuleLoader.Compose([glob]);
+        var completeSnapshot = ProjectDiscovery.Discover(fixture.Root);
+        var complete = ProjectRuleEvaluator.Evaluate(completeSnapshot, policy);
+        Assert.Equal("pass", Assert.Single(complete.Results).Status);
+
+        fixture.Write("src/Application/App.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><ProjectReference Include=\"../Missing/Missing.csproj\"/></ItemGroup></Project>");
+        var incomplete = ProjectRuleEvaluator.Evaluate(ProjectDiscovery.Discover(fixture.Root), policy);
+        Assert.Equal("inconclusive", Assert.Single(incomplete.Results).Status);
+        Assert.Empty(incomplete.Findings);
+        Assert.NotEmpty(incomplete.Results[0].Limitations);
+    }
+
+    [Fact]
+    public void NugetAllowlistUsesTheDirectDeclarationWhenVersionComesFromCentralManagement()
+    {
+        using var fixture = new Fixture();
+        fixture.Write("Directory.Packages.props", "<Project><PropertyGroup><ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally></PropertyGroup><ItemGroup><PackageVersion Include=\"Allowed.Package\" Version=\"1.2.3\"/></ItemGroup></Project>");
+        fixture.Write("Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include=\"Allowed.Package\"/></ItemGroup></Project>");
+        var result = ProjectRuleEvaluator.Evaluate(ProjectDiscovery.Discover(fixture.Root), Bundle("nuget-allowlist"));
+        Assert.Equal("pass", Assert.Single(result.Results).Status);
+        Assert.Empty(result.Findings);
+    }
+
+    [Fact]
+    public void AllowRulesIntersectAndDenyRulesRemainIndependent()
+    {
+        using var fixture = new Fixture();
+        fixture.Write("Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><ProjectReference Include=\"Allowed.csproj\"/><ProjectReference Include=\"Denied.csproj\"/></ItemGroup></Project>");
+        fixture.Write("Allowed.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        fixture.Write("Denied.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+
+        var broad = WithProjectPolicy(Bundle("project-reference-allowlist").Documents[0], "allow-broad",
+            "allowedTargets", new[] { ProjectSelector("Allowed.csproj"), ProjectSelector("Denied.csproj") });
+        var narrow = WithProjectPolicy(Bundle("project-reference-allowlist").Documents[0], "allow-narrow",
+            "allowedTargets", new[] { ProjectSelector("Denied.csproj") });
+        var deny = WithProjectPolicy(Bundle("project-reference").Documents[0], "deny-allowed",
+            "target", ProjectSelector("Allowed.csproj"));
+        var denyRule = deny.Ruleset.Rules[0] with { Severity = "error" };
+        deny = deny with { Ruleset = deny.Ruleset with { Rules = [denyRule] } };
+        var snapshot = ProjectDiscovery.Discover(fixture.Root);
+        var first = ProjectRuleEvaluator.Evaluate(snapshot, RuleLoader.Compose([broad, narrow, deny]));
+        var reordered = ProjectRuleEvaluator.Evaluate(snapshot, RuleLoader.Compose([deny, broad, narrow]));
+
+        Assert.Equal(JsonSerializer.Serialize(first, JsonContract.Options), JsonSerializer.Serialize(reordered, JsonContract.Options));
+        Assert.Equal("pass", first.Results.Single(result => result.RuleId == "allow-broad").Status);
+        Assert.Equal("violation", first.Results.Single(result => result.RuleId == "allow-narrow").Status);
+        Assert.Equal("violation", first.Results.Single(result => result.RuleId == "deny-allowed").Status);
+        Assert.Equal(2, first.Findings.Length);
+        Assert.All(first.Findings, finding => Assert.Equal("Allowed.csproj", finding.Target));
+        Assert.Equal(["error", "warning"], first.Findings.Select(finding => finding.Severity).Order(StringComparer.Ordinal).ToArray());
+    }
+
+    [Fact]
+    public void ExceptionForOneRuleCannotAuthorizeAnotherRule()
+    {
+        using var fixture = new Fixture();
+        fixture.Write("Domain.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><ProjectReference Include=\"Target.csproj\"/></ItemGroup></Project>");
+        fixture.Write("Target.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        var allow = WithProjectPolicy(Bundle("project-reference-allowlist").Documents[0], "allow-none", "allowedTargets", Array.Empty<Selector>());
+        var deny = WithProjectPolicy(Bundle("project-reference").Documents[0], "deny-target", "target", ProjectSelector("Target.csproj"));
+        var exception = new RuleException
+        {
+            Id = "deny-only", RuleId = "deny-target", Scope = ProjectSelector("Domain.csproj"), Reason = "Temporary deny exception"
+        };
+        deny = deny with { Ruleset = deny.Ruleset with { Exceptions = [exception] } };
+
+        var result = ProjectRuleEvaluator.Evaluate(ProjectDiscovery.Discover(fixture.Root), RuleLoader.Compose([deny, allow]));
+        Assert.Equal("pass", result.Results.Single(item => item.RuleId == "deny-target").Status);
+        Assert.Equal("violation", result.Results.Single(item => item.RuleId == "allow-none").Status);
+        Assert.Null(result.Findings.Single(item => item.RuleId == "allow-none").ExceptionId);
+        Assert.Equal("deny-only", result.Findings.Single(item => item.RuleId == "deny-target").ExceptionId);
+    }
+
+    [Fact]
     public void ExceptionsRetainTheOriginalFindingAndReason()
     {
         using var fixture = new Fixture();
@@ -64,6 +177,27 @@ public sealed class ProjectRuleTests
         Assert.Equal("migration", finding.ExceptionId);
         Assert.Equal(exception.Reason, finding.ExceptionReason);
         Assert.Equal("warning", finding.Severity);
+    }
+
+    [Fact]
+    public void OverlappingExceptionsChooseTheSameMostSpecificMatchRegardlessOfOrder()
+    {
+        var finding = new Finding("finding", "rule", "project", "src/Domain.csproj", "message", "warning");
+        var broad = new RuleException
+        {
+            Id = "broad", RuleId = "rule", Scope = new() { Kind = "project", Match = "glob", Value = "src/**" },
+            Reason = "Broad migration"
+        };
+        var exact = new RuleException
+        {
+            Id = "exact", RuleId = "rule", Scope = new() { Kind = "project", Match = "exact", Value = "src/Domain.csproj" },
+            Reason = "Exact migration"
+        };
+
+        var forward = Assert.Single(ProjectRuleEvaluator.ApplyExceptions([finding], [broad, exact]));
+        var reverse = Assert.Single(ProjectRuleEvaluator.ApplyExceptions([finding], [exact, broad]));
+        Assert.Equal("exact", forward.ExceptionId);
+        Assert.Equal(forward, reverse);
     }
 
     [Fact]
@@ -127,10 +261,27 @@ public sealed class ProjectRuleTests
             rule["parameters"]!["source"]!["match"] = "exact"; rule["parameters"]!["source"]!["value"] = "Domain.csproj";
             rule["parameters"]!["target"]!["match"] = "exact"; rule["parameters"]!["target"]!["value"] = "Infrastructure.csproj";
         }
+        if (type == "project-reference-allowlist")
+        {
+            rule["parameters"]!["source"]!["match"] = "exact"; rule["parameters"]!["source"]!["value"] = "Domain.csproj";
+            rule["parameters"]!["allowedTargets"] = new JsonArray(JsonNode.Parse("""{"kind":"project","match":"exact","value":"Allowed.csproj"}"""));
+        }
         if (type == "target-framework") rule["parameters"]!["allowedFrameworks"] = new JsonArray("net10.0");
+        if (type == "nuget-allowlist") rule["parameters"]!["allowedPackageIds"] = new JsonArray("Allowed.Package");
         if (type == "naming") rule["parameters"]!["requiredName"]!["value"] = "Domain";
         var rules = RuleLoader.Parse(Encoding.UTF8.GetBytes(document.ToJsonString()));
         return RuleLoader.Compose([new(rules, new(rules.Id, rules.Version, new string('0', 64), path))]);
+    }
+
+    private static Selector ProjectSelector(string value) => new() { Kind = "project", Match = "exact", Value = value };
+
+    private static LoadedRuleset WithProjectPolicy(LoadedRuleset loaded, string id, string parameter, object value)
+    {
+        var original = loaded.Ruleset.Rules[0];
+        var parameters = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(original.Parameters, JsonContract.Options)!;
+        parameters[parameter] = JsonSerializer.SerializeToElement(value, JsonContract.Options);
+        var rule = original with { Id = id, Parameters = JsonSerializer.SerializeToElement(parameters, JsonContract.Options) };
+        return loaded with { Ruleset = loaded.Ruleset with { Rules = [rule] } };
     }
 
     private sealed class Fixture : IDisposable
@@ -146,10 +297,14 @@ public sealed class ProjectRuleTests
             var name = type == "naming" && bad ? "Wrong" : "Domain";
             var tfm = type == "target-framework" && bad ? "net9.0" : "net10.0";
             var items = type == "project-reference" && bad ? "<ProjectReference Include=\"Infrastructure.csproj\"/>"
+                : type == "project-reference-allowlist" ? $"<ProjectReference Include=\"{(bad ? "Infrastructure" : "Allowed")}.csproj\"/>"
                 : type == "graph-integrity" && bad ? "<ProjectReference Include=\"Missing.csproj\"/>"
-                : type == "nuget-denylist" && bad ? "<PackageReference Include=\"Forbidden.Package\" Version=\"1.0.0\"/>" : "";
+                : type == "nuget-denylist" && bad ? "<PackageReference Include=\"Forbidden.Package\" Version=\"1.0.0\"/>"
+                : type == "nuget-allowlist" ? $"<PackageReference Include=\"{(bad ? "Other" : "Allowed")}.Package\" Version=\"1.0.0\"/>" : "";
             Write(name + ".csproj", $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>{tfm}</TargetFramework></PropertyGroup><ItemGroup>{items}</ItemGroup></Project>");
             if (type == "project-reference" && bad) Write("Infrastructure.csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+            if (type == "project-reference-allowlist")
+                Write((bad ? "Infrastructure" : "Allowed") + ".csproj", "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
             return ProjectDiscovery.Discover(Root);
         }
         public void Dispose()

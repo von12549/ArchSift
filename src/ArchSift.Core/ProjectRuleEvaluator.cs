@@ -48,6 +48,21 @@ public static class ProjectRuleEvaluator
                                     Add("project", project.Id, "禁止的项目引用。", project.Id, edge.TargetId, project.Id);
                         }
                         break;
+                    case "project-reference-allowlist":
+                        var allowSource = rule.Parameters.GetProperty("source").Deserialize<Selector>(JsonContract.Options)!;
+                        var allowedTargets = rule.Parameters.GetProperty("allowedTargets").EnumerateArray()
+                            .Select(value => value.Deserialize<Selector>(JsonContract.Options)!).ToArray();
+                        var allowSources = scoped.Where(p => SelectorMatcher.Matches(allowSource, p.Id)).ToArray();
+                        matched = allowSources.Length; allowEmpty = allowSource.AllowEmpty || rule.Scope.AllowEmpty;
+                        foreach (var project in allowSources)
+                        {
+                            if (!project.ReferencesComplete || project.References.Any(r => r.Status != "resolved"))
+                                limits.Add(project.Id + ": project-reference coverage incomplete.");
+                            foreach (var edge in project.References.Where(r => r.Status == "resolved" && r.TargetId is not null))
+                                if (!allowedTargets.Any(selector => SelectorMatcher.Matches(selector, edge.TargetId!)))
+                                    Add("project", project.Id, "项目引用不在允许列表。", project.Id, edge.TargetId, project.Id);
+                        }
+                        break;
                     case "graph-integrity":
                         var check = rule.Parameters.GetProperty("check").GetString();
                         if (check == "solution-membership")
@@ -94,6 +109,16 @@ public static class ProjectRuleEvaluator
                                 Add("project", project.Id, "直接 PackageReference 命中禁止包 ID。", project.Id, package.Id.ToLowerInvariant(), project.Id);
                         }
                         break;
+                    case "nuget-allowlist":
+                        var allowedPackages = rule.Parameters.GetProperty("allowedPackageIds").EnumerateArray().Select(x => x.GetString()!)
+                            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                        foreach (var project in scoped)
+                        {
+                            if (!project.PackagesComplete) limits.Add(project.Id + ": direct package declarations incomplete.");
+                            foreach (var package in project.Packages.Where(p => p.Status == "declared" && !allowedPackages.Contains(p.Id)))
+                                Add("project", project.Id, "直接 PackageReference 不在允许包 ID 列表。", project.Id, package.Id.ToLowerInvariant(), project.Id);
+                        }
+                        break;
                     case "naming":
                         var name = RuleSemantics.NameSelector(rule);
                         foreach (var project in scoped)
@@ -123,8 +148,14 @@ public static class ProjectRuleEvaluator
     public static List<Finding> ApplyExceptions(IEnumerable<Finding> findings, RuleException[] exceptions) =>
         findings.Select(f =>
         {
-            var exception = exceptions.FirstOrDefault(e => e.RuleId == f.RuleId &&
-                e.Scope.Kind == f.SubjectKind && SelectorMatcher.Matches(e.Scope, f.Subject));
+            var exception = exceptions.Where(e => e.RuleId == f.RuleId && e.Scope.Kind == f.SubjectKind &&
+                    SelectorMatcher.Matches(e.Scope, f.Subject))
+                .OrderBy(e => e.Scope.Match == "exact" ? 0 : 1)
+                .ThenByDescending(e => e.Scope.Value.Count(character => character is not ('*' or '?')))
+                .ThenBy(e => e.Scope.Value.Count(character => character is '*' or '?'))
+                .ThenBy(e => e.Scope.Value, StringComparer.Ordinal)
+                .ThenBy(e => e.Id, StringComparer.Ordinal)
+                .FirstOrDefault();
             return exception is null ? f : f with { ExceptionId = exception.Id, ExceptionReason = exception.Reason };
         }).ToList();
 }

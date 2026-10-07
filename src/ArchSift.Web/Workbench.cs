@@ -50,6 +50,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             PathSafety.EnsureDisjoint(config.Target.Root, rulesDirectory);
             if (!Path.IsPathRooted(config.Target.Root) || !Path.IsPathRooted(config.Output.Directory))
                 throw new ConfigurationException("UI target/output paths must be absolute.");
+            if (!Directory.Exists(config.Target.Root))
+                throw new ConfigurationException("UI target root does not exist.");
+            if (config.Target.Entry is { } entry && !File.Exists(PathSafety.Under(config.Target.Root, entry)))
+                throw new ConfigurationException("UI target entry does not exist under the target root.");
             current = config;
             return Results.Json(current, JsonContract.Options);
         });
@@ -87,16 +91,18 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         {
             if (operation is not ("analyze" or "verify" or "draft" or "changes")) return Results.BadRequest(new { error = "Unknown operation." });
             ChangeRequest request = new();
-            if (operation == "changes")
-            {
-                using var document = await JsonDocument.ParseAsync(context.Request.Body);
-                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p => p.Name is not ("base" or "head")))
-                    throw new ConfigurationException("Comparison accepts only base/head local commit references.");
-                request = document.RootElement.Deserialize<ChangeRequest>(JsonContract.Options)!;
-            }
+            using var document = await JsonDocument.ParseAsync(context.Request.Body);
+            if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p =>
+                    p.Name != "targetKind" && (operation != "changes" || p.Name is not ("base" or "head"))))
+                throw new ConfigurationException("Run request contains unsupported fields.");
+            var targetKind = document.RootElement.TryGetProperty("targetKind", out var kind) ? kind.GetString() : "real";
+            if (targetKind is not ("real" or "fixture")) throw new ConfigurationException("Target kind must be real or fixture.");
+            if (operation == "changes") request = new(
+                document.RootElement.TryGetProperty("base", out var @base) && @base.ValueKind != JsonValueKind.Null ? @base.GetString() : null,
+                document.RootElement.TryGetProperty("head", out var head) && head.ValueKind != JsonValueKind.Null ? head.GetString() : null);
             if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "已有运行在进行；先取消或等待完成。" });
-            var job = new Job(Guid.NewGuid().ToString("N"), operation); jobs[job.Id] = job;
             var config = current;
+            var job = new Job(Guid.NewGuid().ToString("N"), operation, config, targetKind); jobs[job.Id] = job;
             _ = Task.Run(async () =>
             {
                 try
@@ -131,7 +137,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Report, job.Draft, job.Comparison }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Report, job.Draft, job.Comparison }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -161,6 +167,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         app.MapGet("/api/jobs/{id}/draft", (string id) => jobs.TryGetValue(id, out var job) && job.Draft is not null
             ? Results.Text(JsonSerializer.Serialize(job.Draft, JsonContract.Options), "application/json", Encoding.UTF8)
             : Results.NotFound());
+        app.MapPost("/api/shutdown", () =>
+        {
+            if (jobs.Values.Any(job => job.State == "running"))
+                return Results.Conflict(new { error = "仍有运行中的任务；请先等待完成或取消。" });
+            _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); });
+            return Results.Accepted();
+        });
     }
 
     private string RuleFile(string name)
@@ -170,10 +183,12 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             throw new ConfigurationException("Rule file must be a JSON filename in the explicit rules directory.");
         return PathSafety.Under(rulesDirectory, name);
     }
-    private sealed class Job(string id, string operation)
+    private sealed class Job(string id, string operation, RunConfiguration context, string targetKind)
     {
         public string Id { get; } = id;
         public string Operation { get; } = operation;
+        public RunConfiguration Context { get; } = context;
+        public string TargetKind { get; } = targetKind;
         public DateTimeOffset Created { get; } = DateTimeOffset.UtcNow;
         public CancellationTokenSource Cancel { get; } = new();
         private volatile string state = "running";

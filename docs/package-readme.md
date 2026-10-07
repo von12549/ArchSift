@@ -1,4 +1,4 @@
-# ArchSift 0.2.0
+# ArchSift 0.3.0
 
 Windows x64 自包含 CLI 和本机 Web UI。项目声明发现不需要 SDK、Guard 或持久 PATH/Profile 修改；isolated build 需要目标的 SDK/targeting packs，仍默认离线。
 
@@ -14,7 +14,7 @@ Windows x64 自包含 CLI 和本机 Web UI。项目声明发现不需要 SDK、G
 
 changes 另需本地 Git；默认 HEAD 对磁盘工作区最终状态，也支持同时指定 --base / --head 本地 commit。不 checkout、不 fetch、不写目标。UI 输出带会话凭据的 loopback 地址，使用该地址打开；结束时在启动终端 Ctrl+C 停止服务。
 
-规则 JSON 是执行依据，六份模板在 templates/rules。报告可选择 json/html/sarif，JSON 为权威，违规默认 exit 0；配置/执行/无法判定/取消为 2/3/4/130。相关配置和报告均应位于源码根外。
+规则 JSON 是执行依据，八份模板在 templates/rules，包括项目引用与 NuGet 直接包 allowlist。多条 allowlist 独立求值且取交集，deny 不被 allow 覆盖；不完整声明继续产生 limitation。报告可选择 json/html/sarif，JSON 为权威，违规默认 exit 0；配置/执行/无法判定/取消为 2/3/4/130。相关配置和报告均应位于源码根外。
 
 详细说明在 docs/cli.md、docs/changes.md、docs/reports.md、docs/rules.md、docs/build-inputs.md；schema 在 schemas。samples/ci 是需要用户自行 opt in 的报告示例，不启用强制门禁。
 
