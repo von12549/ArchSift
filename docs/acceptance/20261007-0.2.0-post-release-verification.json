@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "recordType": "post-release-verification",
+  "version": "0.2.0",
+  "checkedAtUtc": "2026-10-07T04:05:31.1705896+00:00",
+  "status": "pass",
+  "release": {
+    "tagName": "v0.2.0",
+    "targetCommit": "528ebb1237256018e3ca556919d25908c9b5c92d",
+    "zipSha256": "ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8",
+    "assetCount": 3,
+    "draft": false,
+    "prerelease": false
+  },
+  "gates": [
+    {
+      "id": "release-asset-identity",
+      "status": "pass",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-assets-20261007T025601Z-c0b8a456"
+    },
+    {
+      "id": "published-package-behavior",
+      "status": "pass",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-package-20261007T025832Z-c8cfcabe"
+    },
+    {
+      "id": "cross-platform-source",
+      "status": "pass",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-cross-platform-20261007T030239Z-a9f36764"
+    },
+    {
+      "id": "hosted-ci-and-sample",
+      "status": "pass",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-ci-20261007T031349Z-69104bbe"
+    },
+    {
+      "id": "synthetic-ui-manual",
+      "status": "pass",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-ui-20261007T031846Z-73eb6b0b"
+    },
+    {
+      "id": "ifx-declared-discovery",
+      "status": "expected-partial",
+      "exitCode": 4,
+      "evidenceRoot": "D:\\ArchSift-lab\\runs\\ifx-discovery-69badf0ccd9c4c9d96b6c1d139229917"
+    },
+    {
+      "id": "ifx-known-edge",
+      "status": "pass",
+      "execution": "partial",
+      "compliance": "noncompliant",
+      "exitCode": 4,
+      "evidenceRoot": "D:\\ArchSift-lab\\runs\\post-release-ifx-known-edge-998643a947a24e27b7efc337252ae527"
+    },
+    {
+      "id": "ifx-ui-manual",
+      "status": "pass-with-offline-recovery",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-ifx-ui-20261007T035302Z-c8a6cb2e"
+    },
+    {
+      "id": "final-safety-audit",
+      "status": "pass",
+      "evidenceRoot": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-final-audit-20261007T040531Z-8841f57c"
+    }
+  ],
+  "testTotals": {
+    "localWindows": {
+      "total": 109,
+      "passed": 109,
+      "failed": 0
+    },
+    "localLinux": {
+      "total": 107,
+      "passed": 107,
+      "failed": 0
+    },
+    "hostedWindows": {
+      "total": 109,
+      "passed": 109,
+      "failed": 0
+    },
+    "hostedLinux": {
+      "total": 109,
+      "passed": 109,
+      "failed": 0
+    }
+  },
+  "manualOperator": {
+    "operatorIndependentOfImplementation": true,
+    "helpLevel": "L1",
+    "confidence": 4,
+    "syntheticUiPassed": true,
+    "realIfxUiPassed": true
+  },
+  "realIfx": {
+    "targetRoot": "D:\\IFX-10-Root\\IFX-New",
+    "targetHead": "64ef2674c57e6cf9031481d6d4410cca55b0dad5",
+    "projectCount": 105,
+    "assemblyCount": 0,
+    "sourceBound": false,
+    "execution": "partial",
+    "compliance": "noncompliant",
+    "exitCode": 4,
+    "executionErrorCount": 0,
+    "ruleId": "post-release-ifx-known-edge-01",
+    "findingSource": "src/BuildingBlocks/IFX.Application.Primitives/IFX.Application.Primitives.csproj",
+    "findingTarget": "src/BuildingBlocks/IFX.Domain.Primitives/IFX.Domain.Primitives.csproj",
+    "uiCliCoreParity": true,
+    "officialSarifSchemaPassed": true,
+    "targetBuildInvoked": false,
+    "restoreInvoked": false,
+    "ifxApplicationExecuted": false
+  },
+  "hostedCi": {
+    "runId": 37511164383,
+    "headSha": "528ebb1237256018e3ca556919d25908c9b5c92d",
+    "conclusion": "success",
+    "authenticatedFreshArtifactDownload": false,
+    "testCountsFromRetainedFinalRunArchive": true,
+    "liveArtifactMetadataAndDigestsChecked": true,
+    "actionlint": "not-available",
+    "consumerWorkflowExecuted": false,
+    "requiredCheckRegistered": false,
+    "codeScanningEnabled": false
+  },
+  "safety": {
+    "hostStateEqual": true,
+    "hostStateSha256": "9bb5548523dbb22f6dbacf9903a3b67c4f6b1ee266bf0445e39a3769cbe0531d",
+    "productRepositoryHeadEqual": true,
+    "productPreexistingModificationPreserved": "docs/acceptance/20261007-w08-completion.md",
+    "ifxRepositoryHeadEqual": true,
+    "ifxRepositoryStatusEqual": true,
+    "packageProcessCount": 0,
+    "knownUiListenerCount": 0,
+    "matchingDotnetSdkContainerCount": 0,
+    "destructiveCleanupPerformed": false,
+    "evidencePreserved": true
+  },
+  "criticalEvidence": {
+    "count": 16,
+    "manifest": "D:\\ArchSift-lab\\evidence\\post-release-0.2.0-final-audit-20261007T040531Z-8841f57c\\critical-evidence-manifest.json",
+    "manifestSha256": "58c618d63b1d9490a30953fcd31fcf9d7cb51b9aa80edcbe5c808fd376da938e"
+  },
+  "preservedHarnessFailures": [
+    "windows-command-line-length-before-child-start",
+    "synthetic-ui-empty-readiness-log-regex-null-input",
+    "synthetic-ui-token-versus-session-fragment-expectation",
+    "synthetic-ui-finalizer-missing-packageRoot-property",
+    "real-ifx-ui-finalizer-completed-versus-partial-state-filter"
+  ],
+  "limitations": [
+    "The package manifest records sourceDirty=true and productSourceDirty=false because a pre-existing W08 documentation change was excluded from product inputs.",
+    "Fresh authenticated CI artifact download was unavailable; live artifact metadata and digests were checked, while test totals came from the retained final-run archive.",
+    "No fresh post-release actionlint run was available.",
+    "The consumer workflow, required check registration, and code scanning were not executed or enabled.",
+    "Real IFX remained source-unbound with zero assemblies, so its accurate result is partial rather than completed compliance.",
+    "The real-IFX UI in-memory job summary was not retained after shutdown; recovery used the saved authoritative reports, exact packaged source semantics, matching CLI input identity, and operator observation."
+  ],
+  "acceptanceConclusion": "The published ArchSift 0.2.0 release is verified within the documented release scope. Deferred consumer-policy and source-bound real-IFX claims remain deferred."
+}

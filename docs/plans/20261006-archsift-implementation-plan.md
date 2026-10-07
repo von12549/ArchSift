@@ -394,6 +394,7 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-07 | W08 自动验收/人工入口 | 92 项回归、host safety、五次候选性能、self-contained CLI/Worker/UI 无 SDK 路径 smoke 通过；候选 ZIP/hash/许可已归档；见 [W08 准备](../acceptance/20261007-w08-readiness.md) |
 | 2026-10-07 | W08 真实 IFX/A10/最终清理 | 105 项目声明发现、已知引用违规、fixture 与真实 IFX UI、独立操作员 confidence 4/5（最高 L2）及最终零残留审计通过；见 [W08 完成报告](../acceptance/20261007-w08-completion.md)；W08 COMPLETE，W09/W10 依赖已满足但尚未开始 |
 | 2026-10-07 | 发布后下一目标登记 | 用户要求将 W08 的目标上下文、操作等待/JSON 时机、残留 UI 进程、大范围展示与术语反馈，以及项目引用/NuGet 允许列表、冲突和例外确定性纳入后续；登记为 W11 候选，仅在 W09/W10、发布和发布后验证完成后另行启动 |
+| 2026-10-07 | 0.2.0 发布后验收 | 正式三资产、发布包行为、固定源码 Windows/Linux、最终托管 CI、合成 UI、真实 IFX 已知违规与人工 UI、三格式报告及最终零残留审计通过；验证器失败与 CI/partial 限制保留；见 [0.2.0 发布后验收](../acceptance/20261007-0.2.0-post-release-verification.md)；发布后验收 PASS，W11 仍未启动 |
 
 ## 参考资料
 
