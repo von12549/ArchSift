@@ -1,6 +1,6 @@
 # W11 IFX allowlist 现场复核任务
 
-状态：`COMPLETE / PASS`。W11 自动化门禁、真实 IFX CLI allowlist、信息层级修正后的独立人工 UI 复核及最终安全审计均已通过；完整结论见 [W11 完成记录](20261007-w11-allowlists-ui.md)。本任务及下列命令仅作审计历史保留，不要重复执行；W11 尚未提交、推送或发布。
+状态：`COMPLETE / PASS`。W11 自动化门禁、真实 IFX CLI allowlist、信息层级修正后的独立人工 UI 复核及最终安全审计均已通过；完整结论见 [W11 完成记录](20261007-w11-allowlists-ui.md)。本任务及下列命令仅作审计历史保留，不要重复执行。用户随后另行授权，W11 产品源码已作为 [0.3.0](../releases/0.3.0-publication.md) 提交、推送和发布。
 
 目标固定为 `D:\IFX-10-Root\IFX-New`、入口 `IFX.sln`、HEAD `64ef2674c57e6cf9031481d6d4410cca55b0dad5`、`existing / net10.0 / Debug`。脚本在任何产品执行前拒绝非预期 HEAD 或有普通改动的 IFX 工作区。它不 build/restore IFX，不执行 IFX 应用，不访问 Guard，不修改持久环境或 Profile；规则、报告、日志和结果仅写到 `D:\ArchSift-lab\runs\w11-ifx-allowlists-*`。
 

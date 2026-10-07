@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "version": "0.3.0",
+  "status": "accepted",
+  "sourceCommit": "d1b1d7c325f02c1f1b81abda376e9463de71ea78",
+  "sourceDirty": false,
+  "productInputsSha256": "76eae61ae48cf9e432f71e5756be91110fc0452c943db29dd9369c88132ff7fa",
+  "productSourceDirty": false,
+  "package": {
+    "file": "archsift-0.3.0-win-x64.zip",
+    "bytes": 88917483,
+    "sha256": "0202e9734ec990474c415d4152274db93337a768e51837ef968fc4b539e44c79",
+    "rid": "win-x64",
+    "selfContained": true,
+    "manifestEntries": 611,
+    "manifestSelfHashOmitted": true,
+    "frozenManifestState": "candidate",
+    "releaseBuildId": "release-3b77c6da8619456b903b7b9656c7bc34",
+    "smokeRunId": "smoke-c4743f164e934c97b055e152101fce62",
+    "smokeCheckCount": 14,
+    "officialSarifSchemaPassed": true,
+    "nativeCliWorkerUiPassed": true,
+    "nativeChangesWithGitWithoutSdkPassed": true,
+    "performancePassed": true,
+    "hostStateEqual": true
+  },
+  "development": {
+    "runId": "development-d399a3d2ca8041e58fb5cd71f3d818a4",
+    "sdk": "10.0.303",
+    "configuration": "Debug",
+    "testsTotal": 130,
+    "testsPassed": 130,
+    "testsFailed": 0,
+    "templateValidateRenderPassed": 16,
+    "hostStateEqual": true
+  },
+  "w11": {
+    "completionRecord": "docs/acceptance/20261007-w11-allowlists-ui.md",
+    "finalSafetyAuditId": "w11-final-safety-audit-1c8087f725b645678ee8776c27e8b963",
+    "finalSafetyAuditStatus": "pass",
+    "independentOperatorHelpLevel": "L1",
+    "independentOperatorConfidence": 4
+  },
+  "ci": {
+    "runId": 37610418442,
+    "url": "https://github.com/von12549/ArchSift/actions/runs/37610418442",
+    "headSha": "d1b1d7c325f02c1f1b81abda376e9463de71ea78",
+    "conclusion": "success",
+    "windowsPassed": 130,
+    "linuxPassed": 130,
+    "failed": 0,
+    "other": 0,
+    "retainedArtifactFileCount": 108,
+    "retainedArtifactManifestSha256": "253259b9aeb785c110ca6f9d495d012c17bee4e41b51cc292b61da0fd91d2d13",
+    "windowsArtifact": {
+      "id": 11478041060,
+      "digest": "sha256:05bc95b5f48924d60e966b84dec473ed8873492fa995dfd72630089b4a9a3515"
+    },
+    "linuxArtifact": {
+      "id": 11477412157,
+      "digest": "sha256:a873eb4c54c786057195c03643b63478052fe0bc4b0f9354740a4fb33d2b7ef4"
+    }
+  },
+  "initialSmokeFailure": {
+    "preserved": true,
+    "runId": "smoke-6e079d88627f4f2fb128186cd042f8f1",
+    "reason": "The frozen 0.2.0 version-dependent input identity did not match 0.3.0.",
+    "observedAnalysisMilliseconds": 136,
+    "analysisMillisecondsLimit": 700,
+    "thresholdsChanged": false,
+    "resolutionCommit": "d1b1d7c325f02c1f1b81abda376e9463de71ea78"
+  },
+  "license": "MIT",
+  "thirdPartyNoticesPreserved": true,
+  "limitations": [
+    "Project allowlists cover resolvable direct project references only.",
+    "NuGet allowlists cover declared direct package IDs only; no transitive dependency, version-range or online vulnerability claim.",
+    "Incomplete declarations and unbound assemblies remain partial or inconclusive rather than compliant.",
+    "No Linux Web UI or Linux self-contained distribution claim.",
+    "No NuGet tool, fail-on, required checks, enforced consumer CI or automatically generated approved policy."
+  ]
+}

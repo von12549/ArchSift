@@ -4,7 +4,7 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W11 已完成，0.2.0 已正式发布并通过发布后验收；Windows/Linux 各 109 项 CI、固定 ZIP/SARIF/真实 IFX/安全门禁均有证据。两轮 CI、验证器失败及 W11 人工流程/审计器失败历史保留。W11 的设计、实现、130 项自动回归、真实 IFX CLI、独立人工 UI 和最终安全审计均已通过；当前 `W11 COMPLETE`，用户已授权将该范围以 0.3.0 提交、推送和发布，正式资产尚待本次发布门禁固定。
+状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`，未授权或开始新的工作包。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -399,6 +399,7 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-07 | W11 启动与设计门禁 | 用户在发布后验收提交并推送后授权启动 W11；先冻结新增项目引用/NuGet allowlist、交集与 deny 优先、稳定例外归因、旧 schemaVersion 1 兼容及完整测试矩阵；见 [W11 允许策略决议](../decisions/20261007-w11-policy-composition.md) |
 | 2026-10-07 | W11 自动实现门禁 | schemaVersion 1 增加两个兼容分支及 JSON/Markdown/UI 模板；Core 支持封闭项目/NuGet 直接依赖策略和稳定例外归因；HTML/UI 显示例外 ID/理由；UI 固定每个 job 的目标快照并增加大范围筛选/折叠与安全关闭；首次 IFX UI 复核准确指出项目卡片已折叠但 105 条 coverage limitation 仍展开，保留为 NEEDS FIX 后改为可见计数/影响说明加按需展开；操作员随后要求进一步区分项目、规则结果、违规证据和覆盖限制，现已拆为四个结果语义区及独立项目清单区，桌面/480px 合成视觉验证通过且窄屏无横向溢出；SDK 10.0.303、Debug、离线 restore/build 0 警告错误，97 unit + 31 integration + 2 architecture 全通过，8 个模板独立校验/渲染通过，主机状态一致；最终自动证据 `D:\ArchSift-lab\runs\development-53b4733726dc4624a6a46b063d9f4997`；真实 IFX CLI 已通过，W11 等待新的短 UI 复核与最终安全审计 |
 | 2026-10-07 | W11 人工 UI 与最终关闭 | 真实 IFX 最终 UI 显示 105 项目、0 程序集、`partial / noncompliant / exit 4`、两条规则/两条 finding 与默认折叠的 105 条 limitation；信息区分、项目筛选、窄屏和三格式入口由独立操作员以 L1、confidence 4/5 通过。最终审计精确清理一个弃用会话残留 PID/端口后，自动/CLI/UI/report/SARIF、产品与 IFX 工作树、宿主环境、进程/端口/容器及 24 份关键证据全部通过；见 [W11 完成记录](../acceptance/20261007-w11-allowlists-ui.md)；W11 COMPLETE，未提交、推送或发布 |
+| 2026-10-07 | 0.3.0 正式发布 | tag `v0.3.0` 固定源码 `d1b1d7c`；Windows/Ubuntu 各 130/130 CI；88,917,483-byte Windows x64 ZIP SHA-256 `0202e9734ec990474c415d4152274db93337a768e51837ef968fc4b539e44c79`，三项远程资产 digest/下载字节一致，实际下载包完整 smoke、官方 SARIF schema、性能及宿主状态通过；见 [0.3.0 发布记录](../releases/0.3.0-publication.md)；PUBLISHED / VERIFIED |
 
 ## 参考资料
 

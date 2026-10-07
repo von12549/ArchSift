@@ -2,7 +2,7 @@
 
 独立的本地 .NET 架构与依赖分析工具。`0.3.0` 包含项目发现、八类规则（含项目引用与 NuGet 直接包 allowlist）、真实 ArchUnitNET、JSON/HTML/SARIF、Git 两端/工作区比较和 loopback UI。Windows x64 自包含分发，Linux CLI 已验证；无 Guard 安装前置。ArchSift 使用 [MIT 许可](LICENSE)，第三方许可单独保留。
 
-[下载 0.3.0](https://github.com/von12549/ArchSift/releases/tag/v0.3.0)；先核对 release 的 SHA256SUMS.txt。W11 实现与人工验收见 [0.3.0 范围记录](docs/acceptance/20261007-w11-allowlists-ui.md)，正式资产身份将在 [发布记录](docs/releases/0.3.0-publication.md) 中固定。
+[下载 0.3.0](https://github.com/von12549/ArchSift/releases/tag/v0.3.0)；先核对 release 的 SHA256SUMS.txt。W11 实现与人工验收见 [0.3.0 范围记录](docs/acceptance/20261007-w11-allowlists-ui.md)，正式资产与下载回验见 [发布记录](docs/releases/0.3.0-publication.md)。
 
 ## 开发与验证
 
