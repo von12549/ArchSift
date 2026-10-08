@@ -1,22 +1,22 @@
 # template-project-reference-allowlist
 
-此文件是 JSON 的只读阅读投影；编辑它不会改变执行规则。
+This is a read-only projection of JSON. Editing it does not change executable rules.
 
-来源：project-reference-allowlist.json；版本：1.0.0；SHA-256：08027e31934c89aa32e4614f081b916942fffff6e6b782776d79862bc1773e6e
+Source: project-reference-allowlist.json; version: 1.0.0; SHA-256: ecb9d5402a7e5a7937c84b282e3b66da7b915960f8f8210bf91c24069b6b373d
 
-project-reference-allowlist 模板；只有明确列出的直接项目引用目标才被允许。
+project-reference-allowlist template. Review selectors and policy reasons before use.
 
 ## project-reference-allowlist-01
 
-类型：project-reference-allowlist；启用：true；severity：warning
+Type: project-reference-allowlist; enabled: true; severity: warning
 
-范围：project / glob / \*\*；allowEmpty=false
+Scope: project / glob / \*\*; allowEmpty=false
 
-理由：请按实际架构政策填写允许边界及理由。
+Reason: Describe the intended architecture policy.
 
-- source：{           "kind": "project",           "match": "glob",           "value": "src/Application/\*\*"         }
-- allowedTargets：\[           {             "kind": "project",             "match": "glob",             "value": "src/Domain/\*\*"           }         \]
+- source: {           "kind": "project",           "match": "glob",           "value": "src/Application/\*\*"         }
+- allowedTargets: \[           {             "kind": "project",             "match": "glob",             "value": "src/Domain/\*\*"           }         \]
 
-## 例外
+## Exceptions
 
-无。
+None.

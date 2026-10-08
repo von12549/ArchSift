@@ -3,10 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace ArchSift.Core;
 
-/// <summary>Evaluates the draft-07 keywords used by the four bundled schemas. No remote schemas are loaded.</summary>
+/// <summary>Evaluates the draft-07 keywords used by the fixed bundled schemas. No remote schemas are loaded.</summary>
 public static class SchemaValidation
 {
-    private static readonly string[] Names = ["ruleset", "config", "report", "assembly-manifest", "comparison"];
+    private static readonly string[] Names = ["ruleset", "config", "report", "assembly-manifest", "comparison", "library", "chain", "chain-diagnostic", "chain-summary"];
 
     public static void Validate(JsonElement value, string name)
     {

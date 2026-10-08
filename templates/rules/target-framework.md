@@ -1,21 +1,21 @@
 # template-target-framework
 
-此文件是 JSON 的只读阅读投影；编辑它不会改变执行规则。
+This is a read-only projection of JSON. Editing it does not change executable rules.
 
-来源：target-framework.json；版本：1.0.0；SHA-256：be2f1d0122215e6e7c59aea0192cdf9882c517ed37c2dbf03ad74eadcbd01219
+Source: target-framework.json; version: 1.0.0; SHA-256: 9e0c29b4f5f8a3eac0d481074d3ab1255d3d9e6a23fef1eb38c47f8812cf36c0
 
-target-framework 模板；启用前调整选择器和理由。
+target-framework template. Review selectors and policy reasons before use.
 
 ## target-framework-01
 
-类型：target-framework；启用：true；severity：warning
+Type: target-framework; enabled: true; severity: warning
 
-范围：project / glob / \*\*；allowEmpty=false
+Scope: project / glob / \*\*; allowEmpty=false
 
-理由：请按实际架构政策填写约束理由。
+Reason: Describe the intended architecture policy.
 
-- allowedFrameworks：\[           "net8.0",           "net9.0",           "net10.0"         \]
+- allowedFrameworks: \[           "net8.0",           "net9.0",           "net10.0"         \]
 
-## 例外
+## Exceptions
 
-无。
+None.

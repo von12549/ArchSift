@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "template-target-framework",
   "version": "1.0.0",
-  "description": "target-framework 模板；启用前调整选择器和理由。",
+  "description": "target-framework template. Review selectors and policy reasons before use.",
   "rules": [
     {
       "id": "target-framework-01",
@@ -21,7 +21,7 @@
         ]
       },
       "severity": "warning",
-      "reason": "请按实际架构政策填写约束理由。"
+      "reason": "Describe the intended architecture policy."
     }
   ],
   "exceptions": []

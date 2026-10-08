@@ -1,22 +1,22 @@
 # template-naming
 
-此文件是 JSON 的只读阅读投影；编辑它不会改变执行规则。
+This is a read-only projection of JSON. Editing it does not change executable rules.
 
-来源：naming.json；版本：1.0.0；SHA-256：a00f30b040920c478587a182c9944e6661abb8ada0d03e2a8871a19f5102125e
+Source: naming.json; version: 1.0.0; SHA-256: 0addf281d2988ff731a899bcb8dd47278832cf64ff9bc6b69a34915b10c29602
 
-naming 模板；启用前调整选择器和理由。
+naming template. Review selectors and policy reasons before use.
 
 ## naming-01
 
-类型：naming；启用：true；severity：warning
+Type: naming; enabled: true; severity: warning
 
-范围：project / glob / \*\*；allowEmpty=false
+Scope: project / glob / \*\*; allowEmpty=false
 
-理由：请按实际架构政策填写约束理由。
+Reason: Describe the intended architecture policy.
 
-- subjectKind：project
-- requiredName：{           "match": "glob",           "value": "Sample.\*"         }
+- subjectKind: project
+- requiredName: {           "match": "glob",           "value": "Sample.\*"         }
 
-## 例外
+## Exceptions
 
-无。
+None.

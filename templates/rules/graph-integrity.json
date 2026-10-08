@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "template-graph-integrity",
   "version": "1.0.0",
-  "description": "graph-integrity 模板；启用前调整选择器和理由。",
+  "description": "graph-integrity template. Review selectors and policy reasons before use.",
   "rules": [
     {
       "id": "graph-integrity-01",
@@ -17,7 +17,7 @@
         "check": "resolved-references"
       },
       "severity": "warning",
-      "reason": "请按实际架构政策填写约束理由。"
+      "reason": "Describe the intended architecture policy."
     }
   ],
   "exceptions": []

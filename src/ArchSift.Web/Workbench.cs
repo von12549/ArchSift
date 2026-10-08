@@ -38,12 +38,15 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             { context.Response.StatusCode = 500; await context.Response.WriteAsJsonAsync(new { error = error.Message }); }
         });
         app.UseDefaultFiles(); app.UseStaticFiles();
-        app.MapGet("/api/config", () => Results.Json(new { config = current, rulesDirectory }, JsonContract.Options));
+        app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory }, JsonContract.Options));
         app.MapPost("/api/config", async (HttpContext context) =>
         {
             using var doc = await JsonDocument.ParseAsync(context.Request.Body);
             SchemaValidation.Validate(doc.RootElement, "config");
             var config = doc.RootElement.Deserialize<RunConfiguration>(JsonContract.Options)!;
+            if (config.RulesDirectory is { } requestedRules && !Path.GetFullPath(requestedRules).Equals(Path.GetFullPath(rulesDirectory), PathSafety.Comparison))
+                throw new ConfigurationException("The library directory is fixed for this session. Restart with a new config to change it.");
+            config = config with { RulesDirectory = rulesDirectory };
             if (config.Build.AllowNetwork && config.Build.Sources.Length == 0 || !config.Build.AllowNetwork && config.Build.Sources.Length != 0)
                 throw new ConfigurationException("Network restore must be explicitly enabled with explicit sources.");
             PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
@@ -58,8 +61,35 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             return Results.Json(current, JsonContract.Options);
         });
         app.MapGet("/api/templates", () => Results.Json(RuleTemplates.Names.ToDictionary(n => n, n => JsonDocument.Parse(RuleTemplates.Json(n)).RootElement.Clone())));
+        RulesetLibrary Library() => new(rulesDirectory, current.Target.Root);
+        app.MapGet("/api/library", () => Results.Json(new
+        {
+            entries = Library().List(),
+            references = Library().References(),
+            external = current.Rulesets.Where(p => !Path.GetDirectoryName(Path.GetFullPath(p))!.Equals(Path.GetFullPath(rulesDirectory), PathSafety.Comparison)).ToArray()
+        }, JsonContract.Options));
+        app.MapPost("/api/library/import/{name}", async (string name, HttpContext context) =>
+        {
+            using var buffer = new MemoryStream();
+            await context.Request.Body.CopyToAsync(buffer, context.RequestAborted);
+            return Results.Json(Library().Import(name, buffer.ToArray()), JsonContract.Options);
+        });
+        app.MapGet("/api/library/{entryId}/json", (string entryId) =>
+        {
+            var library = Library(); var entry = library.Find(entryId) ?? throw new ConfigurationException("Missing library entry.");
+            return Results.File(library.Export(entryId), "application/json", entry.FileName);
+        });
+        app.MapPost("/api/library/{entryId}/delete", (string entryId) => { Library().Delete(entryId); return Results.Ok(); });
+        app.MapGet("/api/chains", () => Results.Json(new ChainStore(Library()).List(), JsonContract.Options));
+        app.MapGet("/api/chains/{id}", (string id) => Results.Json(new ChainStore(Library()).Read(id), JsonContract.Options));
+        app.MapPost("/api/chains/{id}", async (string id, HttpContext context) =>
+        {
+            using var buffer = new MemoryStream(); await context.Request.Body.CopyToAsync(buffer, context.RequestAborted);
+            new ChainStore(Library()).Save(id, buffer.ToArray()); return Results.Ok();
+        });
+        app.MapPost("/api/chains/{id}/delete", (string id) => { new ChainStore(Library()).Delete(id); return Results.Ok(); });
         app.MapGet("/api/rules", () => Results.Json(Directory.Exists(rulesDirectory)
-            ? Directory.GetFiles(rulesDirectory, "*.json").Select(Path.GetFileName).Order().ToArray() : []));
+            ? Directory.GetFiles(rulesDirectory, "*.json").Select(Path.GetFileName).Where(n => !n!.StartsWith('.')).Order().ToArray() : []));
         app.MapGet("/api/rules/{name}", (string name) =>
         {
             var path = RuleFile(name); var loaded = RuleLoader.Load(path);
@@ -70,17 +100,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             var path = RuleFile(name);
             using var document = await JsonDocument.ParseAsync(context.Request.Body);
             var bytes = Encoding.UTF8.GetBytes(document.RootElement.GetRawText());
-            var rules = RuleLoader.Parse(bytes);
-            RuleLoader.Compose([new(rules, new(rules.Id, rules.Version, ContentHash.Bytes(bytes), path))]);
-            PathSafety.EnsureDisjoint(current.Target.Root, rulesDirectory);
-            Directory.CreateDirectory(rulesDirectory);
-            PathSafety.EnsureNoLinks(path);
-            var temporary = Path.Combine(rulesDirectory, ".save-" + Guid.NewGuid().ToString("N"));
-            await File.WriteAllBytesAsync(temporary, bytes);
-            File.Move(temporary, path, true);
-            if (!current.Rulesets.Contains(path, StringComparer.Ordinal))
+            var saved = Library().Save(name, bytes);
+            if (!current.Rulesets.Contains(path, OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
                 current = current with { Rulesets = [.. current.Rulesets, path] };
-            return Results.Json(new { saved = name, sha256 = ContentHash.Bytes(bytes) });
+            return Results.Json(new { saved = name, sha256 = saved.Identity!.Sha256, entryId = saved.EntryId });
         });
         app.MapGet("/api/rules/{name}/markdown", (string name) =>
         {
@@ -89,25 +112,47 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         });
         app.MapPost("/api/run/{operation}", async (string operation, HttpContext context) =>
         {
-            if (operation is not ("analyze" or "verify" or "draft" or "changes")) return Results.BadRequest(new { error = "Unknown operation." });
+            if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain")) return Results.BadRequest(new { error = "Unknown operation." });
             ChangeRequest request = new();
             using var document = await JsonDocument.ParseAsync(context.Request.Body);
             if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p =>
-                    p.Name != "targetKind" && (operation != "changes" || p.Name is not ("base" or "head"))))
+                    p.Name != "targetKind" && (operation != "changes" || p.Name is not ("base" or "head")) &&
+                    (operation != "ruleset" || p.Name != "entryId") && (operation != "chain" || p.Name != "chainId")))
                 throw new ConfigurationException("Run request contains unsupported fields.");
             var targetKind = document.RootElement.TryGetProperty("targetKind", out var kind) ? kind.GetString() : "real";
             if (targetKind is not ("real" or "fixture")) throw new ConfigurationException("Target kind must be real or fixture.");
             if (operation == "changes") request = new(
                 document.RootElement.TryGetProperty("base", out var @base) && @base.ValueKind != JsonValueKind.Null ? @base.GetString() : null,
                 document.RootElement.TryGetProperty("head", out var head) && head.ValueKind != JsonValueKind.Null ? head.GetString() : null);
-            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "已有运行在进行；先取消或等待完成。" });
             var config = current;
-            var job = new Job(Guid.NewGuid().ToString("N"), operation, config, targetKind); jobs[job.Id] = job;
+            LoadedRuleset? selected = null; PreparedChain? chain = null;
+            if (operation == "ruleset")
+            {
+                if (!document.RootElement.TryGetProperty("entryId", out var entryId) || entryId.ValueKind != JsonValueKind.String)
+                    throw new ConfigurationException("Ruleset verification requires a saved library entry ID.");
+                selected = Library().Capture(entryId.GetString()!);
+                config = config with { Rulesets = [selected.Identity.Path], Output = config.Output with { Formats = ["json", "html", "sarif"] } };
+            }
+            if (operation == "chain")
+            {
+                if (!document.RootElement.TryGetProperty("chainId", out var chainId) || chainId.ValueKind != JsonValueKind.String)
+                    throw new ConfigurationException("Chain verification requires a saved chain ID.");
+                chain = ChainService.Prepare(config, new ChainStore(Library()).Read(chainId.GetString()!), Library(), targetKind!);
+                config = config with { Rulesets = chain.Rulesets.Where(r => r is not null).Select(r => r!.Identity.Path).ToArray() };
+            }
+            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            var job = new Job(Guid.NewGuid().ToString("N"), operation, config, targetKind, selected?.Ruleset.Id ?? chain?.Chain.Id); jobs[job.Id] = job;
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    if (operation == "draft")
+                    if (operation == "chain")
+                    {
+                        var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
+                        job.Chain = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config, chain!, job.Cancel.Token);
+                        job.ExitCode = job.Chain.ExitCode; job.State = job.Chain.Execution;
+                    }
+                    else if (operation == "draft")
                     {
                         var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, job.Cancel.Token);
                         job.Draft = RuleDraftService.Create(snapshot); job.ExitCode = 0; job.State = "completed";
@@ -122,22 +167,24 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
                     else
                     {
                         var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
-                        var outcome = await new AnalysisService(worker.EvaluateAsync).RunAsync(config, operation, job.Cancel.Token);
+                        var service = new AnalysisService(worker.EvaluateAsync);
+                        var outcome = selected is null ? await service.RunAsync(config, operation, job.Cancel.Token)
+                            : await service.RunSelectedAsync(config, selected, job.Cancel.Token);
                         job.Report = outcome.Report; job.ExitCode = outcome.ExitCode;
                         ReportWriter.Save(config, outcome.Report); job.State = outcome.Report.Execution;
                     }
                 }
                 catch (OperationCanceledException) { job.State = "cancelled"; job.ExitCode = 130; }
-                catch (Exception error) { job.Error = error.Message; job.State = "failed"; job.ExitCode = error is ConfigurationException ? 2 : 3; job.Report = null; job.Comparison = null; }
+                catch (Exception error) { job.Report = null; job.Comparison = null; job.Chain = null; job.Error = error.Message; job.ExitCode = error is ConfigurationException ? 2 : 3; job.State = "failed"; }
                 finally { gate.Release(); }
             });
             foreach (var old in jobs.Values.Where(j => j.State != "running").OrderBy(j => j.Created).Take(Math.Max(0, jobs.Count - 20)))
                 if (jobs.TryRemove(old.Id, out var removed)) removed.Cancel.Dispose();
-            return Results.Json(new { jobId = job.Id });
+            return Results.Json(new { jobId = job.Id, context = job.Context, targetKind = job.TargetKind, selection = job.Selection }, JsonContract.Options);
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Report, job.Draft, job.Comparison }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -147,7 +194,14 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         });
         app.MapGet("/api/jobs/{id}/report/{format}", (string id, string format) =>
         {
-            if (!jobs.TryGetValue(id, out var job)) return Results.NotFound();
+            if (!jobs.TryGetValue(id, out var job) || job.State is "running" or "failed") return Results.NotFound();
+            if (job.Chain is { } chain) return format switch
+            {
+                "json" => Results.Text(ChainWriter.Json(chain), "application/json", Encoding.UTF8),
+                "html" => Results.Text(ChainWriter.Html(chain), "text/html", Encoding.UTF8),
+                "sarif" => Results.Text(ChainWriter.Sarif(chain), "application/sarif+json", Encoding.UTF8),
+                _ => Results.BadRequest()
+            };
             if (job.Comparison is { } comparison) return format switch
             {
                 "json" => Results.Text(ComparisonWriter.Json(comparison), "application/json", Encoding.UTF8),
@@ -167,10 +221,25 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         app.MapGet("/api/jobs/{id}/draft", (string id) => jobs.TryGetValue(id, out var job) && job.Draft is not null
             ? Results.Text(JsonSerializer.Serialize(job.Draft, JsonContract.Options), "application/json", Encoding.UTF8)
             : Results.NotFound());
+        app.MapGet("/api/jobs/{id}/child/{entryId}/{format}", (string id, string entryId, string format) =>
+        {
+            if (!jobs.TryGetValue(id, out var job) || job.Chain is null || format is not ("json" or "html" or "sarif")) return Results.NotFound();
+            var entry = job.Chain.Entries.SingleOrDefault(e => e.EntryId == entryId);
+            if (entry?.ReportDirectory is not { } relative) return Results.NotFound();
+            if (entry.Diagnostic is null && job.Chain.AnalysisReports.TryGetValue(entryId, out var report)) return format switch
+            {
+                "json" => Results.Text(ReportWriter.Json(report), "application/json", Encoding.UTF8),
+                "html" => Results.Text(ReportWriter.Html(report), "text/html", Encoding.UTF8),
+                "sarif" => Results.Text(SarifWriter.Json(report), "application/sarif+json", Encoding.UTF8),
+                _ => Results.BadRequest()
+            };
+            var path = PathSafety.Under(job.Chain.Snapshot.OutputDirectory, relative + "/" + (entry.Diagnostic is null ? "report." : "diagnostic.") + format);
+            return Results.File(File.ReadAllBytes(path), format == "html" ? "text/html" : format == "sarif" ? "application/sarif+json" : "application/json", Path.GetFileName(path));
+        });
         app.MapPost("/api/shutdown", () =>
         {
             if (jobs.Values.Any(job => job.State == "running"))
-                return Results.Conflict(new { error = "仍有运行中的任务；请先等待完成或取消。" });
+                return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
             _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); });
             return Results.Accepted();
         });
@@ -183,12 +252,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             throw new ConfigurationException("Rule file must be a JSON filename in the explicit rules directory.");
         return PathSafety.Under(rulesDirectory, name);
     }
-    private sealed class Job(string id, string operation, RunConfiguration context, string targetKind)
+    private sealed class Job(string id, string operation, RunConfiguration context, string targetKind, string? selection)
     {
         public string Id { get; } = id;
         public string Operation { get; } = operation;
         public RunConfiguration Context { get; } = context;
         public string TargetKind { get; } = targetKind;
+        public string? Selection { get; } = selection;
         public DateTimeOffset Created { get; } = DateTimeOffset.UtcNow;
         public CancellationTokenSource Cancel { get; } = new();
         private volatile string state = "running";
@@ -198,5 +268,6 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         public AnalysisReport? Report { get; set; }
         public RuleDraft? Draft { get; set; }
         public ComparisonReport? Comparison { get; set; }
+        public ChainSummary? Chain { get; set; }
     }
 }

@@ -40,6 +40,8 @@ jobs:
             & ./scripts/Prepare-CiFrameworkFeed.ps1 -Feed $feed
             if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift after restore' }
             & ./scripts/Invoke-DevelopmentChecks.ps1 -LocalFeed $feed -LabRoot (Join-Path $env:RUNNER_TEMP 'archsift-evidence') -Configuration Release -VerifyContracts
+            & node ./scripts/Test-WorkbenchLifecycle.mjs
+            if ($LASTEXITCODE -ne 0) { throw 'Workbench lifecycle/locale regression failed' }
           } finally {
             $equal = (Get-ArchSiftHostHash) -ceq $before
             Write-Output "CI final host-state-equal=$equal"

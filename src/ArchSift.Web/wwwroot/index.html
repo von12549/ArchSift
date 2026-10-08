@@ -1,56 +1,64 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ArchSift 架构工作台</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ArchSift workbench</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/workbench.css"><script src="/i18n.js" defer></script><script src="/app.js" defer></script></head>
 <body>
-<header><div class="brand"><span class="mark" aria-hidden="true">▦</span><div><h1>ArchSift</h1><p>.NET 架构工作台</p></div></div><div id="status" role="status" aria-live="polite">准备配置本次检查</div></header>
+<header><div class="brand"><span class="mark" aria-hidden="true">▦</span><div><h1>ArchSift</h1><p data-i18n=".NET architecture workbench">.NET architecture workbench</p></div></div>
+<div class="header-tools"><label><span data-i18n="Language">Language</span><select id="locale" aria-label="Language" data-i18n-aria-label="Language"><option value="en">English</option><option value="zh">中文</option></select></label><button id="shutdown" type="button" data-i18n="Safe shutdown">Safe shutdown</button></div></header>
+<div id="status" role="status" aria-live="polite" data-i18n="Configure a target to begin.">Configure a target to begin.</div>
 <section id="target-context" class="context-strip" aria-labelledby="context-title">
-<div><h2 id="context-title">运行确认 · 当前编辑配置</h2><span id="context-kind" class="context-kind">真实 / 自定义目标</span></div>
-<dl><div><dt>Target root</dt><dd id="context-target"></dd></div><div><dt>Entry</dt><dd id="context-entry"></dd></div><div><dt>Rules</dt><dd id="context-rules"></dd></div><div><dt>Output</dt><dd id="context-output"></dd></div><div><dt>Build</dt><dd id="context-build"></dd></div></dl>
-<p>请在运行前复述并核对以上目标。关闭浏览器不会停止服务；完成后使用“安全关闭 UI 服务”或在启动终端按 Ctrl+C。</p>
+<div><h2 id="context-title" data-i18n="Run context · Edited configuration">Run context · Edited configuration</h2><span id="context-kind" class="context-kind"></span></div>
+<dl><div><dt data-i18n="Target root">Target root</dt><dd id="context-target"></dd></div><div><dt data-i18n="Entry">Entry</dt><dd id="context-entry"></dd></div><div><dt data-i18n="Rules">Rules</dt><dd id="context-rules"></dd></div><div><dt data-i18n="Output">Output</dt><dd id="context-output"></dd></div><div><dt data-i18n="Build">Build</dt><dd id="context-build"></dd></div></dl>
 </section>
+<nav id="section-tabs" aria-label="Workbench sections" data-i18n-aria-label="Workbench sections">
+<button data-panel="target" aria-selected="true" data-i18n="Target configuration">Target configuration</button><button data-panel="rulesets" aria-selected="false" data-i18n="Rulesets">Rulesets</button><button data-panel="chains" aria-selected="false" data-i18n="Chains">Chains</button><button data-panel="results" aria-selected="false" data-i18n="Results">Results</button><button data-panel="history" aria-selected="false" data-i18n="History">History</button>
+</nav>
 <main>
-<aside>
-<section><h2>本次检查范围</h2><form id="config-form">
-<label>目标类别（操作员确认）<select id="target-kind"><option value="real">真实 / 自定义目标</option><option value="fixture">Fixture / 示例目标</option></select></label>
-<label>目标源码根目录<input id="target" required placeholder="D:\项目"></label>
-<label>Solution / 项目入口（根内相对路径）<input id="entry" placeholder="Sample.slnx"></label>
-<div class="pair"><label>目标框架<select id="tfm"><option value="">单框架自动识别</option><option>net8.0</option><option>net9.0</option><option>net10.0</option></select></label><label>配置<select id="configuration"><option>Debug</option><option>Release</option></select></label></div>
-<label>规则 JSON 路径（每行一个）<textarea id="rules-paths" rows="2"></textarea></label>
-<label>报告输出目录（目标根外）<input id="output" required></label>
-<details><summary>程序集与构建</summary>
-<label>产物模式<select id="build-mode"><option value="existing">已有产物；不自动构建</option><option value="isolated">外置快照构建</option></select></label>
-<p id="build-note">已有 DLL 没有来源清单时，仅报告程序集证据。</p>
-<label>Assembly manifest 路径<input id="manifest"></label>
-<label>未绑定 DLL 路径（每行一个）<textarea id="assemblies" rows="2"></textarea></label>
-<label>离线 NuGet feed<input id="feed"></label>
-<label class="toggle"><input id="network" type="checkbox">显式允许联网 restore</label>
-<label>联网 NuGet sources（每行一个）<textarea id="sources" rows="2"></textarea></label>
+<section id="panel-target" class="tab-panel"><h2 data-i18n="Target configuration">Target configuration</h2><form id="config-form">
+<div class="pair"><label><span data-i18n="Target kind">Target kind</span><select id="target-kind"><option value="real" data-i18n="Real / custom target">Real / custom target</option><option value="fixture" data-i18n="Fixture / sample target">Fixture / sample target</option></select></label><label><span data-i18n="Target root">Target root</span><input id="target" required placeholder="D:\Project"></label></div>
+<label><span data-i18n="Solution / project entry (relative to root)">Solution / project entry (relative to root)</span><input id="entry" placeholder="Sample.slnx"></label>
+<div class="pair"><label><span data-i18n="Target framework">Target framework</span><select id="tfm"><option value="" data-i18n="Automatic TFM">Automatic TFM</option><option>net8.0</option><option>net9.0</option><option>net10.0</option></select></label><label><span data-i18n="Configuration">Configuration</span><select id="configuration"><option>Debug</option><option>Release</option></select></label></div>
+<label><span data-i18n="Report output directory (outside target)">Report output directory (outside target)</span><input id="output" required></label>
+<details><summary data-i18n="Assembly and build inputs">Assembly and build inputs</summary>
+<label><span data-i18n="Build mode">Build mode</span><select id="build-mode"><option value="existing" data-i18n="Existing artifacts (no automatic build)">Existing artifacts (no automatic build)</option><option value="isolated" data-i18n="External snapshot build">External snapshot build</option></select></label>
+<p id="build-note" data-i18n="DLLs without a source manifest provide assembly evidence only.">DLLs without a source manifest provide assembly evidence only.</p>
+<label><span data-i18n="Assembly manifest path">Assembly manifest path</span><input id="manifest"></label>
+<label><span data-i18n="Unbound DLL paths (one per line)">Unbound DLL paths (one per line)</span><textarea id="assemblies" rows="2"></textarea></label>
+<label><span data-i18n="Offline NuGet feed">Offline NuGet feed</span><input id="feed"></label>
+<label class="toggle"><input id="network" type="checkbox"><span data-i18n="Explicitly allow network restore">Explicitly allow network restore</span></label>
+<label><span data-i18n="Network NuGet sources (one per line)">Network NuGet sources (one per line)</span><textarea id="sources" rows="2"></textarea></label>
 </details>
-<p class="hint">源目标只读。规则编辑与报告仅写入明确的外置目录。</p>
-<div class="actions"><button id="analyze" type="button">发现项目</button><button id="verify" type="button" class="primary">验证规则</button><button id="cancel" type="button" disabled>取消本次运行</button></div>
-<button id="draft" type="button" class="subtle">生成待审查规则建议</button>
-<details><summary>变更比较</summary>
-<p class="hint">默认完整分析 HEAD 与磁盘工作区最终状态，含暂存、未暂存及选中的未跟踪输入。不切换工作区，也不自动 fetch。</p>
-<div class="pair"><label>基线 commit（默认 HEAD）<input id="change-base" placeholder="留空使用默认比较"></label><label>目标 commit（默认工作区）<input id="change-head" placeholder="显式比较需两端都填写"></label></div>
-<p class="hint">规则变化与覆盖不足不会被算作问题解决。</p>
-<button id="changes" type="button">比较两端完整结果</button>
-</details>
+<details><summary data-i18n="Legacy composed rules and changes">Legacy composed rules and changes</summary>
+<label><span data-i18n="Ruleset JSON paths (one per line)">Ruleset JSON paths (one per line)</span><textarea id="rules-paths" rows="2"></textarea></label>
+<p class="hint" data-i18n="These paths apply to changes and legacy CLI composition. Verify saved cards in Rulesets or Chains.">These paths apply to changes and legacy CLI composition. Verify saved cards in Rulesets or Chains.</p>
+<div class="pair"><label><span data-i18n="Baseline commit (default HEAD)">Baseline commit (default HEAD)</span><input id="change-base"></label><label><span data-i18n="Target commit (default worktree)">Target commit (default worktree)</span><input id="change-head"></label></div>
+<p class="hint" data-i18n="Specify both commits or neither. Policy changes and incomplete coverage do not count as code fixes.">Specify both commits or neither. Policy changes and incomplete coverage do not count as code fixes.</p>
+<button id="changes" type="button" data-i18n="Compare changes">Compare changes</button></details>
+<p class="hint" data-i18n="The target is read-only. Rules, state and reports use external directories.">The target is read-only. Rules, state and reports use external directories.</p>
+<div class="actions"><button id="analyze" type="button" class="primary" data-i18n="Discover projects">Discover projects</button><button id="draft" type="button" data-i18n="Draft candidate rules">Draft candidate rules</button></div>
 </form></section>
-<section><h2>历史运行</h2><div id="history"><p class="hint">完成后在这里保留本次会话历史。</p></div></section>
-<section><h2>服务生命周期</h2><p class="hint">最终 JSON/HTML/SARIF 仅在任务产生报告后可下载。浏览器关闭不等于服务退出。</p><button id="shutdown" type="button">安全关闭 UI 服务</button></section>
-</aside>
-<div class="workspace">
-<section class="scope"><div class="section-head"><h2 id="result-title">项目与结果</h2><div id="downloads"></div></div><div id="results" class="result-stack"><p class="empty">选取目标并发现项目。这里会分区显示运行结论、规则结论、违规证据与覆盖限制。</p></div><div id="project-region" class="result-region project-region" role="region" aria-labelledby="project-region-title" hidden><div class="region-head"><div><span class="region-label">目标清单</span><h3 id="project-region-title">项目与引用</h3></div><span id="project-region-count" class="region-count"></span></div><p class="region-description">这些是被分析对象，不是规则结论、违规证据或覆盖限制。</p><div id="project-tools"><label>筛选项目清单<input id="project-filter" type="search" placeholder="按项目名称、路径或框架筛选"></label><p id="project-count" class="path"></p></div><div id="graph"></div></div></section>
-<section class="editor">
-<div class="section-head"><h2>规则集编辑</h2><span id="rules-directory" class="path"></span></div>
-<div class="pair"><label>已有文件<select id="rule-files"><option value="">新建规则集</option></select></label><label>保存文件名<input id="filename" value="architecture.json"></label></div>
-<div class="pair"><label>规则集 ID<input id="ruleset-id" value="architecture"></label><label>版本<input id="ruleset-version" value="1.0.0"></label></div>
-<label>说明<input id="ruleset-description" value="请审查并填写架构约束"></label>
-<div id="rule-list"></div>
-<div class="actions"><select id="template"><option value="">选择标准模板</option></select><button id="add-rule" type="button">添加规则</button></div>
-<details><summary>例外（保留原 finding，填写规则 ID、范围与理由）</summary><div id="exception-list"></div><button id="add-exception" type="button" class="subtle">添加例外</button></details>
-<div class="actions"><button id="save-rule" class="primary" type="button">校验并保存规则</button><button id="export-md" type="button">导出只读 Markdown</button></div>
-<p id="editor-message" role="status"></p>
-</section>
-</div>
-</main><footer>声明模型与程序集证据分开呈现。覆盖不足显示“无法判定”，不适用与部分完成保持独立；历史结果保留其原始运行身份和目标快照。</footer>
+<section id="panel-rulesets" class="tab-panel" hidden><div class="section-head"><h2 data-i18n="Ruleset library">Ruleset library</h2><span id="rules-directory" class="path"></span></div>
+<div class="actions"><button id="new-ruleset" data-i18n="New ruleset">New ruleset</button><label class="file-action"><span data-i18n="Import Ruleset">Import Ruleset</span><input id="import-rule" type="file" accept=".json,application/json"></label></div>
+<p class="hint" data-i18n="Verify and export use saved bytes. Editor drafts never change a run.">Verify and export use saved bytes. Editor drafts never change a run.</p>
+<div class="library-workspace"><div><div id="library-cards"></div><div id="external-rules"></div></div>
+<details id="editor-panel" class="editor"><summary data-i18n="Ruleset editor">Ruleset editor</summary>
+<div class="pair"><label><span data-i18n="Saved file">Saved file</span><select id="rule-files"><option value="" data-i18n="New ruleset">New ruleset</option></select></label><label><span data-i18n="Filename">Filename</span><input id="filename" value="architecture.json"></label></div>
+<div class="pair"><label><span data-i18n="Ruleset ID">Ruleset ID</span><input id="ruleset-id" value="architecture"></label><label><span data-i18n="Version">Version</span><input id="ruleset-version" value="1.0.0"></label></div>
+<label><span data-i18n="Description">Description</span><input id="ruleset-description"></label><p id="dirty-state" role="status"></p>
+<div id="rule-list"></div><div class="actions"><select id="template"><option value="" data-i18n="Select a standard template">Select a standard template</option></select><button id="add-rule" type="button" data-i18n="Add rule">Add rule</button></div>
+<details><summary data-i18n="Exceptions (rule ID, scope and reason)">Exceptions (rule ID, scope and reason)</summary><div id="exception-list"></div><button id="add-exception" type="button" data-i18n="Add exception">Add exception</button></details>
+<div class="actions"><button id="save-rule" class="primary" type="button" data-i18n="Validate and save">Validate and save</button><button id="export-md" type="button" data-i18n="Export Markdown">Export Markdown</button></div><p id="editor-message" role="status"></p>
+</details></div></section>
+<section id="panel-chains" class="tab-panel" hidden><div class="section-head"><h2 data-i18n="Chains">Chains</h2><button id="new-chain" data-i18n="New chain">New chain</button></div>
+<p class="hint" data-i18n="Entries run independently in order against one frozen target. Missing rulesets are reported; later entries continue.">Entries run independently in order against one frozen target. Missing rulesets are reported; later entries continue.</p>
+<div class="library-workspace"><div id="chain-cards"></div><details id="chain-editor"><summary data-i18n="Chain editor">Chain editor</summary>
+<div class="pair"><label><span data-i18n="Chain ID">Chain ID</span><input id="chain-id"></label><label><span data-i18n="Version">Version</span><input id="chain-version" value="1.0.0"></label></div>
+<label><span data-i18n="Description">Description</span><input id="chain-description"></label>
+<div class="actions"><select id="chain-select" aria-label="Library ruleset" data-i18n-aria-label="Library ruleset"></select><button id="chain-add" data-i18n="Add saved ruleset">Add saved ruleset</button></div>
+<div id="chain-entries"></div><button id="chain-save" class="primary" data-i18n="Save chain">Save chain</button><p id="chain-message" role="status"></p>
+</details></div></section>
+<section id="panel-results" class="tab-panel" hidden><div class="section-head"><h2 id="result-title" data-i18n="Current job · No result">Current job · No result</h2><button id="cancel" type="button" disabled data-i18n="Cancel current job">Cancel current job</button></div><div id="downloads" class="actions"></div>
+<div id="results" class="result-stack"><p class="empty" data-i18n="Discover a target, verify a saved ruleset, or verify a chain.">Discover a target, verify a saved ruleset, or verify a chain.</p></div>
+<div id="project-region" class="result-region project-region" role="region" aria-labelledby="project-region-title" hidden><div class="region-head"><div><span class="region-label" data-i18n="Target inventory">Target inventory</span><h3 id="project-region-title" data-i18n="Projects and references">Projects and references</h3></div><span id="project-region-count" class="region-count"></span></div><p class="region-description" data-i18n="These are analyzed objects, separate from policy results, findings and coverage limitations.">These are analyzed objects, separate from policy results, findings and coverage limitations.</p><div id="project-tools"><label><span data-i18n="Filter project inventory">Filter project inventory</span><input id="project-filter" type="search"></label><p id="project-count" class="path"></p></div><div id="graph"></div></div></section>
+<section id="panel-history" class="tab-panel" hidden><h2 data-i18n="History">History</h2><p class="hint" data-i18n="Historical results keep their original target, policy and run identity.">Historical results keep their original target, policy and run identity.</p><div id="history"></div></section>
+</main><footer data-i18n="Coverage limits remain visible. Passing rules do not imply full source or IFX protection. Closing this page does not stop the service; use Safe shutdown.">Coverage limits remain visible. Passing rules do not imply full source or IFX protection. Closing this page does not stop the service; use Safe shutdown.</footer>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title" data-i18n="Confirm action">Confirm action</h2><p id="confirm-message"></p><div class="actions"><button id="confirm-yes" class="danger" data-i18n="Continue">Continue</button><button id="confirm-no" data-i18n="Cancel">Cancel</button></div></dialog>
 </body></html>

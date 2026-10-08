@@ -1,13 +1,19 @@
-# 声明发现、输入身份与只读边界
+# Declared discovery, build inputs and read-only boundaries
 
-W03 使用 XML/solution 声明模型，不执行 MSBuild，不启动目标程序。支持 SDK-style C# csproj、sln、slnx；范围由 TargetRoot 决定，solution 成员与同范围未列入项目分开报告，外部引用不递归扫描，未解析引用不构造虚假的内部项目。
+Project discovery reads XML/solution declarations without MSBuild or target application execution. Supported inputs are SDK-style C# csproj, sln and slnx under TargetRoot. Solution members and unlisted projects are reported separately; external references are not recursively analyzed and unresolved edges are not invented as internal projects.
 
-入口 entry 为 TargetRoot 内相对 solution/project，必须通过根边界与 reparse-point 检查；输出路径不得与 TargetRoot 相互包含。项目 ID 为相对 csproj 路径，大小写碰撞报错。solution 只提供入口/成员关系，根内项目图仍清点全部支持项目。没有 solution 的 project 入口不宣称完成 solution-membership 检查。
+Entry is a root-relative solution/project path. All paths reject links/reparse points; output and target cannot contain each other. Project IDs are relative csproj paths; case-colliding identities reject. A project-only entry does not prove solution membership.
 
-TFM 采用项目 unconditional literal 声明，或根内最近的 Directory.Build.props literal；条件、表达式、导入、歧义、缺失与不支持 TFM 均记录限制。多 TFM 需显式选择，保留候选列表，不从一端结果外推。NuGet 检查读取直接 PackageReference ID 和可解析的最近 Directory.Packages.props 包版本；ID 大小写不敏感，导入或 conditional version 不做求值。
+Frameworks come from unconditional literal declarations or nearest root-local Directory.Build.props. Conditions, expressions, imports, ambiguity, missing/unsupported TFMs remain limitations. Multi-TFM inputs require an explicit selection; results never imply other frameworks passed. Package checks read direct PackageReference IDs and resolvable nearest Directory.Packages.props literal versions; conditional/imported version facts are not fully evaluated.
 
-统一 InputCapture 记录相对路径、长度及 SHA-256，稳定排序后形成源身份。普通 .git/.vs/.idea/bin/obj/artifacts/.archsift 不参加默认范围；项目显式使用的 Compile/Content/None/EmbeddedResource/AdditionalFiles/Analyzer 输入另外清点，因此显式生成源码或资源不会被普通 bin/obj 排除隐藏。根外、条件、表达式及缺失输入作为限制，不能声称可完整复现。
+InputCapture records relative path, length and SHA-256 in stable order. Ordinary .git/.vs/.idea/bin/obj/artifacts/.archsift directories are excluded. Explicit Compile/Content/None/EmbeddedResource/AdditionalFiles/Analyzer items are separately included, including referenced generated files. Root-external, conditional, expression-based and missing inputs remain limitations.
 
-运行开始/结束可重复 Capture 并 VerifyUnchanged，相关源码新增或保存使身份失效，返回 source-changed-during-analysis；IDE 或普通生成目录变化不影响无关身份。所有路径均检查链接/重解析点，XML 禁用 DTD 与外部 entity resolver。扫描上限为 100000 个文件，超限准确报错，不 silently truncate。
+Relevant source edits/additions invalidate the snapshot; IDE and unrelated generated files do not. XML disables DTD and external entity resolution. A 100000-file ceiling rejects rather than silently truncating.
 
-W05 已另记录构建快照输入、实际 SDK/TFM/Configuration、程序集 SHA-256 与生成方式，Worker 验证 assembly 版本/token 闭包并区分 assemblies-only 与 source-bound。Razor/JSON/lock 也参加保守快照；未求值的构建条件/表达式不会被标为当前源已绑定。标准 SDK isolated 模式不支持未审查任务/导入/自定义输出/包构建脚本或生成器；完整 MSBuild 输入访问轨迹仍 defer。W06 将加入规则/引擎/上下文的完整运行身份和报告。单独源身份仍不能证明任意现有 DLL 对应当前源码。
+Assembly evidence records SDK/TFM/configuration, source/build inputs, DLL hashes and provenance. Worker validation checks assembly version/token closure and distinguishes source-bound from assemblies-only. A DLL's presence alone never proves current-source compliance. Release optimization can remove type dependencies and remains a limitation.
+
+Isolated mode creates an external snapshot and runs a supported standard SDK build. Restore defaults offline with explicit sources. Unreviewed custom tasks/imports/output paths/package build scripts/generators are rejected. Full MSBuild input tracing remains deferred; an isolated build is not a complete sandbox.
+
+Chains capture source/project facts once, freeze ruleset bytes, share captured build/assembly inputs, and record one build-input identity. Hash checks before/after children detect source or build-evidence drift. Drift stops remaining entries and preserves affected/skipped statuses instead of mixing source versions. Source identity, build identity and rule-file identities remain distinct.
+
+The tool never repairs persistent PATH, environment or PowerShell Profiles. Each controlled dotnet child uses isolated DOTNET_CLI_HOME with DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0. Real IFX integration follows reviewed operator steps and external evidence directories.

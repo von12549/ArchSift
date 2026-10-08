@@ -23,7 +23,7 @@ public sealed class EntrypointTests
         var result = await Run("ArchSift.Cli", "archsift", "not-implemented-command");
         Assert.Equal(2, result.Code);
         Assert.Empty(result.Output);
-        Assert.Contains("当前阶段不支持", result.Error);
+        Assert.Contains("Unsupported command", result.Error);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public sealed class EntrypointTests
     {
         var result = await Run("ArchSift.Web", "ArchSift.Web");
         Assert.Equal(2, result.Code);
-        Assert.Contains("W07", result.Error);
+        Assert.Contains("Local workbench", result.Error);
     }
 
     private static async Task<(int Code, string Output, string Error)> Run(

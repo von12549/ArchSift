@@ -26,9 +26,11 @@ $start.RedirectStandardError=$true
 $start.ArgumentList.Add((Join-Path $root 'src/ArchSift.Web/bin/Debug/net10.0/ArchSift.Web.dll'))
 $start.ArgumentList.Add('--config')
 $start.ArgumentList.Add([IO.Path]::GetFullPath($Config))
-$start.Environment['DOTNET_CLI_HOME']=(Join-Path $root 'artifacts/ui-preview/cli-home')
+$start.Environment['DOTNET_CLI_HOME']=(Join-Path ([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($Config))) 'cli-home')
 $start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
 $process=[Diagnostics.Process]::Start($start)
+if((State-Hash)-cne$before){if(-not$process.HasExited){$process.Kill($true)};throw 'Host drift after preview launch; no repair performed.'}
+Write-Output ('preview-baseline-sha256='+$before+' launch-host-state-equal=True')
 $errors=$process.StandardError.ReadToEndAsync()
 try {
     while(-not$process.HasExited){

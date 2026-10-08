@@ -38,7 +38,7 @@ public sealed class AnalysisCommandTests
             Assert.Equal(0, verify.ExitCode);
             report = JsonSerializer.Deserialize<AnalysisReport>(verify.Output, JsonContract.Options)!;
             Assert.Equal("noncompliant", report.Compliance);
-            Assert.Contains("生效目标", verify.Error);
+            Assert.Contains("Effective target", verify.Error);
             Assert.True(File.Exists(Path.Combine(output, report.RunMetadata.RunId, "report.html")));
             Assert.Equal("2.1.0", JsonNode.Parse(File.ReadAllText(Path.Combine(output, report.RunMetadata.RunId, "report.sarif")))!["version"]!.GetValue<string>());
             var direct = await new AnalysisService().RunAsync(ConfigLoader.Load(config), "verify");

@@ -31,6 +31,7 @@ public static class SafeProcess
         start.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         start.Environment["DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE"] = "1";
         start.Environment["DOTNET_NOLOGO"] = "1";
+        start.Environment["DOTNET_CLI_UI_LANGUAGE"] = "en-US";
         start.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         start.Environment["NUGET_CERT_REVOCATION_MODE"] = "offline";
         if (environment is not null)
