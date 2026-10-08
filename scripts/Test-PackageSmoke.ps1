@@ -118,7 +118,9 @@ try {
         $chainBody=@{schemaVersion=1;id='smoke-chain';version='1';description='Native independent policies';entries=@(@{entryId=$firstCard.entryId},@{entryId=$secondCard.entryId})}
         [void](Native-Post 'chains/smoke-chain' $chainBody)
         $chainJob=Native-Job 'chain' @{chainId='smoke-chain';targetKind='fixture'}
-        if($chainJob.exitCode-ne0-or$chainJob.chain.entries.Count-ne2-or$chainJob.chain.projectCount-ne100){throw 'Native chain summary failed'}
+        # The preceding changes scenario added New.csproj: one shared target now has 101 projects, not 100 or 202.
+        if($chainJob.exitCode-ne0-or$chainJob.chain.entries.Count-ne2-or$chainJob.chain.projectCount-ne101){throw 'Native chain summary failed'}
+        if(@($chainJob.chain.entries|Where-Object {$_.coverage.projectCount-ne101}).Count){throw 'Native child project coverage differs from the shared target'}
         $chainPath=Join-Path $library 'chains/smoke-chain.json'
         [void](Run-Package 'chain-without-sdk' $cli @('chain','verify','--config',$chainConfig,'--chain',$chainPath,'--target-kind','fixture') 0)
         [void](Run-Package 'legacy-duplicate-rule-ids' $cli @('verify','--config',$chainConfig) 2)
