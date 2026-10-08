@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "example-chain",
+  "version": "1.0.0",
+  "description": "Two independent checks",
+  "entries": [
+    {
+      "entryId": "11111111111111111111111111111111"
+    },
+    {
+      "entryId": "22222222222222222222222222222222"
+    }
+  ]
+}

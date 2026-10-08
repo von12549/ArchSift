@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "kind": "chain-entry-diagnostic",
+  "entryId": "11111111111111111111111111111111",
+  "code": "missing-ruleset",
+  "message": "Selected ruleset is unavailable."
+}

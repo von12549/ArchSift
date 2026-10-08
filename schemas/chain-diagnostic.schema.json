@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:chain-diagnostic:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "chain-entry-diagnostic"
+    },
+    "entryId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "code": {
+      "enum": [
+        "missing-ruleset",
+        "invalid-ruleset",
+        "child-error"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "entryId",
+    "code",
+    "message"
+  ]
+}

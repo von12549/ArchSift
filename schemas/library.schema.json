@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:library:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "fileName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rulesetId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "entryId",
+          "fileName",
+          "rulesetId",
+          "deleted"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "entries"
+  ]
+}

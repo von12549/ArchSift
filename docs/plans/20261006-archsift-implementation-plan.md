@@ -4,7 +4,9 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`，未授权或开始新的工作包。
+状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`。2026-10-09 已登记 [0.4.0 改进计划](20261009-archsift-0.4.0-improvement-plan.md)，状态为 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`；同日用户授权在该计划范围内合理设计 UI 逻辑和布局，要求功能分区明确、信息简洁明要、颜色区分明显，已纳入 0.4-A 设计约束及后续视觉验收；用户已授权在新分支 `codex/archsift-0.4.0` 执行全部 0.4.0 开发计划及后续提交、推送、PR、合并、发布；当前 0.4-A 契约与 UX 设计已冻结（十份示例独立 schema 校验通过），0.4-B 开始，仍遵守各项验收门禁与人工真实集成流程。
+
+后续交接：2026-10-09 用户授权在 0.4.0 验收完成后通知 Codex Local Project `IFX-Guard-Test-Project`，由该项目编写 ArchSift–IFX 的 Agent 自动测试计划；已追加到 0.4.0 改进计划末尾。当前 `PENDING ACCEPTANCE / NOT NOTIFIED`，本项授权为验收后的通知与测试计划编写，尚未启动测试执行。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
