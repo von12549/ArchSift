@@ -18,6 +18,8 @@
 
 0.5.0 开发进度：新 CLI 转发与私有父生命周期通道已复现并修复静默启动；独立 Setup、schema/兼容性、所有权、包核验、安全解压、配置、备份、并存升级、回退和中断恢复已实现。Release 178 项、八模板及 Node 检查通过，宿主哈希相等；真实包、固定源码 CI、独立下载、人工终端与真实 IFX 门禁尚待关闭。版本文档更新为 0.5.0 开发态，0.4.0 指南另存且旧资产/验收不改。详见 [开发验收](../acceptance/20261010-0.5-setup-development.md)。
 
+0.5.0 自动门禁关闭：精确产品 `c4010d8` 的 Windows/Ubuntu 各 179 项（含运行中父进程退出取消 audit）、两次 17 项标准原生 CLI UI/Worker/chain/SARIF/performance ZIP smoke、两次 13 项独立 Setup/旧包接管/升级回退、四项草稿资产 digest 与独立下载 bytes、宿主 equality 全通过。版本化当前/0.4.0 安装指南已随 ZIP 保留。见 [候选就绪](../acceptance/20261010-0.5-candidate-readiness.md)。Draft PR #2 与未公开 release `408066486` 已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED；真实 IFX/人工终端/最终审计和合并发布尚待关闭，用户授权持续有效。
+
 ## 目标与交付边界
 
 ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
