@@ -34,6 +34,8 @@
 
 0.5.0 操作员管道/文件输出已通过：新安装 CLI 管道就绪且安全关闭 exit 0、Web/监听退出；文件 stdout/stderr 的无 token 验收、宿主/IFX/原安装/新配置与包相等。见 [step03c](../acceptance/20261010-0.5-ifx-step03-pipe-file.md)。下一步先建立外置的真实保存状态副本和只读 adopt 计划；随后逐块升级回退、最终审计，尚未合并/发布。
 
+0.5.0 操作员外置副本与只读 adopt 计划已通过：原 0.4.0 的 621 个 payload、2 个规则库文件（含墓碑）及 6 份报告复制并核对，副本配置仅将 rules/reports 重定位至外置根。plan ID `09ab270957afd8f66908da4132df1f293677580cdb5b2b077dd6946ba4d9b47a`，文件 SHA-256 `9921ac788fe415556b3bf3919d70517365d2dc47391b6fc6ec009824801ef7e5`；宿主/IFX/原安装/报告相等，未 adopt/upgrade/分析/build。见 [step04a](../acceptance/20261010-0.5-ifx-step04a-copy-plan.md)。下一块只在该外置副本 apply 已审阅 adopt 计划、inspect，并生成只读 upgrade 计划；其后再逐块升级/回退和最终审计。未合并/发布。
+
 ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
 
 首个完整版本为 0.1.0，覆盖六类规则、项目分析、项目验证、ArchUnitNET 程序集依赖检查、CLI、本机 Web UI、JSON/HTML 报告和本地 Windows x64 ZIP。后续 0.2.0 覆盖变更验证、SARIF、Linux CLI 验证与非阻断 CI 样例；各版本均以验收结果交付，不预设日期。
