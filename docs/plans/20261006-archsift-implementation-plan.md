@@ -36,6 +36,8 @@
 
 0.5.0 操作员外置副本与只读 adopt 计划已通过：原 0.4.0 的 621 个 payload、2 个规则库文件（含墓碑）及 6 份报告复制并核对，副本配置仅将 rules/reports 重定位至外置根。plan ID `09ab270957afd8f66908da4132df1f293677580cdb5b2b077dd6946ba4d9b47a`，文件 SHA-256 `9921ac788fe415556b3bf3919d70517365d2dc47391b6fc6ec009824801ef7e5`；宿主/IFX/原安装/报告相等，未 adopt/upgrade/分析/build。见 [step04a](../acceptance/20261010-0.5-ifx-step04a-copy-plan.md)。下一块只在该外置副本 apply 已审阅 adopt 计划、inspect，并生成只读 upgrade 计划；其后再逐块升级/回退和最终审计。未合并/发布。
 
+0.5.0 操作员外置副本 adopt 已通过：receipt `77534c6576a1405d93fffb69031f3893`，副本选中 0.4.0，inspect verified/pending=0；保存状态、宿主/IFX/原安装/报告均相等。只读 0.5.0 upgrade 计划 ID `b66f8bb972f168bbfea6cac91da4b7e47b794d0bbd4cdc458c05b2afe5b620bf`、文件 SHA-256 `69bc2c984d3d1849713b3795b1c990dc6d76de11bf8d5a72177735aa0fe06332` 已审阅，smoke=true，尚未 apply/分析/build。见 [step04b](../acceptance/20261010-0.5-ifx-step04b-adopt-upgrade-plan.md)。下一块只在副本 apply 升级并核对备份、并存版本及状态；回退和最终审计仍待逐块执行，未合并/发布。
+
 ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
 
 首个完整版本为 0.1.0，覆盖六类规则、项目分析、项目验证、ArchUnitNET 程序集依赖检查、CLI、本机 Web UI、JSON/HTML 报告和本地 Windows x64 ZIP。后续 0.2.0 覆盖变更验证、SARIF、Linux CLI 验证与非阻断 CI 样例；各版本均以验收结果交付，不预设日期。
