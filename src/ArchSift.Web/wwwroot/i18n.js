@@ -241,6 +241,8 @@ const zhTranslations={
   "Version": "版本",
   "Select a standard template": "选择标准模板",
   "Add rule": "添加规则",
+  "Find rule by ID or type": "按规则 ID 或类型查找",
+  "Matching rules: ": "匹配规则：",
   "Exceptions (rule ID, scope and reason)": "例外（规则 ID、范围与理由）",
   "Add exception": "添加例外",
   "Validate and save": "校验并保存",

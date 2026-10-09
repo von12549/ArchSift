@@ -88,7 +88,7 @@ try{
     $listenerGone=@(Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction SilentlyContinue|Where-Object OwningProcess -eq $process.Id).Count-eq0
     $questions=@(
         'Desktop and narrow-screen layouts in English and Chinese: clear sections, concise summary/details, distinct color plus text labels; Language and Safe shutdown aligned',
-        'External rules read-only; both JSON files imported explicitly; 182-rule card bounded and editor hidden until New/Edit; full saved card verified with partial/compliant, 105 limits, zero assemblies and no source binding visible',
+        'External rules read-only; both JSON files imported explicitly; 182-rule card bounded and editor hidden until New/Edit; editor rules default collapsed and ID/type search locates one rule; full saved card verified with partial/compliant, 105 limits, zero assemblies and no source binding visible',
         'Two-entry saved chain verified; entry order, per-child result/downloads and unique 105-project scope understandable',
         'After deleting the subset, chain Verify stayed available and the missing child was shown while the later full child ran',
         'After an invalid target entry submission, current project count/list/title/downloads cleared; prior result remained only in History',
