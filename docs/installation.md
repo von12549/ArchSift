@@ -1,6 +1,6 @@
 # Windows installation and configuration — 0.5.0
 
-**0.5.0 is in development; acceptance/publication are pending.** It adds CLI UI output/lifetime repair and a separate portable setup with install/adopt/upgrade/rollback/recovery. Follow [setup commands and transaction boundaries](setup.md). Until 0.5.0 is published, stable assets remain [0.4.0](releases/0.4.0-publication.md); its [manual guide](installation-0.4.md) preserves original checksums and the launcher workaround.
+**0.5.0 is published and independently downloaded/verified.** It adds CLI UI output/lifetime repair and a separate portable setup with install/adopt/upgrade/rollback/recovery. Obtain the four official assets from the [v0.5.0 Release](https://github.com/von12549/ArchSift/releases/tag/v0.5.0), verify them against the [publication record](releases/0.5.0-publication.md), then follow [setup commands and transaction boundaries](setup.md). The [0.4.0 manual guide](installation-0.4.md) preserves its original checksums and launcher workaround.
 
 ## Requirements
 
@@ -29,7 +29,7 @@ Manual ZIP extraction into an empty version directory remains supported. Create 
 
 ## UI startup and shutdown
 
-Use the selected binary's full path with ui --config and the saved config. CLI forwards stdout/stderr and displays ARCHSIFT_UI=, ARCHSIFT_PID= and waiting state. A private stdin pipe binds Web to its parent. Startup timeout is 30 seconds. Ctrl+C requests shutdown, waits up to 10 seconds, then stops only the owned tree if needed. Parent exit closes the pipe and stops Web. Web cancels and drains current jobs for up to 8 seconds before its owned-tree fallback, retaining completed cancellation evidence when cleanup succeeds. New 0.5.0 package/terminal acceptance is required; historical 0.4.0 evidence is unchanged.
+Use the selected binary's full path with ui --config and the saved config. CLI forwards stdout/stderr and displays ARCHSIFT_UI=, ARCHSIFT_PID= and waiting state. A private stdin pipe binds Web to its parent. Startup timeout is 30 seconds. Ctrl+C requests shutdown, waits up to 10 seconds, then stops only the owned tree if needed. Parent exit closes the pipe and stops Web. Web cancels and drains current jobs for up to 8 seconds before its owned-tree fallback, retaining completed cancellation evidence when cleanup succeeds. The 0.5.0 package and real IFX terminal lifecycle passed acceptance; historical 0.4.0 evidence is unchanged.
 
 Open the complete URL locally; never publish its session fragment. Confirm target/entry/TFM/configuration/build/output/library before actions. Installation-only checks perform no discovery, verification, chains, comparison, drafts, imports or build. Browser library listing can create internal empty registry/lock metadata; preserve existing identity/tombstones.
 

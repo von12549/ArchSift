@@ -1,6 +1,6 @@
 # ArchSift 0.5.0 portable setup
 
-0.5.0 is in development until its [acceptance and release gates](plans/20261010-archsift-0.5.0-plan.md) close. The commands below belong to 0.5.0. The published 0.4.0 ZIP has no setup/upgrade commands. Use only independently verified official assets when a release is available.
+0.5.0 is [published and independently verified](releases/0.5.0-publication.md); its [acceptance and release gates](plans/20261010-archsift-0.5.0-plan.md) are closed with stated limitations. The commands below belong to 0.5.0. The published 0.4.0 ZIP has no setup/upgrade commands. Use independently verified official assets.
 
 `ArchSift.Setup.exe` is a separate self-contained Windows x64 executable. It performs user-writable filesystem installation without elevation, SDK/runtime prerequisites, PATH changes, service registration or target execution. `--notices` prints embedded ArchSift/.NET license and third-party notices. Run PowerShell 7 with `-NoProfile` and use full executable paths.
 
@@ -33,7 +33,7 @@ Explicit adoption records ownership only for the existing package manifest's pay
 & $setup plan adopt --root 'D:\Tools\ArchSift' --version-directory 'D:\Tools\ArchSift\versions\0.4.0' --config 'D:\Tools\ArchSift\config\project.json' > 'D:\Tools\adopt-plan.json'
 ```
 
-Review/save/apply the plan as above. Close the owned UI/CLI first. Unknown or future state schemas reject adoption instead of discarding fields. Real IFX installation remains an operator gate with individually reviewed command blocks.
+Review/save/apply the plan as above. Close the owned UI/CLI first. Unknown or future state schemas reject adoption instead of discarding fields. The 0.5.0 real IFX installation and external-copy upgrade/rollback passed individually reviewed operator blocks; future IFX changes still require their own review.
 
 ## Upgrade and rollback
 
