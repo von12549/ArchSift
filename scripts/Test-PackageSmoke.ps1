@@ -101,7 +101,7 @@ try {
     $chainConfig=Join-Path $run 'chain-config.json'
     $chainSettings=[ordered]@{schemaVersion=1;target=@{root=$fixture};rulesDirectory=$library;rulesets=@($firstPolicy,$secondPolicy);build=@{mode='existing';configuration='Debug'};output=@{directory=(Join-Path $run 'chain-reports');formats=@('json','html','sarif')}}
     [IO.File]::WriteAllText($chainConfig,($chainSettings|ConvertTo-Json -Depth 8))
-    $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=$web;$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true;$start.ArgumentList.Add('--config');$start.ArgumentList.Add($chainConfig);$start.Environment['DOTNET_ROOT']=(Join-Path $run 'no-dotnet');$start.Environment['DOTNET_HOST_PATH']=(Join-Path $run 'no-dotnet/dotnet.exe');$start.Environment['DOTNET_CLI_HOME']=(Join-Path $run 'web-home');$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
+    $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=$cli;$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true;$start.ArgumentList.Add('ui');$start.ArgumentList.Add('--config');$start.ArgumentList.Add($chainConfig);$start.Environment['DOTNET_ROOT']=(Join-Path $run 'no-dotnet');$start.Environment['DOTNET_HOST_PATH']=(Join-Path $run 'no-dotnet/dotnet.exe');$start.Environment['DOTNET_CLI_HOME']=(Join-Path $run 'web-home');$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
     $server=[Diagnostics.Process]::Start($start);$serverError=$server.StandardError.ReadToEndAsync();$url=$null
     try{
         for($lineIndex=0;$lineIndex-lt25;$lineIndex++){$read=$server.StandardOutput.ReadLineAsync();if(-not$read.Wait(10000)){throw 'UI startup timeout'};$line=$read.Result;if($null-eq$line){throw 'UI exited before readiness'};if($line.StartsWith('ARCHSIFT_UI=')){$url=$line.Substring(12);break}}
@@ -129,7 +129,17 @@ try {
         if($missingJob.exitCode-ne4-or$missingJob.chain.entries[0].diagnostic.code-cne'missing-ruleset'-or$missingJob.chain.entries[1].execution-cne'completed'){throw 'Native missing-child continuation failed'}
         [void](Run-Package 'chain-missing-then-success' $cli @('chain','verify','--config',$chainConfig,'--chain',$chainPath) 4)
         if($SarifSchema){foreach($file in Get-ChildItem -LiteralPath $chainSettings.output.directory -Recurse -File -Filter '*.sarif'){if(-not(Test-Json -LiteralPath $file.FullName -SchemaFile $SarifSchema)){throw 'Native chain/diagnostic SARIF failed official validation'}}}
-        [void](Native-Post 'shutdown' @{});if(-not$server.WaitForExit(10000)){throw 'Native UI safe shutdown failed'};$http.Dispose();$checks.Add([ordered]@{name='offline-native-ui-cards-chains-export';exitCode=0;expected=0;hostStateEqual=((State-Hash)-ceq$before)})
+        [void](Native-Post 'shutdown' @{});if(-not$server.WaitForExit(10000)-or$server.ExitCode-ne0){throw 'Native CLI UI safe shutdown failed'}
+        [Threading.Tasks.Task]::WaitAll($serverOutput,$serverError)
+        $pidMatch=[regex]::Match($serverOutput.Result,'ARCHSIFT_PID=([0-9]+)')
+        if(-not$pidMatch.Success-or-not$serverOutput.Result.Contains('ARCHSIFT_STATE=waiting')){throw 'CLI did not forward Web PID/waiting state.'}
+        $ownedWebId=[int]$pidMatch.Groups[1].Value
+        $remaining=Get-Process -Id $ownedWebId -ErrorAction SilentlyContinue
+        if($remaining-and$remaining.Path-ceq$web){throw 'Owned Web child survived safe shutdown.'}
+        $listenerClosed=$false
+        try{[void]$http.GetAsync($baseUri+'/api/config').GetAwaiter().GetResult()}catch [Net.Http.HttpRequestException]{$listenerClosed=$true}
+        if(-not$listenerClosed){throw 'Owned Web listener survived safe shutdown.'}
+        $http.Dispose();$checks.Add([ordered]@{name='offline-native-cli-ui-cards-chains-export-shutdown';exitCode=0;expected=0;hostStateEqual=((State-Hash)-ceq$before);ownedWebPidExited=$true;listenerClosed=$true})
     }finally{if(-not$server.HasExited){$server.Kill($true);$server.WaitForExit()};$server.Dispose()}
     $result=[ordered]@{packageRoot=$package;zipSha256=(Get-FileHash -LiteralPath $ZipPath -Algorithm SHA256).Hash.ToLowerInvariant();checks=$checks.ToArray();performancePassed=$performancePassed;performance=$performance;noSdkPathUsed=$false;invalidDotnetRootAndHostUsed=$true;processPathPreserved=$true;hostStateEqual=((State-Hash)-ceq$before);version=$manifest.version;sourceCommit=$manifest.sourceCommit;sarifSchemaVerified=$sarifSchemaVerified}
     [IO.File]::WriteAllText((Join-Path $run 'smoke-result.json'),($result|ConvertTo-Json -Depth 8));$result|ConvertTo-Json -Depth 8
