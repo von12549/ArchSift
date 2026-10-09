@@ -32,4 +32,4 @@ The workbench uses saved cards for Verify/Verify Chain. Import selects a local J
 | 4 | Partial/inconclusive result; continued chain child errors are recorded here |
 | 130 | Cancelled, with current audit evidence retained |
 
-CLI Ctrl+C cancels the current run/process tree. UI cancellation is job-specific; cancelled reports remain downloadable and clearly labelled. Web binds loopback with origin/token protection. Closing the page does not stop the service.
+Analysis CLI Ctrl+C cancels the current run/process tree. UI job cancellation is separate from server shutdown; cancelled reports remain downloadable and clearly labelled. Web binds loopback with origin/token protection. Closing the page does not stop the service. A 0.4.0 native CLI UI launch has been observed to hide startup output, and a piped retry left a Web child after CLI cancellation. See [installation diagnostics and the temporary native Web entry](installation.md#known-040-cli-ui-launch-issue); verify shutdown rather than assuming the whole UI process tree exited.

@@ -10,7 +10,11 @@
 
 后续交接：2026-10-09 用户授权在 0.4.0 验收完成后通知 Codex Local Project `IFX-Guard-Test-Project`，由该项目编写 ArchSift–IFX 的 Agent 自动测试计划；已追加到 0.4.0 改进计划末尾。当前 `PUBLISHED / HANDOFF PENDING`，合并、发布及下载回验已完成；本项授权为测试计划编写，尚未启动测试执行。
 
+2026-10-10 后续工作：用户授权完善 ArchSift 安装配置与环境文档，并设计 installer／upgrade；见 [安装指南](../installation.md) 与 [安装升级设计](20261010-installation-upgrade-design.md)。文档已补充发布状态、自包含包的实际需求、UI 静默启动与遗留进程问题、直接 Web 临时入口和手工升级边界；installer/upgrade 处于设计阶段，未实现或执行。IFX 已有安装的配置读取、直接 Web UI 启动及安全关闭得到操作者确认，标准 CLI UI 启动契约仍待修复。规则方向见 [IFX 0.4.0 备选](../../../IFX-10-Root/docs/plans/20261010-archsift-0.4.0-ifx-rule-candidates.md)，尚未生成或采纳正式策略。既有 0.4.0 发布与验收身份保持冻结；本次不选择新版本、不运行安装/升级或真实分析。
+
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
+
+2026-10-10 0.5.0 执行授权：用户指定 0.5.0，授权新分支中执行 CLI 启动修复及 installer/upgrade/rollback 计划，以及对应提交、推送、PR、合并、验证和发布。已创建 `codex/archsift-0.5.0`；详见 [0.5.0 计划](20261010-archsift-0.5.0-plan.md)。当前 IN PROGRESS / NOT ACCEPTED / NOT RELEASED；真实 IFX 人工操作及安全门禁不变。上文 HANDOFF PENDING 是旧阶段记录；0.4.0 改进计划已记录通知送达，仅证明测试计划请求已发送。
 
 ## 目标与交付边界
 
