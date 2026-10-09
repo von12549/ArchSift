@@ -43,9 +43,12 @@ try {
         $publishArguments=@('publish',$path,'--no-restore','-c','Release','-r','win-x64','--self-contained','true','--disable-build-servers','-p:UseSharedCompilation=false',('-p:Version='+$Version),'-o',$destination)
         if($project-eq'Setup'){
             $assets=Get-Content -LiteralPath (Join-Path $root 'src/ArchSift.Setup/obj/project.assets.json') -Raw|ConvertFrom-Json
-            $runtimeProperty=@($assets.libraries.PSObject.Properties|Where-Object Name -like 'Microsoft.NETCore.App.Runtime.win-x64/*')
-            if($runtimeProperty.Count-ne1){throw 'Setup runtime identity unavailable.'}
-            $runtimeNotices=Join-Path (Join-Path $run 'nuget-cache') $runtimeProperty[0].Value.path
+            $runtimeDependency=@($assets.project.frameworks.'net10.0'.downloadDependencies|Where-Object name -eq 'Microsoft.NETCore.App.Runtime.win-x64')
+            if($runtimeDependency.Count-ne1){throw 'Setup runtime identity unavailable.'}
+            $runtimeRange=$runtimeDependency[0].version.Trim('[',']').Split(',')
+            if($runtimeRange.Count-ne2-or$runtimeRange[0].Trim()-cne$runtimeRange[1].Trim()){throw 'Setup runtime version must be exact.'}
+            $runtimeNotices=Join-Path (Join-Path (Join-Path $run 'nuget-cache') 'microsoft.netcore.app.runtime.win-x64') $runtimeRange[0].Trim()
+            foreach($notice in @('LICENSE.TXT','THIRD-PARTY-NOTICES.TXT')){if(-not[IO.File]::Exists((Join-Path $runtimeNotices $notice))){throw 'Setup runtime notices missing.'}}
             $publishArguments+=@('-p:PublishSingleFile=true','-p:IncludeNativeLibrariesForSelfExtract=true',('-p:SetupNoticesDirectory='+$runtimeNotices))
         }
         Run-Dotnet ('publish-'+$project) $publishArguments
