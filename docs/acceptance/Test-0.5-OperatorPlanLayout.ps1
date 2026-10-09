@@ -1,6 +1,6 @@
 # Synthetic-only regression for the operator wrapper. No real IFX paths are used.
 [CmdletBinding()]
-param([string]$LabRoot='D:\ArchSift-lab')
+param([string]$LabRoot='D:\ArchSift-lab',[switch]$VerifyApply)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $repository=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -51,6 +51,17 @@ try{
         if((Test-Path -LiteralPath $new)-or(Get-FileHash -LiteralPath (Join-Path $old 'config/ifx.json') -Algorithm SHA256).Hash-cne$configHash){throw 'Fixture state changed.'}
         $checks.Add(@{layout=$layout;expectedReject=$shouldReject;pass=$true;runRoot=$result.runRoot})
         Write-Output ('operator-layout='+$layout+' PASS')
+        if($VerifyApply-and$layout-eq'versioned'){
+            $planPath=Join-Path $result.runRoot 'plan.json';$plan=Get-Content -LiteralPath $planPath -Raw|ConvertFrom-Json
+            & (Join-Path $PSScriptRoot '20261010-0.5-operator-apply.ps1') -PlanPath $planPath -ReviewedPlanId $plan.planId -ExpectedPlanFileSha256 (Get-FileHash -LiteralPath $planPath -Algorithm SHA256).Hash.ToLowerInvariant() -SetupPath $options.SetupPath -TargetRoot $target -ExistingInstallRoot $old -ExistingVersionDirectory $version -ExpectedNewInstallRoot $new | Out-Null
+            $applyFile=@(Get-ChildItem -LiteralPath $result.runRoot -Directory -Filter 'apply-*'|ForEach-Object {Join-Path $_.FullName 'result.json'})
+            if($applyFile.Count-ne1){throw 'Apply evidence missing.'}
+            $appliedResult=Get-Content -LiteralPath $applyFile[0] -Raw|ConvertFrom-Json
+            if($appliedResult.status-cne'installed-private-smoke-passed'-or-not$appliedResult.applied-or-not$appliedResult.hostStateEqual-or-not$appliedResult.targetStateEqual-or-not$appliedResult.existing040StateEqual-or-not$appliedResult.installedStateVerified){throw 'Synthetic operator apply checks failed.'}
+            if(Test-Path -LiteralPath (Join-Path $new 'reports')){throw 'Operator apply performed analysis.'}
+            $checks.Add(@{layout='versioned-apply-private-smoke-inspect';pass=$true;runRoot=$appliedResult.runRoot})
+            Write-Output 'operator-versioned-apply PASS'
+        }
     }
 }finally{
     $equal=(Get-ArchSiftHostHash)-ceq$before
