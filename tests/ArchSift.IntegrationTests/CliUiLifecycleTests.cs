@@ -57,12 +57,16 @@ public sealed class CliUiLifecycleTests
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task NativeCliForwardsStartupAndOwnsWebUntilShutdownOrParentExit(bool terminateParent)
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task NativeCliForwardsStartupAndOwnsWebUntilShutdownOrParentExit(bool terminateParent, bool startJob)
     {
         var root = Path.Combine(Path.GetTempPath(), "archsift-cli-ui-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path.Combine(root, "target"));
+        if (startJob)
+            for (var index = 0; index < 5000; index++)
+                File.WriteAllText(Path.Combine(root, "target", "P" + index + ".csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
         var config = new RunConfiguration { SchemaVersion = 1, Target = new() { Root = Path.Combine(root, "target") },
             Output = new() { Directory = Path.Combine(root, "reports") }, RulesDirectory = Path.Combine(root, "rules") };
         var configPath = Path.Combine(root, "config.json");
@@ -95,12 +99,27 @@ public sealed class CliUiLifecycleTests
             using var client = new HttpClient { BaseAddress = new Uri(address.GetLeftPart(UriPartial.Authority)) };
             client.DefaultRequestHeaders.Add("X-ArchSift-Token", address.Fragment[9..]);
             Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/config", timeout.Token)).StatusCode);
+            if (startJob)
+            {
+                using var started = await client.PostAsJsonAsync("/api/run/analyze", new { targetKind = "fixture" }, timeout.Token);
+                started.EnsureSuccessStatusCode();
+                using var document = JsonDocument.Parse(await started.Content.ReadAsStringAsync(timeout.Token));
+                using var state = JsonDocument.Parse(await client.GetStringAsync("/api/jobs/" + document.RootElement.GetProperty("jobId").GetString(), timeout.Token));
+                Assert.Equal("running", state.RootElement.GetProperty("state").GetString());
+            }
             if (terminateParent) parent.Kill();
             else (await client.PostAsJsonAsync("/api/shutdown", new { }, timeout.Token)).EnsureSuccessStatusCode();
             await parent.WaitForExitAsync(timeout.Token);
             await child.WaitForExitAsync(timeout.Token);
             if (!terminateParent) Assert.Equal(0, parent.ExitCode);
-            Assert.False(Directory.Exists(config.Output.Directory));
+            if (startJob)
+            {
+                var reportPath = Assert.Single(Directory.GetFiles(config.Output.Directory, "report.json", SearchOption.AllDirectories));
+                using var report = JsonDocument.Parse(File.ReadAllBytes(reportPath));
+                Assert.Equal("cancelled", report.RootElement.GetProperty("execution").GetString());
+                Assert.Equal(5000, Directory.GetFiles(config.Target.Root, "*.csproj").Length);
+            }
+            else Assert.False(Directory.Exists(config.Output.Directory));
             await Assert.ThrowsAnyAsync<HttpRequestException>(() => client.GetAsync("/api/config", timeout.Token));
             await error;
         }

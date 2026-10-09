@@ -294,6 +294,7 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
     }
     private static void EnsureStopped(OwnedVersion[] versions)
     {
+        if (versions.Length == 0) return;
         foreach (var process in Process.GetProcesses())
         {
             using (process)
@@ -303,27 +304,52 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
                 {
                     var name = process.ProcessName;
                     if (name is not ("archsift" or "ArchSift.Web" or "ArchSift.Setup")) continue;
-                    if (ProcessEnded(process)) continue;
-                    var path = process.MainModule?.FileName;
+                    var path = ProcessImage.Read(process);
                     if (path is null)
                     {
-                        if (ProcessEnded(process)) continue;
-                        throw new ConfigurationException("Cannot inspect live ArchSift process identity.");
+                        if (EndedOrGone(process.Id)) continue;
+                        throw new ConfigurationException("Cannot inspect live ArchSift process identity; PID " + process.Id);
                     }
-                    if (versions.Any(v => PathSafety.IsUnder(path, v.Directory))) throw new ConfigurationException("Close the existing owned UI/CLI before setup; PID " + process.Id);
+                    if (versions.Any(v => PathSafety.IsUnder(path, v.Directory)) && !ProcessEnded(process))
+                        throw new ConfigurationException("Close the existing owned UI/CLI before setup; PID " + process.Id);
                 }
                 catch (InvalidOperationException) { }
                 catch (System.ComponentModel.Win32Exception)
                 {
                     // Process enumeration races normal exit. A live, inaccessible process still requires review.
-                    if (!ProcessEnded(process)) throw new ConfigurationException("Cannot inspect live ArchSift process; operator review required.");
+                    if (!EndedOrGone(process.Id)) throw new ConfigurationException("Cannot inspect live ArchSift process; operator review required. PID " + process.Id);
                 }
             }
         }
     }
+    private static bool EndedOrGone(int id)
+    {
+        // Windows can deny handles during process teardown. Re-enumerate briefly rather than treating denial as exit.
+        for (var attempt = 0; attempt < 6; attempt++)
+        {
+            Process? current = null;
+            foreach (var candidate in Process.GetProcesses())
+                if (candidate.Id == id) current = candidate; else candidate.Dispose();
+            if (current is null) return true;
+            using (current)
+            {
+                try
+                {
+                    if (current.ProcessName is not ("archsift" or "ArchSift.Web" or "ArchSift.Setup") || ProcessEnded(current)) return true;
+                }
+                catch (InvalidOperationException) { return true; }
+                catch (System.ComponentModel.Win32Exception) { }
+            }
+            if (attempt < 5) Thread.Sleep(20);
+        }
+        return false;
+    }
     private static bool ProcessEnded(Process process)
     {
         process.Refresh();
+        // A terminated Windows process can remain in system enumeration while another handle is retained.
+        // Its process object may reject new handles; the system thread snapshot still proves no live thread.
+        if (OperatingSystem.IsWindows() && process.Threads.Count == 0) return true;
         if (process.HasExited) return true;
         // Linux reports a zombie in enumeration with no executable module; it cannot hold a live library/listener.
         if (OperatingSystem.IsLinux())

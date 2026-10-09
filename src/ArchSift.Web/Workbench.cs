@@ -19,7 +19,8 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
     {
         app.Lifetime.ApplicationStopping.Register(() =>
         {
-            foreach (var job in jobs.Values) job.Cancel.Cancel();
+            foreach (var job in jobs.Values.Where(j => j.State == "running"))
+                try { job.Cancel.Cancel(); } catch (ObjectDisposedException) { }
         });
         app.Use(async (context, next) =>
         {
@@ -247,6 +248,21 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); });
             return Results.Accepted();
         });
+    }
+
+    public async Task DrainShutdownAsync()
+    {
+        // Job completion releases the gate only after process cleanup and current audit writes.
+        // An owning CLI remains alive and can terminate the whole tree if graceful cleanup stalls.
+        if (!await gate.WaitAsync(TimeSpan.FromSeconds(8)))
+        {
+            Console.Error.WriteLine("ARCHSIFT_SHUTDOWN=forced; owned process tree did not finish cancellation.");
+            await Console.Error.FlushAsync();
+            using var owned = System.Diagnostics.Process.GetCurrentProcess();
+            owned.Kill(entireProcessTree: true);
+            return;
+        }
+        gate.Release();
     }
 
     private string RuleFile(string name)

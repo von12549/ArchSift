@@ -26,7 +26,7 @@ function Hash-Json($Object){[Convert]::ToHexString([Security.Cryptography.SHA256
 function Hash-File([string]$Path){(Get-FileHash -LiteralPath (Safe-Path $Path) -Algorithm SHA256).Hash.ToLowerInvariant()}
 function Git-Read([string[]]$Arguments){
     $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=(Get-Command git).Source;$start.UseShellExecute=$false;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
-    foreach($arg in (@('-C',$TargetRoot)+$Arguments)){$start.ArgumentList.Add($arg)}
+    foreach($arg in (@('--no-optional-locks','--no-replace-objects','-c','core.fsmonitor=false','-c','core.untrackedCache=false','-C',$TargetRoot)+$Arguments)){$start.ArgumentList.Add($arg)}
     $process=[Diagnostics.Process]::Start($start);$stdout=$process.StandardOutput.ReadToEndAsync();$stderr=$process.StandardError.ReadToEndAsync()
     try{if(-not$process.WaitForExit(30000)){$process.Kill($true);$process.WaitForExit();throw 'Read-only Git timeout.'};[Threading.Tasks.Task]::WaitAll($stdout,$stderr);if($process.ExitCode-ne0){throw 'Read-only Git metadata failed.'};return $stdout.Result}finally{$process.Dispose()}
 }
