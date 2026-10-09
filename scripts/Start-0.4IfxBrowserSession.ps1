@@ -1,9 +1,28 @@
 # Operator-only 0.4-F step 4. The operator performs the browser review and safe shutdown.
 [CmdletBinding()]
-param([switch]$PreflightOnly)
+param(
+    [switch]$PreflightOnly,
+    [string]$ReplacementPackageRoot,
+    [string]$ReplacementManifestSha256,
+    [string]$ReplacementSourceCommit
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
+$replacementValues=@($ReplacementPackageRoot,$ReplacementManifestSha256,$ReplacementSourceCommit)
+if(@($replacementValues|Where-Object { -not[string]::IsNullOrWhiteSpace($_) }).Count -notin @(0,3)){throw 'Replacement package root, manifest SHA-256 and source commit must be supplied together.'}
 . (Join-Path $PSScriptRoot 'Invoke-0.4IfxCandidateStep.ps1') -ValidateOnly | Out-Null
+if($ReplacementPackageRoot){
+    if($ReplacementManifestSha256-notmatch'^[0-9a-f]{64}$'-or$ReplacementSourceCommit-notmatch'^[0-9a-f]{40}$'){throw 'Replacement manifest hash or source commit is invalid.'}
+    $package=[IO.Path]::GetFullPath($ReplacementPackageRoot)
+    if(-not(Is-Under $package $lab)-or(Is-Under $package $target)){throw 'Replacement package must be inside the lab and outside IFX.'}
+    No-Links $package
+    $manifestPath=Join-Path $package 'package-manifest.json'
+    if((Sha $manifestPath)-cne$ReplacementManifestSha256){throw 'Replacement package manifest hash changed.'}
+    $manifest=Get-Content -LiteralPath $manifestPath -Raw|ConvertFrom-Json -Depth 20
+    if($manifest.version-cne'0.4.0'-or$manifest.sourceCommit-cne$ReplacementSourceCommit-or$manifest.productSourceDirty){throw 'Replacement candidate source/version differs.'}
+    Check-Package $manifest
+    $expectedManifestHash=$ReplacementManifestSha256
+}
 $matrixRoot='D:\ArchSift-lab\runs\ifx-0.4-library-chain-2352c85bc7ed49449d985eabbd1d7981'
 $matrixResultPath=Join-Path $matrixRoot 'operator-result.json'
 if((Sha $matrixResultPath)-cne'c39ea0f58c79a4b6ac79ef59ed2ced08e3222b09af7b535d1bbcab2ba301d99f'){throw 'Accepted matrix result changed.'}
@@ -12,7 +31,7 @@ if($matrixResult.status-cne'pass-with-limitations'-or$matrixResult.checksPassed-
 $subsetSource=Join-Path $matrixRoot 'library/declaration-subset.json'
 $expectedSubsetHash='4f1db37bc6ab94406578c702293fc4fefd3d01b0f5f1cde9f7e84c90f88ccb9f'
 if((Sha $subsetSource)-cne$expectedSubsetHash){throw 'Reviewed subset bytes changed.'}
-if($PreflightOnly){[ordered]@{step='ifx-0.4-browser-preflight';status='metadata-pass';nativeProcessStarted=$false;sourceRecordsChecked=563;candidateRulesChecked=182;subsetRulesChecked=3;packageEntriesChecked=621}|ConvertTo-Json;return}
+if($PreflightOnly){[ordered]@{step='ifx-0.4-browser-preflight';status='metadata-pass';nativeProcessStarted=$false;sourceRecordsChecked=563;candidateRulesChecked=182;subsetRulesChecked=3;packageEntriesChecked=$manifest.entries.Count;packageSourceCommit=$manifest.sourceCommit;packageManifestSha256=$expectedManifestHash}|ConvertTo-Json;return}
 
 $sessionRoot=Join-Path $lab ('runs/ifx-0.4-browser-'+[guid]::NewGuid().ToString('N'))
 if(-not(Is-Under $sessionRoot $lab)-or(Is-Under $sessionRoot $target)-or(Is-Under $sessionRoot $repo)){throw 'Browser session output escaped the lab.'}
@@ -68,8 +87,8 @@ try{
     if($process.ExitCode-ne0){throw 'Native Web exited with an error.'}
     $listenerGone=@(Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction SilentlyContinue|Where-Object OwningProcess -eq $process.Id).Count-eq0
     $questions=@(
-        'Desktop and narrow-screen layouts in English and Chinese: clear sections, concise summary/details, distinct color plus text labels',
-        'External rules visible as read-only; both JSON files imported explicitly; full saved card verified with partial/compliant, 105 limits, zero assemblies and no source binding visible',
+        'Desktop and narrow-screen layouts in English and Chinese: clear sections, concise summary/details, distinct color plus text labels; Language and Safe shutdown aligned',
+        'External rules read-only; both JSON files imported explicitly; 182-rule card bounded and editor hidden until New/Edit; full saved card verified with partial/compliant, 105 limits, zero assemblies and no source binding visible',
         'Two-entry saved chain verified; entry order, per-child result/downloads and unique 105-project scope understandable',
         'After deleting the subset, chain Verify stayed available and the missing child was shown while the later full child ran',
         'After an invalid target entry submission, current project count/list/title/downloads cleared; prior result remained only in History',
@@ -86,7 +105,7 @@ finally{
     $packageEqual=$true;try{Check-Package $manifest}catch{$packageEqual=$false}
     $safe=$exitObserved-and$listenerGone-and$hostBaseline-ceq$hostAfter-and$targetHead-ceq$headAfter-and$targetStatus-ceq$statusAfter-and$sourceEqual-and$packageEqual-and(Sha $policy)-ceq$expectedRulesHash-and(Sha $manifestPath)-ceq$expectedManifestHash-and(Sha $configPath)-ceq$configHash
     $humanPass=$review.Count-eq6-and@($review|Where-Object { $_.answer -ne 'yes' }).Count-eq0-and$null-ne$usabilityRating-and$usabilityRating-ge4
-    $result=[ordered]@{step='ifx-0.4-browser-manual-session';status=$(if($safe-and$humanPass-and$null-eq$problem){'pass-with-limitations'}elseif($safe){'needs-review'}else{'stop'});runRoot=$sessionRoot;review=$review;humanChecksPassed=$humanPass;usabilityRating=$usabilityRating;targetHeadEqual=($targetHead-ceq$headAfter);ordinaryStatusEqual=($targetStatus-ceq$statusAfter);sourceRecordsEqual=$sourceEqual;hostHashBefore=$hostBaseline;hostHashAfter=$hostAfter;hostStateEqual=($hostBaseline-ceq$hostAfter);packageUnchanged=$packageEqual;rulesUnchanged=((Sha $policy)-ceq$expectedRulesHash);configUnchanged=((Sha $configPath)-ceq$configHash);processExited=$exitObserved;recordedListenerGone=$listenerGone;targetBuildInvoked=$false;restoreInvoked=$false;policyAdopted=$false;browserVisualReviewPerformed=($review.Count-eq6);error=$problem;nextAction='RETURN RESULT AND ANY HUMAN OBSERVATIONS BEFORE NEXT COMMAND'}
+    $result=[ordered]@{step='ifx-0.4-browser-manual-session';status=$(if($safe-and$humanPass-and$null-eq$problem){'pass-with-limitations'}elseif($safe){'needs-review'}else{'stop'});runRoot=$sessionRoot;review=$review;humanChecksPassed=$humanPass;usabilityRating=$usabilityRating;packageSourceCommit=$manifest.sourceCommit;packageManifestSha256=$expectedManifestHash;targetHeadEqual=($targetHead-ceq$headAfter);ordinaryStatusEqual=($targetStatus-ceq$statusAfter);sourceRecordsEqual=$sourceEqual;hostHashBefore=$hostBaseline;hostHashAfter=$hostAfter;hostStateEqual=($hostBaseline-ceq$hostAfter);packageUnchanged=$packageEqual;rulesUnchanged=((Sha $policy)-ceq$expectedRulesHash);configUnchanged=((Sha $configPath)-ceq$configHash);processExited=$exitObserved;recordedListenerGone=$listenerGone;targetBuildInvoked=$false;restoreInvoked=$false;policyAdopted=$false;browserVisualReviewPerformed=($review.Count-eq6);error=$problem;nextAction='RETURN RESULT AND ANY HUMAN OBSERVATIONS BEFORE NEXT COMMAND'}
     Save-Json (Join-Path $sessionRoot 'operator-result.json') $result
     $result|ConvertTo-Json -Depth 12
     if($result.status-eq'stop'){throw 'Browser operator session stopped; preserve evidence and review before another step.'}
