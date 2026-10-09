@@ -43,6 +43,18 @@ public static class Program
                 server.Limits.MaxRequestBodySize = 4 * 1024 * 1024;
             });
             var app = builder.Build();
+            // The owned pipe closes on CLI death as well as normal cancellation. Direct Web remains standalone.
+            if (Environment.GetEnvironmentVariable("ARCHSIFT_UI_PARENT_CONTROL") == "stdin-v1")
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        while (await Console.In.ReadLineAsync() is { } command)
+                            if (command == "shutdown") break;
+                    }
+                    catch (IOException) { }
+                    app.Lifetime.StopApplication();
+                });
             var workbench = new Workbench(config, rulesDirectory); workbench.Map(app);
             await app.StartAsync();
             var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();

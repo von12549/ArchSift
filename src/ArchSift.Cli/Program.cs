@@ -38,16 +38,8 @@ public static class Program
                 }
                 if (!File.Exists(web)) throw new IOException("Web payload is missing; use the complete local package.");
                 var native = Path.ChangeExtension(web, OperatingSystem.IsWindows() ? ".exe" : null);
-                var start = new System.Diagnostics.ProcessStartInfo
-                { FileName = File.Exists(native) ? native : SafeProcess.Dotnet, UseShellExecute = false, CreateNoWindow = true };
-                if (!File.Exists(native)) start.ArgumentList.Add(web);
-                start.ArgumentList.Add("--config"); start.ArgumentList.Add(configPath);
-                start.Environment["DOTNET_CLI_HOME"] = Path.Combine(Path.GetTempPath(), "archsift-ui-home-" + Guid.NewGuid().ToString("N"));
-                start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
-                using var process = System.Diagnostics.Process.Start(start)!;
-                try { await process.WaitForExitAsync(cancel.Token); }
-                catch (OperationCanceledException) { if (!process.HasExited) process.Kill(true); throw; }
-                return process.ExitCode;
+                return await ArchSift.Hosting.UiProcess.RunAsync(File.Exists(native) ? native : SafeProcess.Dotnet,
+                    File.Exists(native) ? null : web, configPath, Console.Out, Console.Error, cancel.Token);
             }
             if (args is [] or ["--help"] or ["-h"])
             {

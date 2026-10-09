@@ -4,6 +4,7 @@
     <AssemblyName>archsift</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../Shared/UiProcess.cs" Link="UiProcess.cs" />
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
   </ItemGroup>

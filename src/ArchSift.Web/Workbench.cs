@@ -17,6 +17,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
 
     public void Map(WebApplication app)
     {
+        app.Lifetime.ApplicationStopping.Register(() =>
+        {
+            foreach (var job in jobs.Values) job.Cancel.Cancel();
+        });
         app.Use(async (context, next) =>
         {
             var host = context.Request.Host;
