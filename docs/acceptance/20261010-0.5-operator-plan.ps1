@@ -22,7 +22,7 @@ function Safe-Path([string]$Path){
         $cursor=[IO.Path]::GetDirectoryName($cursor)
     };return $full
 }
-function Hash-Json($Object){[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes(($Object|ConvertTo-Json -Depth 10 -Compress)))).ToLowerInvariant()}
+function Hash-Json($Object){[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes((ConvertTo-Json -InputObject $Object -Depth 10 -Compress)))).ToLowerInvariant()}
 function Hash-File([string]$Path){(Get-FileHash -LiteralPath (Safe-Path $Path) -Algorithm SHA256).Hash.ToLowerInvariant()}
 function Git-Read([string[]]$Arguments){
     $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=(Get-Command git).Source;$start.UseShellExecute=$false;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
