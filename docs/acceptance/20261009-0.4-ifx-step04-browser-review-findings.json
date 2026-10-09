@@ -30,7 +30,13 @@
     "chainSummaryCount": 2,
     "diagnosticCount": 1
   },
-  "operatorFinalHostHashRecovered": false,
+  "operatorFinalHostHashRecovered": true,
+  "recoveryResultPath": "D:/ArchSift-lab/runs/ifx-0.4-browser-ca19f9bf0f624bf588fb0d488ca921a6/recovered-result.json",
+  "recoveryResultSha256": "5b0c132c2d0e4644267468b2143cdeaaaaf8e3f32023b005b70e8df5c4e5a3f4",
+  "recoveryStatus": "needs-review",
+  "recoveryHostStateEqual": true,
+  "recoverySourceRecordsEqual": true,
+  "recoveryPackageRulesConfigEqual": true,
   "browserVisualAccepted": false,
   "finalAcceptancePassed": false,
   "nextStep": "recover-operator-result-and-retest-revised-ui"
