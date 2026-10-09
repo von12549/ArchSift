@@ -22,6 +22,8 @@
 
 ## 目标与交付边界
 
+2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
+
 0.5.0 操作员第一步停止：误用旧安装根读取 manifest，实际包根为 `D:/IFX-10-Root/ArchSift/versions/0.4.0`。已修正操作员脚本及初始化证据，五项合成布局回归通过且宿主相等；真实步骤未通过，等待重试。产品源码/资产保持 c4010d8，未合并或发布；见 [候选记录](../acceptance/20261010-0.5-candidate-readiness.md)。
 
 0.5.0 操作员第一步重试：真实 plan 输出、文件和 before/after 审计已读取，目标/原 0.4.0/宿主均相等；新根、配置和包身份审查通过，未 apply 或分析/build。见 [step01 记录](../acceptance/20261010-0.5-ifx-step01-plan.md)。下一块为操作者执行新根安装、private UI smoke 和 inspect；其包装脚本合成回归已通过。产品/候选资产 c4010d8 保持冻结，合并/发布仍受剩余人工门禁限制。
