@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://archsift.local/schemas/setup.schema.json",
+  "title": "ArchSift 0.5 setup contracts",
+  "oneOf": [
+    {"$ref":"#/$defs/SetupPlan"}, {"$ref":"#/$defs/Installation"},
+    {"$ref":"#/$defs/Receipt"}, {"$ref":"#/$defs/Journal"}
+  ],
+  "$defs": {
+    "sha": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "text": {"type":"string","minLength":1},
+    "id": {"type":"string","pattern":"^[a-f0-9]{32}$"},
+    "version": {"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+    "PackageFile": {
+      "type":"object","additionalProperties":false,"required":["path","bytes","sha256"],
+      "properties":{"path":{"$ref":"#/$defs/text"},"bytes":{"type":"integer","minimum":0,"maximum":268435456},"sha256":{"$ref":"#/$defs/sha"}}
+    },
+    "PackageManifest": {
+      "type":"object","additionalProperties":false,
+      "required":["schemaVersion","version","rid","selfContained","acceptanceStatus","sourceCommit","sourceDirty","productSourceDirty","productInputsSha256","entries","manifestSelfHashOmitted"],
+      "properties":{
+        "schemaVersion":{"const":1},"version":{"$ref":"#/$defs/version"},"rid":{"const":"win-x64"},"selfContained":{"const":true},
+        "acceptanceStatus":{"type":"string"},"sourceCommit":{"type":"string","pattern":"^[a-f0-9]{40}$"},
+        "sourceDirty":{"type":"boolean"},"productSourceDirty":{"const":false},"productInputsSha256":{"$ref":"#/$defs/sha"},
+        "entries":{"type":"array","minItems":3,"maxItems":10000,"items":{"$ref":"#/$defs/PackageFile"}},"manifestSelfHashOmitted":{"const":true}
+      }
+    },
+    "PackageIdentity": {
+      "type":"object","additionalProperties":false,"required":["path","sha256","version","manifestSha256","sourceCommit"],
+      "properties":{"path":{"$ref":"#/$defs/text"},"sha256":{"$ref":"#/$defs/sha"},"version":{"$ref":"#/$defs/version"},"manifestSha256":{"$ref":"#/$defs/sha"},"sourceCommit":{"type":"string","pattern":"^[a-f0-9]{40}$"}}
+    },
+    "OwnedVersion": {
+      "type":"object","additionalProperties":false,"required":["version","directory","manifestSha256","packageSha256"],
+      "properties":{"version":{"$ref":"#/$defs/version"},"directory":{"$ref":"#/$defs/text"},"manifestSha256":{"$ref":"#/$defs/sha"},"packageSha256":{"anyOf":[{"$ref":"#/$defs/sha"},{"const":"adopted-local-payload"}]}}
+    },
+    "Installation": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","root","targetRoot","configPath","libraryPath","selectedVersion","versions","lastOperation"],
+      "properties":{"schemaVersion":{"const":1},"root":{"$ref":"#/$defs/text"},"targetRoot":{"$ref":"#/$defs/text"},"configPath":{"$ref":"#/$defs/text"},"libraryPath":{"$ref":"#/$defs/text"},"selectedVersion":{"$ref":"#/$defs/version"},"versions":{"type":"array","minItems":1,"maxItems":100,"items":{"$ref":"#/$defs/OwnedVersion"}},"lastOperation":{"$ref":"#/$defs/id"}}
+    },
+    "StateFile": {
+      "type":"object","additionalProperties":false,"required":["scope","path","sha256"],
+      "properties":{"scope":{"enum":["config","library"]},"path":{"$ref":"#/$defs/text"},"sha256":{"$ref":"#/$defs/sha"}}
+    },
+    "StateIdentity": {
+      "type":"object","additionalProperties":false,"required":["configExists","libraryExists","files","sha256"],
+      "properties":{"configExists":{"type":"boolean"},"libraryExists":{"type":"boolean"},"files":{"type":"array","maxItems":10000,"items":{"$ref":"#/$defs/StateFile"}},"sha256":{"$ref":"#/$defs/sha"}}
+    },
+    "SetupPlan": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","planId","operation","expiresUtc","root","package","adoptedVersion","configPath","config","selectionSha256","state","smoke"],
+      "properties":{"schemaVersion":{"const":1},"planId":{"$ref":"#/$defs/sha"},"operation":{"enum":["install","upgrade","adopt","rollback"]},"expiresUtc":{"type":"string","format":"date-time"},"root":{"$ref":"#/$defs/text"},"package":{"anyOf":[{"$ref":"#/$defs/PackageIdentity"},{"type":"null"}]},"adoptedVersion":{"anyOf":[{"$ref":"#/$defs/OwnedVersion"},{"type":"null"}]},"configPath":{"$ref":"#/$defs/text"},"config":{"type":"object"},"selectionSha256":{"anyOf":[{"$ref":"#/$defs/sha"},{"type":"null"}]},"state":{"$ref":"#/$defs/StateIdentity"},"smoke":{"type":"boolean"}}
+    },
+    "Receipt": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","id","operation","planId","before","after","beforeState","afterState","backupDirectory","hostSha256","hostStateEqual","outcome"],
+      "properties":{"schemaVersion":{"const":1},"id":{"$ref":"#/$defs/id"},"operation":{"enum":["install","upgrade","adopt","rollback"]},"planId":{"$ref":"#/$defs/sha"},"before":{"anyOf":[{"$ref":"#/$defs/Installation"},{"type":"null"}]},"after":{"$ref":"#/$defs/Installation"},"beforeState":{"$ref":"#/$defs/StateIdentity"},"afterState":{"$ref":"#/$defs/StateIdentity"},"backupDirectory":{"type":"string"},"hostSha256":{"$ref":"#/$defs/sha"},"hostStateEqual":{"const":true},"outcome":{"enum":["success","no-op"]}}
+    },
+    "Journal": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","id","phase","plan","before","after","beforeState","afterState","hostSha256"],
+      "properties":{"schemaVersion":{"const":1},"id":{"$ref":"#/$defs/id"},"phase":{"enum":["prepared","backed-up","staged","configured","committed","completed","aborted"]},"plan":{"$ref":"#/$defs/SetupPlan"},"before":{"anyOf":[{"$ref":"#/$defs/Installation"},{"type":"null"}]},"after":{"$ref":"#/$defs/Installation"},"beforeState":{"$ref":"#/$defs/StateIdentity"},"afterState":{"anyOf":[{"$ref":"#/$defs/StateIdentity"},{"type":"null"}]},"hostSha256":{"$ref":"#/$defs/sha"}}
+    },
+    "SetupCompatibility": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","configSchemaVersion","librarySchemaVersion","chainSchemaVersion"],
+      "properties":{"schemaVersion":{"const":1},"configSchemaVersion":{"const":1},"librarySchemaVersion":{"const":1},"chainSchemaVersion":{"const":1}}
+    }
+  }
+}

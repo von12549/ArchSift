@@ -10,9 +10,39 @@
 
 后续交接：2026-10-09 用户授权在 0.4.0 验收完成后通知 Codex Local Project `IFX-Guard-Test-Project`，由该项目编写 ArchSift–IFX 的 Agent 自动测试计划；已追加到 0.4.0 改进计划末尾。当前 `PUBLISHED / HANDOFF PENDING`，合并、发布及下载回验已完成；本项授权为测试计划编写，尚未启动测试执行。
 
+2026-10-10 后续工作：用户授权完善 ArchSift 安装配置与环境文档，并设计 installer／upgrade；见 [安装指南](../installation.md) 与 [安装升级设计](20261010-installation-upgrade-design.md)。文档已补充发布状态、自包含包的实际需求、UI 静默启动与遗留进程问题、直接 Web 临时入口和手工升级边界；installer/upgrade 处于设计阶段，未实现或执行。IFX 已有安装的配置读取、直接 Web UI 启动及安全关闭得到操作者确认，标准 CLI UI 启动契约仍待修复。规则方向见 [IFX 0.4.0 备选](../../../IFX-10-Root/docs/plans/20261010-archsift-0.4.0-ifx-rule-candidates.md)，尚未生成或采纳正式策略。既有 0.4.0 发布与验收身份保持冻结；本次不选择新版本、不运行安装/升级或真实分析。
+
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
+2026-10-10 0.5.0 执行授权：用户指定 0.5.0，授权新分支中执行 CLI 启动修复及 installer/upgrade/rollback 计划，以及对应提交、推送、PR、合并、验证和发布。已创建 `codex/archsift-0.5.0`；详见 [0.5.0 计划](20261010-archsift-0.5.0-plan.md)。当前 IN PROGRESS / NOT ACCEPTED / NOT RELEASED；真实 IFX 人工操作及安全门禁不变。上文 HANDOFF PENDING 是旧阶段记录；0.4.0 改进计划已记录通知送达，仅证明测试计划请求已发送。
+
+0.5.0 开发进度：新 CLI 转发与私有父生命周期通道已复现并修复静默启动；独立 Setup、schema/兼容性、所有权、包核验、安全解压、配置、备份、并存升级、回退和中断恢复已实现。Release 178 项、八模板及 Node 检查通过，宿主哈希相等；真实包、固定源码 CI、独立下载、人工终端与真实 IFX 门禁尚待关闭。版本文档更新为 0.5.0 开发态，0.4.0 指南另存且旧资产/验收不改。详见 [开发验收](../acceptance/20261010-0.5-setup-development.md)。
+
+0.5.0 自动门禁关闭：精确产品 `c4010d8` 的 Windows/Ubuntu 各 179 项（含运行中父进程退出取消 audit）、两次 17 项标准原生 CLI UI/Worker/chain/SARIF/performance ZIP smoke、两次 13 项独立 Setup/旧包接管/升级回退、四项草稿资产 digest 与独立下载 bytes、宿主 equality 全通过。版本化当前/0.4.0 安装指南已随 ZIP 保留。见 [候选就绪](../acceptance/20261010-0.5-candidate-readiness.md)。Draft PR #2 与未公开 release `408066486` 已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED；真实 IFX/人工终端/最终审计和合并发布尚待关闭，用户授权持续有效。
+
 ## 目标与交付边界
+
+2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
+
+0.5.0 操作员第一步停止：误用旧安装根读取 manifest，实际包根为 `D:/IFX-10-Root/ArchSift/versions/0.4.0`。已修正操作员脚本及初始化证据，五项合成布局回归通过且宿主相等；真实步骤未通过，等待重试。产品源码/资产保持 c4010d8，未合并或发布；见 [候选记录](../acceptance/20261010-0.5-candidate-readiness.md)。
+
+0.5.0 操作员第一步重试：真实 plan 输出、文件和 before/after 审计已读取，目标/原 0.4.0/宿主均相等；新根、配置和包身份审查通过，未 apply 或分析/build。见 [step01 记录](../acceptance/20261010-0.5-ifx-step01-plan.md)。下一块为操作者执行新根安装、private UI smoke 和 inspect；其包装脚本合成回归已通过。产品/候选资产 c4010d8 保持冻结，合并/发布仍受剩余人工门禁限制。
+
+0.5.0 操作员新根安装通过：真实 receipt/inspect 已核对，`ArchSift-0.5-review` 选中 0.5.0、config/manifest/state 与审查计划一致，private UI smoke 成功，目标/原 0.4.0/宿主相等，无分析/build。见 [step02](../acceptance/20261010-0.5-ifx-step02-install.md)。标准 CLI 可见终端与键盘等人工门禁尚待执行；产品 c4010d8 和资产不变，尚未合并或正式发布。
+
+0.5.0 操作员标准 CLI Safe shutdown 已通过：可见 URL/PID/waiting 与本地配置确认、CLI exit 0、Web PID 退出；宿主/IFX/原 0.4.0/新 config 与 626 payload 均相等，未分析/build。见 [step03a](../acceptance/20261010-0.5-ifx-step03-safe-shutdown.md)。Ctrl+C、pipe/file、外置副本升级回退及最终审计仍待人工逐块执行；产品候选保持冻结，未合并/正式发布。
+
+0.5.0 操作员 Ctrl+C 已通过：独立可见控制台的 CLI exit 130，Web PID 40888 已退出且不再监听，宿主/IFX/原安装/新配置与包相等。见 [step03b](../acceptance/20261010-0.5-ifx-step03-ctrl-c.md)。下一步为管道与文件重定向验收；合成空目标测试通过。外置副本升级回退、最终审计及合并发布仍待完成。
+
+0.5.0 操作员管道/文件输出已通过：新安装 CLI 管道就绪且安全关闭 exit 0、Web/监听退出；文件 stdout/stderr 的无 token 验收、宿主/IFX/原安装/新配置与包相等。见 [step03c](../acceptance/20261010-0.5-ifx-step03-pipe-file.md)。下一步先建立外置的真实保存状态副本和只读 adopt 计划；随后逐块升级回退、最终审计，尚未合并/发布。
+
+0.5.0 操作员外置副本与只读 adopt 计划已通过：原 0.4.0 的 621 个 payload、2 个规则库文件（含墓碑）及 6 份报告复制并核对，副本配置仅将 rules/reports 重定位至外置根。plan ID `09ab270957afd8f66908da4132df1f293677580cdb5b2b077dd6946ba4d9b47a`，文件 SHA-256 `9921ac788fe415556b3bf3919d70517365d2dc47391b6fc6ec009824801ef7e5`；宿主/IFX/原安装/报告相等，未 adopt/upgrade/分析/build。见 [step04a](../acceptance/20261010-0.5-ifx-step04a-copy-plan.md)。下一块只在该外置副本 apply 已审阅 adopt 计划、inspect，并生成只读 upgrade 计划；其后再逐块升级/回退和最终审计。未合并/发布。
+
+0.5.0 操作员外置副本 adopt 已通过：receipt `77534c6576a1405d93fffb69031f3893`，副本选中 0.4.0，inspect verified/pending=0；保存状态、宿主/IFX/原安装/报告均相等。只读 0.5.0 upgrade 计划 ID `b66f8bb972f168bbfea6cac91da4b7e47b794d0bbd4cdc458c05b2afe5b620bf`、文件 SHA-256 `69bc2c984d3d1849713b3795b1c990dc6d76de11bf8d5a72177735aa0fe06332` 已审阅，smoke=true，尚未 apply/分析/build。见 [step04b](../acceptance/20261010-0.5-ifx-step04b-adopt-upgrade-plan.md)。下一块只在副本 apply 升级并核对备份、并存版本及状态；回退和最终审计仍待逐块执行，未合并/发布。
+
+0.5.0 操作员外置副本升级已通过：upgrade receipt `6efbaf703da244aa8ee24f175fa6952e`，选中 0.5.0 且原 0.4.0 并存；private UI smoke、完整 config/库备份及 inspect/pending=0 均通过。保存状态、六份报告、宿主/IFX/原安装及原报告相等，未分析/build。见 [step04c](../acceptance/20261010-0.5-ifx-step04c-upgrade.md)。下一块只对外置副本使用上述 receipt 和当前 selection 哈希执行回退，随后单独做最终审计；未合并/发布。
+
+0.5.0 操作员外置副本回退已通过：rollback receipt `8d04aec04cf043d1acd9468b45b901a2`，重新选中 0.4.0，0.5.0 继续并存，inspect/pending=0；保存状态、完整升级备份、六份报告、宿主/IFX/原安装及原报告相等，未分析/build。见 [step04d](../acceptance/20261010-0.5-ifx-step04d-rollback.md)。下一块为最终只读 source/host/process/listener 及新安装/副本/资产审计；其结果审阅前仍未合并/发布。
 
 ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
 

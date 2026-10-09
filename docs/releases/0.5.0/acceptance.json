@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "version": "0.5.0",
+  "status": "accepted-with-limitations",
+  "sourceCommit": "c4010d8c45eecadb3c51272334ceb4169e27b6ce",
+  "rid": "win-x64",
+  "selfContained": true,
+  "assets": [
+    {
+      "name": "archsift-0.5.0-win-x64.zip",
+      "bytes": 89042456,
+      "sha256": "9071b35036ea8d7b0a52e00bbd078b4de70ccc5b4a661a3f0daf10f5e6f9de85"
+    },
+    {
+      "name": "ArchSift.Setup.exe",
+      "bytes": 74071838,
+      "sha256": "f3eb9e4d166efc7c3ddb9bb738571016807f795b0cc68aeb6cb4f2668c5fad07"
+    }
+  ],
+  "manifestSha256": "b7a7b7508ba887eaf3b1a3208cf924c47266148bbb41c5c4bb593da4a791b225",
+  "payloadEntryCount": 626,
+  "gates": {
+    "ciRunId": 37960042055,
+    "windowsTests": 179,
+    "ubuntuTests": 179,
+    "nativePackageSmoke": 17,
+    "setupSmoke": 13,
+    "nativeCliUiOutputAndShutdown": true,
+    "runningScanParentExitCancelledAudit": true,
+    "sarifOfficialSchema": true,
+    "performanceBudget": true,
+    "independentDraftDownload": true,
+    "realIfxOperator": true,
+    "nativeTerminal": true,
+    "externalCopyUpgradeRollback": true,
+    "finalOperatorAudit": true,
+    "hostStateEqual": true
+  },
+  "limits": [
+    "Real IFX acceptance covered installation, UI and CLI lifecycle, and upgrade/rollback on an external copy; no 0.5.0 IFX analysis or target build was performed.",
+    "Self-contained package and controlled invalid DOTNET_ROOT/HOST checks passed; no physically SDK-free host certification.",
+    "No minimum Windows version or ARM64, Linux self-contained/Web, publisher signature, schema migration or uninstall certification.",
+    "No IFX policy adoption or C/D/E/full-source protection claim; 0.4.0 historical evidence and assets remain unchanged."
+  ],
+  "publisherSignatureVerified": false
+}

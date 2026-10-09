@@ -1,4 +1,4 @@
-# ArchSift 0.4.0 development package
+# ArchSift 0.5.0 package
 
 Windows x64 self-contained CLI and loopback workbench. Declared project discovery requires no SDK or Guard installation and makes no persistent PATH/Profile changes. Isolated builds need supported target SDKs/targeting packs and default to offline restore. This package is a candidate until its exact bytes pass the release acceptance gates.
 
@@ -13,7 +13,9 @@ After extracting, run in PowerShell:
 ./archsift.exe ui --config D:/your-config/archsift.json
 ```
 
-Changes requires local Git and compares HEAD with the final worktree by default; explicit --base/--head local commits must be supplied together. It does not fetch, checkout or write to the target. UI startup prints a session-token loopback URL. Use Safe shutdown or Ctrl+C to stop the service; closing the browser alone does not stop it.
+Changes requires local Git and compares HEAD with the final worktree by default; explicit --base/--head local commits must be supplied together. It does not fetch, checkout or write to the target. CLI UI forwards stdout/stderr and prints URL/PID/waiting state; a private control pipe ends Web on parent exit. Use Safe shutdown or Ctrl+C; closing the browser alone does not stop it. Never publish the token.
+
+The separate self-contained Windows ArchSift.Setup.exe supports reviewed plan/apply installation, explicit adoption, compatible side-by-side upgrade, receipt rollback and journal recovery. It does not change PATH or install an SDK. --notices prints embedded runtime licenses. Unknown schema/migration rejects; ruleset entry IDs, tombstones and chain references are preserved. See docs/setup.md and docs/installation.md. Setup does not analyze/build targets or adopt policy.
 
 JSON is executable policy. Eight templates in templates/rules include direct project/NuGet allowlists. Allowlists intersect and do not override deny rules. Incomplete declarations retain limitations. Legacy verify composes configured files; card/chain verification uses frozen saved library bytes, with independent chain children and a separate summary. Import/export retains exact saved JSON bytes, including BOM; unsaved drafts do not change runs. Missing chain entries produce diagnostics while later entries continue.
 

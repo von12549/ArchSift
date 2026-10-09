@@ -16,8 +16,13 @@ public static class SchemaValidation
         var resource = assembly.GetManifestResourceNames().Single(n => n.EndsWith("." + name + ".schema.json", StringComparison.Ordinal));
         using var stream = assembly.GetManifestResourceStream(resource)!;
         using var schema = JsonDocument.Parse(stream);
+        ValidateDocument(value, schema.RootElement);
+    }
+
+    public static void ValidateDocument(JsonElement value, JsonElement schema)
+    {
         CheckDuplicateKeys(value, "$");
-        var errors = Evaluate(value, schema.RootElement, schema.RootElement, "$", 0);
+        var errors = Evaluate(value, schema, schema, "$", 0);
         if (errors.Count > 0)
             throw new ConfigurationException(string.Join("\n", errors.Take(20)));
     }
