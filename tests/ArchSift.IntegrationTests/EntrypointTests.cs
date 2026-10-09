@@ -9,6 +9,7 @@ public sealed class EntrypointTests
     [Theory]
     [InlineData("ArchSift.Cli", "archsift", "archsift")]
     [InlineData("ArchSift.Web", "ArchSift.Web", "archsift-web")]
+    [InlineData("ArchSift.Setup", "ArchSift.Setup", "archsift-setup")]
     public async Task VersionEntrypointsReportTheSharedVersion(string project, string assembly, string name)
     {
         var result = await Run(project, assembly, "--version");

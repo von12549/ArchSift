@@ -116,7 +116,7 @@
       "archsift.archunit": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Core": "[0.1.0-dev, )",
+          "ArchSift.Core": "[0.5.0, )",
           "TngTech.ArchUnitNET": "[0.13.4, 0.13.4]"
         }
       },
@@ -126,7 +126,7 @@
       "archsift.core": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Contracts": "[0.1.0-dev, )"
+          "ArchSift.Contracts": "[0.5.0, )"
         }
       },
       "TngTech.ArchUnitNET": {

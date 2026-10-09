@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><AssemblyName>ArchSift.Setup</AssemblyName></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
+    <Compile Include="../Shared/UiProcess.cs" Link="UiProcess.cs" />
+    <EmbeddedResource Include="../../schemas/setup/setup.schema.json" Link="Schemas/setup.schema.json" />
+    <EmbeddedResource Include="../../LICENSE" LogicalName="ArchSift.Setup.Notices.ArchSift-LICENSE.txt" />
+    <EmbeddedResource Include="$(SetupNoticesDirectory)/LICENSE.TXT;$(SetupNoticesDirectory)/THIRD-PARTY-NOTICES.TXT" Condition="'$(SetupNoticesDirectory)' != ''" LogicalName="ArchSift.Setup.Notices.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <Target Name="RequireSetupRuntimeNotices" BeforeTargets="Publish" Condition="'$(SelfContained)' == 'true'">
+    <Error Condition="'$(SetupNoticesDirectory)' == ''" Text="Self-contained Setup requires embedded runtime license/third-party notices." />
+  </Target>
+</Project>

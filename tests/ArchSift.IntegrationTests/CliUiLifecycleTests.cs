@@ -11,6 +11,52 @@ namespace ArchSift.IntegrationTests;
 public sealed class CliUiLifecycleTests
 {
     [Theory]
+    [InlineData("cancel")]
+    [InlineData("timeout")]
+    [InlineData("bad-config")]
+    public async Task OwnedRunnerCancellationStartupTimeoutAndErrorLeaveNoChild(string scenario)
+    {
+        var root = Path.Combine(Path.GetTempPath(), "archsift-ui-runner-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "target"));
+        var configPath = Path.Combine(root, "config.json");
+        File.WriteAllText(configPath, scenario == "bad-config" ? "{}" : JsonSerializer.Serialize(new RunConfiguration
+        { SchemaVersion = 1, Target = new() { Root = Path.Combine(root, "target") }, Output = new() { Directory = Path.Combine(root, "reports") } }, JsonContract.Options));
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "ArchSift.slnx"))) directory = directory.Parent;
+        var build = typeof(CliUiLifecycleTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
+        var executable = Path.Combine(directory!.FullName, "src", "ArchSift.Web", "bin", build, "net10.0", OperatingSystem.IsWindows() ? "ArchSift.Web.exe" : "ArchSift.Web");
+        using var cancellation = new CancellationTokenSource(); var errors = new StringWriter();
+        var writer = new ReadinessWriter(cancellation, scenario == "cancel");
+        try
+        {
+            var run = ArchSift.Hosting.UiProcess.RunAsync(executable, null, configPath, writer, errors, cancellation.Token,
+                startupTimeout: scenario == "timeout" ? TimeSpan.FromTicks(1) : null);
+            if (scenario == "cancel") await Assert.ThrowsAnyAsync<OperationCanceledException>(() => run);
+            else if (scenario == "timeout") await Assert.ThrowsAsync<TimeoutException>(() => run);
+            else { Assert.Equal(2, await run); Assert.NotEmpty(errors.ToString()); }
+            if (writer.ChildPid is { } pid)
+            {
+                try { using var child = Process.GetProcessById(pid); Assert.True(child.HasExited); }
+                catch (ArgumentException) { }
+            }
+            Assert.False(Directory.Exists(Path.Combine(root, "reports")));
+        }
+        finally { Directory.Delete(root, true); }
+    }
+
+    private sealed class ReadinessWriter(CancellationTokenSource cancellation, bool cancelOnReady) : StringWriter
+    {
+        public int? ChildPid { get; private set; }
+        public override Task WriteLineAsync(string? value)
+        {
+            if (value?.StartsWith("ARCHSIFT_PID=", StringComparison.Ordinal) == true) ChildPid = int.Parse(value[13..], System.Globalization.CultureInfo.InvariantCulture);
+            if (cancelOnReady && value?.StartsWith("ARCHSIFT_STATE=waiting", StringComparison.Ordinal) == true) cancellation.Cancel();
+            // Never include session URL/token in test output or assertions.
+            return Task.CompletedTask;
+        }
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task NativeCliForwardsStartupAndOwnsWebUntilShutdownOrParentExit(bool terminateParent)

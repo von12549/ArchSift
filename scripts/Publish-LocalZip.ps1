@@ -1,12 +1,12 @@
 [CmdletBinding()]
-param([string]$LabRoot='D:\ArchSift-lab',[string]$LocalFeed=(Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),[string]$Version='0.4.0',[switch]$RequireCommittedSource)
+param([string]$LabRoot='D:\ArchSift-lab',[string]$LocalFeed=(Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),[string]$Version='0.5.0',[switch]$RequireCommittedSource)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $lab=[IO.Path]::GetFullPath($LabRoot)
 if($lab-eq$root-or$lab.StartsWith($root+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Package output must be outside source.'}
 if($Version-notmatch'^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?$'){throw 'Invalid package version.'}
-$productScope=@('src','schemas','templates','samples','scripts','.github','Directory.Build.props','Directory.Packages.props','global.json','NuGet.Config','LICENSE','docs/migration','docs/package-readme.md','docs/cli.md','docs/changes.md','docs/reports.md','docs/rules.md','docs/build-inputs.md')
+$productScope=@('src','schemas','templates','samples','scripts','.github','Directory.Build.props','Directory.Packages.props','global.json','NuGet.Config','LICENSE','docs/migration','docs/package-readme.md','docs/installation.md','docs/setup.md','docs/cli.md','docs/changes.md','docs/reports.md','docs/rules.md','docs/build-inputs.md')
 $sourceCommitBefore=(& git -C $root rev-parse HEAD).Trim()
 function Product-Hash {
     $paths=((& git -C $root ls-files -z --cached --others --exclude-standard -- @productScope)-join "`n").Split([char]0,[StringSplitOptions]::RemoveEmptyEntries)
@@ -36,11 +36,19 @@ function Run-Dotnet([string]$Name,[string[]]$Arguments){
     try{if(-not$p.WaitForExit(180000)){$p.Kill($true);throw 'Publish command timed out.'};[Threading.Tasks.Task]::WaitAll($out,$err);[IO.File]::WriteAllText((Join-Path $run ($Name+'.stdout.log')),$out.Result);[IO.File]::WriteAllText((Join-Path $run ($Name+'.stderr.log')),$err.Result);$equal=(State-Hash)-ceq$before;$checks.Add([ordered]@{name=$Name;exitCode=$p.ExitCode;hostStateEqual=$equal});Write-Output ($Name+' exit='+$p.ExitCode+' host-state-equal='+$equal);if(-not$equal){throw 'Host state drift; no repair.'};if($p.ExitCode-ne0){Write-Output $out.Result;Write-Output $err.Result;throw 'Package build failed.'}}finally{$p.Dispose()}
 }
 try {
-    foreach($project in @('Cli','Web')){
+    foreach($project in @('Cli','Web','Setup')){
         $path='src/ArchSift.'+$project+'/ArchSift.'+$project+'.csproj'
         Run-Dotnet ('restore-'+$project) @('restore',$path,'--locked-mode','-r','win-x64','-p:RuntimeIdentifier=win-x64','-p:SelfContained=true','--configfile',(Join-Path $root 'NuGet.Config'),'--source',[IO.Path]::GetFullPath($LocalFeed),'--packages',(Join-Path $run 'nuget-cache'),'--disable-build-servers','-p:NuGetAudit=false')
-        $destination=if($project-eq'Cli'){$payload}else{Join-Path $payload 'web'}
-        Run-Dotnet ('publish-'+$project) @('publish',$path,'--no-restore','-c','Release','-r','win-x64','--self-contained','true','--disable-build-servers','-p:UseSharedCompilation=false',('-p:Version='+$Version),'-o',$destination)
+        $destination=if($project-eq'Cli'){$payload}elseif($project-eq'Web'){Join-Path $payload 'web'}else{Join-Path $run 'setup'}
+        $publishArguments=@('publish',$path,'--no-restore','-c','Release','-r','win-x64','--self-contained','true','--disable-build-servers','-p:UseSharedCompilation=false',('-p:Version='+$Version),'-o',$destination)
+        if($project-eq'Setup'){
+            $assets=Get-Content -LiteralPath (Join-Path $root 'src/ArchSift.Setup/obj/project.assets.json') -Raw|ConvertFrom-Json
+            $runtimeProperty=@($assets.libraries.PSObject.Properties|Where-Object Name -like 'Microsoft.NETCore.App.Runtime.win-x64/*')
+            if($runtimeProperty.Count-ne1){throw 'Setup runtime identity unavailable.'}
+            $runtimeNotices=Join-Path (Join-Path $run 'nuget-cache') $runtimeProperty[0].Value.path
+            $publishArguments+=@('-p:PublishSingleFile=true','-p:IncludeNativeLibrariesForSelfExtract=true',('-p:SetupNoticesDirectory='+$runtimeNotices))
+        }
+        Run-Dotnet ('publish-'+$project) $publishArguments
     }
     $licenseRoot=Join-Path $payload 'licenses'
     [void][IO.Directory]::CreateDirectory($licenseRoot)
@@ -48,7 +56,8 @@ try {
     Copy-Item -LiteralPath (Join-Path $root 'docs/package-readme.md') -Destination (Join-Path $payload 'README.md')
     foreach($folder in @('schemas','templates','samples')){Copy-Item -LiteralPath (Join-Path $root $folder) -Destination (Join-Path $payload $folder) -Recurse}
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'docs'))
-    foreach($file in @('cli.md','changes.md','reports.md','rules.md','build-inputs.md')){Copy-Item -LiteralPath (Join-Path $root ('docs/'+$file)) -Destination (Join-Path $payload ('docs/'+$file))}
+    foreach($file in @('cli.md','changes.md','reports.md','rules.md','build-inputs.md','installation.md','setup.md')){Copy-Item -LiteralPath (Join-Path $root ('docs/'+$file)) -Destination (Join-Path $payload ('docs/'+$file))}
+    [IO.File]::WriteAllText((Join-Path $payload 'setup-compatibility.json'),'{"schemaVersion":1,"configSchemaVersion":1,"librarySchemaVersion":1,"chainSchemaVersion":1}')
     Copy-Item -LiteralPath (Join-Path $root 'docs/migration/third-party-notices.md') -Destination (Join-Path $licenseRoot 'third-party-notices.md')
     Copy-Item -LiteralPath (Join-Path $root 'docs/migration/licenses') -Destination (Join-Path $licenseRoot 'libraries') -Recurse
     foreach($runtimeConfig in @((Join-Path $payload 'archsift.runtimeconfig.json'),(Join-Path $payload 'web/ArchSift.Web.runtimeconfig.json'))){
@@ -68,6 +77,7 @@ try {
     [IO.File]::WriteAllText((Join-Path $payload 'package-manifest.json'),([ordered]@{schemaVersion=1;version=$Version;rid='win-x64';selfContained=$true;acceptanceStatus='candidate';sourceCommit=$commit;sourceDirty=$dirty;productSourceDirty=$productDirty;productInputsSha256=$productHashBefore;entries=$entries;manifestSelfHashOmitted=$true}|ConvertTo-Json -Depth 8))
     $zip=Join-Path $run ('archsift-'+$Version+'-win-x64.zip')
     [IO.Compression.ZipFile]::CreateFromDirectory($payload,$zip)
-    $result=[ordered]@{zipPath=$zip;zipSha256=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant();payloadRoot=$payload;runRoot=$run;checks=$checks.ToArray();hostStateEqual=((State-Hash)-ceq$before);version=$Version;sourceCommit=$commit;sourceDirty=$dirty;productSourceDirty=$productDirty;acceptanceStatus='candidate'}
+    $setupExecutable=Join-Path $run 'setup/ArchSift.Setup.exe'
+    $result=[ordered]@{zipPath=$zip;zipSha256=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant();setupPath=$setupExecutable;setupSha256=(Get-FileHash -LiteralPath $setupExecutable -Algorithm SHA256).Hash.ToLowerInvariant();payloadRoot=$payload;runRoot=$run;checks=$checks.ToArray();hostStateEqual=((State-Hash)-ceq$before);version=$Version;sourceCommit=$commit;sourceDirty=$dirty;productSourceDirty=$productDirty;acceptanceStatus='candidate'}
     [IO.File]::WriteAllText((Join-Path $run 'package-result.json'),($result|ConvertTo-Json -Depth 8));$result|ConvertTo-Json -Depth 8
 } finally {Write-Output ('package-final-host-state-equal='+((State-Hash)-ceq$before))}

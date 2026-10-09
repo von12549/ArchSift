@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="../../src/ArchSift.Setup/ArchSift.Setup.csproj" />
     <ProjectReference Include="../../src/ArchSift.Contracts/ArchSift.Contracts.csproj" />
     <ProjectReference Include="../../src/ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../../src/ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
