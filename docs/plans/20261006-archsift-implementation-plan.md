@@ -28,6 +28,8 @@
 
 0.5.0 操作员新根安装通过：真实 receipt/inspect 已核对，`ArchSift-0.5-review` 选中 0.5.0、config/manifest/state 与审查计划一致，private UI smoke 成功，目标/原 0.4.0/宿主相等，无分析/build。见 [step02](../acceptance/20261010-0.5-ifx-step02-install.md)。标准 CLI 可见终端与键盘等人工门禁尚待执行；产品 c4010d8 和资产不变，尚未合并或正式发布。
 
+0.5.0 操作员标准 CLI Safe shutdown 已通过：可见 URL/PID/waiting 与本地配置确认、CLI exit 0、Web PID 退出；宿主/IFX/原 0.4.0/新 config 与 626 payload 均相等，未分析/build。见 [step03a](../acceptance/20261010-0.5-ifx-step03-safe-shutdown.md)。Ctrl+C、pipe/file、外置副本升级回退及最终审计仍待人工逐块执行；产品候选保持冻结，未合并/正式发布。
+
 ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
 
 首个完整版本为 0.1.0，覆盖六类规则、项目分析、项目验证、ArchUnitNET 程序集依赖检查、CLI、本机 Web UI、JSON/HTML 报告和本地 Windows x64 ZIP。后续 0.2.0 覆盖变更验证、SARIF、Linux CLI 验证与非阻断 CI 样例；各版本均以验收结果交付，不预设日期。
