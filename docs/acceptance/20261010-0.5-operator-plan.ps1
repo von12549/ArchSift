@@ -8,6 +8,7 @@ param(
     [Parameter(Mandatory)][string]$ExpectedSourceCommit,
     [string]$TargetRoot='D:\IFX-10-Root\IFX-New',
     [string]$ExistingInstallRoot='D:\IFX-10-Root\ArchSift',
+    [string]$ExistingVersionDirectory,
     [string]$NewInstallRoot='D:\IFX-10-Root\ArchSift-0.5-review',
     [string]$LabRoot='D:\ArchSift-lab'
 )
@@ -42,10 +43,19 @@ function Target-State {
     return [ordered]@{head=$head;ordinaryStatusSha256=(Hash-Json $status);filesSha256=(Hash-Json $files);fileCount=$files.Count}
 }
 function Existing-State {
-    $manifestPath=Join-Path $ExistingInstallRoot 'package-manifest.json'
+    if($ExistingVersionDirectory){
+        $versionRoot=Safe-Path $ExistingVersionDirectory
+        if($versionRoot-cne$ExistingInstallRoot-and-not$versionRoot.StartsWith($ExistingInstallRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Existing version directory escapes installation root.'}
+    }else{
+        $candidates=@($ExistingInstallRoot,(Join-Path $ExistingInstallRoot 'versions/0.4.0'))
+        $matches=@($candidates|Where-Object {[IO.File]::Exists((Safe-Path (Join-Path $_ 'package-manifest.json')))})
+        if($matches.Count-ne1){throw 'Expected exactly one existing 0.4.0 package root; specify -ExistingVersionDirectory after review.'}
+        $versionRoot=Safe-Path $matches[0]
+    }
+    $manifestPath=Join-Path $versionRoot 'package-manifest.json'
     $manifest=Get-Content -LiteralPath (Safe-Path $manifestPath) -Raw|ConvertFrom-Json
     if($manifest.version-cne'0.4.0'-or$manifest.sourceCommit-cne'bb599bd87aaa3322229c049442e135f3c091b72a'-or(Hash-File $manifestPath)-cne'd35fea42475633eb290c858e4df4aec4387dad639d2d03480d20e9edd532849c'){throw 'Existing 0.4.0 manifest differs; stop for review.'}
-    foreach($file in $manifest.entries){$path=Safe-Path (Join-Path $ExistingInstallRoot $file.path);if(-not$path.StartsWith($ExistingInstallRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)-or(Hash-File $path)-cne$file.sha256){throw 'Existing package identity differs.'}}
+    foreach($file in $manifest.entries){$path=Safe-Path (Join-Path $versionRoot $file.path);if(-not$path.StartsWith($versionRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)-or(Hash-File $path)-cne$file.sha256){throw 'Existing package identity differs.'}}
     $configPath=Join-Path $ExistingInstallRoot 'config/ifx.json';$config=Get-Content -LiteralPath (Safe-Path $configPath) -Raw|ConvertFrom-Json
     $base=[IO.Path]::GetDirectoryName($configPath)
     $library=if($config.PSObject.Properties.Name-contains'rulesDirectory'){[IO.Path]::GetFullPath([string]$config.rulesDirectory,$base)}else{Join-Path ([IO.Path]::GetFullPath([string]$config.output.directory,$base)) 'rules'}
@@ -57,7 +67,7 @@ function Existing-State {
         }
     }
     if([IO.Directory]::Exists($library)){Walk-Library $library}
-    return [ordered]@{manifestSha256=(Hash-File $manifestPath);payloadCount=$manifest.entries.Count;configSha256=(Hash-File $configPath);librarySha256=(Hash-Json @($records|Sort-Object path));libraryFileCount=$records.Count}
+    return [ordered]@{versionDirectory=$versionRoot;manifestSha256=(Hash-File $manifestPath);payloadCount=$manifest.entries.Count;configSha256=(Hash-File $configPath);librarySha256=(Hash-Json @($records|Sort-Object path));libraryFileCount=$records.Count}
 }
 $TargetRoot=Safe-Path $TargetRoot;$ExistingInstallRoot=Safe-Path $ExistingInstallRoot;$NewInstallRoot=Safe-Path $NewInstallRoot;$LabRoot=Safe-Path $LabRoot
 $sourceRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -65,12 +75,18 @@ foreach($protected in @($sourceRoot,$TargetRoot,$ExistingInstallRoot)){
     if($LabRoot-eq$protected-or$LabRoot.StartsWith($protected+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)-or$protected.StartsWith($LabRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Evidence/protected roots overlap.'}
 }
 if([IO.Directory]::Exists($NewInstallRoot)-or[IO.File]::Exists($NewInstallRoot)){throw 'New review root must be absent; preserve existing directories.'}
-$hostBefore=Get-ArchSiftHostHash;$targetBefore=Target-State;$existingBefore=Existing-State
+$hostBefore=Get-ArchSiftHostHash;$targetBefore=$null;$existingBefore=$null
 $run=Join-Path $LabRoot ('evidence/ifx-0.5-plan-'+[Guid]::NewGuid().ToString('N'))
 [void][IO.Directory]::CreateDirectory($run)
-[IO.File]::WriteAllText((Join-Path $run 'before.json'),(@{hostSha256=$hostBefore;target=$targetBefore;existing=$existingBefore}|ConvertTo-Json -Depth 8))
+$beforePath=Join-Path $run 'before.json'
+[IO.File]::WriteAllText($beforePath,(@{hostSha256=$hostBefore;target=$targetBefore;existing=$existingBefore}|ConvertTo-Json -Depth 8))
 $completed=$false
+$candidateStarted=$false
 try{
+    $targetBefore=Target-State
+    [IO.File]::WriteAllText($beforePath,(@{hostSha256=$hostBefore;target=$targetBefore;existing=$existingBefore}|ConvertTo-Json -Depth 8))
+    $existingBefore=Existing-State
+    [IO.File]::WriteAllText($beforePath,(@{hostSha256=$hostBefore;target=$targetBefore;existing=$existingBefore}|ConvertTo-Json -Depth 8))
     $SetupPath=Safe-Path $SetupPath;$ZipPath=Safe-Path $ZipPath
     if((Hash-File $SetupPath)-cne$ExpectedSetupSha256-or(Hash-File $ZipPath)-cne$ExpectedZipSha256){throw 'Reviewed candidate asset hash mismatch.'}
     $archive=[IO.Compression.ZipFile]::OpenRead($ZipPath)
@@ -80,7 +96,7 @@ try{
     $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=$SetupPath;$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
     foreach($arg in @('plan','install','--root',$NewInstallRoot,'--package',$ZipPath,'--sha256',$ExpectedZipSha256,'--target',$TargetRoot,'--entry','IFX.sln','--tfm','net10.0','--smoke','true')){$start.ArgumentList.Add($arg)}
     $start.Environment['DOTNET_CLI_HOME']=(Join-Path $run 'cli-home');$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
-    $process=[Diagnostics.Process]::Start($start);$stdout=$process.StandardOutput.ReadToEndAsync();$stderr=$process.StandardError.ReadToEndAsync()
+    $process=[Diagnostics.Process]::Start($start);$candidateStarted=$true;$stdout=$process.StandardOutput.ReadToEndAsync();$stderr=$process.StandardError.ReadToEndAsync()
     try{
         if(-not$process.WaitForExit(120000)){$process.Kill($true);$process.WaitForExit();throw 'Read-only setup planning timeout.'}
         [Threading.Tasks.Task]::WaitAll($stdout,$stderr)
@@ -91,9 +107,16 @@ try{
         if([IO.Directory]::Exists($NewInstallRoot)){throw 'Read-only plan unexpectedly created install root.'}
         $completed=$true
     }finally{$process.Dispose()}
+}catch{
+    [IO.File]::WriteAllText((Join-Path $run 'stop.json'),(@{status='stop';message=$_.Exception.Message;candidateStarted=$candidateStarted}|ConvertTo-Json -Depth 4))
+    throw
 }finally{
-    $hostEqual=(Get-ArchSiftHostHash)-ceq$hostBefore;$targetEqual=(Hash-Json (Target-State))-ceq(Hash-Json $targetBefore);$existingEqual=(Hash-Json (Existing-State))-ceq(Hash-Json $existingBefore)
+    $hostEqual=(Get-ArchSiftHostHash)-ceq$hostBefore;$targetEqual=$null;$existingEqual=$null
+    $auditErrors=[Collections.Generic.List[string]]::new()
+    if($null-ne$targetBefore){try{$targetEqual=(Hash-Json (Target-State))-ceq(Hash-Json $targetBefore)}catch{$targetEqual=$false;$auditErrors.Add($_.Exception.Message)}}
+    if($null-ne$existingBefore){try{$existingEqual=(Hash-Json (Existing-State))-ceq(Hash-Json $existingBefore)}catch{$existingEqual=$false;$auditErrors.Add($_.Exception.Message)}}
     $result=[ordered]@{status=$(if($completed-and$hostEqual-and$targetEqual-and$existingEqual){'plan-ready-for-review'}else{'stop'});runRoot=$run;hostStateEqual=$hostEqual;targetStateEqual=$targetEqual;existing040StateEqual=$existingEqual;applied=$false;analysisOrBuildPerformed=$false}
     [IO.File]::WriteAllText((Join-Path $run 'result.json'),($result|ConvertTo-Json -Depth 5));$result|ConvertTo-Json -Depth 5
-    if(-not$hostEqual-or-not$targetEqual-or-not$existingEqual){throw 'Safety drift; preserve evidence and stop. No repair.'}
+    [IO.File]::WriteAllText((Join-Path $run 'audit-errors.json'),(ConvertTo-Json -InputObject $auditErrors.ToArray()))
+    if(-not$hostEqual-or($null-ne$targetEqual-and-not$targetEqual)-or($null-ne$existingEqual-and-not$existingEqual)){throw 'Safety drift or audit failure; preserve evidence and stop. No repair.'}
 }
