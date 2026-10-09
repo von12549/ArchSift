@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "step": "ifx-0.4-browser-manual-session",
+  "status": "needs-review",
+  "runRoot": "D:/ArchSift-lab/runs/ifx-0.4-browser-ca19f9bf0f624bf588fb0d488ca921a6",
+  "candidateSourceCommit": "061a53dfbbe5f67a3c339b4530288c4ca79c3adf",
+  "originalOperatorResultWritten": false,
+  "resultWriterFailure": "Where-Object shorthand in Start-0.4IfxBrowserSession.ps1 did not parse the comparison operator after the six responses and rating.",
+  "operatorResponses": {
+    "sixQuestions": ["yes", "yes", "yes", "yes", "yes", "yes"],
+    "usabilityRating": 4,
+    "visualFindingsOverridePass": true
+  },
+  "visualFindings": [
+    "Language selector and Safe shutdown button are visibly misaligned.",
+    "Expanded ruleset card shows a very long raw JSON block beside an over-prominent editor."
+  ],
+  "agentReadOnlyChecks": {
+    "nativeWebPid": 37072,
+    "nativeWebProcessAlive": false,
+    "recordedPort": 7935,
+    "listenerCount": 0,
+    "targetHead": "64ef2674c57e6cf9031481d6d4410cca55b0dad5",
+    "targetOrdinaryStatusClean": true,
+    "configSha256": "c78de692f1bcfdea1245913e8d586b3172bbe3700a794066e1452584721ef200",
+    "fullRulesetSha256": "48495a266a1d8444ca0cd8cdeb6e5f3023f294ca70b30e020bf5c4a5131fbda2",
+    "subsetSha256": "4f1db37bc6ab94406578c702293fc4fefd3d01b0f5f1cde9f7e84c90f88ccb9f",
+    "analysisReportCount": 4,
+    "chainSummaryCount": 2,
+    "diagnosticCount": 1
+  },
+  "operatorFinalHostHashRecovered": false,
+  "browserVisualAccepted": false,
+  "finalAcceptancePassed": false,
+  "nextStep": "recover-operator-result-and-retest-revised-ui"
+}

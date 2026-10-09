@@ -234,6 +234,7 @@ const zhTranslations={
   "Import Ruleset": "导入规则集",
   "Verify and export use saved bytes. Editor drafts never change a run.": "验证与导出使用已保存内容。编辑器草稿不影响运行。",
   "Ruleset editor": "规则集编辑器",
+  "Close editor": "关闭编辑器",
   "Saved file": "已保存文件",
   "Filename": "文件名",
   "Ruleset ID": "规则集 ID",

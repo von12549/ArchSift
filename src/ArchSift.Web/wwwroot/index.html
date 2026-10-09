@@ -36,17 +36,17 @@
 <div class="actions"><button id="analyze" type="button" class="primary" data-i18n="Discover projects">Discover projects</button><button id="draft" type="button" data-i18n="Draft candidate rules">Draft candidate rules</button></div>
 </form></section>
 <section id="panel-rulesets" class="tab-panel" hidden><div class="section-head"><h2 data-i18n="Ruleset library">Ruleset library</h2><span id="rules-directory" class="path"></span></div>
-<div class="actions"><button id="new-ruleset" data-i18n="New ruleset">New ruleset</button><label class="file-action"><span data-i18n="Import Ruleset">Import Ruleset</span><input id="import-rule" type="file" accept=".json,application/json"></label></div>
+<div class="actions"><button id="new-ruleset" data-i18n="New ruleset">New ruleset</button><label class="file-action"><span data-i18n="Import Ruleset">Import Ruleset</span><input id="import-rule" type="file" accept=".json,application/json"></label></div><p id="library-message" role="status" aria-live="polite"></p>
 <p class="hint" data-i18n="Verify and export use saved bytes. Editor drafts never change a run.">Verify and export use saved bytes. Editor drafts never change a run.</p>
-<div class="library-workspace"><div><div id="library-cards"></div><div id="external-rules"></div></div>
-<details id="editor-panel" class="editor"><summary data-i18n="Ruleset editor">Ruleset editor</summary>
+<div id="rules-workspace" class="library-workspace"><div><div id="library-cards"></div><div id="external-rules"></div></div>
+<div id="editor-panel" class="editor" hidden><div class="editor-head"><h3 data-i18n="Ruleset editor">Ruleset editor</h3><button id="close-editor" type="button" data-i18n="Close editor">Close editor</button></div>
 <div class="pair"><label><span data-i18n="Saved file">Saved file</span><select id="rule-files"><option value="" data-i18n="New ruleset">New ruleset</option></select></label><label><span data-i18n="Filename">Filename</span><input id="filename" value="architecture.json"></label></div>
 <div class="pair"><label><span data-i18n="Ruleset ID">Ruleset ID</span><input id="ruleset-id" value="architecture"></label><label><span data-i18n="Version">Version</span><input id="ruleset-version" value="1.0.0"></label></div>
 <label><span data-i18n="Description">Description</span><input id="ruleset-description"></label><p id="dirty-state" role="status"></p>
 <div id="rule-list"></div><div class="actions"><select id="template"><option value="" data-i18n="Select a standard template">Select a standard template</option></select><button id="add-rule" type="button" data-i18n="Add rule">Add rule</button></div>
 <details><summary data-i18n="Exceptions (rule ID, scope and reason)">Exceptions (rule ID, scope and reason)</summary><div id="exception-list"></div><button id="add-exception" type="button" data-i18n="Add exception">Add exception</button></details>
 <div class="actions"><button id="save-rule" class="primary" type="button" data-i18n="Validate and save">Validate and save</button><button id="export-md" type="button" data-i18n="Export Markdown">Export Markdown</button></div><p id="editor-message" role="status"></p>
-</details></div></section>
+</div></div></section>
 <section id="panel-chains" class="tab-panel" hidden><div class="section-head"><h2 data-i18n="Chains">Chains</h2><button id="new-chain" data-i18n="New chain">New chain</button></div>
 <p class="hint" data-i18n="Entries run independently in order against one frozen target. Missing rulesets are reported; later entries continue.">Entries run independently in order against one frozen target. Missing rulesets are reported; later entries continue.</p>
 <div class="library-workspace"><div id="chain-cards"></div><details id="chain-editor"><summary data-i18n="Chain editor">Chain editor</summary>
