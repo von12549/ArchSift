@@ -301,9 +301,9 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
                 if (process.Id == Environment.ProcessId) continue;
                 try
                 {
-                    if (ProcessEnded(process)) continue;
                     var name = process.ProcessName;
                     if (name is not ("archsift" or "ArchSift.Web" or "ArchSift.Setup")) continue;
+                    if (ProcessEnded(process)) continue;
                     var path = process.MainModule?.FileName;
                     if (path is null)
                     {
