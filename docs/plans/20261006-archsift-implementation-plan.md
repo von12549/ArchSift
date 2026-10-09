@@ -40,6 +40,8 @@
 
 0.5.0 操作员外置副本升级已通过：upgrade receipt `6efbaf703da244aa8ee24f175fa6952e`，选中 0.5.0 且原 0.4.0 并存；private UI smoke、完整 config/库备份及 inspect/pending=0 均通过。保存状态、六份报告、宿主/IFX/原安装及原报告相等，未分析/build。见 [step04c](../acceptance/20261010-0.5-ifx-step04c-upgrade.md)。下一块只对外置副本使用上述 receipt 和当前 selection 哈希执行回退，随后单独做最终审计；未合并/发布。
 
+0.5.0 操作员外置副本回退已通过：rollback receipt `8d04aec04cf043d1acd9468b45b901a2`，重新选中 0.4.0，0.5.0 继续并存，inspect/pending=0；保存状态、完整升级备份、六份报告、宿主/IFX/原安装及原报告相等，未分析/build。见 [step04d](../acceptance/20261010-0.5-ifx-step04d-rollback.md)。下一块为最终只读 source/host/process/listener 及新安装/副本/资产审计；其结果审阅前仍未合并/发布。
+
 ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
 
 首个完整版本为 0.1.0，覆盖六类规则、项目分析、项目验证、ArchUnitNET 程序集依赖检查、CLI、本机 Web UI、JSON/HTML 报告和本地 Windows x64 ZIP。后续 0.2.0 覆盖变更验证、SARIF、Linux CLI 验证与非阻断 CI 样例；各版本均以验收结果交付，不预设日期。
