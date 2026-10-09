@@ -1,21 +1,27 @@
-# JSON/HTML/SARIF 结果与可信度
+# JSON, HTML and SARIF semantics
 
-report.schema.json 是 schemaVersion=1 权威契约。operation、源/规则/引擎/程序集输入身份、scope、buildContext、engineVersions、execution、compliance、ruleResults、findings、coverage、limitations、executionErrors 和 runMetadata 均显式输出。
+JSON is the authority; HTML and SARIF are projections. Analysis report schemaVersion 1 records operation, source/rule/engine/assembly identity, scope, build context, execution, compliance, per-rule results, findings, coverage, limitations, errors and run metadata.
 
-逐规则 pass/violation/inconclusive/not-applicable/error 与总体执行状态分开。已判定违规默认 exit 0；有违规与无法判定同时出现时总体 noncompliant 并保留部分覆盖。没有有效违规但任何需要的规则无法判定时不得 compliant；全部 disabled/不适用为 not-applicable；无规则 analyze 为 null。
+Per-rule pass/violation/inconclusive/not-applicable/error is separate from execution. Effective violations produce noncompliant policy even when coverage is partial. With no effective violation, required inconclusive checks prevent compliant policy. All disabled/not-applicable checks yield not-applicable; analyze has null compliance.
 
-未绑定程序集保留实际 DLL finding，但相关规则是 inconclusive，不能从旧 DLL 推出当前源码不合规/合规。规则例外保留原 finding 和稳定 id/reason，统计有效违规时排除明确豁免。源码/规则/程序集在运行中变化导致本次当前源码结论失效，独立 runId 不借用上次结果。
+Unbound assembly findings are retained as actual DLL evidence while associated current-source checks remain inconclusive. Exceptions preserve findings, stable IDs and user reasons. Source/evidence drift invalidates current-source conclusions. Input identity includes source records, exact rule/assembly bytes, TFM/configuration and tool/engine versions; timestamps/duration/local paths remain run metadata or locator fields.
 
-核心 finding 排序和 ID 稳定；输入身份含相对源记录、原始规则哈希、程序集字节、TFM/configuration 与引擎/工具版本。时间、耗时、本机路径位于 runMetadata/定位字段。无源码映射时只显示程序集和类型位置，不虚构行号。HTML 是 JSON 数据的投影，所有用户文本均转义。
+HTML escapes user-authored content. Genuine assembly/type evidence never acquires guessed source files or line numbers. Unique output directories prevent old reports from standing in for failed or cancelled current jobs. Report-write failures return execution error 3.
 
-每次保存新 runId；历史报告保留其输入身份，不能当作当前运行。配置错误可在分析前拒绝；执行错误/取消时保留已完成结果和未完成规则标识。报告写入失败返回 3，不等同于合规通过。
+## Chain summaries
+
+chain-summary schemaVersion 1 is additive and independent of existing analysis/comparison schemas. It records the immutable chain snapshot, one source/build input identity, ordered entry identities/hashes, execution, compliance, exit code, unique project count and per-entry results/coverage/binding/limitations/report links. Project counts are not summed across repeated analysis of the same target. Rule identity is qualified by entry; findings from different policies are not deduplicated.
+
+A missing/invalid ruleset gets typed diagnostic JSON/HTML/SARIF, with no invented rule results/findings. Later entries continue. Effective violation takes precedence; otherwise missing/error/inconclusive/skipped means inconclusive, otherwise any compliant child means compliant, otherwise all-not-applicable is not-applicable. Any incomplete child makes execution partial. Cancellation retains completed evidence, a cancelled summary and skipped remaining entries. A partial/compliant summary must expose its uncovered scope.
+
+Output: snapshot.json; independent entry report directories; diagnostic.json/html/sarif where appropriate; chain-summary.json/html/sarif. CLI and UI invoke the same service. Card/chain verification always writes all three formats.
 
 ## SARIF 2.1.0
 
-配置 output.formats 可加入 sarif，生成 report.sarif / comparison.sarif；UI 也提供下载。JSON 仍为权威。稳定 finding ID 投影为 partialFingerprints；info 映射 note，warning/error 保留。例外为 external accepted suppression，程序集来源不足的 finding 使用 review，不冒充可判定的 fail。只对确实位于 inputIdentity 的根相对文件附 artifact URI，按路径分段 URI 编码；没有源码映射就不附文件位置，不虚构行号。
+Stable findings use partialFingerprints. Info maps to note; warning/error retain their levels. Exceptions use accepted external suppressions. Inconclusive assembly findings use review rather than conclusive fail. Only genuine root-relative paths present in inputIdentity receive artifact URIs, encoded per segment and bound to the actual source root via %SRCROOT%. No source mapping means no invented location.
 
-invocations 记录 executionSuccessful 和执行/覆盖 notifications；properties 保留 execution、compliance、coverage、逐规则状态与输入身份。只有 completed 的全面比较才附 baselineState new/unchanged/absent；政策变化或部分比较不作该承诺。
+Invocations carry executionSuccessful and execution/coverage notifications; properties retain status/coverage/input information. Only completed comprehensive changes comparisons use baselineState new/unchanged/absent. Policy changes and partial comparisons do not make that promise.
 
-投影按 [OASIS SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html) 与 [GitHub SARIF 支持](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support) 核对。只有逻辑/程序集位置的结果可能不会显示为 GitHub 源码告警；默认仅上传 artifact，不擅自启用 code scanning。
+Chain SARIF has one run per analyzed child, entry-qualified rule IDs and genuine findings, plus an orchestration run for diagnostics/limits/skips. Missing/invalid entries never become fabricated results. Official OASIS schema validation applies to examples and generated outputs. [SARIF specification](https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html) and [GitHub support](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support) describe the projection boundaries. Logic-only results may not appear as source alerts; default CI samples upload artifacts without enabling required checks.
 
-相对 artifact URI 显式关联 `%SRCROOT%` 和 originalUriBaseIds 的实际源码根 file URI；比较报告使用原始 TargetRoot，而不是一次性快照目录作为消费映射基准。此信息与已有 JSON 的 TargetRoot 一样属于本次输入定位，不是虚构源码映射。
+Generated product prose is English in every format. The Chinese UI changes presentation only; user-authored policy IDs, descriptions, exception reasons, paths and source text are preserved.

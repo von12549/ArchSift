@@ -4,7 +4,11 @@
 
 计划 ID：20261006-archsift-implementation
 
-状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`，未授权或开始新的工作包。
+状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`。2026-10-09 已登记 [0.4.0 改进计划](20261009-archsift-0.4.0-improvement-plan.md)，历史起点状态为 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`；同日用户授权在该计划范围内合理设计 UI 逻辑和布局，要求功能分区明确、信息简洁明要、颜色区分明显，已纳入 0.4-A 设计约束及后续视觉验收；用户已授权在新分支 `codex/archsift-0.4.0` 执行全部 0.4.0 开发计划及后续提交、推送、PR、合并、发布；当前 0.4-A 已冻结，0.4-B–E 代码与自动检查完成（Windows 142 项、前端逻辑/语言检查、合成桌面/窄屏与 SARIF），0.4-F 候选自动门禁已通过：固定 061a53d 的 Windows/Ubuntu 各 142 项、两次 17 项原生包 smoke、仓库草稿独立下载字节一致；Draft PR #1 与未公开 release 草稿已准备，真实 IFX 首步发现已核对（105 项目、0 程序集、105 条限制、exit 4，目标/宿主不变），第二步 182 条候选规则验证已核对（全部 pass、0 findings、partial/compliant/exit 4，563 源码记录与发现一致，规则/包/配置/目标/宿主不变），第三步规则库与规则链 API/CLI 首次停止证据已保留，修正后八项全部通过且目标/宿主不变，第四步真实 IFX 浏览器操作员虽回答六项 yes、可用性 4/5，但结果写入脚本语法错误，且截图发现语言/安全关闭按钮错位与规则集卡片展开过长，故第四步未通过；旧会话已由操作员恢复安全结果并确认目标/宿主不变；UI 修复、结果写入修复及替代包 a561e7d 的 Windows/Ubuntu 各 142 项 CI、两次 17 项 smoke、草稿资产独立下载回验已完成，替代包第四步复测六项 yes、评分 4/5，但操作员新发现 182 条规则在编辑器中全部展开；此段为阶段历史；最新状态见下段，尚未合并/公开发布/通知 IFX 项目，仍遵守各项验收门禁与人工真实集成流程。
+
+当前更新：0.4.0 精确产品提交 `bb599bd` 的真实 IFX 浏览器复测六项均为 yes，可用性 5/5；显式两次提交取消契约测试和最终只读 IFX/宿主/进程审计均通过。见 [最终验收](../acceptance/20261009-0.4-final-acceptance.md)。状态为 `ACCEPTED WITH LIMITATIONS / RELEASE PENDING`；声明层 105 项目、零程序集、105 条限制及 IFX 候选策略未采纳的边界保留。上段长记录保留此前阶段和停止证据。
+
+后续交接：2026-10-09 用户授权在 0.4.0 验收完成后通知 Codex Local Project `IFX-Guard-Test-Project`，由该项目编写 ArchSift–IFX 的 Agent 自动测试计划；已追加到 0.4.0 改进计划末尾。当前 `ACCEPTED / NOT YET NOTIFIED`，计划在合并、发布及下载回验完成后发送；本项授权为测试计划编写，尚未启动测试执行。
 
 来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
 
@@ -402,6 +406,10 @@ L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次�
 | 2026-10-07 | 0.3.0 正式发布 | tag `v0.3.0` 固定源码 `d1b1d7c`；Windows/Ubuntu 各 130/130 CI；88,917,483-byte Windows x64 ZIP SHA-256 `0202e9734ec990474c415d4152274db93337a768e51837ef968fc4b539e44c79`，三项远程资产 digest/下载字节一致，实际下载包完整 smoke、官方 SARIF schema、性能及宿主状态通过；见 [0.3.0 发布记录](../releases/0.3.0-publication.md)；PUBLISHED / VERIFIED |
 
 ## 参考资料
+
+2026-10-09 0.4.0 后续：替代包 `a561e7d` 的真实 IFX 浏览器验收六项均为 yes、操作员可用性 4/5，先前的语言/安全关闭对齐和规则集卡片过长问题已修复，目标与宿主状态保持不变；见 [第二次 step 04 记录](../acceptance/20261009-0.4-ifx-step04-browser-retest.json)。操作员随后发现 182 条规则在编辑器中全部展开，已纳入逐规则默认折叠、ID/类型筛选及新候选定向复测。0.4-F 最终门禁尚未关闭，不声明版本验收或发布完成。
+
+编辑器修复已提交为 `bb599bd`，新候选在 Windows/Ubuntu CI 各通过 142 项，本地 Debug/Release、两次原生包 smoke、未公开草稿资产独立下载回验和 IFX 只读预检均通过；见 [新候选准备记录](../acceptance/20261009-0.4-editor-candidate-readiness.md)。等待原操作员对新包进行定向浏览器复测，随后才可推进剩余验收门禁。
 
 2026-10-07：[0.2.0 发布记录](../releases/0.2.0-publication.md)已关闭：GitHub tag `v0.2.0` 指向 `528ebb1`；ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`，三资产 uploaded、digest/下载字节一致，发布后 native smoke 通过。W09 `0286b75`、W10 初始 `8dc363e`、补充修复 `26498f4` / `eb52640` / `528ebb1`、固定验收 `27a5719` 均保留原历史并附 Codex trailer。发布关闭时 W11 尚未授权；随后发布后验收通过，用户另行授权并完成独立 W11 范围。W11 当前尚未提交、推送或发布。
 

@@ -10,6 +10,8 @@ public static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
         Console.OutputEncoding = Encoding.UTF8;
         using var cancel = new CancellationTokenSource();
         Console.CancelKeyPress += (_, e) => { e.Cancel = true; cancel.Cancel(); };
@@ -49,24 +51,36 @@ public static class Program
             }
             if (args is [] or ["--help"] or ["-h"])
             {
-                Console.WriteLine("ArchSift — .NET 架构与依赖分析工具。");
+                Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
+                Console.WriteLine("chain verify --config <JSON> --chain <JSON> [--target-kind real|fixture]");
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
-                Console.WriteLine("rules validate --file <JSON>；rules render --file <JSON> --output <新 Markdown>");
-                Console.WriteLine("rules draft --config <JSON> --output <目录>；ui --config <JSON>");
-                Console.WriteLine("changes --config <JSON> [--base <本地 commit> --head <本地 commit>]；默认 HEAD 对磁盘工作区最终状态。"); return 0;
+                Console.WriteLine("rules validate --file <JSON>; rules render --file <JSON> --output <new Markdown>");
+                Console.WriteLine("rules draft --config <JSON> --output <directory>; ui --config <JSON>");
+                Console.WriteLine("changes --config <JSON> [--base <local commit> --head <local commit>]; default HEAD vs final worktree."); return 0;
             }
             if (args.Length >= 2 && args[0] == "rules" && args[1] is "validate" or "render")
             {
                 var flags = Flags(args[2..], ["--file", "--output"]);
                 var file = Required(flags, "--file"); var loaded = RuleLoader.Load(file); RuleLoader.Compose([loaded]);
-                if (args[1] == "validate") { Console.WriteLine($"有效规则集：{loaded.Ruleset.Id}；SHA-256：{loaded.Identity.Sha256}"); return 0; }
+                if (args[1] == "validate") { Console.WriteLine($"Valid ruleset: {loaded.Ruleset.Id}; SHA-256: {loaded.Identity.Sha256}"); return 0; }
                 var output = Path.GetFullPath(Required(flags, "--output"));
-                if (Path.GetFullPath(file).Equals(output, PathSafety.Comparison)) throw new ConfigurationException("Markdown 输出不得覆盖 JSON 规则来源。");
+                if (Path.GetFullPath(file).Equals(output, PathSafety.Comparison)) throw new ConfigurationException("Markdown output must not overwrite the source JSON ruleset.");
                 PathSafety.EnsureNoLinks(output);
                 using var stream = new FileStream(output, FileMode.CreateNew, FileAccess.Write);
                 using var writer = new StreamWriter(stream, new UTF8Encoding(false));
                 writer.Write(RuleMarkdown.Render(loaded)); Console.WriteLine(output); return 0;
+            }
+            if (args.Length >= 2 && args[0] == "chain" && args[1] == "verify")
+            {
+                var flags = Flags(args[2..], ["--config", "--chain", "--target-kind"]);
+                var config = ConfigLoader.Load(Required(flags, "--config"));
+                var chain = ChainStore.Load(Required(flags, "--chain"));
+                var library = new RulesetLibrary(config.RulesDirectory ?? Path.Combine(config.Output.Directory, "rules"), config.Target.Root);
+                var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
+                var summary = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config, chain, library,
+                    flags.GetValueOrDefault("--target-kind")?.Single() ?? "real", cancel.Token);
+                Console.WriteLine(ChainWriter.Json(summary)); return summary.ExitCode;
             }
             var draft = args.Length >= 2 && args[0] == "rules" && args[1] == "draft";
             if (args.Length > 0 && args[0] == "changes")
@@ -82,7 +96,7 @@ public static class Program
             if (draft || args.Length > 0 && args[0] is "analyze" or "verify")
             {
                 var config = Configuration(args[(draft ? 2 : 1)..]);
-                Console.Error.WriteLine($"生效目标：{config.Target.Root}；入口：{config.Target.Entry ?? "(root scan)"}；TFM：{config.Build.TargetFramework ?? "(declared)"}；配置：{config.Build.Configuration}；产物：{config.Build.Mode}；输出：{config.Output.Directory}；网络 restore：{config.Build.AllowNetwork}");
+                Console.Error.WriteLine($"Effective target: {config.Target.Root}; entry: {config.Target.Entry ?? "(root scan)"}; TFM: {config.Build.TargetFramework ?? "(declared)"}; configuration: {config.Build.Configuration}; build: {config.Build.Mode}; output: {config.Output.Directory}; network restore: {config.Build.AllowNetwork}");
                 if (draft)
                 {
                     PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
@@ -97,11 +111,11 @@ public static class Program
                 var result = await new AnalysisService(worker.EvaluateAsync).RunAsync(config, args[0], cancel.Token);
                 ReportWriter.Save(config, result.Report); Console.WriteLine(ReportWriter.Json(result.Report)); return result.ExitCode;
             }
-            throw new ConfigurationException("配置错误：当前阶段不支持此命令。使用 --help 查看已实现入口。");
+            throw new ConfigurationException("Unsupported command. Use --help for available commands.");
         }
         catch (ConfigurationException error) { Console.Error.WriteLine(error.Message); return 2; }
         catch (JsonException error) { Console.Error.WriteLine(error.Message); return 2; }
-        catch (OperationCanceledException) { Console.Error.WriteLine("已取消。"); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Cancelled."); return 130; }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or TimeoutException)
         { Console.Error.WriteLine(error.Message); return 3; }
     }

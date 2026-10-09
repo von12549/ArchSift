@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "step": "ifx-0.4-browser-manual-session",
+  "status": "pass-with-limitations",
+  "runRoot": "D:/ArchSift-lab/runs/ifx-0.4-browser-13b6d73ec3b64765be043ca0fa7431c3",
+  "operatorResultSha256": "641dacce67809c9e39679ea1f89e8b7d42d0c529bb12dc4934bbd62e22222812",
+  "packageSourceCommit": "a561e7dba3297a8e2350f6b21c4b183cfd3db301",
+  "packageManifestSha256": "2e4903d3beab9c30eecf12b98631754dc1645b5804a4287ea2ead6b0fcde4166",
+  "operatorReview": {
+    "sixAnswers": ["yes", "yes", "yes", "yes", "yes", "yes"],
+    "usabilityRating": 4,
+    "priorVisualFindingsFixed": true,
+    "newFinding": "The Ruleset editor renders all 182 rule forms expanded in one long column; locating a specific rule is difficult."
+  },
+  "safety": {
+    "targetHeadEqual": true,
+    "ordinaryStatusEqual": true,
+    "sourceRecordsEqual": true,
+    "hostStateEqual": true,
+    "packageUnchanged": true,
+    "rulesUnchanged": true,
+    "configUnchanged": true,
+    "processExited": true,
+    "recordedListenerGone": true,
+    "targetBuildInvoked": false,
+    "restoreInvoked": false,
+    "policyAdopted": false
+  },
+  "acceptanceDecision": "Step 04 historical candidate passed with its declared limits, but the new editor usability finding requires a product fix and targeted retest on a new candidate before final release acceptance."
+}

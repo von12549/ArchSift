@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "toolVersion": "0.4.0",
+  "toolConfiguration": "Release",
+  "analysisConfiguration": "Debug",
+  "reference": "100-project-chain",
+  "inputSha256": "95746840a465114f0e80be7a1ebc7bf02bfc8de8ad44d844592de1c85175fba4",
+  "projectCount": 100,
+  "targetFramework": "net10.0",
+  "platform": "Windows x64",
+  "sdk": "10.0.303",
+  "analysisMillisecondsLimit": 700,
+  "processWallMillisecondsLimit": 1000,
+  "sampledPeakWorkingSetBytesLimit": 67108864,
+  "measurementCount": 5,
+  "referenceMeasurementSource": "D:/ArchSift-lab/runs/development-1006982678294b3bb3e6999f290f7dee/performance.json",
+  "referenceObservedAnalysisMilliseconds": [
+    113,
+    114,
+    110,
+    112,
+    110
+  ],
+  "referenceObservedWallMilliseconds": [
+    217,
+    213,
+    207,
+    210,
+    205
+  ],
+  "referenceObservedSampledPeakBytes": [
+    30593024,
+    29376512,
+    31125504,
+    31363072,
+    30597120
+  ],
+  "rationale": "Retain existing 700ms/1000ms/64MiB ceilings and the identical declared fixture. Freeze the 0.4.0 version-bound identity before candidate smoke. Five source-development reference runs passed; candidate packaging is measured independently.",
+  "acceptanceBoundary": "Declared fixture only; no IFX/build/worker/chain performance certification.",
+  "releasePassed": false
+}

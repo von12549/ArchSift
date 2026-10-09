@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "template-project-reference",
   "version": "1.0.0",
-  "description": "project-reference 模板；启用前调整选择器和理由。",
+  "description": "project-reference template. Review selectors and policy reasons before use.",
   "rules": [
     {
       "id": "project-reference-01",
@@ -26,7 +26,7 @@
         }
       },
       "severity": "warning",
-      "reason": "请按实际架构政策填写约束理由。"
+      "reason": "Describe the intended architecture policy."
     }
   ],
   "exceptions": []

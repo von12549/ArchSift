@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "template-naming",
+  "version": "1.0.0",
+  "description": "naming 模板；启用前调整选择器和理由。",
+  "rules": [
+    {
+      "id": "naming-01",
+      "type": "naming",
+      "enabled": true,
+      "scope": {
+        "kind": "project",
+        "match": "glob",
+        "value": "**"
+      },
+      "parameters": {
+        "subjectKind": "project",
+        "requiredName": {
+          "match": "glob",
+          "value": "Sample.*"
+        }
+      },
+      "severity": "warning",
+      "reason": "请按实际架构政策填写约束理由。"
+    }
+  ],
+  "exceptions": []
+}

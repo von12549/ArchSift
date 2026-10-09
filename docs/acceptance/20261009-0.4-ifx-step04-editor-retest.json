@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "step": "ifx-0.4-browser-manual-session",
+  "status": "accepted-with-limitations",
+  "runRoot": "D:/ArchSift-lab/runs/ifx-0.4-browser-8564bbf6a23c4390b18203739d03189d",
+  "operatorResultSha256": "be3b084bdbc95aa902f6c0708b9a0e21a17d6f0c2ef74f65745e013e04a64494",
+  "packageSourceCommit": "bb599bd87aaa3322229c049442e135f3c091b72a",
+  "packageManifestSha256": "d35fea42475633eb290c858e4df4aec4387dad639d2d03480d20e9edd532849c",
+  "sixOperatorAnswers": ["yes", "yes", "yes", "yes", "yes", "yes"],
+  "usabilityRating": 5,
+  "editorDefaultCollapseAndIdTypeSearchPassed": true,
+  "reportReview": {
+    "analysisReportCount": 6,
+    "chainSummaryCount": 2,
+    "chainDiagnosticCount": 1,
+    "officialSarifFileCount": 9,
+    "allJsonAndSarifSchemasValid": true,
+    "fullSavedCardExecution": "partial",
+    "fullSavedCardCompliance": "compliant",
+    "fullSavedCardProjectCount": 105,
+    "fullSavedCardAssemblyCount": 0,
+    "fullSavedCardLimitations": 105,
+    "fullSavedCardRuleCount": 182,
+    "missingChildChainCompliance": "inconclusive"
+  },
+  "safety": {
+    "targetHeadEqual": true,
+    "ordinaryStatusEqual": true,
+    "sourceRecordsEqual": true,
+    "hostHashBefore": "9bb5548523dbb22f6dbacf9903a3b67c4f6b1ee266bf0445e39a3769cbe0531d",
+    "hostHashAfter": "9bb5548523dbb22f6dbacf9903a3b67c4f6b1ee266bf0445e39a3769cbe0531d",
+    "hostStateEqual": true,
+    "packageUnchanged": true,
+    "rulesUnchanged": true,
+    "configUnchanged": true,
+    "processExited": true,
+    "recordedListenerGone": true,
+    "targetBuildInvoked": false,
+    "restoreInvoked": false,
+    "policyAdopted": false
+  },
+  "limitations": [
+    "The 105-project run is declaration-level: zero assemblies and no source binding; partial/compliant is not full IFX protection.",
+    "Candidate IFX policy and 16 test-project allowlists were not adopted or closed."
+  ],
+  "finalAcceptancePassed": false,
+  "nextStep": "resolve-explicit-two-commit-cancellation-gate-and-final-safety-audit"
+}

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "template-project-reference-allowlist",
   "version": "1.0.0",
-  "description": "project-reference-allowlist 模板；只有明确列出的直接项目引用目标才被允许。",
+  "description": "project-reference-allowlist template. Review selectors and policy reasons before use.",
   "rules": [
     {
       "id": "project-reference-allowlist-01",
@@ -28,7 +28,7 @@
         ]
       },
       "severity": "warning",
-      "reason": "请按实际架构政策填写允许边界及理由。"
+      "reason": "Describe the intended architecture policy."
     }
   ],
   "exceptions": []

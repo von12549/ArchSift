@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "template-nuget-allowlist",
   "version": "1.0.0",
-  "description": "nuget-allowlist 模板；只有明确列出的直接 PackageReference ID 才被允许。",
+  "description": "nuget-allowlist template. Review selectors and policy reasons before use.",
   "rules": [
     {
       "id": "nuget-allowlist-01",
@@ -19,7 +19,7 @@
         ]
       },
       "severity": "warning",
-      "reason": "请按实际架构政策填写允许的直接包及理由。"
+      "reason": "Describe the intended architecture policy."
     }
   ],
   "exceptions": []

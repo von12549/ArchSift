@@ -12,6 +12,8 @@ public static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         if (args is ["--version"]) { Console.WriteLine($"archsift-web {RuntimeInfo.ProductVersion}"); return 0; }
         if (args is ["__worker"])
@@ -26,7 +28,7 @@ public static class Program
             catch (Exception error) { Console.Error.WriteLine(error.Message); return 3; }
         }
         if (args is not ["--config", var configFile])
-        { Console.Error.WriteLine("W07 本机 UI：使用 --config <JSON>；或 --version。"); return 2; }
+        { Console.Error.WriteLine("Local workbench: use --config <JSON> or --version."); return 2; }
         try
         {
             var config = ConfigLoader.Load(configFile);

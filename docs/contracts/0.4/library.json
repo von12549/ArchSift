@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "entryId": "11111111111111111111111111111111",
+      "fileName": "policy.json",
+      "rulesetId": "policy",
+      "deleted": false
+    }
+  ]
+}

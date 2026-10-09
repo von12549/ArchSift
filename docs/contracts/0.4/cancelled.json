@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "kind": "chain-summary",
+  "toolVersion": "0.4.0",
+  "snapshot": {
+    "chainId": "example-chain",
+    "chainVersion": "1.0.0",
+    "entries": [
+      {
+        "entryId": "11111111111111111111111111111111",
+        "sourcePath": "D:/rules/policy-0.json",
+        "rulesetIdentity": {
+          "id": "policy-0",
+          "version": "1.0.0",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "path": "D:/rules/policy-0.json"
+        },
+        "errorCode": null,
+        "errorMessage": null
+      },
+      {
+        "entryId": "22222222222222222222222222222222",
+        "sourcePath": "D:/rules/policy-1.json",
+        "rulesetIdentity": {
+          "id": "policy-1",
+          "version": "1.0.0",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "path": "D:/rules/policy-1.json"
+        },
+        "errorCode": null,
+        "errorMessage": null
+      }
+    ],
+    "target": {
+      "root": "D:/fixture"
+    },
+    "build": {
+      "mode": "existing",
+      "configuration": "Debug",
+      "assemblyPaths": [],
+      "allowNetwork": false,
+      "sources": []
+    },
+    "inputIdentity": {
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "files": []
+    },
+    "buildInputIdentity": {
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "files": []
+    },
+    "outputDirectory": "D:/reports/example-run",
+    "targetKind": "fixture"
+  },
+  "execution": "cancelled",
+  "compliance": "inconclusive",
+  "exitCode": 130,
+  "projectCount": 1,
+  "entries": [
+    {
+      "entryId": "11111111111111111111111111111111",
+      "execution": "completed",
+      "compliance": "compliant",
+      "exitCode": 0,
+      "reportDirectory": "11111111111111111111111111111111/child-run",
+      "diagnostic": null,
+      "coverage": {
+        "projectCount": 1,
+        "assemblyCount": 0,
+        "sourceBound": false
+      },
+      "binding": "none",
+      "ruleResults": [
+        {
+          "ruleId": "same-rule-id",
+          "status": "pass",
+          "matched": 1,
+          "findingIds": [],
+          "limitations": []
+        }
+      ],
+      "findings": [],
+      "limitations": []
+    },
+    {
+      "entryId": "22222222222222222222222222222222",
+      "execution": "skipped",
+      "compliance": "inconclusive",
+      "exitCode": null,
+      "reportDirectory": null,
+      "diagnostic": null,
+      "coverage": {
+        "projectCount": 1,
+        "assemblyCount": 0,
+        "sourceBound": false
+      },
+      "binding": "none",
+      "ruleResults": [],
+      "findings": [],
+      "limitations": [
+        "User cancelled chain."
+      ]
+    }
+  ],
+  "limitations": [],
+  "runMetadata": {
+    "runId": "example-run",
+    "startedUtc": "2026-10-09T00:00:00Z",
+    "elapsedMilliseconds": 0,
+    "targetRoot": "D:/fixture"
+  }
+}

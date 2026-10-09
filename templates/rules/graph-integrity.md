@@ -1,21 +1,21 @@
 # template-graph-integrity
 
-此文件是 JSON 的只读阅读投影；编辑它不会改变执行规则。
+This is a read-only projection of JSON. Editing it does not change executable rules.
 
-来源：graph-integrity.json；版本：1.0.0；SHA-256：254164a20f1edefbb85463822c481eafa424033ecef8da5b73c8fb95e95f32df
+Source: graph-integrity.json; version: 1.0.0; SHA-256: 0b3a78bdd44c12ad9a590ae879b27098aab4499a20e8db25b72a6336b0197b8a
 
-graph-integrity 模板；启用前调整选择器和理由。
+graph-integrity template. Review selectors and policy reasons before use.
 
 ## graph-integrity-01
 
-类型：graph-integrity；启用：true；severity：warning
+Type: graph-integrity; enabled: true; severity: warning
 
-范围：project / glob / \*\*；allowEmpty=false
+Scope: project / glob / \*\*; allowEmpty=false
 
-理由：请按实际架构政策填写约束理由。
+Reason: Describe the intended architecture policy.
 
-- check：resolved-references
+- check: resolved-references
 
-## 例外
+## Exceptions
 
-无。
+None.

@@ -92,7 +92,7 @@ public static class AssemblyWorker
                     foreach (var dependencyTarget in new[] { dependency.Target }.Concat(dependency.TargetGenericArguments.SelectMany(GenericTypes)))
                         if (Match(target, dependencyTarget))
                             Add(rule.Scope.Kind, rule.Scope.Kind == "namespace" ? type.Namespace.FullName : type.FullName,
-                                "ArchUnitNET 检测到禁止的类型依赖。", type.FullName, dependencyTarget.FullName, type.Assembly.Name + ":" + type.FullName);
+                                "ArchUnitNET detected a forbidden type dependency.", type.FullName, dependencyTarget.FullName, type.Assembly.Name + ":" + type.FullName);
                 }
                 else
                 {
@@ -101,13 +101,13 @@ public static class AssemblyWorker
                     {
                         var names = inspected.Keys.Where(n => SelectorMatcher.Matches(rule.Scope, n)).ToArray(); matched = names.Length;
                         foreach (var name in names)
-                            if (!SelectorMatcher.Matches(required, name)) Add("assembly", name, "程序集命名不符合规则。");
+                            if (!SelectorMatcher.Matches(required, name)) Add("assembly", name, "Assembly name does not match the naming rule.");
                     }
                     else
                     {
                         var scoped = types.Where(t => Match(rule.Scope, t)).ToArray(); matched = scoped.Length;
                         foreach (var type in scoped)
-                            if (!SelectorMatcher.Matches(required, type.FullName)) Add("type", type.FullName, "类型命名不符合规则。", location: type.Assembly.Name + ":" + type.FullName);
+                            if (!SelectorMatcher.Matches(required, type.FullName)) Add("type", type.FullName, "Type name does not match the naming rule.", location: type.Assembly.Name + ":" + type.FullName);
                     }
                 }
                 current = ProjectRuleEvaluator.ApplyExceptions(current, exceptions);

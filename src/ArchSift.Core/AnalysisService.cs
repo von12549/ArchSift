@@ -8,13 +8,24 @@ public sealed record RunOutcome(AnalysisReport Report, int ExitCode);
 public sealed class AnalysisService(
     Func<AssemblyInputs, RuleBundle, string, CancellationToken, Task<AssemblyEvaluation>>? assemblyEvaluator = null)
 {
-    public async Task<RunOutcome> RunAsync(RunConfiguration config, string operation, CancellationToken token = default)
+    public Task<RunOutcome> RunAsync(RunConfiguration config, string operation, CancellationToken token = default) =>
+        RunCoreAsync(config, operation, null, null, null, null, false, token);
+
+    public Task<RunOutcome> RunSelectedAsync(RunConfiguration config, LoadedRuleset selected, CancellationToken token = default) =>
+        RunCoreAsync(config, "verify", RuleLoader.Compose([selected]), null, null, null, false, token);
+
+    public Task<RunOutcome> RunFrozenAsync(RunConfiguration config, LoadedRuleset selected, ProjectSnapshot snapshot,
+        AssemblyInputs? assemblies, string? buildError, CancellationToken token = default) =>
+        RunCoreAsync(config, "verify", RuleLoader.Compose([selected]), snapshot, assemblies, buildError, true, token);
+
+    private async Task<RunOutcome> RunCoreAsync(RunConfiguration config, string operation, RuleBundle? frozenBundle,
+        ProjectSnapshot? frozenSnapshot, AssemblyInputs? frozenAssemblies, string? buildError, bool sharedBuild, CancellationToken token)
     {
         if (operation is not ("analyze" or "verify")) throw new ConfigurationException("Unsupported analysis operation.");
         PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
         if (config.RulesDirectory is { } rulesDirectory) PathSafety.EnsureDisjoint(config.Target.Root, rulesDirectory);
-        var bundle = operation == "verify"
-            ? RuleLoader.Compose(config.Rulesets.Select(RuleLoader.Load)) : new RuleBundle([]);
+        var bundle = frozenBundle ?? (operation == "verify"
+            ? RuleLoader.Compose(config.Rulesets.Select(RuleLoader.Load)) : new RuleBundle([]));
         if (operation == "verify" && bundle.Documents.Length == 0) throw new ConfigurationException("verify requires at least one ruleset.");
         var stopwatch = Stopwatch.StartNew();
         var started = DateTimeOffset.UtcNow.ToString("O"); var runId = Guid.NewGuid().ToString("N");
@@ -27,7 +38,7 @@ public sealed class AnalysisService(
         try
         {
             token.ThrowIfCancellationRequested();
-            snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, framework, token);
+            snapshot = frozenSnapshot ?? ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, framework, token);
             limits.AddRange(snapshot.Scope.UnsupportedConstructs);
             if (snapshot.Projects.Length == 0) limits.Add("No supported project files found.");
             var projectRules = ProjectRuleEvaluator.Evaluate(snapshot, bundle);
@@ -38,7 +49,8 @@ public sealed class AnalysisService(
             {
                 try
                 {
-                    assemblyInputs = config.Build.Mode == "isolated"
+                    if (buildError is not null) throw new ConfigurationException(buildError);
+                    assemblyInputs = sharedBuild ? frozenAssemblies ?? throw new ConfigurationException("Shared assembly inputs are unavailable.") : config.Build.Mode == "isolated"
                         ? await IsolatedBuild.BuildAsync(config, snapshot, token)
                         : AssemblyArtifacts.Existing(config, snapshot);
                     binding = assemblyInputs.SourceBound ? "source-bound" : "assemblies-only";
@@ -64,7 +76,7 @@ public sealed class AnalysisService(
                 }
             }
             InputCapture.VerifyUnchanged(config.Target.Root, snapshot.InputIdentity, token);
-            foreach (var document in bundle.Documents)
+            foreach (var document in frozenBundle is null ? bundle.Documents : [])
                 if (AssemblyArtifacts.FileHash(document.Identity.Path) != document.Identity.Sha256) throw new SourceChangedException();
             if (assemblyInputs is not null)
                 foreach (var path in assemblyInputs.Paths)

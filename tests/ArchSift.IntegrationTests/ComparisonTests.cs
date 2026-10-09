@@ -8,6 +8,34 @@ namespace ArchSift.IntegrationTests;
 public sealed class ComparisonTests
 {
     [Fact]
+    public async Task ExplicitTwoCommitCancellationRetainsCurrentAuditWithoutCompleteComparisonClaims()
+    {
+        using var fixture = new GitFixture(); await fixture.Initialize(); fixture.Project("A");
+        File.WriteAllText(Path.Combine(fixture.Source, "policy.json"), RuleTemplates.Json("type-dependency")); await fixture.Commit();
+        var baseline = (await fixture.Git("rev-parse", "HEAD")).Trim();
+        File.WriteAllText(Path.Combine(fixture.Source, "Changed.cs"), "class Changed {}"); await fixture.Commit();
+        var target = (await fixture.Git("rev-parse", "HEAD")).Trim(); Assert.NotEqual(baseline, target);
+        var before = await fixture.Git("status", "--porcelain=v1");
+        var reachedAssembly = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cancel = new CancellationTokenSource();
+        var analysis = new AnalysisService(async (_, _, _, token) =>
+        {
+            reachedAssembly.TrySetResult(); await Task.Delay(Timeout.Infinite, token);
+            throw new InvalidOperationException("Cancellation gate was not reached.");
+        });
+        var run = new ComparisonService(analysis).RunAsync(fixture.Config, new(baseline, target), cancel.Token);
+        await reachedAssembly.Task.WaitAsync(TimeSpan.FromSeconds(20)); cancel.Cancel();
+        var outcome = await run; ComparisonWriter.Save(fixture.Config, outcome.Report);
+        Assert.Equal(130, outcome.ExitCode); Assert.Equal("cancelled", outcome.Report.Status);
+        Assert.Equal(baseline, outcome.Report.BaselineIdentity.Commit); Assert.Equal(target, outcome.Report.TargetIdentity.Commit);
+        Assert.Empty(outcome.Report.Added); Assert.Empty(outcome.Report.Resolved);
+        var path = Path.Combine(fixture.Config.Output.Directory, outcome.Report.RunMetadata.RunId);
+        foreach (var format in new[] { "json", "html", "sarif" }) Assert.True(File.Exists(Path.Combine(path, "comparison." + format)));
+        Assert.Contains("cancelled", ComparisonWriter.Json(outcome.Report)); Assert.Contains("cancelled", ComparisonWriter.Html(outcome.Report));
+        Assert.DoesNotContain("baselineState", SarifWriter.Json(outcome.Report));
+        Assert.Equal(before, await fixture.Git("status", "--porcelain=v1"));
+    }
+    [Fact]
     public async Task HeadAgainstFinalDiskIncludesStagedUnstagedUntrackedAndCrossProjectFindings()
     {
         using var fixture = new GitFixture(); await fixture.Initialize();

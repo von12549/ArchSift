@@ -44,18 +44,18 @@ public sealed class WebWorkbenchTests
             var page = await client.GetAsync("/", timeout.Token); Assert.Equal(HttpStatusCode.OK, page.StatusCode);
             Assert.True(page.Headers.Contains("Content-Security-Policy"));
             var pageText = await page.Content.ReadAsStringAsync(timeout.Token);
-            Assert.Contains("本次检查范围", pageText);
-            Assert.Contains("运行确认 · 当前编辑配置", pageText);
-            Assert.Contains("安全关闭 UI 服务", pageText);
-            Assert.Contains("项目与引用", pageText);
-            Assert.Contains("这些是被分析对象，不是规则结论、违规证据或覆盖限制", pageText);
+            Assert.Contains("Target configuration", pageText);
+            Assert.Contains("Run context · Edited configuration", pageText);
+            Assert.Contains("Safe shutdown", pageText);
+            Assert.Contains("Projects and references", pageText);
+            Assert.Contains("These are analyzed objects, separate from policy results, findings and coverage limitations.", pageText);
             var scriptText = await client.GetStringAsync("/app.js", timeout.Token);
-            Assert.Contains("执行完整性与规则合规是两个独立维度", scriptText);
-            Assert.Contains("逐规则结论", scriptText);
-            Assert.Contains("违规与例外", scriptText);
-            Assert.Contains("这些信息影响结果完整性，不是项目名称，也不是额外 finding", scriptText);
-            Assert.Contains("覆盖限制：存在时结果不会冒充完整合规", scriptText);
-            Assert.Contains("已折叠，展开查看全部", scriptText);
+            Assert.Contains("Execution completeness and policy compliance are separate dimensions.", scriptText);
+            Assert.Contains("Per-rule results", scriptText);
+            Assert.Contains("Findings and exceptions", scriptText);
+            Assert.Contains("These limitations affect completeness; they are separate from projects and findings.", scriptText);
+            Assert.Contains("Coverage limitations: passing rules do not imply full coverage", scriptText);
+            Assert.Contains("Collapsed; expand for details", scriptText);
             var styleText = await client.GetStringAsync("/style.css", timeout.Token);
             Assert.Contains(".finding-region", styleText);
             Assert.Contains(".coverage-region", styleText);
@@ -93,6 +93,64 @@ public sealed class WebWorkbenchTests
             }
             Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + id + "/report/json", timeout.Token)).StatusCode);
             Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + id + "/report/sarif", timeout.Token)).StatusCode);
+            // New card/chain surfaces are independent of startup composition and preserve exact JSON bytes.
+            var sourceBefore = InputCapture.Capture(source).Sha256;
+            async Task<LibraryCard[]> Cards()
+            {
+                using var document = JsonDocument.Parse(await client.GetStringAsync("/api/library", timeout.Token));
+                return document.RootElement.GetProperty("entries").Deserialize<LibraryCard[]>(JsonContract.Options)!;
+            }
+            var firstCard = Assert.Single(await Cards());
+            var importedBytes = new byte[] { 0xef, 0xbb, 0xbf }.Concat(Encoding.UTF8.GetBytes(template.Replace("template-naming", "second-policy", StringComparison.Ordinal))).ToArray();
+            var imported = await client.PostAsync("/api/library/import/second.json", new ByteArrayContent(importedBytes), timeout.Token);
+            Assert.Equal(HttpStatusCode.OK, imported.StatusCode);
+            var secondCard = (await Cards()).Single(c => c.EntryId != firstCard.EntryId);
+            Assert.Equal(importedBytes, await client.GetByteArrayAsync("/api/library/" + secondCard.EntryId + "/json", timeout.Token));
+            var registryHash = AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, ".archsift-library.json"));
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/library/import/second.json", new ByteArrayContent(importedBytes), timeout.Token)).StatusCode);
+            Assert.Equal(registryHash, AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, ".archsift-library.json")));
+            async Task<JsonDocument> NewJob(string operation, object request)
+            {
+                var response = await client.PostAsJsonAsync("/api/run/" + operation, request, timeout.Token); response.EnsureSuccessStatusCode();
+                using var initialJob = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token));
+                var newId = initialJob.RootElement.GetProperty("jobId").GetString();
+                while (true)
+                {
+                    var document = JsonDocument.Parse(await client.GetStringAsync("/api/jobs/" + newId, timeout.Token));
+                    if (document.RootElement.GetProperty("state").GetString() != "running") return document;
+                    document.Dispose(); await Task.Delay(20, timeout.Token);
+                }
+            }
+            var composedConfig = config with { Rulesets = [Path.Combine(rulesDirectory, "policy.json"), Path.Combine(rulesDirectory, "second.json")] };
+            (await client.PostAsync("/api/config", JsonContent.Create(composedConfig, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            using (var cardJob = await NewJob("ruleset", new { entryId = firstCard.EntryId, targetKind = "fixture" }))
+            {
+                var report = cardJob.RootElement.GetProperty("report").Deserialize<AnalysisReport>(JsonContract.Options)!;
+                Assert.Single(report.RulesetIdentities); Assert.Equal(firstCard.Identity!.Sha256, report.RulesetIdentities[0].Sha256);
+                Assert.Single(cardJob.RootElement.GetProperty("context").GetProperty("rulesets").EnumerateArray());
+                Assert.Equal("fixture", cardJob.RootElement.GetProperty("targetKind").GetString());
+            }
+            var chain = new ChainDocument(1, "http-chain", "1", "User-authored 原文", [new(firstCard.EntryId), new(secondCard.EntryId)]);
+            (await client.PostAsync("/api/chains/http-chain", JsonContent.Create(chain, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            using (var chainJob = await NewJob("chain", new { chainId = chain.Id, targetKind = "fixture" }))
+            {
+                var summary = chainJob.RootElement.GetProperty("chain").Deserialize<ChainSummary>(JsonContract.Options)!;
+                Assert.Equal(2, summary.Entries.Length); Assert.Equal(1, summary.ProjectCount); Assert.Equal("noncompliant", summary.Compliance);
+                foreach (var child in summary.Entries)
+                    Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + chainJob.RootElement.GetProperty("id").GetString() + "/child/" + child.EntryId + "/sarif", timeout.Token)).StatusCode);
+            }
+            (await client.PostAsync("/api/library/" + firstCard.EntryId + "/delete", JsonContent.Create(new { }), timeout.Token)).EnsureSuccessStatusCode();
+            using (var missingJob = await NewJob("chain", new { chainId = chain.Id }))
+            {
+                var summary = missingJob.RootElement.GetProperty("chain").Deserialize<ChainSummary>(JsonContract.Options)!;
+                Assert.Equal("missing-ruleset", summary.Entries[0].Diagnostic!.Code); Assert.Empty(summary.Entries[0].Findings);
+                Assert.Equal("completed", summary.Entries[1].Execution); Assert.Equal(4, summary.ExitCode);
+            }
+            (await client.PostAsync("/api/library/import/policy.json", new StringContent(template, Encoding.UTF8, "application/json"), timeout.Token)).EnsureSuccessStatusCode();
+            Assert.DoesNotContain(await Cards(), c => c.EntryId == firstCard.EntryId);
+            Assert.Equal(firstCard.EntryId, (await client.GetFromJsonAsync<ChainDocument>("/api/chains/http-chain", JsonContract.Options, timeout.Token))!.Entries[0].EntryId);
+            (await client.PostAsync("/api/config", JsonContent.Create(config with { Rulesets = [Path.Combine(rulesDirectory, "policy.json")] }, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            Assert.Equal(sourceBefore, InputCapture.Capture(source).Sha256);
             // Compare the same source over the authenticated HTTP surface and reject stale downloads after failure.
             async Task Git(params string[] arguments)
             {

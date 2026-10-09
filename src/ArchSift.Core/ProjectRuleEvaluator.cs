@@ -27,7 +27,7 @@ public static class ProjectRuleEvaluator
                 var requirement = RuleSemantics.NameSelector(rule);
                 foreach (var file in files)
                     if (!SelectorMatcher.Matches(requirement, file))
-                        Add("source-file", file, "文件名/路径不符合命名规则。", location: file);
+                        Add("source-file", file, "Source filename/path does not match the naming rule.", location: file);
             }
             else
             {
@@ -45,7 +45,7 @@ public static class ProjectRuleEvaluator
                                 limits.Add(project.Id + ": project-reference coverage incomplete.");
                             foreach (var edge in project.References.Where(r => r.TargetId is not null))
                                 if (SelectorMatcher.Matches(target, edge.TargetId!))
-                                    Add("project", project.Id, "禁止的项目引用。", project.Id, edge.TargetId, project.Id);
+                                    Add("project", project.Id, "Forbidden project reference.", project.Id, edge.TargetId, project.Id);
                         }
                         break;
                     case "project-reference-allowlist":
@@ -60,7 +60,7 @@ public static class ProjectRuleEvaluator
                                 limits.Add(project.Id + ": project-reference coverage incomplete.");
                             foreach (var edge in project.References.Where(r => r.Status == "resolved" && r.TargetId is not null))
                                 if (!allowedTargets.Any(selector => SelectorMatcher.Matches(selector, edge.TargetId!)))
-                                    Add("project", project.Id, "项目引用不在允许列表。", project.Id, edge.TargetId, project.Id);
+                                    Add("project", project.Id, "Project reference is outside the allowlist.", project.Id, edge.TargetId, project.Id);
                         }
                         break;
                     case "graph-integrity":
@@ -71,7 +71,7 @@ public static class ProjectRuleEvaluator
                                 limits.Add("Solution membership requires an explicit solution entry.");
                             else
                                 foreach (var project in scoped.Where(p => snapshot.Scope.UnlistedProjects.Contains(p.Id, StringComparer.Ordinal)))
-                                    Add("project", project.Id, "范围内项目未列入 solution。", location: project.Id);
+                                    Add("project", project.Id, "Project in scope is not listed in the solution.", location: project.Id);
                             if (snapshot.Scope.UnsupportedConstructs.Any(s => s.Contains("solution", StringComparison.Ordinal)))
                                 limits.Add("Solution parsing coverage incomplete.");
                             if (snapshot.Scope.UnresolvedReferences.Any(s => s.StartsWith("entry ->", StringComparison.Ordinal)))
@@ -84,7 +84,7 @@ public static class ProjectRuleEvaluator
                                 if (!project.ReferencesComplete) limits.Add(project.Id + ": reference declarations incomplete.");
                                 foreach (var edge in project.References)
                                 {
-                                    if (edge.Status == "missing") Add("project", project.Id, "内部项目引用无法解析。", project.Id, edge.TargetId, project.Id);
+                                    if (edge.Status == "missing") Add("project", project.Id, "Internal project reference cannot be resolved.", project.Id, edge.TargetId, project.Id);
                                     if (edge.Status is "external" or "unsupported") limits.Add(project.Id + ": external/unsupported reference is uncovered.");
                                 }
                             }
@@ -96,7 +96,7 @@ public static class ProjectRuleEvaluator
                         {
                             if (!project.FrameworkComplete) limits.Add(project.Id + ": framework cannot be determined.");
                             else foreach (var framework in project.Frameworks.Where(f => !allowed.Contains(f)))
-                                Add("project", project.Id, "声明的目标框架不在允许列表。", project.Id, framework, project.FrameworkSource);
+                                Add("project", project.Id, "Declared target framework is outside the allowlist.", project.Id, framework, project.FrameworkSource);
                         }
                         break;
                     case "nuget-denylist":
@@ -106,7 +106,7 @@ public static class ProjectRuleEvaluator
                         {
                             if (!project.PackagesComplete) limits.Add(project.Id + ": direct package declarations incomplete.");
                             foreach (var package in project.Packages.Where(p => p.Status == "declared" && forbidden.Contains(p.Id)))
-                                Add("project", project.Id, "直接 PackageReference 命中禁止包 ID。", project.Id, package.Id.ToLowerInvariant(), project.Id);
+                                Add("project", project.Id, "Direct PackageReference matches a forbidden package ID.", project.Id, package.Id.ToLowerInvariant(), project.Id);
                         }
                         break;
                     case "nuget-allowlist":
@@ -116,13 +116,13 @@ public static class ProjectRuleEvaluator
                         {
                             if (!project.PackagesComplete) limits.Add(project.Id + ": direct package declarations incomplete.");
                             foreach (var package in project.Packages.Where(p => p.Status == "declared" && !allowedPackages.Contains(p.Id)))
-                                Add("project", project.Id, "直接 PackageReference 不在允许包 ID 列表。", project.Id, package.Id.ToLowerInvariant(), project.Id);
+                                Add("project", project.Id, "Direct PackageReference is outside the allowed package IDs.", project.Id, package.Id.ToLowerInvariant(), project.Id);
                         }
                         break;
                     case "naming":
                         var name = RuleSemantics.NameSelector(rule);
                         foreach (var project in scoped)
-                            if (!SelectorMatcher.Matches(name, project.Name)) Add("project", project.Id, "项目名称不符合命名规则。", location: project.Id);
+                            if (!SelectorMatcher.Matches(name, project.Name)) Add("project", project.Id, "Project name does not match the naming rule.", location: project.Id);
                         break;
                 }
             }

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "step": "ifx-0.4-library-chain-matrix",
+  "status": "stopped-preserved",
+  "operatorRunRoot": "D:/ArchSift-lab/runs/ifx-0.4-library-chain-3c03335a9ef54afeab960150b22163ac",
+  "operatorResultSha256": "10ab567538f64ac5cddc314554d394719b5cb0d3af4ec4d3f23fee0bfaa3abc1",
+  "checksPassed": 2,
+  "acceptedChecks": [
+    "explicit-import-export-and-atomic-conflicts",
+    "single-saved-card-despite-invalid-external-config"
+  ],
+  "failedAt": "save-chain",
+  "httpStatus": 400,
+  "cause": "The operator helper used chain id ifx-0.4-audit-chain; chain IDs permit letters, digits, underscores and hyphens, not a period.",
+  "chainFileCreated": false,
+  "productDefectObserved": false,
+  "targetHeadEqual": true,
+  "ordinaryStatusEqual": true,
+  "hostStateEqual": true,
+  "rulesUnchanged": true,
+  "packageManifestUnchanged": true,
+  "configUnchanged": true,
+  "processExited": true,
+  "targetBuildInvoked": false,
+  "restoreInvoked": false,
+  "policyAdopted": false,
+  "browserVisualReviewPerformed": false,
+  "matrixAccepted": false,
+  "nextStep": "operator-rerun-reviewed-corrected-matrix"
+}
