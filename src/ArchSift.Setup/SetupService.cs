@@ -301,19 +301,43 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
                 if (process.Id == Environment.ProcessId) continue;
                 try
                 {
+                    if (ProcessEnded(process)) continue;
                     var name = process.ProcessName;
                     if (name is not ("archsift" or "ArchSift.Web" or "ArchSift.Setup")) continue;
-                    var path = process.MainModule?.FileName ?? throw new ConfigurationException("Cannot inspect ArchSift process identity.");
+                    var path = process.MainModule?.FileName;
+                    if (path is null)
+                    {
+                        if (ProcessEnded(process)) continue;
+                        throw new ConfigurationException("Cannot inspect live ArchSift process identity.");
+                    }
                     if (versions.Any(v => PathSafety.IsUnder(path, v.Directory))) throw new ConfigurationException("Close the existing owned UI/CLI before setup; PID " + process.Id);
                 }
                 catch (InvalidOperationException) { }
                 catch (System.ComponentModel.Win32Exception)
                 {
                     // Process enumeration races normal exit. A live, inaccessible process still requires review.
-                    if (!process.HasExited) throw new ConfigurationException("Cannot inspect live ArchSift process; operator review required.");
+                    if (!ProcessEnded(process)) throw new ConfigurationException("Cannot inspect live ArchSift process; operator review required.");
                 }
             }
         }
+    }
+    private static bool ProcessEnded(Process process)
+    {
+        process.Refresh();
+        if (process.HasExited) return true;
+        // Linux reports a zombie in enumeration with no executable module; it cannot hold a live library/listener.
+        if (OperatingSystem.IsLinux())
+        {
+            try
+            {
+                var stat = File.ReadAllText("/proc/" + process.Id + "/stat");
+                var end = stat.LastIndexOf(')');
+                return end >= 0 && stat.Length > end + 2 && stat[end + 2] is 'Z' or 'X';
+            }
+            catch (FileNotFoundException) { return true; }
+            catch (DirectoryNotFoundException) { return true; }
+        }
+        return false;
     }
     private static string[] Pending(string root)
     {

@@ -5,7 +5,7 @@
   "toolConfiguration": "Release",
   "analysisConfiguration": "Debug",
   "reference": "100-project-chain",
-  "inputSha256": "95746840a465114f0e80be7a1ebc7bf02bfc8de8ad44d844592de1c85175fba4",
+  "inputSha256": "3808fa45a3542bf76fdccca04024057bcd0d7a53586519c935986fc2eaf91f03",
   "projectCount": 100,
   "targetFramework": "net10.0",
   "platform": "Windows x64",
@@ -14,7 +14,11 @@
   "processWallMillisecondsLimit": 1000,
   "sampledPeakWorkingSetBytesLimit": 67108864,
   "measurementCount": 5,
-  "rationale": "Retain the unchanged 0.4.0 declared reference and measured ceilings; freeze version identity before 0.5.0 candidate smoke. Setup acquisition/extraction/UI startup are separate from analyzer timing.",
+  "referenceMeasurementSource": "D:/ArchSift-lab/runs/development-b4eac148797a4a46992c55ac4bb9b675/performance.json",
+  "referenceObservedAnalysisMilliseconds": [114, 135, 112, 107, 109],
+  "referenceObservedWallMilliseconds": [216, 249, 212, 213, 211],
+  "referenceObservedSampledPeakBytes": [36249600, 34234368, 35909632, 35520512, 35033088],
+  "rationale": "Retain identical source files and unchanged 700ms/1000ms/64MiB ceilings. Run identity includes ToolIdentity.Version, so the copied 0.4.0 hash failed candidate validation. Independently measured five 0.5.0 source-reference runs establish the new version-bound hash before candidate revalidation. Setup timing is separate.",
   "acceptanceBoundary": "Declared fixture only; no IFX/build/worker/chain or Setup performance certification.",
   "releasePassed": false
 }
