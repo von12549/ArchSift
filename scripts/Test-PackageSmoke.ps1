@@ -28,7 +28,7 @@ function State-Hash {
 }
 $before=State-Hash
 $checks=[Collections.Generic.List[object]]::new()
-function Run-Package([string]$Name,[string]$Executable,[string[]]$Arguments,[int]$Expected,[string]$ChildPath=''){
+function Run-Package([string]$Name,[string]$Executable,[string[]]$Arguments,[int]$Expected){
     $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=$Executable;$start.WorkingDirectory=$run;$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
     foreach($arg in $Arguments){$start.ArgumentList.Add($arg)}
     $start.Environment['DOTNET_ROOT']=(Join-Path $run 'no-dotnet');$start.Environment['DOTNET_HOST_PATH']=(Join-Path $run 'no-dotnet/dotnet.exe');$start.Environment['DOTNET_CLI_HOME']=(Join-Path $run 'cli-home');$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
@@ -79,8 +79,8 @@ try {
     & $git -C $fixture -c user.name='ArchSift Fixture' -c user.email='fixture@archsift.invalid' commit -m "Synthetic packaged comparison`n`nCo-Authored-By: Codex <noreply@openai.com>" | Out-Null
     if($LASTEXITCODE-ne0){throw 'Packaged comparison fixture commit failed.'}
     [IO.File]::WriteAllText((Join-Path $fixture 'New.csproj'),'<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>')
-    $withoutGit=Run-Package 'changes-needs-git' $cli @('changes','--config',$sarifConfig) 3
-    $compared=Run-Package 'native-changes-no-sdk' $cli @('changes','--config',$sarifConfig) 0 ([IO.Path]::GetDirectoryName($git))
+    $invalidRef=Run-Package 'changes-invalid-local-ref' $cli @('changes','--config',$sarifConfig,'--base','archsift-missing-local-commit','--head','HEAD') 2
+    $compared=Run-Package 'native-changes-no-sdk' $cli @('changes','--config',$sarifConfig) 0
     $comparison=$compared.Substring($compared.IndexOf('{'))|ConvertFrom-Json
     if($comparison.added.Count-ne1-or$comparison.existing.Count-ne100-or$comparison.status-cne'completed'){throw 'Packaged comparison evidence mismatch.'}
     if($SarifSchema){$comparisonSarif=Get-ChildItem -LiteralPath $sarifOutput -Filter 'comparison.sarif' -Recurse -File|Select-Object -ExpandProperty FullName;if(-not(Test-Json -LiteralPath $comparisonSarif -SchemaFile ([IO.Path]::GetFullPath($SarifSchema)))){throw 'Official comparison SARIF schema failed.'}}
