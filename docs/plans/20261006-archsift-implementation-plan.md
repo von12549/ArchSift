@@ -44,7 +44,7 @@
 
 0.6-E 完成：固定实现4975dbb测量后，7918f7c先冻结预算，新候选200项／八模板、54次CLI/UI声明及真实合成程序集性能样本、30次声明／实际Worker PID取消资格通过，宿主相等。见 [E验收](../acceptance/20261011-0.6-e-parallel-performance.md)。默认串行不变；合成二／四路收益约11–22%，不承诺真实IFX。Draft PR #3已创建；首次Ubuntu CI两项Windows manifest fixture错误已修正，待F新提交回验；未合并／发布。
 
-0.6-F 自动门禁就绪：固定a05c44e Windows/Ubuntu各200项CI、八模板/Node、实际ZIP17/Setup13、原生二/四路一致、官方SARIF/冻结性能、九张合成原生浏览器截图与交互、草稿四资产服务器digest及独立下载完整ZIP/Setup回验通过，宿主相等；历史Ubuntu／fixture／浏览器基础设施停止均保留。见 [候选记录](../acceptance/20261011-0.6-candidate-readiness.md)。Draft PR #3与未公开v0.6.0 release已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED。真实IFX块01只读plan已审核，原安装/目标/宿主相等、未apply/分析/build；块02新根安装与private UI验证命令已准备，待操作员运行并回传，见[操作员门禁](../acceptance/20261011-0.6-operator-gates.md)。
+0.6-F 自动门禁就绪：固定a05c44e Windows/Ubuntu各200项CI、八模板/Node、实际ZIP17/Setup13、原生二/四路一致、官方SARIF/冻结性能、九张合成原生浏览器截图与交互、草稿四资产服务器digest及独立下载完整ZIP/Setup回验通过，宿主相等；历史Ubuntu／fixture／浏览器基础设施停止均保留。见 [候选记录](../acceptance/20261011-0.6-candidate-readiness.md)。Draft PR #3与未公开v0.6.0 release已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED。真实IFX块01只读plan与块02新根安装/private UI已审核，原安装/目标/宿主相等、未分析/build；块03a六份规则库文件复制与输入冻结命令已准备，待操作员运行并回传，见[操作员门禁](../acceptance/20261011-0.6-operator-gates.md)。
 
 2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
 
