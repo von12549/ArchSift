@@ -27,15 +27,32 @@ public static class Program
             }
             catch (Exception error) { Console.Error.WriteLine(error.Message); return 3; }
         }
-        if (args is not ["--config", var configFile])
-        { Console.Error.WriteLine("Local workbench: use --config <JSON> or --version."); return 2; }
+        var launcherRoot = args is ["--launcher", var root] ? root : null;
+        var configFile = args is ["--config", var file] ? file : null;
+        if (launcherRoot is null && configFile is null)
+        { Console.Error.WriteLine("Local workbench: use --config <JSON>, --launcher <install-root> or --version."); return 2; }
         try
         {
-            var config = ConfigLoader.Load(configFile);
-            PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
-            var rulesDirectory = config.RulesDirectory ?? Path.Combine(config.Output.Directory, "rules");
-            PathSafety.EnsureDisjoint(config.Target.Root, rulesDirectory);
-            var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [], ContentRootPath = AppContext.BaseDirectory });
+            SessionProfile? profile = null;
+            if (Environment.GetEnvironmentVariable("ARCHSIFT_UI_PROFILE_CONTROL") == "stdin-profile-v1")
+            {
+                var message = await Console.In.ReadLineAsync();
+                if (message is null || !message.StartsWith("profile:", StringComparison.Ordinal) || message.Length > 16384)
+                    throw new ConfigurationException("Missing or invalid private session profile.");
+                profile = JsonSerializer.Deserialize<SessionProfile>(message[8..], JsonContract.Options);
+            }
+            RunConfiguration? config = null; string? rulesDirectory = null;
+            if (configFile is not null)
+            {
+                configFile = Path.GetFullPath(configFile); config = ConfigLoader.Load(configFile);
+                PathSafety.EnsureDisjoint(config.Target.Root, config.Output.Directory);
+                rulesDirectory = config.RulesDirectory ?? Path.Combine(config.Output.Directory, "rules");
+                PathSafety.EnsureDisjoint(config.Target.Root, rulesDirectory);
+                if (profile is not null && !profile.ConfigPath.Equals(configFile, PathSafety.Comparison)) throw new ConfigurationException("Session profile path mismatch.");
+                profile ??= new(Path.GetFileName(configFile), configFile, false, false);
+            }
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [], ContentRootPath = AppContext.BaseDirectory,
+                WebRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot"), EnvironmentName = Environments.Production });
             builder.WebHost.UseSetting(WebHostDefaults.PreventHostingStartupKey, "true");
             builder.WebHost.ConfigureKestrel(server =>
             {
@@ -55,14 +72,17 @@ public static class Program
                     catch (IOException) { }
                     app.Lifetime.StopApplication();
                 });
-            var workbench = new Workbench(config, rulesDirectory); workbench.Map(app);
+            await using var launcher = launcherRoot is null ? null : new Launcher(launcherRoot);
+            Workbench? workbench = null;
+            if (launcher is not null) launcher.Map(app);
+            else { workbench = new Workbench(config!, rulesDirectory!, profile); workbench.Map(app); }
             await app.StartAsync();
             var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
-            Console.WriteLine("ARCHSIFT_UI=" + address + "/#session=" + workbench.Token);
+            Console.WriteLine("ARCHSIFT_UI=" + address + "/#session=" + (launcher?.Token ?? workbench!.Token));
             Console.WriteLine("ARCHSIFT_PID=" + Environment.ProcessId);
             Console.WriteLine("ARCHSIFT_STATE=waiting; reports are downloadable only after a job produces them; close safely in the UI or press Ctrl+C.");
             await app.WaitForShutdownAsync();
-            await workbench.DrainShutdownAsync();
+            if (workbench is not null) await workbench.DrainShutdownAsync();
             return 0;
         }
         catch (ConfigurationException error) { Console.Error.WriteLine(error.Message); return 2; }

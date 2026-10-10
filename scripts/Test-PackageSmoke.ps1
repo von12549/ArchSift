@@ -33,7 +33,7 @@ function Run-Package([string]$Name,[string]$Executable,[string[]]$Arguments,[int
     foreach($arg in $Arguments){$start.ArgumentList.Add($arg)}
     $start.Environment['DOTNET_ROOT']=(Join-Path $run 'no-dotnet');$start.Environment['DOTNET_HOST_PATH']=(Join-Path $run 'no-dotnet/dotnet.exe');$start.Environment['DOTNET_CLI_HOME']=(Join-Path $run 'cli-home');$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
     $timer=[Diagnostics.Stopwatch]::StartNew();$p=[Diagnostics.Process]::Start($start);$out=$p.StandardOutput.ReadToEndAsync();$err=$p.StandardError.ReadToEndAsync();$peak=0L
-    try{while(-not$p.WaitForExit(50)-and$timer.Elapsed.TotalSeconds-lt180){try{$peak=[Math]::Max($peak,$p.PeakWorkingSet64)}catch{}};if(-not$p.HasExited){$p.Kill($true);throw 'Package command timeout'};[Threading.Tasks.Task]::WaitAll($out,$err);$timer.Stop();[IO.File]::WriteAllText((Join-Path $run ($Name+'.stdout.log')),$out.Result);[IO.File]::WriteAllText((Join-Path $run ($Name+'.stderr.log')),$err.Result);$equal=(State-Hash)-ceq$before;$checks.Add([ordered]@{name=$Name;exitCode=$p.ExitCode;expected=$Expected;hostStateEqual=$equal;wallMilliseconds=$timer.ElapsedMilliseconds;sampledPeakBytes=$peak});if($p.ExitCode-ne$Expected-or-not$equal){Write-Output $err.Result;throw ('Package check failed: '+$Name)};Write-Host ($Name+' PASS');return $out.Result}finally{$p.Dispose()}
+    try{while(-not$p.WaitForExit(50)-and$timer.Elapsed.TotalSeconds-lt180){try{$p.Refresh();$peak=[Math]::Max($peak,$p.PeakWorkingSet64)}catch{}};if(-not$p.HasExited){$p.Kill($true);throw 'Package command timeout'};[Threading.Tasks.Task]::WaitAll($out,$err);$timer.Stop();[IO.File]::WriteAllText((Join-Path $run ($Name+'.stdout.log')),$out.Result);[IO.File]::WriteAllText((Join-Path $run ($Name+'.stderr.log')),$err.Result);$equal=(State-Hash)-ceq$before;$checks.Add([ordered]@{name=$Name;exitCode=$p.ExitCode;expected=$Expected;hostStateEqual=$equal;wallMilliseconds=$timer.ElapsedMilliseconds;sampledPeakBytes=$peak});if($p.ExitCode-ne$Expected-or-not$equal){Write-Output $err.Result;throw ('Package check failed: '+$Name)};Write-Host ($Name+' PASS');return $out.Result}finally{$p.Dispose()}
 }
 try {
     $cli=Join-Path $package 'archsift.exe';$web=Join-Path $package 'web/ArchSift.Web.exe'
@@ -121,6 +121,11 @@ try {
         # The preceding changes scenario added New.csproj: one shared target now has 101 projects, not 100 or 202.
         if($chainJob.exitCode-ne0-or$chainJob.chain.entries.Count-ne2-or$chainJob.chain.projectCount-ne101){throw 'Native chain summary failed'}
         if(@($chainJob.chain.entries|Where-Object {$_.coverage.projectCount-ne101}).Count){throw 'Native child project coverage differs from the shared target'}
+        foreach($count in @(2,4)){
+            $parallel=Native-Job 'chain' @{chainId='smoke-chain';targetKind='fixture';maxConcurrency=$count}
+            if($parallel.exitCode-ne$chainJob.exitCode-or$parallel.chain.compliance-cne$chainJob.chain.compliance-or$parallel.chain.snapshot.executionOptions.maxConcurrency-ne$count-or($parallel.chain.entries.entryId-join',')-cne($chainJob.chain.entries.entryId-join',')){throw 'Native parallel result/options/order mismatch'}
+            foreach($entry in $chainJob.chain.entries){$other=$parallel.chain.entries|Where-Object entryId -eq $entry.entryId;if(($entry.findings.id-join',')-cne($other.findings.id-join',')){throw 'Native parallel findings differ'}}
+        }
         $chainPath=Join-Path $library 'chains/smoke-chain.json'
         [void](Run-Package 'chain-without-sdk' $cli @('chain','verify','--config',$chainConfig,'--chain',$chainPath,'--target-kind','fixture') 0)
         [void](Run-Package 'legacy-duplicate-rule-ids' $cli @('verify','--config',$chainConfig) 2)

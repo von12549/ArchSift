@@ -7,12 +7,13 @@ public sealed record RuleEvaluation(RuleResult[] Results, Finding[] Findings);
 
 public static class ProjectRuleEvaluator
 {
-    public static RuleEvaluation Evaluate(ProjectSnapshot snapshot, RuleBundle bundle)
+    public static RuleEvaluation Evaluate(ProjectSnapshot snapshot, RuleBundle bundle, CancellationToken token = default)
     {
         var results = new List<RuleResult>();
         var findings = new List<Finding>();
         foreach (var rule in bundle.Rules.Where(r => r.Enabled))
         {
+            token.ThrowIfCancellationRequested();
             if (rule.Type == "type-dependency" || (rule.Type == "naming" &&
                 rule.Parameters.GetProperty("subjectKind").GetString() is "type" or "assembly")) continue;
             var scoped = snapshot.Projects.Where(p => SelectorMatcher.Matches(rule.Scope, p.Id)).ToArray();

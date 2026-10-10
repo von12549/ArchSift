@@ -46,7 +46,7 @@
       "archsift.core": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Contracts": "[0.5.0, )"
+          "ArchSift.Contracts": "[0.6.0, )"
         }
       }
     },

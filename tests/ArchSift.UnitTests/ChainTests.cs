@@ -26,6 +26,122 @@ public sealed class ChainTests : IDisposable
     private static ChainDocument Chain(params LibraryCard[] cards) => new(1, "chain", "1", "Ordered checks", cards.Select(c => new ChainEntry(c.EntryId)).ToArray());
 
     [Fact]
+    public async Task BoundedParallelExecutionKeepsOrderedResultsAndMatchesSerialSemantics()
+    {
+        var first = Add("one", "Wrong"); var second = Add("two"); var third = Add("three");
+        var service = new ChainService(new AnalysisService());
+        var serial = await service.RunAsync(Config, Chain(first, second, third), Library);
+        var updates = new List<ChainProgress>();
+        var parallel = await service.RunAsync(Config, Chain(first, second, third), Library,
+            progress: p => updates.Add(p), options: new() { MaxConcurrency = 2 });
+        Assert.Equal(2, parallel.Snapshot.ExecutionOptions!.MaxConcurrency);
+        Assert.Equal(serial.Compliance, parallel.Compliance); Assert.Equal(serial.ExitCode, parallel.ExitCode);
+        Assert.Equal(serial.Entries.Select(e => e.EntryId), parallel.Entries.Select(e => e.EntryId));
+        foreach (var child in serial.Entries)
+        {
+            var other = parallel.Entries.Single(e => e.EntryId == child.EntryId);
+            Assert.Equal(child.Execution, other.Execution); Assert.Equal(child.Compliance, other.Compliance);
+            Assert.Equal(child.Findings.Select(f => f.Id), other.Findings.Select(f => f.Id));
+            Assert.Equal(child.RuleResults.Select(r => r.Status), other.RuleResults.Select(r => r.Status));
+        }
+        Assert.All(updates, p => Assert.InRange(p.RunningCount, 0, 2));
+        await Assert.ThrowsAsync<ConfigurationException>(() => service.RunAsync(Config, Chain(first), Library, options: new() { MaxConcurrency = 5 }));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ParallelWorkersActuallyOverlapAndDriftIsNotReportedAsUserCancellation(bool changeInputs)
+    {
+        var cards = new List<LibraryCard>();
+        for (var i = 0; i < 4; i++)
+        {
+            var rules = RuleLoader.Parse(System.Text.Encoding.UTF8.GetBytes(RuleTemplates.Json("type-dependency"))) with { Id = "compiled-" + i };
+            cards.Add(Library.Import("compiled-" + i + ".json", JsonSerializer.SerializeToUtf8Bytes(rules, JsonContract.Options)));
+        }
+        var bothEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var entered = 0;
+        using var cancel = new CancellationTokenSource();
+        var analysis = new AnalysisService(async (_, _, _, token) =>
+        {
+            if (Interlocked.Increment(ref entered) == 2) bothEntered.TrySetResult();
+            await bothEntered.Task.WaitAsync(token);
+            if (changeInputs) File.WriteAllText(Path.Combine(Config.Target.Root, "During.cs"), "class During {}");
+            else cancel.Cancel();
+            await Task.Delay(20, token);
+            throw new SourceChangedException();
+        });
+        // SourceChangedException is produced only by the test delegate on a drift path, never a target entry point.
+        var running = new ChainService(analysis).RunAsync(Config, Chain(cards.ToArray()), Library, token: cancel.Token,
+            options: new() { MaxConcurrency = 2 });
+        await bothEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        var summary = await running.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Equal(2, entered);
+        Assert.Equal(changeInputs ? 4 : 130, summary.ExitCode);
+        Assert.Equal(changeInputs ? "partial" : "cancelled", summary.Execution);
+        Assert.All(summary.Entries.Skip(2), e => Assert.Equal("skipped", e.Execution));
+        if (changeInputs)
+        {
+            Assert.Contains("global-input-drift", summary.Limitations);
+            Assert.All(summary.Entries.Take(2), e => { Assert.Equal("inconclusive", e.Compliance); Assert.False(e.Coverage.SourceBound); });
+        }
+    }
+
+    [Fact]
+    public async Task CancellationWhenSummaryPublicationStartsProducesCurrentCancelledAudit()
+    {
+        var first = Add("one"); using var cancel = new CancellationTokenSource();
+        var summary = await new ChainService(new AnalysisService()).RunAsync(Config, Chain(first), Library, token: cancel.Token,
+            progress: p => { if (p.Stage == "writing-reports") cancel.Cancel(); });
+        Assert.Equal(130, summary.ExitCode);
+        using var saved = JsonDocument.Parse(File.ReadAllText(Path.Combine(summary.Snapshot.OutputDirectory, "chain-summary.json")));
+        Assert.Equal("cancelled", saved.RootElement.GetProperty("execution").GetString());
+    }
+
+    [Fact]
+    public async Task ProgressIsCurrentOrderedAndPublishedAfterChildFilesExistWithLegacyReadCompatibility()
+    {
+        var first = Add("one"); var second = Add("two");
+        var updates = new List<ChainProgress>();
+        var summary = await new ChainService(new AnalysisService()).RunAsync(Config, Chain(first, second), Library,
+            progress: progress =>
+            {
+                using var doc = JsonDocument.Parse(JsonSerializer.Serialize(progress, JsonContract.Options));
+                SchemaValidation.Validate(doc.RootElement, "chain-progress");
+                Assert.Equal(new[] { first.EntryId, second.EntryId }, progress.Entries.Select(e => e.EntryId));
+                foreach (var entry in progress.Entries.Where(e => e.OutputAvailable))
+                    Assert.NotEmpty(Directory.GetFiles(Path.Combine(Config.Output.Directory, progress.RunId, entry.EntryId), "report.json", SearchOption.AllDirectories));
+                updates.Add(progress);
+            });
+        Assert.Equal("preparing", updates[0].Stage);
+        Assert.Equal("finished", updates[^1].Stage);
+        Assert.Equal(2, updates[^1].ExecutedCount); Assert.Equal(0, updates[^1].SkippedCount);
+        Assert.Equal(updates.Count, updates.Select(p => p.Revision).Distinct().Count());
+        Assert.Contains(updates, p => p.Entries.Any(e => e.State == "writing" && !e.OutputAvailable));
+        Assert.True(File.Exists(Path.Combine(summary.Snapshot.OutputDirectory, "chain-summary.json")));
+        Assert.NotNull(summary.Timings); Assert.True(summary.Timings.Total >= summary.Timings.Preparation);
+        var legacy = summary with { SchemaVersion = 1, ToolVersion = "0.4.0", Timings = null, Snapshot = summary.Snapshot with { ExecutionOptions = null } };
+        var text = ChainWriter.Json(legacy);
+        var restored = JsonSerializer.Deserialize<ChainSummary>(text, JsonContract.Options)!;
+        Assert.Equal("0.4.0", restored.ToolVersion); Assert.Null(restored.Snapshot.ExecutionOptions);
+    }
+
+    [Fact]
+    public async Task CancellationInPreparationAndDriftAfterLastChildRemainAuditable()
+    {
+        var first = Add("one"); using var cancel = new CancellationTokenSource();
+        var service = new ChainService(new AnalysisService());
+        var cancelled = await service.RunAsync(Config, Chain(first), Library, token: cancel.Token,
+            progress: p => { if (p.Stage == "preparing") cancel.Cancel(); });
+        Assert.Equal(130, cancelled.ExitCode); Assert.Equal("skipped", cancelled.Entries[0].Execution);
+        Assert.Contains("preparation-cancelled", cancelled.Limitations);
+        var drift = await service.RunAsync(Config, Chain(first), Library,
+            progress: p => { if (p.Stage == "evaluating" && p.EndedCount == 1) File.WriteAllText(Path.Combine(Config.Target.Root, "Later.cs"), "class Later {}"); });
+        Assert.Equal(4, drift.ExitCode); Assert.Equal("inconclusive", drift.Compliance);
+        Assert.Contains("global-input-drift", drift.Limitations);
+    }
+
+    [Fact]
     public async Task IndependentDuplicateRuleIdsAndReorderKeepFindingsAndSemanticsButLegacyRejectsComposition()
     {
         var first = Add("one", "Wrong"); var second = Add("two");
@@ -41,7 +157,7 @@ public sealed class ChainTests : IDisposable
             Assert.Equal(1, child.Coverage.ProjectCount);
             Assert.True(File.Exists(Path.Combine(forward.Snapshot.OutputDirectory, child.ReportDirectory!, "report.json")));
         }
-        using var json = JsonDocument.Parse(ChainWriter.Json(forward)); SchemaValidation.Validate(json.RootElement, "chain-summary");
+        using var json = JsonDocument.Parse(ChainWriter.Json(forward)); SchemaValidation.Validate(json.RootElement, "chain-summary-v2");
         var sarif = JsonNode.Parse(ChainWriter.Sarif(forward))!;
         Assert.Equal(3, sarif["runs"]!.AsArray().Count);
         Assert.StartsWith(first.EntryId + "/", sarif["runs"]![0]!["results"]![0]!["ruleId"]!.GetValue<string>(), StringComparison.Ordinal);

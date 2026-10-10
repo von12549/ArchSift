@@ -11,13 +11,13 @@ public static class ChainWriter
     public static string Json(ChainSummary summary)
     {
         var text = JsonSerializer.Serialize(summary, JsonContract.Options);
-        using var doc = JsonDocument.Parse(text); SchemaValidation.Validate(doc.RootElement, "chain-summary"); return text;
+        using var doc = JsonDocument.Parse(text); SchemaValidation.Validate(doc.RootElement, summary.SchemaVersion == 2 ? "chain-summary-v2" : "chain-summary"); return text;
     }
     public static string Html(ChainSummary summary)
     {
         string E(string? text) => WebUtility.HtmlEncode(text ?? "Unavailable");
         var html = new StringBuilder("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><title>ArchSift chain summary</title><style>body{font:16px Segoe UI,sans-serif;margin:2rem;color:#17324d;max-width:1100px}table{border-collapse:collapse;width:100%}td,th{padding:.7rem;border-bottom:1px solid #c2d1df;text-align:left}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}.limit{border-left:4px solid #8a4b00;padding:1rem;background:#fff2d9}details{margin:1rem 0}</style><h1>Chain summary</h1>");
-        html.Append($"<p>{E(summary.Snapshot.ChainId)} / {E(summary.Snapshot.ChainVersion)}</p><p>Execution: <strong>{E(summary.Execution)}</strong>; policy: <strong>{E(summary.Compliance)}</strong>; exit: {summary.ExitCode}</p>");
+        html.Append($"<p>{E(summary.Snapshot.ChainId)} / {E(summary.Snapshot.ChainVersion)}</p><p>Report tool version: {E(summary.ToolVersion)}; max concurrency: {summary.Snapshot.ExecutionOptions?.MaxConcurrency.ToString() ?? "Unavailable (legacy report)"}</p><p>Execution: <strong>{E(summary.Execution)}</strong>; policy: <strong>{E(summary.Compliance)}</strong>; exit: {summary.ExitCode}</p>");
         html.Append($"<p>Target: {E(summary.Snapshot.Target.Root)}; kind: {E(summary.Snapshot.TargetKind)}; unique captured projects: {summary.ProjectCount}</p><p>Source input: <code>{E(summary.Snapshot.InputIdentity.Sha256)}</code></p><p>Build input: <code>{E(summary.Snapshot.BuildInputIdentity.Sha256)}</code></p>");
         if (summary.Execution != "completed") html.Append("<p class=\"limit\">This run is incomplete. Passing policy results do not prove full coverage. Review each entry's limitations and source binding.</p>");
         foreach (var child in summary.Entries)
@@ -80,6 +80,17 @@ public static class ChainWriter
         WriteNew(Path.Combine(root, "chain-summary.json"), Json(summary));
         WriteNew(Path.Combine(root, "chain-summary.html"), Html(summary));
         WriteNew(Path.Combine(root, "chain-summary.sarif"), Sarif(summary));
+    }
+    internal static void Replace(ChainSummary summary)
+    {
+        var root = summary.Snapshot.OutputDirectory;
+        foreach (var (name, text) in new[] { ("chain-summary.json", Json(summary)), ("chain-summary.html", Html(summary)), ("chain-summary.sarif", Sarif(summary)) })
+        {
+            var path = Path.Combine(root, name); PathSafety.EnsureNoLinks(path);
+            if (!File.Exists(path)) throw new IOException("Missing current summary during cancellation publication.");
+            var temporary = path + ".tmp-" + Guid.NewGuid().ToString("N");
+            WriteNew(temporary, text); PathSafety.EnsureNoLinks(path); File.Move(temporary, path, true);
+        }
     }
     public static void SaveDiagnostic(string directory, ChainDiagnostic diagnostic)
     {

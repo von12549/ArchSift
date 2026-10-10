@@ -1,0 +1,26 @@
+{
+  "$schema":"http://json-schema.org/draft-07/schema#",
+  "$id":"urn:archsift:chain-progress:v1",
+  "type":"object","additionalProperties":false,
+  "required":["schemaVersion","runId","revision","stage","elapsedMilliseconds","totalCount","endedCount","executedCount","skippedCount","runningCount","entries"],
+  "properties":{
+    "schemaVersion":{"const":1},"runId":{"type":"string","pattern":"^[a-f0-9]{32}$"},
+    "revision":{"type":"integer","minimum":0},"elapsedMilliseconds":{"type":"integer","minimum":0},
+    "stage":{"enum":["preparing","acquiring-evidence","evaluating","writing-reports","finished"]},
+    "totalCount":{"type":"integer","minimum":0},"endedCount":{"type":"integer","minimum":0},
+    "executedCount":{"type":"integer","minimum":0},"skippedCount":{"type":"integer","minimum":0},
+    "runningCount":{"type":"integer","minimum":0},
+    "entries":{"type":"array","items":{
+      "type":"object","additionalProperties":false,
+      "required":["entryId","state","execution","compliance","startedUtc","finishedUtc","outputAvailable","error"],
+      "properties":{
+        "entryId":{"type":"string","pattern":"^[a-f0-9]{32}$"},
+        "state":{"enum":["waiting","running","writing","completed","partial","failed","skipped","cancelled"]},
+        "execution":{"enum":[null,"completed","partial","failed","skipped","cancelled"]},
+        "compliance":{"enum":[null,"compliant","noncompliant","inconclusive","not-applicable"]},
+        "startedUtc":{"type":["string","null"]},"finishedUtc":{"type":["string","null"]},
+        "outputAvailable":{"type":"boolean"},"error":{"type":["string","null"]}
+      }
+    }}
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "status": "development-baseline-not-release-budget",
+  "sdk": "10.0.303",
+  "productConfiguration": "Release",
+  "targetFramework": "net10.0",
+  "targetConfiguration": "Debug",
+  "fixture": "100-projects-200-inputs-182-naming-rules-four-groups",
+  "inputSha256": "f2aa113201223ab9eb1caeb560ac064ab36f50699f2bd75b46115077ac2c9907",
+  "productInputsSha256": "b382308f10332443e8afec7c97337816d935e8522789b7030167aaba4d9e5bbc",
+  "sourceDirtyAtMeasurement": true,
+  "evidence": "D:/ArchSift-lab/runs/chain-measure-ec7dfafbe0114f0498e88db5be8e841f/measurements.json",
+  "evidenceSha256": "9d2519dfb4a93fd79f982c3ebceab75bc2db0fc943a1170540de58e1eb589ad8",
+  "maxConcurrency": 1,
+  "iterationsPerSurface": 6,
+  "cache": "first-process-os-cache-unspecified-plus-five-warm-os-cache-new-process-runs",
+  "cli": {"wallMinimumMilliseconds":647,"wallMaximumMilliseconds":668,"sampledPeakMaximumMiB":62.1,"inputVerificationMinimumMilliseconds":254,"inputVerificationMaximumMilliseconds":263},
+  "ui": {"jobWallMinimumMilliseconds":616,"jobWallMaximumMilliseconds":657,"sampledPeakMaximumMiB":61.4,"inputVerificationMinimumMilliseconds":249,"inputVerificationMaximumMilliseconds":260},
+  "hostStateEqual": true,
+  "thresholdStatus": "pending-parallel-measurement",
+  "limitations": ["Not IFX or assembly performance.","Development source hashes and built DLL hashes are recorded; this is not fixed clean release qualification.","Timing intervals overlap; total excludes the final summary persistence, while external wall includes it.","Evidence timing includes shared preflight input checks and is not build duration.","Memory is sampled for this declaration-only process; worker process-tree measurements and cancellation latency remain for later gates.","Initial cached-process-info memory samples retained separately and superseded."]
+}
