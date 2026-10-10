@@ -65,16 +65,20 @@ function Semantic-Sha($Summary,[string]$Root){
     })
     return Hash-Json ([ordered]@{schemaVersion=$Summary.schemaVersion;toolVersion=$Summary.toolVersion;chainId=$Summary.snapshot.chainId;targetKind=$Summary.snapshot.targetKind;targetRoot=$Summary.snapshot.target.root;inputSha256=$Summary.snapshot.inputIdentity.sha256;buildInputSha256=$Summary.snapshot.buildInputIdentity.sha256;chainEntriesSha256=(Hash-Json $Summary.snapshot.entries);execution=$Summary.execution;compliance=$Summary.compliance;exitCode=$Summary.exitCode;projectCount=$Summary.projectCount;entries=$entries;limitationsSha256=(Hash-Json $Summary.limitations)})
 }
-function Port-Closed([int]$Port){
-    $socket=[Net.Sockets.TcpClient]::new()
-    try{
-        try{$task=$socket.ConnectAsync([Net.IPAddress]::Loopback,$Port);if(-not$task.Wait(1000)){return $false};return -not$socket.Connected}
-        catch{
-            $error=$_.Exception
-            while($null-ne$error.InnerException){$error=$error.InnerException}
-            return $error -is [Net.Sockets.SocketException] -and $error.SocketErrorCode -eq [Net.Sockets.SocketError]::ConnectionRefused
-        }
-    }finally{$socket.Dispose()}
+function Listener-PidsFromLines([string[]]$Lines,[int]$Port){
+    foreach($line in $lines){
+        $parts=@($line.Trim() -split '\s+')
+        if($parts.Count-ne5-or$parts[0]-cne'TCP'-or$parts[3]-cne'LISTENING'-or-not$parts[1].EndsWith(":$Port",[StringComparison]::Ordinal)){continue}
+        $listenerId=0
+        if(-not[int]::TryParse($parts[4],[ref]$listenerId)){throw 'TCP listener inventory has an invalid PID.'}
+        Write-Output $listenerId
+    }
+}
+function Port-ListenerPids([int]$Port){
+    $netstat=Join-Path ([Environment]::SystemDirectory) 'netstat.exe'
+    $lines=@(& $netstat -ano -p tcp)
+    if($LASTEXITCODE-ne0){throw 'TCP listener inventory failed.'}
+    Listener-PidsFromLines $lines $Port
 }
 
 $hostBefore=Get-ArchSiftHostHash;$targetBefore=$null;$originalBefore=$null;$freeze=$null;$policyEqual=$null;$configEqual=$null;$configBefore=$null
@@ -161,6 +165,8 @@ try{
                 }
                 $stdoutRest=$process.StandardOutput.ReadToEndAsync()
                 if($null-eq$address-or$webPid-ne$process.Id){throw "UI address or owned PID identity differs on $stem."}
+                $listeningPids=@(Port-ListenerPids $address.Port)
+                if($listeningPids.Count-ne1-or$listeningPids[0]-ne$webPid){throw "Exact loopback listener was not observed with the owned PID on $stem."}
                 $startupMs=$launchClock.ElapsedMilliseconds
                 $client=[Net.Http.HttpClient]::new();$client.Timeout=[TimeSpan]::FromSeconds(10)
                 $client.BaseAddress=[Uri]::new($address.GetLeftPart([UriPartial]::Authority))
@@ -214,11 +220,11 @@ try{
                 $shutdownMode='api'
                 if(-not$process.WaitForExit(10000)){throw "UI safe shutdown timeout on $stem."}
                 $launchClock.Stop();$webExitCode=$process.ExitCode
-                $portClosed=Port-Closed $address.Port
+                $portClosed=@(Port-ListenerPids $address.Port).Count-eq0
                 $allPortsClosed=$allPortsClosed-and$portClosed
                 if($webExitCode-ne0-or-not$portClosed){throw "UI process or exact loopback port remained on $stem."}
                 try{$process.Refresh();$peakBytes=[Math]::Max($peakBytes,$process.PeakWorkingSet64);$cpuMs=[long]$process.TotalProcessorTime.TotalMilliseconds}catch{}
-                $records.Add([ordered]@{surface='direct-native-web';iteration=$iteration;cache=$(if($iteration-eq0){'first-process/os-cache-unspecified'}else{'warm-os-cache/new-process'});maxConcurrency=$concurrency;startupMilliseconds=$startupMs;jobWallMilliseconds=$jobMs;totalWallMilliseconds=$launchClock.ElapsedMilliseconds;cpuMilliseconds=$cpuMs;peakWorkingSetBytes=$peakBytes;memoryScope='single-native-web-process/no-assembly-worker';reportBytes=$reportBytes;reportFileCount=$reportFiles.Count;reportDirectory=$reportRoot;summarySha256=(Hash-File $summaryPath);inputIdentitySha256=$summary.snapshot.inputIdentity.sha256;semanticSha256=$semanticSha;timings=$summary.timings;webPid=$webPid;loopbackPort=$address.Port;safeShutdown=$shutdownMode;portClosed=$portClosed})
+                $records.Add([ordered]@{surface='direct-native-web';iteration=$iteration;cache=$(if($iteration-eq0){'first-process/os-cache-unspecified'}else{'warm-os-cache/new-process'});maxConcurrency=$concurrency;startupMilliseconds=$startupMs;jobWallMilliseconds=$jobMs;totalWallMilliseconds=$launchClock.ElapsedMilliseconds;cpuMilliseconds=$cpuMs;peakWorkingSetBytes=$peakBytes;memoryScope='single-native-web-process/no-assembly-worker';reportBytes=$reportBytes;reportFileCount=$reportFiles.Count;reportDirectory=$reportRoot;summarySha256=(Hash-File $summaryPath);inputIdentitySha256=$summary.snapshot.inputIdentity.sha256;semanticSha256=$semanticSha;timings=$summary.timings;webPid=$webPid;loopbackPort=$address.Port;listenerProof='netstat-owned-before/absent-after';safeShutdown=$shutdownMode;portClosed=$portClosed})
                 $completedCount++
                 [IO.File]::WriteAllText((Join-Path $run 'progress.json'),(@{attemptedCount=$attemptedCount;completedCount=$completedCount;lastStem=$stem;lastReportDirectory=$reportRoot}|ConvertTo-Json))
             }finally{
