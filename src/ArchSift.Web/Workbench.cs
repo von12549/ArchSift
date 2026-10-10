@@ -8,11 +8,12 @@ using ArchSift.Core;
 
 namespace ArchSift.Web;
 
-public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
+public sealed class Workbench(RunConfiguration initial, string rulesDirectory, SessionProfile? profile = null)
 {
     private RunConfiguration current = initial;
     private readonly ConcurrentDictionary<string, Job> jobs = new();
     private readonly SemaphoreSlim gate = new(1, 1);
+    private volatile bool dirty;
     public string Token { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
 
     public void Map(WebApplication app)
@@ -43,7 +44,16 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             { context.Response.StatusCode = 500; await context.Response.WriteAsJsonAsync(new { error = error.Message }); }
         });
         app.UseDefaultFiles(); app.UseStaticFiles();
-        app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory, toolVersion = ToolIdentity.Version }, JsonContract.Options));
+        app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory, toolVersion = ToolIdentity.Version, profile }, JsonContract.Options));
+        app.MapGet("/api/session", () => Results.Json(new { processId = Environment.ProcessId, running = jobs.Values.Any(j => j.State == "running"), dirty }));
+        app.MapPost("/api/session/dirty", async (HttpContext context) =>
+        {
+            using var doc = await JsonDocument.ParseAsync(context.Request.Body);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object || doc.RootElement.EnumerateObject().Count() != 1 ||
+                !doc.RootElement.TryGetProperty("dirty", out var value) || value.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+                throw new ConfigurationException("Expected a dirty boolean.");
+            dirty = value.GetBoolean(); return Results.Ok();
+        });
         app.MapPost("/api/config", async (HttpContext context) =>
         {
             using var doc = await JsonDocument.ParseAsync(context.Request.Body);
@@ -247,10 +257,16 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             var path = PathSafety.Under(job.Chain.Snapshot.OutputDirectory, relative + "/" + (entry.Diagnostic is null ? "report." : "diagnostic.") + format);
             return Results.File(File.ReadAllBytes(path), format == "html" ? "text/html" : format == "sarif" ? "application/sarif+json" : "application/json", Path.GetFileName(path));
         });
-        app.MapPost("/api/shutdown", () =>
+        app.MapPost("/api/shutdown", async (HttpContext context) =>
         {
             if (jobs.Values.Any(job => job.State == "running"))
                 return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            if (dirty)
+            {
+                using var doc = await JsonDocument.ParseAsync(context.Request.Body);
+                if (!doc.RootElement.TryGetProperty("discardChanges", out var discard) || discard.ValueKind != JsonValueKind.True)
+                    return Results.Conflict(new { error = "Unsaved changes remain. Export/save them or explicitly discard them." });
+            }
             _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); });
             return Results.Accepted();
         });

@@ -14,7 +14,7 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
         if (File.Exists(Selection(root))) throw new ConfigurationException("Installation already owned; use upgrade.");
         if (Directory.Exists(root) && Directory.EnumerateFileSystemEntries(root).Any(p => Path.GetFileName(p) != "downloads"))
             throw new ConfigurationException("Unknown existing installation; inspect and explicitly adopt it.");
-        var configPath = SetupFiles.Under(root, "config/project.json");
+        var configPath = SetupFiles.Under(root, "config/default.json");
         ValidateConfiguration(root, configPath, configuration);
         if (File.Exists(configPath)) throw new ConfigurationException("Existing configuration cannot be overwritten.");
         var identity = PackageReader.Inspect(package, sha256);
@@ -25,6 +25,8 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
     public SetupPlan PlanUpgrade(string root, string package, string sha256, bool smoke)
     {
         var before = LoadInstallation(root);
+        if (!PathSafety.IsUnder(before.ConfigPath, SetupFiles.Under(before.Root, "config")))
+            throw new ConfigurationException("Legacy config outside config directory requires explicit relocation review; no automatic migration is supported.");
         var config = ConfigLoader.Load(before.ConfigPath);
         ValidateConfiguration(before.Root, before.ConfigPath, config);
         if (config.Target.Root != before.TargetRoot || Library(config) != before.LibraryPath)
@@ -61,8 +63,14 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
         root = SetupFiles.Safe(root);
         if (!File.Exists(Selection(root))) return new { status = "unowned", root, message = "Existing ZIP installations require explicit adoption." };
         var installation = LoadInstallation(root);
-        var config = ConfigLoader.Load(installation.ConfigPath);
-        ValidateConfiguration(root, installation.ConfigPath, config); ValidateState(config);
+        RunConfiguration config;
+        try
+        {
+            config = ConfigLoader.Load(installation.ConfigPath);
+            ValidateConfiguration(root, installation.ConfigPath, config); ValidateState(config);
+        }
+        catch (Exception error) when (error is IOException or ConfigurationException or UnauthorizedAccessException)
+        { return new { status = "state-invalid", installation, error = error.Message, pendingOperations = Pending(root) }; }
         return new { status = "verified", installation, selectionSha256 = SetupFiles.FileHash(Selection(root)),
             state = Capture(installation.ConfigPath, config), launchExecutable = Path.Combine(Selected(installation).Directory, "archsift.exe"),
             pendingOperations = Pending(root), limits = new[] { "No target analysis/build performed.", "Schema migration is unsupported." } };
@@ -263,12 +271,12 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
         if (plan.Root != SetupFiles.Safe(plan.Root) || plan.ConfigPath != SetupFiles.Safe(plan.ConfigPath) ||
             (plan.Operation == "adopt" ? plan.AdoptedVersion is null || plan.Package is not null : plan.Package is null || plan.AdoptedVersion is not null))
             throw new ConfigurationException("Plan operation/path mismatch.");
-        if (plan.Operation == "install" && (plan.SelectionSha256 is not null || plan.State.ConfigExists || plan.ConfigPath != SetupFiles.Under(plan.Root, "config/project.json")))
+        if (plan.Operation == "install" && (plan.SelectionSha256 is not null || plan.State.ConfigExists || plan.ConfigPath != SetupFiles.Under(plan.Root, "config/default.json")))
             throw new ConfigurationException("Invalid install plan.");
         if (plan.Operation == "upgrade" && plan.SelectionSha256 is null) throw new ConfigurationException("Upgrade requires prior ownership.");
         if (plan.AdoptedVersion is { } version && !PathSafety.IsUnder(version.Directory, plan.Root)) throw new ConfigurationException("Adoption escapes installation root.");
     }
-    private static Installation LoadInstallation(string root)
+    public static Installation LoadInstallation(string root)
     {
         root = SetupFiles.Safe(root); var installation = SetupFiles.Read<Installation>(Selection(root));
         ValidateInstallation(installation, root); return installation;

@@ -25,9 +25,10 @@ public static class Program
                 Console.WriteLine(JsonSerializer.Serialize(AssemblyWorker.Evaluate(request), JsonContract.Options)); return 0;
             }
             if (args is ["--version"]) { Console.WriteLine($"archsift {RuntimeInfo.ProductVersion}"); return 0; }
-            if (args is ["ui", "--config", var uiConfig])
+            if (args is ["ui", "--config", _] or ["launch", "--root", _])
             {
-                var configPath = Path.GetFullPath(uiConfig); ConfigLoader.Load(configPath);
+                var launch = args[0] == "launch";
+                var configPath = Path.GetFullPath(args[2]); if (!launch) ConfigLoader.Load(configPath);
                 var web = Path.Combine(AppContext.BaseDirectory, "web", "ArchSift.Web.dll");
                 if (!File.Exists(web))
                 {
@@ -38,8 +39,14 @@ public static class Program
                 }
                 if (!File.Exists(web)) throw new IOException("Web payload is missing; use the complete local package.");
                 var native = Path.ChangeExtension(web, OperatingSystem.IsWindows() ? ".exe" : null);
-                return await ArchSift.Hosting.UiProcess.RunAsync(File.Exists(native) ? native : SafeProcess.Dotnet,
-                    File.Exists(native) ? null : web, configPath, Console.Out, Console.Error, cancel.Token);
+                return await ArchSift.Hosting.UiProcess.RunArgumentsAsync(File.Exists(native) ? native : SafeProcess.Dotnet,
+                    File.Exists(native) ? null : web, [launch ? "--launcher" : "--config", configPath], Console.Out, Console.Error, cancel.Token,
+                    onAddress: launch ? address =>
+                    {
+                        try { using var browser = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(address.AbsoluteUri) { UseShellExecute = true }); }
+                        catch (Exception error) when (error is System.ComponentModel.Win32Exception or InvalidOperationException)
+                        { throw new IOException("Default browser could not open the local launcher."); }
+                    } : null);
             }
             if (args is [] or ["--help"] or ["-h"])
             {
@@ -49,6 +56,7 @@ public static class Program
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
                 Console.WriteLine("rules validate --file <JSON>; rules render --file <JSON> --output <new Markdown>");
                 Console.WriteLine("rules draft --config <JSON> --output <directory>; ui --config <JSON>");
+                Console.WriteLine("launch --root <verified-install-root>; choose a profile before starting the workbench.");
                 Console.WriteLine("changes --config <JSON> [--base <local commit> --head <local commit>]; default HEAD vs final worktree."); return 0;
             }
             if (args.Length >= 2 && args[0] == "rules" && args[1] is "validate" or "render")

@@ -7,6 +7,7 @@ archsift chain verify --config config.json --chain chain.json --target-kind fixt
 archsift changes --config config.json
 archsift changes --config config.json --base HEAD~1 --head HEAD
 archsift ui --config config.json
+archsift launch --root D:/Tools/ArchSift
 archsift rules validate --file architecture.json
 archsift rules render --file architecture.json --output architecture.md
 archsift rules draft --config config.json --output D:/archsift-output/drafts
@@ -23,6 +24,8 @@ Each run uses a unique external output directory. Normal files are `report.json/
 Output and target must be disjoint and must not cross links/reparse points. Markdown rendering creates a new file and cannot overwrite JSON. Existing mode does not restore/build automatically. Isolated builds are explicit, default Debug/offline, and need supported target prerequisites; see [build inputs](build-inputs.md). They are not a full sandbox.
 
 The workbench uses saved cards for Verify/Verify Chain. Import selects a local JSON file; Export JSON preserves saved bytes including UTF-8 BOM. External configured paths remain read-only in the UI until explicitly imported. Unsaved editor changes never affect a run.
+
+0.6.0 development adds `launch --root` before configuration loading, current product version and true chain progress. The launcher stores its catalog and latest selection only in the install root's config directory; Setup still manages one config and library. It never treats a newly registered external file as protected. Direct `ui --config` remains available. Chain progress goes to stderr / the current job API, while final chain JSON stays authoritative stdout. Summary v2 records execution options and overlapping stage timings; old v1 reports remain readable without invented options or timings. Parallel execution belongs to the later 0.6-E package and is not claimed by the current intermediate implementation.
 
 | Exit | Meaning |
 | --- | --- |
