@@ -2,6 +2,8 @@
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
   "Chain progress":"规则链进度",
+  "Maximum concurrent rulesets":"同时运行的规则集上限",
+  "1 · Serial (default)":"1 · 串行（默认）",
   "Preparing inputs":"准备输入",
   "Acquiring build evidence":"获取构建证据",
   "Evaluating rulesets":"验证规则集",

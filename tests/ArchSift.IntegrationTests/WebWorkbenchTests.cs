@@ -134,10 +134,15 @@ public sealed class WebWorkbenchTests
             }
             var chain = new ChainDocument(1, "http-chain", "1", "User-authored 原文", [new(firstCard.EntryId), new(secondCard.EntryId)]);
             (await client.PostAsync("/api/chains/http-chain", JsonContent.Create(chain, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
-            using (var chainJob = await NewJob("chain", new { chainId = chain.Id, targetKind = "fixture" }))
+            foreach (var invalid in new[] { "0", "5", "1.5", "\"2\"" })
+                Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/run/chain", new StringContent("{\"chainId\":\"http-chain\",\"maxConcurrency\":" + invalid + "}", Encoding.UTF8, "application/json"), timeout.Token)).StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/run/chain", new StringContent("{\"chainId\":\"http-chain\",\"maxConcurrency\":1,\"maxConcurrency\":2}", Encoding.UTF8, "application/json"), timeout.Token)).StatusCode);
+            using (var chainJob = await NewJob("chain", new { chainId = chain.Id, targetKind = "fixture", maxConcurrency = 2 }))
             {
                 var summary = chainJob.RootElement.GetProperty("chain").Deserialize<ChainSummary>(JsonContract.Options)!;
                 Assert.Equal(2, summary.Entries.Length); Assert.Equal(1, summary.ProjectCount); Assert.Equal("noncompliant", summary.Compliance);
+                Assert.Equal(2, summary.Snapshot.ExecutionOptions!.MaxConcurrency);
+                Assert.Equal("finished", chainJob.RootElement.GetProperty("progress").GetProperty("stage").GetString());
                 foreach (var child in summary.Entries)
                     Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + chainJob.RootElement.GetProperty("id").GetString() + "/child/" + child.EntryId + "/sarif", timeout.Token)).StatusCode);
             }

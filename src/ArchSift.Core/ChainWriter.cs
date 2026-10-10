@@ -81,6 +81,17 @@ public static class ChainWriter
         WriteNew(Path.Combine(root, "chain-summary.html"), Html(summary));
         WriteNew(Path.Combine(root, "chain-summary.sarif"), Sarif(summary));
     }
+    internal static void Replace(ChainSummary summary)
+    {
+        var root = summary.Snapshot.OutputDirectory;
+        foreach (var (name, text) in new[] { ("chain-summary.json", Json(summary)), ("chain-summary.html", Html(summary)), ("chain-summary.sarif", Sarif(summary)) })
+        {
+            var path = Path.Combine(root, name); PathSafety.EnsureNoLinks(path);
+            if (!File.Exists(path)) throw new IOException("Missing current summary during cancellation publication.");
+            var temporary = path + ".tmp-" + Guid.NewGuid().ToString("N");
+            WriteNew(temporary, text); PathSafety.EnsureNoLinks(path); File.Move(temporary, path, true);
+        }
+    }
     public static void SaveDiagnostic(string directory, ChainDiagnostic diagnostic)
     {
         var json = JsonSerializer.Serialize(diagnostic, JsonContract.Options);

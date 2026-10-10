@@ -40,6 +40,8 @@
 
 0.6-D 完成：独立选择页、config 元数据／规范化预览／受管与外部区分、default.json 新安装、旧路径／单配置升级回退保护、私有父生命周期和原生 owned PID／端口退出实现。195 项与八模板、Node 通过，宿主相等；所有失败与修复记录保留。见 [D 验收](../acceptance/20261011-0.6-d-launcher.md)。旧 0.5 指南保留，仍未进行真实 IFX 或 0.6 发布；下一阶段 E 受控并行。
 
+0.6-E 实现候选：有界 1–4 调度、默认串行、统一漂移／取消、按原顺序汇总、CLI/API/UI 参数实现；200 项、八模板及 Node 通过，真实合成 chain 共享一次 isolated build 并使用两个 ArchUnitNET Worker、目标未执行。检查根 development-4fe9696c6cd3445e9a2fd28aa1a02e5e，宿主相等。先提交固定测量源码，再测 1/2/4 并冻结预算；E 尚未验收完成，未发布。
+
 2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
 
 0.5.0 操作员第一步停止：误用旧安装根读取 manifest，实际包根为 `D:/IFX-10-Root/ArchSift/versions/0.4.0`。已修正操作员脚本及初始化证据，五项合成布局回归通过且宿主相等；真实步骤未通过，等待重试。产品源码/资产保持 c4010d8，未合并或发布；见 [候选记录](../acceptance/20261010-0.5-candidate-readiness.md)。

@@ -130,9 +130,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain")) return Results.BadRequest(new { error = "Unknown operation." });
             ChangeRequest request = new();
             using var document = await JsonDocument.ParseAsync(context.Request.Body);
+            SchemaValidation.ValidateDocument(document.RootElement, JsonSerializer.SerializeToElement(new { type = "object" }));
             if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p =>
                     p.Name != "targetKind" && (operation != "changes" || p.Name is not ("base" or "head")) &&
-                    (operation != "ruleset" || p.Name != "entryId") && (operation != "chain" || p.Name != "chainId")))
+                    (operation != "ruleset" || p.Name != "entryId") && (operation != "chain" || p.Name is not ("chainId" or "maxConcurrency"))))
                 throw new ConfigurationException("Run request contains unsupported fields.");
             var targetKind = document.RootElement.TryGetProperty("targetKind", out var kind) ? kind.GetString() : "real";
             if (targetKind is not ("real" or "fixture")) throw new ConfigurationException("Target kind must be real or fixture.");
@@ -140,6 +141,12 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
                 document.RootElement.TryGetProperty("base", out var @base) && @base.ValueKind != JsonValueKind.Null ? @base.GetString() : null,
                 document.RootElement.TryGetProperty("head", out var head) && head.ValueKind != JsonValueKind.Null ? head.GetString() : null);
             var config = current;
+            var options = new ChainRunOptions();
+            if (operation == "chain" && document.RootElement.TryGetProperty("maxConcurrency", out var concurrency))
+            {
+                var optionJson = JsonSerializer.SerializeToElement(new Dictionary<string, JsonElement> { ["maxConcurrency"] = concurrency });
+                SchemaValidation.Validate(optionJson, "chain-run-options"); options = optionJson.Deserialize<ChainRunOptions>(JsonContract.Options)!;
+            }
             if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
             LoadedRuleset? selected = null; CapturedChain? chain = null;
             try
@@ -170,7 +177,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
                     {
                         var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
                         job.Chain = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunCapturedAsync(config, chain!, job.Cancel.Token,
-                            progress => job.Progress = progress, job.Id);
+                            progress => job.Progress = progress, job.Id, options);
                         job.ExitCode = job.Chain.ExitCode; job.State = job.Chain.Execution;
                     }
                     else if (operation == "draft")

@@ -33,6 +33,15 @@ public sealed class ChainCommandTests
             var expected = await new ChainService(new AnalysisService()).RunAsync(config, chain, library, "fixture");
             Assert.Equal(expected.Compliance, actual.Compliance); Assert.Equal("fixture", actual.Snapshot.TargetKind);
             Assert.Equal(expected.Entries.SelectMany(e => e.Findings).Select(f => f.Id), actual.Entries.SelectMany(e => e.Findings).Select(f => f.Id));
+            foreach (var count in new[] { 1, 2, 3, 4 })
+            {
+                var concurrent = await Run("chain", "verify", "--config", configPath, "--chain", chainPath, "--max-concurrency", count.ToString());
+                Assert.Equal(0, concurrent.ExitCode);
+                Assert.Equal(count, JsonSerializer.Deserialize<ChainSummary>(concurrent.Output, JsonContract.Options)!.Snapshot.ExecutionOptions!.MaxConcurrency);
+            }
+            foreach (var invalid in new[] { "0", "5", "1.5", "invalid" })
+                Assert.Equal(2, (await Run("chain", "verify", "--config", configPath, "--chain", chainPath, "--max-concurrency", invalid)).ExitCode);
+            Assert.Equal(2, (await Run("chain", "verify", "--config", configPath, "--chain", chainPath, "--max-concurrency", "1", "--max-concurrency", "2")).ExitCode);
             Assert.Equal(2, (await Run("verify", "--config", configPath)).ExitCode);
             library.Delete(first.EntryId);
             Assert.Equal(4, (await Run("chain", "verify", "--config", configPath, "--chain", chainPath)).ExitCode);

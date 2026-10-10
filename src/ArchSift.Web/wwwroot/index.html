@@ -50,6 +50,7 @@
 <div class="actions"><button id="save-rule" class="primary" type="button" data-i18n="Validate and save">Validate and save</button><button id="export-md" type="button" data-i18n="Export Markdown">Export Markdown</button></div><p id="editor-message" role="status"></p>
 </div></div></section>
 <section id="panel-chains" class="tab-panel" hidden><div class="section-head"><h2 data-i18n="Chains">Chains</h2><button id="new-chain" data-i18n="New chain">New chain</button></div>
+<label><span data-i18n="Maximum concurrent rulesets">Maximum concurrent rulesets</span><select id="chain-concurrency"><option value="1" data-i18n="1 · Serial (default)">1 · Serial (default)</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
 <p class="hint" data-i18n="Entries run independently in order against one frozen target. Missing rulesets are reported; later entries continue.">Entries run independently in order against one frozen target. Missing rulesets are reported; later entries continue.</p>
 <div class="library-workspace"><div id="chain-cards"></div><details id="chain-editor"><summary data-i18n="Chain editor">Chain editor</summary>
 <div class="pair"><label><span data-i18n="Chain ID">Chain ID</span><input id="chain-id"></label><label><span data-i18n="Version">Version</span><input id="chain-version" value="1.0.0"></label></div>

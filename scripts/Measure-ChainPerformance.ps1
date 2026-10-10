@@ -3,6 +3,7 @@ param(
     [ValidateSet('Debug','Release')][string]$Configuration='Release',
     [string]$LabRoot='D:\ArchSift-lab',
     [string]$FixtureRoot,
+    [ValidateSet('declaration','assembly')][string]$Scenario='declaration',
     [ValidateRange(1,4)][int]$MaxConcurrency=1,
     [ValidateRange(6,20)][int]$Iterations=6,
     [switch]$SkipUi
@@ -42,32 +43,45 @@ function New-Start([string[]]$Arguments){
 function Invoke-Tool([string[]]$Arguments){
     $timer=[Diagnostics.Stopwatch]::StartNew(); $process=[Diagnostics.Process]::Start((New-Start $Arguments))
     try{
-        $stdout=$process.StandardOutput.ReadToEndAsync(); $stderr=$process.StandardError.ReadToEndAsync(); $peak=0L
+        $stdout=$process.StandardOutput.ReadToEndAsync(); $stderr=$process.StandardError.ReadToEndAsync(); $peak=0L; $treePeak=0L; $cpu=0d
         while(-not$process.WaitForExit(10)){
             if($timer.Elapsed.TotalSeconds-gt60){$process.Kill($true);$process.WaitForExit();throw 'Measurement timed out.'}
-            try{$process.Refresh();$peak=[Math]::Max($peak,$process.PeakWorkingSet64)}catch{}
+            try{$process.Refresh();$peak=[Math]::Max($peak,$process.PeakWorkingSet64);$cpu=$process.TotalProcessorTime.TotalMilliseconds;if($Scenario-eq'assembly'){$treePeak=[Math]::Max($treePeak,(Tree-Memory $process.Id))}}catch{}
         }
         [Threading.Tasks.Task]::WaitAll($stdout,$stderr)
         if($process.ExitCode-notin@(0,4)){throw ('Measurement failed: '+$stderr.Result)}
-        return @{stdout=$stdout.Result;stderr=$stderr.Result;exitCode=$process.ExitCode;wall=$timer.ElapsedMilliseconds;peak=$peak}
+        return @{stdout=$stdout.Result;stderr=$stderr.Result;exitCode=$process.ExitCode;wall=$timer.ElapsedMilliseconds;peak=$peak;treePeak=$treePeak;sampledRootCpuMilliseconds=$cpu}
     }finally{if(-not$process.HasExited){$process.Kill($true);$process.WaitForExit()};$process.Dispose()}
+}
+function Tree-Memory([int]$RootPid){
+    $rows=@(Get-CimInstance Win32_Process|Select-Object ProcessId,ParentProcessId)
+    $owned=[Collections.Generic.HashSet[int]]::new();[void]$owned.Add($RootPid)
+    do{$added=$false;foreach($row in $rows){if($owned.Contains([int]$row.ParentProcessId)-and$owned.Add([int]$row.ProcessId)){$added=$true}}}while($added)
+    $total=0L;foreach($id in $owned){try{$entry=[Diagnostics.Process]::GetProcessById($id);try{$total+=$entry.WorkingSet64}finally{$entry.Dispose()}}catch{}}
+    return $total
 }
 try{
     if(-not$FixtureRoot){
         $FixtureRoot=Join-Path $run 'fixture'; $source=Join-Path $FixtureRoot 'source'; $library=Join-Path $FixtureRoot 'rules'
         [void][IO.Directory]::CreateDirectory($source); [void][IO.Directory]::CreateDirectory($library)
-        for($i=0;$i-lt100;$i++){
+        for($i=0;$Scenario-eq'declaration'-and$i-lt100;$i++){
             $name='P'+$i.ToString('D3'); $directory=Join-Path $source $name; [void][IO.Directory]::CreateDirectory($directory)
             [IO.File]::WriteAllText((Join-Path $directory "$name.csproj"),'<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>')
             [IO.File]::WriteAllText((Join-Path $directory "$name.cs"),"namespace $name; public class Marker {}")
+        }
+        if($Scenario-eq'assembly'){
+            [IO.File]::WriteAllText((Join-Path $source 'Sample.csproj'),'<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework><AssemblyName>Sample.Types</AssemblyName></PropertyGroup></Project>')
+            [IO.File]::WriteAllText((Join-Path $source 'Sample.cs'),'namespace Sample.Domain { public class Model { public int Value; } } namespace Sample.Infrastructure { public class Forbidden {} }')
         }
         $entries=@(); $registry=@(); $counts=@(24,33,35,90)
         for($group=0;$group-lt4;$group++){
             $id=('a'+($group+1)).PadRight(32,'0'); $name='group-'+($group+1); $rules=@()
             for($i=0;$i-lt$counts[$group];$i++){
+                if($Scenario-eq'assembly'){break}
                 $project='P'+$i.ToString('D3')
                 $rules+=@{id='rule-'+$i;type='naming';enabled=$true;severity='warning';reason='Synthetic independent project naming';scope=@{kind='project';match='exact';value="$project/$project.csproj"};parameters=@{subjectKind='project';requiredName=@{match='exact';value=$project}}}
             }
+            if($Scenario-eq'assembly'){$template=Get-Content -LiteralPath (Join-Path $repo 'templates/rules/type-dependency.json') -Raw|ConvertFrom-Json;$rules=@($template.rules)}
             Save-Json (Join-Path $library "$name.json") @{schemaVersion=1;id=$name;version='1';description='Synthetic declaration benchmark';rules=$rules;exceptions=@()}
             $entries+=@{entryId=$id}; $registry+=@{entryId=$id;fileName="$name.json";rulesetId=$name;deleted=$false}
         }
@@ -79,7 +93,10 @@ try{
     if(-not$FixtureRoot.StartsWith($lab+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Only recorded external lab fixtures are accepted.'}
     $source=Join-Path $FixtureRoot 'source'; $library=Join-Path $FixtureRoot 'rules'; $chain=Join-Path $library 'chains/measure.json'
     $config=Join-Path $run 'config.json'
-    Save-Json $config @{schemaVersion=1;target=@{root=$source};rulesDirectory=$library;rulesets=@();build=@{mode='existing';targetFramework='net10.0';configuration='Debug';allowNetwork=$false};output=@{directory=(Join-Path $run 'reports');formats=@('json','html','sarif')}}
+    $build=@{mode='existing';targetFramework='net10.0';configuration='Debug';allowNetwork=$false}
+    if($Scenario-eq'assembly'){$build.mode='isolated';$build.localFeed=Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'}
+    $expectedProjects=if($Scenario-eq'assembly'){1}else{100}
+    Save-Json $config @{schemaVersion=1;target=@{root=$source};rulesDirectory=$library;rulesets=@();build=$build;output=@{directory=(Join-Path $run 'reports');formats=@('json','html','sarif')}}
     $sdk=(Invoke-Tool @('--version')).stdout.Trim(); Check-Host
     $arguments=@($cli,'chain','verify','--config',$config,'--chain',$chain,'--target-kind','fixture')
     if($MaxConcurrency-ne1){$arguments+=@('--max-concurrency',[string]$MaxConcurrency)}
@@ -87,8 +104,8 @@ try{
         $result=Invoke-Tool $arguments; Check-Host
         [IO.File]::WriteAllText((Join-Path $run "cli-$i.json"),$result.stdout,[Text.UTF8Encoding]::new($false))
         $summary=$result.stdout|ConvertFrom-Json
-        if($summary.projectCount-ne100-or$summary.entries.Count-ne4-or$summary.execution-ne'completed'-or$summary.compliance-ne'compliant'){throw 'Unexpected synthetic result; preserve evidence.'}
-        $records.Add(@{surface='cli';iteration=$i;cache=$(if($i-eq0){'first-process/os-cache-unspecified'}else{'warm-os-cache/new-process'});maxConcurrency=$MaxConcurrency;wallMilliseconds=$result.wall;sampledPeakWorkingSetBytes=$result.peak;inputSha256=$summary.snapshot.inputIdentity.sha256;timings=$summary.timings;entryMilliseconds=@($summary.entries|ForEach-Object{(Get-Content -LiteralPath (Join-Path $summary.snapshot.outputDirectory ($_.reportDirectory+'/report.json')) -Raw|ConvertFrom-Json).runMetadata.elapsedMilliseconds})})
+        if($summary.projectCount-ne$expectedProjects-or$summary.entries.Count-ne4-or$summary.execution-ne'completed'-or$summary.compliance-ne'compliant'){throw 'Unexpected synthetic result; preserve evidence.'}
+        $records.Add(@{surface='cli';iteration=$i;cache=$(if($i-eq0){'first-process/os-cache-unspecified'}else{'warm-os-cache/new-process'});maxConcurrency=$MaxConcurrency;wallMilliseconds=$result.wall;sampledPeakWorkingSetBytes=$result.peak;sampledTreeWorkingSetBytes=$result.treePeak;sampledRootCpuMilliseconds=$result.sampledRootCpuMilliseconds;inputSha256=$summary.snapshot.inputIdentity.sha256;timings=$summary.timings;entryMilliseconds=@($summary.entries|ForEach-Object{(Get-Content -LiteralPath (Join-Path $summary.snapshot.outputDirectory ($_.reportDirectory+'/report.json')) -Raw|ConvertFrom-Json).runMetadata.elapsedMilliseconds})})
     }
     if(-not$SkipUi){
         for($i=0;$i-lt$Iterations;$i++){
@@ -114,7 +131,7 @@ try{
                     $peak=$process.PeakWorkingSet64
                     if($job.state-eq'running'){Start-Sleep -Milliseconds 10}
                 }while($job.state-eq'running')
-                if($job.exitCode-ne0-or$job.chain.projectCount-ne100-or$job.chain.compliance-ne'compliant'){throw 'Unexpected UI result.'}
+                if($job.exitCode-ne0-or$job.chain.projectCount-ne$expectedProjects-or$job.chain.compliance-ne'compliant'){throw 'Unexpected UI result.'}
                 $jobTimer.Stop(); Save-Json (Join-Path $run "ui-$i.json") $job.chain
                 $records.Add(@{surface='ui';iteration=$i;cache=$(if($i-eq0){'first-process/os-cache-unspecified'}else{'warm-os-cache/new-process'});maxConcurrency=$MaxConcurrency;startupMilliseconds=$startup;wallMilliseconds=$jobTimer.ElapsedMilliseconds;sampledPeakWorkingSetBytes=$peak;inputSha256=$job.chain.snapshot.inputIdentity.sha256;timings=$job.chain.timings})
             }finally{
@@ -125,6 +142,6 @@ try{
     }
     $productInputs=@(& git -C $repo ls-files src schemas Directory.Build.props|Sort-Object|ForEach-Object{@{path=$_;sha256=(Get-FileHash -LiteralPath (Join-Path $repo $_)).Hash.ToLowerInvariant()}})
     $productIdentity=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes(($productInputs|ConvertTo-Json -Depth 4 -Compress)))).ToLowerInvariant()
-    Save-Json (Join-Path $run 'measurements.json') @{fixtureRoot=$FixtureRoot;sourceCommit=(& git -C $repo rev-parse HEAD);sourceDirty=([bool](& git -C $repo status --porcelain));productInputs=$productInputs;productInputsSha256=$productIdentity;scriptSha256=(Get-FileHash -LiteralPath $PSCommandPath).Hash.ToLowerInvariant();sdk=$sdk;tfm='net10.0';productConfiguration=$Configuration;targetConfiguration='Debug';cpu=(Get-CimInstance Win32_Processor|Select-Object -First 1 -ExpandProperty Name);logicalProcessors=[Environment]::ProcessorCount;cliSha256=(Get-FileHash -LiteralPath $cli).Hash.ToLowerInvariant();webSha256=(Get-FileHash -LiteralPath $web).Hash.ToLowerInvariant();scope='100 projects / 200 inputs / 182 naming rules / four declaration groups; not IFX or assembly performance';records=$records.ToArray()}
+    Save-Json (Join-Path $run 'measurements.json') @{fixtureRoot=$FixtureRoot;scenario=$Scenario;sourceCommit=(& git -C $repo rev-parse HEAD);sourceDirty=([bool](& git -C $repo status --porcelain));productInputs=$productInputs;productInputsSha256=$productIdentity;scriptSha256=(Get-FileHash -LiteralPath $PSCommandPath).Hash.ToLowerInvariant();sdk=$sdk;tfm='net10.0';productConfiguration=$Configuration;targetConfiguration='Debug';cpu=(Get-CimInstance Win32_Processor|Select-Object -First 1 -ExpandProperty Name);logicalProcessors=[Environment]::ProcessorCount;cliSha256=(Get-FileHash -LiteralPath $cli).Hash.ToLowerInvariant();webSha256=(Get-FileHash -LiteralPath $web).Hash.ToLowerInvariant();scope=$(if($Scenario-eq'assembly'){'One shared synthetic isolated build / four independent real ArchUnitNET workers; no target entry point'}else{'100 projects / 200 inputs / 182 naming rules / four declaration groups; not IFX'});records=$records.ToArray()}
     Write-Output ('chain-measurement-root='+$run)
 }finally{Save-Json (Join-Path $run 'host-final.json') @{baselineSha256=$baseline;finalSha256=(Get-ArchSiftHostHash);equal=((Get-ArchSiftHostHash)-ceq$baseline)};Check-Host}

@@ -52,7 +52,7 @@ public static class Program
             {
                 Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
-                Console.WriteLine("chain verify --config <JSON> --chain <JSON> [--target-kind real|fixture]");
+                Console.WriteLine("chain verify --config <JSON> --chain <JSON> [--target-kind real|fixture] [--max-concurrency 1..4]");
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
                 Console.WriteLine("rules validate --file <JSON>; rules render --file <JSON> --output <new Markdown>");
                 Console.WriteLine("rules draft --config <JSON> --output <directory>; ui --config <JSON>");
@@ -73,14 +73,18 @@ public static class Program
             }
             if (args.Length >= 2 && args[0] == "chain" && args[1] == "verify")
             {
-                var flags = Flags(args[2..], ["--config", "--chain", "--target-kind"]);
+                var flags = Flags(args[2..], ["--config", "--chain", "--target-kind", "--max-concurrency"]);
+                var concurrency = 1;
+                if (flags.TryGetValue("--max-concurrency", out var values) && !int.TryParse(values.Single(), out concurrency))
+                    throw new ConfigurationException("Max concurrency must be an integer from 1 to 4.");
+                var options = ChainService.ValidateOptions(new() { MaxConcurrency = concurrency });
                 var config = ConfigLoader.Load(Required(flags, "--config"));
                 var chain = ChainStore.Load(Required(flags, "--chain"));
                 var library = new RulesetLibrary(config.RulesDirectory ?? Path.Combine(config.Output.Directory, "rules"), config.Target.Root);
                 var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
                 var summary = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config, chain, library,
                     flags.GetValueOrDefault("--target-kind")?.Single() ?? "real", cancel.Token,
-                    progress => Console.Error.WriteLine($"Chain {progress.RunId}: {progress.Stage}; ended {progress.EndedCount}/{progress.TotalCount}; executed {progress.ExecutedCount}; skipped {progress.SkippedCount}; running {progress.RunningCount}"));
+                    progress => Console.Error.WriteLine($"Chain {progress.RunId}: {progress.Stage}; ended {progress.EndedCount}/{progress.TotalCount}; executed {progress.ExecutedCount}; skipped {progress.SkippedCount}; running {progress.RunningCount}"), options);
                 Console.WriteLine(ChainWriter.Json(summary)); return summary.ExitCode;
             }
             var draft = args.Length >= 2 && args[0] == "rules" && args[1] == "draft";
