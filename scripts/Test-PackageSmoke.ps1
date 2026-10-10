@@ -121,6 +121,11 @@ try {
         # The preceding changes scenario added New.csproj: one shared target now has 101 projects, not 100 or 202.
         if($chainJob.exitCode-ne0-or$chainJob.chain.entries.Count-ne2-or$chainJob.chain.projectCount-ne101){throw 'Native chain summary failed'}
         if(@($chainJob.chain.entries|Where-Object {$_.coverage.projectCount-ne101}).Count){throw 'Native child project coverage differs from the shared target'}
+        foreach($count in @(2,4)){
+            $parallel=Native-Job 'chain' @{chainId='smoke-chain';targetKind='fixture';maxConcurrency=$count}
+            if($parallel.exitCode-ne$chainJob.exitCode-or$parallel.chain.compliance-cne$chainJob.chain.compliance-or$parallel.chain.snapshot.executionOptions.maxConcurrency-ne$count-or($parallel.chain.entries.entryId-join',')-cne($chainJob.chain.entries.entryId-join',')){throw 'Native parallel result/options/order mismatch'}
+            foreach($entry in $chainJob.chain.entries){$other=$parallel.chain.entries|Where-Object entryId -eq $entry.entryId;if(($entry.findings.id-join',')-cne($other.findings.id-join',')){throw 'Native parallel findings differ'}}
+        }
         $chainPath=Join-Path $library 'chains/smoke-chain.json'
         [void](Run-Package 'chain-without-sdk' $cli @('chain','verify','--config',$chainConfig,'--chain',$chainPath,'--target-kind','fixture') 0)
         [void](Run-Package 'legacy-duplicate-rule-ids' $cli @('verify','--config',$chainConfig) 2)

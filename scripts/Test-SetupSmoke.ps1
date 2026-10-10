@@ -62,7 +62,8 @@ try{
     [IO.File]::WriteAllText((Join-Path $library '.archsift-library.json'),(@{schemaVersion=1;entries=@(@{entryId=$active;fileName='policy.json';rulesetId='template-naming';deleted=$false},@{entryId=$deleted;fileName='deleted.json';rulesetId='deleted-policy';deleted=$true})}|ConvertTo-Json -Depth 6))
     [IO.File]::WriteAllText((Join-Path $library '.archsift-library.lock'),'')
     [IO.File]::WriteAllText((Join-Path $library 'chains/retained.json'),(@{schemaVersion=1;id='retained';version='1';description='Synthetic dangling reference';entries=@(@{entryId=$active},@{entryId=$deleted})}|ConvertTo-Json -Depth 6))
-    $configPath=Join-Path $legacy 'config.json'
+    [void][IO.Directory]::CreateDirectory((Join-Path $legacy 'config'))
+    $configPath=Join-Path $legacy 'config/ifx.json'
     [IO.File]::WriteAllText($configPath,(@{schemaVersion=1;target=@{root=$target;entry='Synthetic.csproj'};rulesets=@();build=@{mode='existing';targetFramework='net10.0';configuration='Debug';allowNetwork=$false};output=@{directory=(Join-Path $legacy 'reports');formats=@('json','html','sarif')};rulesDirectory=$library}|ConvertTo-Json -Depth 8))
     $stateBefore=User-StateHash $configPath $library
     $text=Invoke-Setup 'plan-adopt' @('plan','adopt','--root',$legacy,'--version-directory',$oldVersion,'--config',$configPath)
