@@ -5,7 +5,7 @@ import {pathToFileURL} from 'node:url';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import assert from 'node:assert/strict';
-const [installRoot,outputRoot,modules]=process.argv.slice(2);
+const [installRoot,outputRoot,modules,browserChannel]=process.argv.slice(2);
 if(!installRoot||!outputRoot||!modules)throw new Error('Supply synthetic install root, external QA directory and bundled Node modules.');
 await fs.mkdir(outputRoot,{recursive:true});
 const installation=JSON.parse(await fs.readFile(path.join(installRoot,'install.json'),'utf8'));
@@ -22,7 +22,7 @@ let browser;
 const checks=[],screens=[];
 try{
  const address=await Promise.race([ready,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Native readiness timeout.')),30000))]);
- browser=await chromium.launch({headless:true});
+ browser=await chromium.launch({headless:true,...(browserChannel?{channel:browserChannel}:{})});
  const context=await browser.newContext({viewport:{width:1440,height:1000}});const page=await context.newPage();
  const errors=[];page.on('pageerror',()=>errors.push('Browser script error'));
  await page.goto(address);await page.waitForSelector('#managed-candidate button');
