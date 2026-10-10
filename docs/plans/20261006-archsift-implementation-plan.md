@@ -48,7 +48,7 @@
 
 0.6-F 真实 IFX 进展：块03b操作员串行 CLI 试运行已[审阅](../acceptance/20261011-0.6-ifx-step03b-serial-canary.md)：固定包、四组规则和同一输入，105 项目／585 输入、182 条规则结果为 pass，但每组 105 条未求值构建上下文限制使整体为 `partial/compliant/exit 4`、`sourceBound=false`；不称当前源码完整合规。原安装／目标／宿主／配置／策略相等，owned 进程退出，无 build 或目标入口。当时下一块为03c CLI 1/2/4 各首进程与五轮热运行；当前进展见下段，仍未验收／合并／公开发布。
 
-0.6-F CLI 实测：操作员块03c已[审阅](../acceptance/20261011-0.6-ifx-step03c-cli-measurements.md)，真实 IFX 固定输入 18/18 次、18 份新报告，1/2/4 均与03b语义一致；五轮热新进程 wall 中位数 1638/1236/1054ms，二路／四路相对串行约快24.5%／35.7%。该 workload 仅含声明规则，仍为 `partial/compliant/exit 4` 且不能证明完整源码合规；原安装、目标、配置、策略、宿主保持相等，进程退出。块03d首次 UI 运行在端口关闭探针处[停止](../acceptance/20261011-0.6-ifx-step03d-first-stop.md)，有效测量 0/18；脚本修订后待操作员复测。数值发布阈值待UI证据后再定，默认串行不变。
+0.6-F 真实 IFX 测量：操作员块03c CLI 和块03d Web UI 已[分别](../acceptance/20261011-0.6-ifx-step03c-cli-measurements.md)[审阅](../acceptance/20261011-0.6-ifx-step03d-ui-measurements.md)，固定输入各 18/18 次、同一语义；五轮热新进程 CLI wall 中位数 1638/1236/1054ms，Web job 1576/1195/1022ms、Web total 2094/1703/1546ms。03d 首次端口探针[停止证据](../acceptance/20261011-0.6-ifx-step03d-first-stop.md)保留且未计入有效样本。该 workload 仅含声明规则，仍为 `partial/compliant/exit 4`，不能证明完整源码合规；原安装、目标、配置、策略、宿主相等，owned 进程／监听退出。基于两种入口实测已冻结[独立真实 IFX 参考预算](../performance/0.6-ifx-budget.json)，须取预算冻结后的新样本资格复核，默认串行不变；随后独立人工体验、旧版副本生命周期与最终审计仍待关闭。
 
 2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
 
