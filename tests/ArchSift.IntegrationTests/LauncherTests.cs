@@ -163,6 +163,8 @@ public sealed class LauncherTests
             {
                 var path = Path.Combine(WebDirectory, Path.GetRelativePath(source, file)); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.Copy(file, path);
             }
+            if (!OperatingSystem.IsWindows())
+                File.WriteAllText(Path.Combine(WebDirectory, "ArchSift.Web.exe"), "Windows package metadata placeholder; never execute on Linux.");
             var version = Path.GetDirectoryName(WebDirectory)!;
             File.WriteAllText(Path.Combine(version, "archsift.exe"), "Synthetic CLI placeholder; never execute.");
             File.WriteAllText(Path.Combine(version, "LICENSE"), "Synthetic manifest fixture.");
