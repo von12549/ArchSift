@@ -13,6 +13,23 @@ internal sealed class ChainProgressTracker
     public string Id { get; }
     public string Started { get; } = DateTimeOffset.UtcNow.ToString("O");
     public Stopwatch Timer { get; } = Stopwatch.StartNew();
+    public long Preparation { get; set; }
+    public long Evidence { get; set; }
+    public long Evaluation { get; set; }
+    private long verificationTicks;
+    private long writingTicks;
+
+    public void Verify(Action action) => Measure(action, ref verificationTicks);
+    public void Write(Action action) => Measure(action, ref writingTicks);
+    private static void Measure(Action action, ref long ticks)
+    {
+        var started = Stopwatch.GetTimestamp();
+        try { action(); }
+        finally { Interlocked.Add(ref ticks, Stopwatch.GetTimestamp() - started); }
+    }
+    public ChainTimings Timings() => new(Preparation, Evidence, Evaluation,
+        (long)(Interlocked.Read(ref verificationTicks) * 1000d / Stopwatch.Frequency),
+        (long)(Interlocked.Read(ref writingTicks) * 1000d / Stopwatch.Frequency), Timer.ElapsedMilliseconds);
 
     public ChainProgressTracker(ChainDocument chain, Action<ChainProgress>? observer, string? runId)
     {

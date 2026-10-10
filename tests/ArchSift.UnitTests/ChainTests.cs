@@ -46,7 +46,8 @@ public sealed class ChainTests : IDisposable
         Assert.Equal(updates.Count, updates.Select(p => p.Revision).Distinct().Count());
         Assert.Contains(updates, p => p.Entries.Any(e => e.State == "writing" && !e.OutputAvailable));
         Assert.True(File.Exists(Path.Combine(summary.Snapshot.OutputDirectory, "chain-summary.json")));
-        var legacy = summary with { SchemaVersion = 1, ToolVersion = "0.4.0", Snapshot = summary.Snapshot with { ExecutionOptions = null } };
+        Assert.NotNull(summary.Timings); Assert.True(summary.Timings.Total >= summary.Timings.Preparation);
+        var legacy = summary with { SchemaVersion = 1, ToolVersion = "0.4.0", Timings = null, Snapshot = summary.Snapshot with { ExecutionOptions = null } };
         var text = ChainWriter.Json(legacy);
         var restored = JsonSerializer.Deserialize<ChainSummary>(text, JsonContract.Options)!;
         Assert.Equal("0.4.0", restored.ToolVersion); Assert.Null(restored.Snapshot.ExecutionOptions);

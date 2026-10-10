@@ -71,6 +71,7 @@ public sealed class ChainService(AnalysisService analysis)
         ChainProgressTracker tracker)
     {
         var timer = tracker.Timer; var id = tracker.Id; var started = tracker.Started;
+        tracker.Preparation = timer.ElapsedMilliseconds;
         var directory = Path.Combine(config.Output.Directory, id); PathSafety.EnsureNoLinks(directory);
         Directory.CreateDirectory(directory);
         var children = new List<ChainChild>(); var limits = new List<string>();
@@ -92,6 +93,7 @@ public sealed class ChainService(AnalysisService analysis)
         var cancelled = token.IsCancellationRequested || prepared.PreparationError == "preparation-cancelled";
         var drift = prepared.PreparationError == "global-input-drift";
         if (prepared.PreparationError is { } preparationError) limits.Add(preparationError);
+        var evidenceStarted = timer.ElapsedMilliseconds;
         try
         {
             if (drift) throw new SourceChangedException();
@@ -120,11 +122,13 @@ public sealed class ChainService(AnalysisService analysis)
         }
         catch (OperationCanceledException) { cancelled = true; }
         catch (SourceChangedException) { drift = true; limits.Add("global-input-drift"); }
+        tracker.Evidence = timer.ElapsedMilliseconds - evidenceStarted;
         var snapshot = new ChainSnapshot(prepared.Chain.Id, prepared.Chain.Version, prepared.Entries, config.Target, config.Build,
             prepared.Source.InputIdentity, new(AssemblyArtifacts.FileIdentity(buildFiles.ToArray()), buildFiles.ToArray()), directory, prepared.TargetKind)
             { ExecutionOptions = new() };
         ChainWriter.WriteNew(Path.Combine(directory, "snapshot.json"), JsonSerializer.Serialize(snapshot, JsonContract.Options));
         tracker.Stage("evaluating");
+        var evaluationStarted = timer.ElapsedMilliseconds;
         for (var index = 0; index < prepared.Entries.Length; index++)
         {
             var entry = prepared.Entries[index];
@@ -148,7 +152,7 @@ public sealed class ChainService(AnalysisService analysis)
             {
                 var diagnostic = new ChainDiagnostic(entry.EntryId, entry.ErrorCode!, entry.ErrorMessage!);
                 tracker.Entry(index, "writing");
-                ChainWriter.SaveDiagnostic(entryDirectory, diagnostic);
+                tracker.Write(() => ChainWriter.SaveDiagnostic(entryDirectory, diagnostic));
                 children.Add(new(entry.EntryId, "failed", "inconclusive", 2, entry.EntryId, diagnostic, new(0, 0, false), "none", [], [], []));
                 tracker.Entry(index, "failed", children[^1]); continue;
             }
@@ -167,7 +171,7 @@ public sealed class ChainService(AnalysisService analysis)
                 }
                 if (report.Limitations.Contains("source-changed-during-analysis", StringComparer.Ordinal)) { drift = true; limits.Add("global-input-drift"); }
                 tracker.Entry(index, "writing");
-                ReportWriter.Save(childConfig, report);
+                tracker.Write(() => ReportWriter.Save(childConfig, report));
                 reports[entry.EntryId] = report;
                 var childLimits = report.Limitations.Concat(report.ExecutionErrors).Concat(report.RuleResults.SelectMany(r => r.Limitations)).Distinct().ToArray();
                 children.Add(new(entry.EntryId, report.Execution, report.Compliance ?? "inconclusive", drift ? 4 : outcome.ExitCode,
@@ -177,11 +181,12 @@ public sealed class ChainService(AnalysisService analysis)
             catch (OperationCanceledException) { cancelled = true; children.Add(new(entry.EntryId, "skipped", "inconclusive", null, null, null, new(0, 0, false), "none", [], [], ["User cancelled chain."])); }
             catch (Exception error) when (error is IOException or ConfigurationException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
             {
-                var diagnostic = new ChainDiagnostic(entry.EntryId, "child-error", error.Message); ChainWriter.SaveDiagnostic(entryDirectory, diagnostic);
+                var diagnostic = new ChainDiagnostic(entry.EntryId, "child-error", error.Message); tracker.Write(() => ChainWriter.SaveDiagnostic(entryDirectory, diagnostic));
                 children.Add(new(entry.EntryId, "failed", "inconclusive", 3, entry.EntryId, diagnostic, new(0, 0, false), "none", [], [], []));
             }
             tracker.Entry(index, children[^1].Execution, children[^1]);
         }
+        tracker.Evaluation = timer.ElapsedMilliseconds - evaluationStarted;
         if (!cancelled && !drift)
             try { CheckInputs(); }
             catch (SourceChangedException) { drift = true; limits.Add("global-input-drift"); }
@@ -191,12 +196,16 @@ public sealed class ChainService(AnalysisService analysis)
         if (drift && compliance != "noncompliant") compliance = "inconclusive";
         var code = cancelled ? 130 : execution == "partial" || compliance == "inconclusive" ? 4 : 0;
         var summary = new ChainSummary(snapshot, execution, compliance, code, prepared.Source.Projects.Length, children.ToArray(), limits.Distinct().ToArray(),
-            new(id, started, timer.ElapsedMilliseconds, config.Target.Root)) { AnalysisReports = reports, SchemaVersion = 2 };
+            new(id, started, timer.ElapsedMilliseconds, config.Target.Root)) { AnalysisReports = reports, SchemaVersion = 2, Timings = tracker.Timings() };
         tracker.Stage("writing-reports");
         ChainWriter.Save(summary);
         tracker.Stage("finished"); return summary;
 
         void CheckInputs()
+        {
+            tracker.Verify(VerifyInputs);
+        }
+        void VerifyInputs()
         {
             try { InputCapture.VerifyUnchanged(config.Target.Root, prepared.Source.InputIdentity, token); }
             catch (Exception error) when (error is IOException or ConfigurationException or UnauthorizedAccessException) { throw new SourceChangedException(); }
