@@ -1,6 +1,20 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Chain progress":"规则链进度",
+  "Preparing inputs":"准备输入",
+  "Acquiring build evidence":"获取构建证据",
+  "Evaluating rulesets":"验证规则集",
+  "Writing reports":"写出报告",
+  "Finished":"已结束",
+  "Waiting":"等待",
+  "Writing report":"写出报告",
+  "Skipped":"已跳过",
+  "Ended: ":"已结束：",
+  "Executed: ":"已执行完：",
+  "Skipped: ":"已跳过：",
+  "Elapsed: ":"耗时：",
+  "Report tool version: ":"报告工具版本：",
   " · Collapsed; expand for details": " · 已折叠，展开查看全部",
   " · Exit ": " · 退出 ",
   " (filter does not change report totals)": " 个（筛选不改变报告总数）",

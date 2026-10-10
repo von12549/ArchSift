@@ -41,7 +41,7 @@ public sealed class AnalysisService(
             snapshot = frozenSnapshot ?? ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, framework, token);
             limits.AddRange(snapshot.Scope.UnsupportedConstructs);
             if (snapshot.Projects.Length == 0) limits.Add("No supported project files found.");
-            var projectRules = ProjectRuleEvaluator.Evaluate(snapshot, bundle);
+            var projectRules = ProjectRuleEvaluator.Evaluate(snapshot, bundle, token);
             results.AddRange(projectRules.Results); findings.AddRange(projectRules.Findings);
             var needsAssembly = bundle.Rules.Any(r => r.Enabled && (r.Type == "type-dependency" ||
                 r.Type == "naming" && r.Parameters.GetProperty("subjectKind").GetString() is "type" or "assembly"));

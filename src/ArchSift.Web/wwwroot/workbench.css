@@ -29,6 +29,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .region-label{letter-spacing:0}.result-fact strong,.metrics b{font-family:"Segoe UI",sans-serif}
 .status-completed,.status-pass,.status-compliant{color:var(--pass);background:#e4f4e9}
 .status-partial,.status-inconclusive{color:var(--warning);background:#fff1d2}
+.status-waiting,.status-running,.status-writing{color:var(--action);background:#e8f1ff}
+.status-skipped{color:var(--warning);background:#fff1d2}
+.chain-progress-list{padding-left:1.5rem}.chain-progress-list li{padding:.6rem 0;border-bottom:1px solid #c2d1df;overflow-wrap:anywhere}.chain-progress-list .status-chip{margin-left:.5rem}
 .status-violation,.status-noncompliant,.status-failed,.status-error{color:var(--error);background:#ffeaed}
 .status-cancelled,.status-skipped,.status-not-applicable,.status-neutral{color:#475b71;background:#e9eff5}
 .severity-error{color:var(--error);background:#ffeaed}.severity-warning{color:var(--warning);background:#fff1d2}

@@ -41,6 +41,8 @@ public sealed class WebWorkbenchTests
             client.DefaultRequestHeaders.Add("Origin", "https://evil.invalid");
             Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync("/api/config", timeout.Token)).StatusCode);
             client.DefaultRequestHeaders.Remove("Origin");
+            using (var runtime = JsonDocument.Parse(await client.GetStringAsync("/api/config", timeout.Token)))
+                Assert.Equal(ToolIdentity.Version, runtime.RootElement.GetProperty("toolVersion").GetString());
             var page = await client.GetAsync("/", timeout.Token); Assert.Equal(HttpStatusCode.OK, page.StatusCode);
             Assert.True(page.Headers.Contains("Content-Security-Policy"));
             var pageText = await page.Content.ReadAsStringAsync(timeout.Token);

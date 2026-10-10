@@ -26,6 +26,48 @@ public sealed class ChainTests : IDisposable
     private static ChainDocument Chain(params LibraryCard[] cards) => new(1, "chain", "1", "Ordered checks", cards.Select(c => new ChainEntry(c.EntryId)).ToArray());
 
     [Fact]
+    public async Task ProgressIsCurrentOrderedAndPublishedAfterChildFilesExistWithLegacyReadCompatibility()
+    {
+        var first = Add("one"); var second = Add("two");
+        var updates = new List<ChainProgress>();
+        var summary = await new ChainService(new AnalysisService()).RunAsync(Config, Chain(first, second), Library,
+            progress: progress =>
+            {
+                using var doc = JsonDocument.Parse(JsonSerializer.Serialize(progress, JsonContract.Options));
+                SchemaValidation.Validate(doc.RootElement, "chain-progress");
+                Assert.Equal(new[] { first.EntryId, second.EntryId }, progress.Entries.Select(e => e.EntryId));
+                foreach (var entry in progress.Entries.Where(e => e.OutputAvailable))
+                    Assert.NotEmpty(Directory.GetFiles(Path.Combine(Config.Output.Directory, progress.RunId, entry.EntryId), "report.json", SearchOption.AllDirectories));
+                updates.Add(progress);
+            });
+        Assert.Equal("preparing", updates[0].Stage);
+        Assert.Equal("finished", updates[^1].Stage);
+        Assert.Equal(2, updates[^1].ExecutedCount); Assert.Equal(0, updates[^1].SkippedCount);
+        Assert.Equal(updates.Count, updates.Select(p => p.Revision).Distinct().Count());
+        Assert.Contains(updates, p => p.Entries.Any(e => e.State == "writing" && !e.OutputAvailable));
+        Assert.True(File.Exists(Path.Combine(summary.Snapshot.OutputDirectory, "chain-summary.json")));
+        var legacy = summary with { SchemaVersion = 1, ToolVersion = "0.4.0", Snapshot = summary.Snapshot with { ExecutionOptions = null } };
+        var text = ChainWriter.Json(legacy);
+        var restored = JsonSerializer.Deserialize<ChainSummary>(text, JsonContract.Options)!;
+        Assert.Equal("0.4.0", restored.ToolVersion); Assert.Null(restored.Snapshot.ExecutionOptions);
+    }
+
+    [Fact]
+    public async Task CancellationInPreparationAndDriftAfterLastChildRemainAuditable()
+    {
+        var first = Add("one"); using var cancel = new CancellationTokenSource();
+        var service = new ChainService(new AnalysisService());
+        var cancelled = await service.RunAsync(Config, Chain(first), Library, token: cancel.Token,
+            progress: p => { if (p.Stage == "preparing") cancel.Cancel(); });
+        Assert.Equal(130, cancelled.ExitCode); Assert.Equal("skipped", cancelled.Entries[0].Execution);
+        Assert.Contains("preparation-cancelled", cancelled.Limitations);
+        var drift = await service.RunAsync(Config, Chain(first), Library,
+            progress: p => { if (p.Stage == "evaluating" && p.EndedCount == 1) File.WriteAllText(Path.Combine(Config.Target.Root, "Later.cs"), "class Later {}"); });
+        Assert.Equal(4, drift.ExitCode); Assert.Equal("inconclusive", drift.Compliance);
+        Assert.Contains("global-input-drift", drift.Limitations);
+    }
+
+    [Fact]
     public async Task IndependentDuplicateRuleIdsAndReorderKeepFindingsAndSemanticsButLegacyRejectsComposition()
     {
         var first = Add("one", "Wrong"); var second = Add("two");
@@ -41,7 +83,7 @@ public sealed class ChainTests : IDisposable
             Assert.Equal(1, child.Coverage.ProjectCount);
             Assert.True(File.Exists(Path.Combine(forward.Snapshot.OutputDirectory, child.ReportDirectory!, "report.json")));
         }
-        using var json = JsonDocument.Parse(ChainWriter.Json(forward)); SchemaValidation.Validate(json.RootElement, "chain-summary");
+        using var json = JsonDocument.Parse(ChainWriter.Json(forward)); SchemaValidation.Validate(json.RootElement, "chain-summary-v2");
         var sarif = JsonNode.Parse(ChainWriter.Sarif(forward))!;
         Assert.Equal(3, sarif["runs"]!.AsArray().Count);
         Assert.StartsWith(first.EntryId + "/", sarif["runs"]![0]!["results"]![0]!["ruleId"]!.GetValue<string>(), StringComparison.Ordinal);

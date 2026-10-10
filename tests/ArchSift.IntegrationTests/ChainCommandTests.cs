@@ -28,6 +28,7 @@ public sealed class ChainCommandTests
             Task<ProcessResult> Run(params string[] args) => SafeProcess.RunAsync(SafeProcess.Dotnet, repo.FullName, [cli, .. args], Path.Combine(root, "cli-home"), null, CancellationToken.None);
             var result = await Run("chain", "verify", "--config", configPath, "--chain", chainPath, "--target-kind", "fixture");
             Assert.Equal(0, result.ExitCode);
+            Assert.Contains("preparing", result.Error); Assert.Contains("finished", result.Error);
             var actual = JsonSerializer.Deserialize<ChainSummary>(result.Output, JsonContract.Options)!;
             var expected = await new ChainService(new AnalysisService()).RunAsync(config, chain, library, "fixture");
             Assert.Equal(expected.Compliance, actual.Compliance); Assert.Equal("fixture", actual.Snapshot.TargetKind);

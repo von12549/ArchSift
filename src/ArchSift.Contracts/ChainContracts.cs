@@ -10,7 +10,11 @@ public sealed record ChainEntrySnapshot(string EntryId, string? SourcePath, Rule
     string? ErrorCode, string? ErrorMessage);
 public sealed record ChainSnapshot(string ChainId, string ChainVersion, ChainEntrySnapshot[] Entries,
     TargetSettings Target, BuildSettings Build, InputIdentity InputIdentity, InputIdentity BuildInputIdentity,
-    string OutputDirectory, string TargetKind);
+    string OutputDirectory, string TargetKind)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public ChainRunOptions? ExecutionOptions { get; init; }
+}
 public sealed record ChainDiagnostic(string EntryId, string Code, string Message)
 {
     public int SchemaVersion { get; init; } = 1;
