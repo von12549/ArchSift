@@ -1,0 +1,6 @@
+{
+  "$schema":"http://json-schema.org/draft-07/schema#",
+  "$id":"urn:archsift:profile-selection:v1",
+  "type":"object","additionalProperties":false,"required":["schemaVersion","selectedProfileId"],
+  "properties":{"schemaVersion":{"const":1},"selectedProfileId":{"type":"string","pattern":"^[a-f0-9]{32}$"}}
+}

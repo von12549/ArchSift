@@ -1,0 +1,702 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:chain-summary:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "kind": {
+      "const": "chain-summary"
+    },
+    "toolVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chainId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chainVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "entryId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{32}$"
+              },
+              "sourcePath": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rulesetIdentity": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "version": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "path": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "version",
+                      "sha256",
+                      "path"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "errorCode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "errorMessage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "entryId",
+              "sourcePath",
+              "rulesetIdentity",
+              "errorCode",
+              "errorMessage"
+            ]
+          }
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1
+            },
+            "entry": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "root"
+          ]
+        },
+        "build": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "existing",
+                "isolated"
+              ]
+            },
+            "targetFramework": {
+              "enum": [
+                "net8.0",
+                "net9.0",
+                "net10.0"
+              ]
+            },
+            "configuration": {
+              "enum": [
+                "Debug",
+                "Release"
+              ]
+            },
+            "assemblyManifest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "assemblyPaths": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "allowNetwork": {
+              "type": "boolean"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "localFeed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cacheDirectory": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": []
+        },
+        "inputIdentity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "length": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "kind": {
+                    "enum": [
+                      "analysis",
+                      "build",
+                      "evidence"
+                    ]
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256",
+                  "length",
+                  "kind"
+                ]
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "sha256",
+            "files"
+          ]
+        },
+        "buildInputIdentity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "length": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "kind": {
+                    "enum": [
+                      "analysis",
+                      "build",
+                      "evidence"
+                    ]
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256",
+                  "length",
+                  "kind"
+                ]
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "sha256",
+            "files"
+          ]
+        },
+        "outputDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targetKind": {
+          "enum": [
+            "real",
+            "fixture"
+          ]
+        },
+        "executionOptions": {
+          "additionalProperties": false,
+          "properties": {
+            "maxConcurrency": {
+              "minimum": 1,
+              "type": "integer",
+              "maximum": 4
+            }
+          },
+          "required": [
+            "maxConcurrency"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "chainId",
+        "chainVersion",
+        "entries",
+        "target",
+        "build",
+        "inputIdentity",
+        "buildInputIdentity",
+        "outputDirectory",
+        "targetKind",
+        "executionOptions"
+      ]
+    },
+    "execution": {
+      "enum": [
+        "completed",
+        "partial",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "compliance": {
+      "enum": [
+        "compliant",
+        "noncompliant",
+        "inconclusive",
+        "not-applicable"
+      ]
+    },
+    "exitCode": {
+      "enum": [
+        0,
+        2,
+        3,
+        4,
+        130
+      ]
+    },
+    "projectCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "execution": {
+            "enum": [
+              "completed",
+              "partial",
+              "failed",
+              "cancelled",
+              "skipped"
+            ]
+          },
+          "compliance": {
+            "enum": [
+              "compliant",
+              "noncompliant",
+              "inconclusive",
+              "not-applicable"
+            ]
+          },
+          "exitCode": {
+            "anyOf": [
+              {
+                "enum": [
+                  0,
+                  2,
+                  3,
+                  4,
+                  130
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reportDirectory": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "diagnostic": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "schemaVersion": {
+                    "const": 1
+                  },
+                  "kind": {
+                    "const": "chain-entry-diagnostic"
+                  },
+                  "entryId": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{32}$"
+                  },
+                  "code": {
+                    "enum": [
+                      "missing-ruleset",
+                      "invalid-ruleset",
+                      "child-error"
+                    ]
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "schemaVersion",
+                  "kind",
+                  "entryId",
+                  "code",
+                  "message"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "coverage": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "projectCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "assemblyCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sourceBound": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "projectCount",
+              "assemblyCount",
+              "sourceBound"
+            ]
+          },
+          "binding": {
+            "enum": [
+              "none",
+              "assemblies-only",
+              "source-bound"
+            ]
+          },
+          "ruleResults": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "ruleId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "enum": [
+                    "pass",
+                    "violation",
+                    "inconclusive",
+                    "not-applicable",
+                    "error"
+                  ]
+                },
+                "matched": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "findingIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "minItems": 0
+                },
+                "limitations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "ruleId",
+                "status",
+                "matched",
+                "findingIds",
+                "limitations"
+              ]
+            },
+            "minItems": 0
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "ruleId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "subjectKind": {
+                  "enum": [
+                    "project",
+                    "assembly",
+                    "namespace",
+                    "type",
+                    "source-file"
+                  ]
+                },
+                "subject": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "severity": {
+                  "enum": [
+                    "info",
+                    "warning",
+                    "error"
+                  ]
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "target": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "location": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "exceptionId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "exceptionReason": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "ruleId",
+                "subjectKind",
+                "subject",
+                "message",
+                "severity",
+                "source",
+                "target",
+                "location",
+                "exceptionId",
+                "exceptionReason"
+              ]
+            },
+            "minItems": 0
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "entryId",
+          "execution",
+          "compliance",
+          "exitCode",
+          "reportDirectory",
+          "diagnostic",
+          "coverage",
+          "binding",
+          "ruleResults",
+          "findings",
+          "limitations"
+        ]
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "runMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startedUtc": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elapsedMilliseconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "targetRoot": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "runId",
+        "startedUtc",
+        "elapsedMilliseconds",
+        "targetRoot"
+      ]
+    },
+    "timings": {
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "preparation": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inputVerification": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reportWriting": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evaluation": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "preparation",
+        "evidence",
+        "evaluation",
+        "inputVerification",
+        "reportWriting",
+        "total"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "toolVersion",
+    "snapshot",
+    "execution",
+    "compliance",
+    "exitCode",
+    "projectCount",
+    "entries",
+    "limitations",
+    "runMetadata"
+  ]
+}

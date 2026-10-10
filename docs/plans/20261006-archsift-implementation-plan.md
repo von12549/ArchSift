@@ -30,6 +30,10 @@
 
 2026-10-11 0.6.0 Git 授权：用户要求创建新分支用于 0.6.0 实施，并在新分支提交／推送；已从 main 创建 `codex/archsift-0.6.0`，本次提交范围为三份计划文档。产品实现、构建／测量／现场安装／真实 IFX 集成仍未授权开始，0.6-A–F 维持 `NOT STARTED`；没有 PR／合并／发布授权。
 
+2026-10-11 0.6.0 执行授权：用户授权开始全部正式实施计划、每阶段提交／推送，以及后续 PR、合并、文档更新和发布；继续在 `codex/archsift-0.6.0` 工作。当前 `IMPLEMENTATION AUTHORIZED / IN PROGRESS / NOT ACCEPTED / NOT RELEASED`，0.6-A 已启动；此前仅文档／Git 授权为历史阶段。真实 IFX 操作员逐块、独立可用性及最终宿主／进程门禁保持有效，未通过不得合并发布。
+
+0.6-A 完成：执行／进度／profile DTO 与 schema、独立 chain-summary v2 及宿主边界决议已冻结；SDK 10.0.303/net10.0 Release、locked 离线 restore/build、189 项与八模板全通过，宿主相等。见 [A 验收](../acceptance/20261011-0.6-a-contracts.md)。版本仍在开发中，不代表运行时进度／启动器／并行或发布门禁通过。
+
 2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
 
 0.5.0 操作员第一步停止：误用旧安装根读取 manifest，实际包根为 `D:/IFX-10-Root/ArchSift/versions/0.4.0`。已修正操作员脚本及初始化证据，五项合成布局回归通过且宿主相等；真实步骤未通过，等待重试。产品源码/资产保持 c4010d8，未合并或发布；见 [候选记录](../acceptance/20261010-0.5-candidate-readiness.md)。
