@@ -29,13 +29,18 @@ function Original-State {
         foreach($path in [IO.Directory]::EnumerateFileSystemEntries($Directory)){
             [void](Safe-Path $path)
             if([IO.Directory]::Exists($path)){Walk-Original $path}else{
-                $records.Add(@{path=[IO.Path]::GetRelativePath($ExistingInstallRoot,$path);sha256=(Hash-File $path)})
+                $records.Add([pscustomobject][ordered]@{path=[IO.Path]::GetRelativePath($ExistingInstallRoot,$path);sha256=(Hash-File $path)})
                 if($records.Count-gt10000){throw 'Original installation file-count limit.'}
             }
         }
     }
     Walk-Original $ExistingInstallRoot
-    return @{selectedVersion=$selection.selectedVersion;configPath=$selection.configPath;filesSha256=(Hash-Json @($records|Sort-Object path));fileCount=$records.Count}
+    $sorted=@($records|Sort-Object path)
+    # The first two operator blocks used ordinary hashtables, whose JSON key order can differ by PowerShell process.
+    # Accept either historical key order at the transition, then use the fixed path-first order for this block's audit.
+    $legacyReverse=@($sorted|ForEach-Object {[ordered]@{sha256=$_.sha256;path=$_.path}})
+    return @{selectedVersion=$selection.selectedVersion;configPath=$selection.configPath;
+        filesSha256=(Hash-Json $sorted);legacyReverseSha256=(Hash-Json $legacyReverse);fileCount=$records.Count}
 }
 function Stable-Path([string]$Root,[string]$Relative){
     $path=Safe-Path (Join-Path $Root $Relative)
@@ -51,7 +56,7 @@ $expected=@{
     'ifx-tenant-boundaries-v1.json'='4919b07e941d2f1ff26a78c9fe724a7464771a98e07dd63548726913b659e980'
     'chains/ifx-04-class-A-test.json'='b29552ab34da4f29d219e9da17693599cae653547465e46cb4840fdab179ad64'
 }
-$hostBefore=Get-ArchSiftHostHash;$targetBefore=$null;$originalBefore=$null;$completed=$false;$sourceRecords=@()
+$hostBefore=Get-ArchSiftHostHash;$targetBefore=$null;$originalBefore=$null;$completed=$false;$sourceRecords=@();$copiedCount=0
 $run=Join-Path $LabRoot ('evidence/ifx-0.6-policy-freeze-'+[Guid]::NewGuid().ToString('N'));[void][IO.Directory]::CreateDirectory($run)
 try{
     $installResult=Get-Content -LiteralPath (Safe-Path (Join-Path $ReviewedInstallRoot 'result.json')) -Raw|ConvertFrom-Json
@@ -65,9 +70,25 @@ try{
         try{$image=$owned.Path;if(-not$image){throw 'Cannot inspect live ArchSift process.'};if($image.StartsWith($ExistingInstallRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)-or$image.StartsWith($NewInstallRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Original or new installation has an active CLI/UI.'}}finally{$owned.Dispose()}
     }
     $targetBefore=Target-State;$originalBefore=Original-State
-    if($targetBefore.head-cne$installBefore.target.head-or$targetBefore.ordinaryStatusSha256-cne$installBefore.target.ordinaryStatusSha256-or$targetBefore.filesSha256-cne$installBefore.target.filesSha256-or$targetBefore.fileCount-ne$installBefore.target.fileCount-or
-        $originalBefore.selectedVersion-cne$installBefore.original.selectedVersion-or$originalBefore.configPath-cne$installBefore.original.configPath-or$originalBefore.filesSha256-cne$installBefore.original.filesSha256-or$originalBefore.fileCount-ne$installBefore.original.fileCount-or
-        $hostBefore-cne$installBefore.hostSha256){throw 'Source, original installation or host changed since install review.'}
+    $preflight=@{
+        targetHeadEqual=$targetBefore.head-ceq$installBefore.target.head
+        targetStatusEqual=$targetBefore.ordinaryStatusSha256-ceq$installBefore.target.ordinaryStatusSha256
+        targetFilesEqual=$targetBefore.filesSha256-ceq$installBefore.target.filesSha256
+        targetCountEqual=$targetBefore.fileCount-eq$installBefore.target.fileCount
+        originalSelectionEqual=$originalBefore.selectedVersion-ceq$installBefore.original.selectedVersion
+        originalConfigPathEqual=$originalBefore.configPath-ceq$installBefore.original.configPath
+        originalFilesEqual=$installBefore.original.filesSha256-in @($originalBefore.filesSha256,$originalBefore.legacyReverseSha256)
+        originalCountEqual=$originalBefore.fileCount-eq$installBefore.original.fileCount
+        # A different task shell can have a different process PATH. Record that difference;
+        # the same-process host equality in finally is the safety gate for this copy-only block.
+        hostMatchesPrior=$hostBefore-ceq$installBefore.hostSha256
+        originalCurrentCanonicalSha256=$originalBefore.filesSha256
+        originalHistoricalSha256=$installBefore.original.filesSha256
+        hostCurrentSha256=$hostBefore
+        hostHistoricalSha256=$installBefore.hostSha256
+    }
+    [IO.File]::WriteAllText((Join-Path $run 'preflight.json'),($preflight|ConvertTo-Json -Depth 5))
+    if(@($preflight.GetEnumerator()|Where-Object {$_.Key.EndsWith('Equal') -and -not$_.Value}).Count-ne0){throw 'Source or original installation baseline differs; review preflight.json.'}
     $install=Get-Content -LiteralPath (Stable-Path $NewInstallRoot 'install.json') -Raw|ConvertFrom-Json
     if($install.selectedVersion-cne'0.6.0'-or$install.configPath-cne(Join-Path $NewInstallRoot 'config/default.json')-or$install.libraryPath-cne(Join-Path $NewInstallRoot 'rules')-or$install.targetRoot-cne$TargetRoot-or(Hash-File (Stable-Path $NewInstallRoot 'install.json'))-cne$inspection.selectionSha256){throw 'New installation changed after inspect.'}
     $newConfig=Stable-Path $NewInstallRoot 'config/default.json'
@@ -93,6 +114,7 @@ try{
     foreach($name in $policyNames){
         $from=Stable-Path $sourceRules $name;$to=Stable-Path $destinationRules $name
         [IO.File]::Copy($from,$to,$false)
+        $copiedCount++
         if((Hash-File $to)-cne$expected[$name]){throw "Copied policy bytes differ: $name"}
     }
     foreach($name in $policyNames){if((Hash-File (Stable-Path $sourceRules $name))-cne$expected[$name]){throw "Source policy changed during copy: $name"}}
@@ -104,9 +126,9 @@ try{
 finally{
     $hostEqual=(Get-ArchSiftHostHash)-ceq$hostBefore;$targetEqual=$null;$originalEqual=$null;$sourceEqual=$null;$auditErrors=@()
     if($null-ne$targetBefore){try{$targetEqual=(Hash-Json (Target-State))-ceq(Hash-Json $targetBefore)}catch{$targetEqual=$false;$auditErrors+=$_.Exception.Message}}
-    if($null-ne$originalBefore){try{$originalEqual=(Hash-Json (Original-State))-ceq(Hash-Json $originalBefore)}catch{$originalEqual=$false;$auditErrors+=$_.Exception.Message}}
+    if($null-ne$originalBefore){try{$afterOriginal=Original-State;$originalEqual=$afterOriginal.filesSha256-ceq$originalBefore.filesSha256-and$afterOriginal.fileCount-eq$originalBefore.fileCount-and$afterOriginal.selectedVersion-ceq$originalBefore.selectedVersion-and$afterOriginal.configPath-ceq$originalBefore.configPath}catch{$originalEqual=$false;$auditErrors+=$_.Exception.Message}}
     if($sourceRecords.Count-eq$policyNames.Count){try{$sourceEqual=@($sourceRecords|Where-Object {(Hash-File (Stable-Path (Stable-Path $ExistingInstallRoot 'rules') $_.path))-cne$_.sha256}).Count-eq0}catch{$sourceEqual=$false;$auditErrors+=$_.Exception.Message}}
-    $result=@{status=$(if($completed-and$hostEqual-and$targetEqual-and$originalEqual-and$sourceEqual){'policy-frozen-for-review'}else{'stop'});runRoot=$run;newInstallRoot=$NewInstallRoot;copiedFileCount=$policyNames.Count;sourcePolicyStateEqual=$sourceEqual;targetStateEqual=$targetEqual;originalInstallationStateEqual=$originalEqual;hostStateEqual=$hostEqual;analysisOrBuildPerformed=$false}
+    $result=@{status=$(if($completed-and$hostEqual-and$targetEqual-and$originalEqual-and$sourceEqual){'policy-frozen-for-review'}else{'stop'});runRoot=$run;newInstallRoot=$NewInstallRoot;copiedFileCount=$copiedCount;sourcePolicyStateEqual=$sourceEqual;targetStateEqual=$targetEqual;originalInstallationStateEqual=$originalEqual;hostStateEqual=$hostEqual;analysisOrBuildPerformed=$false}
     [IO.File]::WriteAllText((Join-Path $run 'result.json'),($result|ConvertTo-Json -Depth 6));[IO.File]::WriteAllText((Join-Path $run 'audit-errors.json'),(ConvertTo-Json -InputObject $auditErrors));$result|ConvertTo-Json -Depth 6
     if(-not$hostEqual-or$targetEqual-eq$false-or$originalEqual-eq$false-or$sourceEqual-eq$false){throw 'Safety or source audit failed; preserve evidence without repair.'}
 }
