@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-11 0.6.0 替代候选最新状态：Agent 已完成新根安装、六份策略冻结、串行试跑、CLI/Web 各 18 次真实 IFX 测量，全部样本低于预先冻结预算；外置 0.5→0.6→0.5 副本生命周期、后续受管编辑拒绝、launcher 元数据保留及[人工前机器审计](../acceptance/20261011-0.6-r2-machine-audit.md)均通过。原 IFX 目标、原安装和宿主状态保持相等。最终[独立人工 UI 视觉／操作清单](../acceptance/20261011-0.6-human-r2-checklist.md)待用户执行，故仍 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`；下面旧段落保留形成时的历史状态。
+
 日期：2026-10-06（Australia/Sydney）
 
 计划 ID：20261006-archsift-implementation
