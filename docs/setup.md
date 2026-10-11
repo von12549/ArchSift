@@ -1,6 +1,6 @@
-# ArchSift 0.5.0 portable setup
+# ArchSift 0.6.0 portable setup — development
 
-0.5.0 is [published and independently verified](releases/0.5.0-publication.md); its [acceptance and release gates](plans/20261010-archsift-0.5.0-plan.md) are closed with stated limitations. The commands below belong to 0.5.0. The published 0.4.0 ZIP has no setup/upgrade commands. Use independently verified official assets.
+0.6.0 remains in development; do not treat source implementation as a published package. The [0.5.0 Setup guide](setup-0.5.md) and [publication record](releases/0.5.0-publication.md) preserve the stable version. Existing command syntax remains, with 0.6.x compatibility and the new install path config/default.json. Old 0.5.0 Setup rejects 0.6 packages; use the new verified Setup only after its release gates pass.
 
 `ArchSift.Setup.exe` is a separate self-contained Windows x64 executable. It performs user-writable filesystem installation without elevation, SDK/runtime prerequisites, PATH changes, service registration or target execution. `--notices` prints embedded ArchSift/.NET license and third-party notices. Run PowerShell 7 with `-NoProfile` and use full executable paths.
 
@@ -10,7 +10,7 @@ Download the version-specific Windows ZIP, Setup executable, checksums and accep
 
 ```powershell
 $setup = 'D:\Tools\ArchSift.Setup.exe'
-$zip = 'D:\Tools\downloads\archsift-0.5.0-win-x64.zip'
+$zip = 'D:\Tools\downloads\archsift-0.6.0-win-x64.zip'
 $zipHash = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
 # Compare zipHash with the independently obtained release record before continuing.
 & $setup plan install --root 'D:\Tools\ArchSift' --package $zip --sha256 $zipHash --target 'D:\source\MyApp' --entry 'MyApp.sln' --tfm net10.0 --smoke true > 'D:\Tools\install-plan.json'
@@ -20,7 +20,7 @@ $plan = Get-Content -LiteralPath 'D:\Tools\install-plan.json' -Raw | ConvertFrom
 & $setup apply --plan 'D:\Tools\install-plan.json' --plan-id $plan.planId
 ```
 
-Plan/install accepts `--configuration Debug|Release`, `--output <reports>` and `--library <rules>`. Defaults are existing binaries, Debug, explicit TFM, no network restore, JSON/HTML/SARIF and empty rulesets. Plans are read-only and expire after 24 hours. A plan ID binds all displayed data; any config/library/selection/package drift rejects apply. Unknown files/configs are never overwritten. The config is `config/project.json`; selected binaries are in `versions/<version>`. `install.json` is a local selection/ownership record, not a PATH launcher.
+Plan/install accepts `--configuration Debug|Release`, `--output <reports>` and `--library <rules>`. Defaults are existing binaries, Debug, explicit TFM, no network restore, JSON/HTML/SARIF and empty rulesets. Plans are read-only and expire after 24 hours. A plan ID binds all displayed data; any config/library/selection/package drift rejects apply. Unknown files/configs are never overwritten. The config is `config/default.json`; selected binaries are in `versions/<version>`. `install.json` is a local selection/ownership record, not a PATH launcher.
 
 `--smoke true` loads the saved config through native Web and safely stops it. It performs no analysis/build/import and does not persist or display a session token. Open the normal UI separately through the selected executable when desired. Setup stdout is machine JSON; stderr contains errors and hash/equality checkpoints. Preserve both if a step fails.
 

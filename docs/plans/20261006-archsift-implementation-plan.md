@@ -1,8 +1,12 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-11 0.6.0 替代候选最新状态：Agent 完成新根安装、冻结策略、CLI/Web 各 18 次真实 IFX 测量、外置 0.5→0.6→0.5 副本生命周期；用户完成独立 UI 视觉与实际操作，八项 yes、信心 5/5；人工后只读机器审计通过，原 IFX 目标、原安装和宿主状态相等。见[最终验收](../acceptance/20261011-0.6-final-acceptance.md)。状态 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；下面旧段落保留形成时的历史状态。
+
 日期：2026-10-06（Australia/Sydney）
 
 计划 ID：20261006-archsift-implementation
+
+2026-10-11 0.6.0 最新进展：原候选真实 IFX 块 04 已由独立操作员完成，六项 yes、信心 4/5、最高 L2，目标／原安装／宿主／受管配置／策略相等且进程和监听关闭。其[截图和问题记录](../acceptance/20261011-0.6-ifx-step04-human-usability.md)指出工作台 profile 区域大量留白、创建外部 profile 缺少 JSON 模板；用户要求两项均在发布前修复。原候选 a05c44e 和测量只保留历史身份；替代产品 de222c2 的 Windows/Ubuntu CI、200 项、本地 ZIP17/Setup13、原生合成浏览器及草稿独立下载回验已通过，见[替代候选记录](../acceptance/20261011-0.6-replacement-candidate.md)；真实 IFX 新包、独立人工、旧版副本生命周期与最终审计仍待操作员逐块复验。当前 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`。
 
 状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`。2026-10-09 已登记 [0.4.0 改进计划](20261009-archsift-0.4.0-improvement-plan.md)，历史起点状态为 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`；同日用户授权在该计划范围内合理设计 UI 逻辑和布局，要求功能分区明确、信息简洁明要、颜色区分明显，已纳入 0.4-A 设计约束及后续视觉验收；用户已授权在新分支 `codex/archsift-0.4.0` 执行全部 0.4.0 开发计划及后续提交、推送、PR、合并、发布；当前 0.4-A 已冻结，0.4-B–E 代码与自动检查完成（Windows 142 项、前端逻辑/语言检查、合成桌面/窄屏与 SARIF），0.4-F 候选自动门禁已通过：固定 061a53d 的 Windows/Ubuntu 各 142 项、两次 17 项原生包 smoke、仓库草稿独立下载字节一致；Draft PR #1 与未公开 release 草稿已准备，真实 IFX 首步发现已核对（105 项目、0 程序集、105 条限制、exit 4，目标/宿主不变），第二步 182 条候选规则验证已核对（全部 pass、0 findings、partial/compliant/exit 4，563 源码记录与发现一致，规则/包/配置/目标/宿主不变），第三步规则库与规则链 API/CLI 首次停止证据已保留，修正后八项全部通过且目标/宿主不变，第四步真实 IFX 浏览器操作员虽回答六项 yes、可用性 4/5，但结果写入脚本语法错误，且截图发现语言/安全关闭按钮错位与规则集卡片展开过长，故第四步未通过；旧会话已由操作员恢复安全结果并确认目标/宿主不变；UI 修复、结果写入修复及替代包 a561e7d 的 Windows/Ubuntu 各 142 项 CI、两次 17 项 smoke、草稿资产独立下载回验已完成，替代包第四步复测六项 yes、评分 4/5，但操作员新发现 182 条规则在编辑器中全部展开；此段为阶段历史；最新状态见下段，尚未合并/公开发布/通知 IFX 项目，仍遵守各项验收门禁与人工真实集成流程。
 
@@ -23,6 +27,32 @@
 ## 目标与交付边界
 
 2026-10-10 0.5.0 发布更新：`v0.5.0` 已从已合并的 [PR #2](https://github.com/von12549/ArchSift/pull/2) 正式发布，tag 直接指向冻结产品 `c4010d8`；四项公开资产独立下载、17 项 ZIP smoke、13 项 Setup smoke、宿主哈希回验均通过。当前状态 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；见[发布记录](../releases/0.5.0-publication.md)。以下曾标记未合并、未发布或人工门禁待完成的段落为阶段历史。
+
+2026-10-11 后续改进登记：用户提出 0.6.0 的 chain 进度展示、独立 ruleset 的受控并行验证、UI 显示当前 ArchSift 产品版本，以及启动器中的配置 profile 选择；暂不包含条目间依赖编排。启动器须先解决 0.5.0 启动前必须加载 JSON、Setup 单配置路径与多 profile 升级保护之间的契约。范围与验收入口见 [0.6.0 改进项](20261011-archsift-0.6.0-improvements.md)。目前仅登记，不标记为已设计、实现或发布。
+
+2026-10-11 0.6.0 正式计划冻结：用户确认一份受管配置＋多份外部 profile；清单／选择记录均在安装根 config 目录，新安装 default.json，目录外 profile 不受保护；并发度整数 1–4、默认串行，收益先测量，数值门禁测量后冻结。见 [正式实施计划](20261011-archsift-0.6.0-plan.md)，状态 `FORMAL / SCOPE AND DESIGN FROZEN / IMPLEMENTATION NOT AUTHORIZED / NOT STARTED`，0.6-A–F 全部未开始。本轮仅完成计划文档，未实现／构建／测试／测量／安装／真实集成／提交／推送／发布；0.5.0 发布与历史验收保持冻结。
+
+2026-10-11 0.6.0 Git 授权：用户要求创建新分支用于 0.6.0 实施，并在新分支提交／推送；已从 main 创建 `codex/archsift-0.6.0`，本次提交范围为三份计划文档。产品实现、构建／测量／现场安装／真实 IFX 集成仍未授权开始，0.6-A–F 维持 `NOT STARTED`；没有 PR／合并／发布授权。
+
+2026-10-11 0.6.0 执行授权：用户授权开始全部正式实施计划、每阶段提交／推送，以及后续 PR、合并、文档更新和发布；继续在 `codex/archsift-0.6.0` 工作。当前 `IMPLEMENTATION AUTHORIZED / IN PROGRESS / NOT ACCEPTED / NOT RELEASED`，0.6-A 已启动；此前仅文档／Git 授权为历史阶段。真实 IFX 操作员逐块、独立可用性及最终宿主／进程门禁保持有效，未通过不得合并发布。
+
+0.6-A 完成：执行／进度／profile DTO 与 schema、独立 chain-summary v2 及宿主边界决议已冻结；SDK 10.0.303/net10.0 Release、locked 离线 restore/build、189 项与八模板全通过，宿主相等。见 [A 验收](../acceptance/20261011-0.6-a-contracts.md)。版本仍在开发中，不代表运行时进度／启动器／并行或发布门禁通过。
+
+0.6-B 完成：当前程序 0.6.0 身份、可取消准备、共享 CLI/Web 串行进度、子报告写出／汇总终态时序和最终漂移复核实现；191 项、八模板、Node 中英文状态回归通过，宿主相等。见 [B 验收](../acceptance/20261011-0.6-b-progress.md)。并行、启动器、测量及固定候选视觉／现场门禁仍待后续阶段。
+
+0.6-C 完成：v2 阶段计时和外置合成 CLI/UI 串行测量，191 项回归与宿主相等。各六轮测得 CLI 647–668ms、UI job 616–657ms、采样峰值约 62MiB，输入复核约 250ms；首轮缓存内存样本保留且由 Refresh 重测替代。见 [C 验收](../acceptance/20261011-0.6-c-serial-baseline.md)。此为有实际源码 hash 的开发基线，非固定发布预算；不宣称 IFX／程序集性能或并行收益。
+
+0.6-D 完成：独立选择页、config 元数据／规范化预览／受管与外部区分、default.json 新安装、旧路径／单配置升级回退保护、私有父生命周期和原生 owned PID／端口退出实现。195 项与八模板、Node 通过，宿主相等；所有失败与修复记录保留。见 [D 验收](../acceptance/20261011-0.6-d-launcher.md)。旧 0.5 指南保留，仍未进行真实 IFX 或 0.6 发布；下一阶段 E 受控并行。
+
+0.6-E 实现候选：有界 1–4 调度、默认串行、统一漂移／取消、按原顺序汇总、CLI/API/UI 参数实现；200 项、八模板及 Node 通过，真实合成 chain 共享一次 isolated build 并使用两个 ArchUnitNET Worker、目标未执行。检查根 development-4fe9696c6cd3445e9a2fd28aa1a02e5e，宿主相等。先提交固定测量源码，再测 1/2/4 并冻结预算；E 尚未验收完成，未发布。
+
+0.6-E 完成：固定实现4975dbb测量后，7918f7c先冻结预算，新候选200项／八模板、54次CLI/UI声明及真实合成程序集性能样本、30次声明／实际Worker PID取消资格通过，宿主相等。见 [E验收](../acceptance/20261011-0.6-e-parallel-performance.md)。默认串行不变；合成二／四路收益约11–22%，不承诺真实IFX。Draft PR #3已创建；首次Ubuntu CI两项Windows manifest fixture错误已修正，待F新提交回验；未合并／发布。
+
+0.6-F 自动门禁就绪：固定a05c44e Windows/Ubuntu各200项CI、八模板/Node、实际ZIP17/Setup13、原生二/四路一致、官方SARIF/冻结性能、九张合成原生浏览器截图与交互、草稿四资产服务器digest及独立下载完整ZIP/Setup回验通过，宿主相等；历史Ubuntu／fixture／浏览器基础设施停止均保留。见 [候选记录](../acceptance/20261011-0.6-candidate-readiness.md)。Draft PR #3与未公开v0.6.0 release已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED。真实IFX块01只读plan、块02新根安装/private UI、块03a六份策略复制与冻结均已审核，原安装/目标/宿主相等、未分析/build；块03a首次在复制前因无序哈希跨进程比较停止的[证据](../acceptance/20261011-0.6-ifx-step03a-stop.md)继续保留，成功重试见[03a验收](../acceptance/20261011-0.6-ifx-step03a-policy-freeze.md)。当时下一块为03b单次串行真实CLI试运行；当前进展见下段及[操作员门禁](../acceptance/20261011-0.6-operator-gates.md)。
+
+0.6-F 真实 IFX 进展：块03b操作员串行 CLI 试运行已[审阅](../acceptance/20261011-0.6-ifx-step03b-serial-canary.md)：固定包、四组规则和同一输入，105 项目／585 输入、182 条规则结果为 pass，但每组 105 条未求值构建上下文限制使整体为 `partial/compliant/exit 4`、`sourceBound=false`；不称当前源码完整合规。原安装／目标／宿主／配置／策略相等，owned 进程退出，无 build 或目标入口。当时下一块为03c CLI 1/2/4 各首进程与五轮热运行；当前进展见下段，仍未验收／合并／公开发布。
+
+0.6-F 真实 IFX 测量：操作员块03c CLI 和块03d Web UI 已[分别](../acceptance/20261011-0.6-ifx-step03c-cli-measurements.md)[审阅](../acceptance/20261011-0.6-ifx-step03d-ui-measurements.md)，固定输入各 18/18 次、同一语义；五轮热新进程 CLI wall 中位数 1638/1236/1054ms，Web job 1576/1195/1022ms、Web total 2094/1703/1546ms。03d 首次端口探针[停止证据](../acceptance/20261011-0.6-ifx-step03d-first-stop.md)保留且未计入有效样本。该 workload 仅含声明规则，仍为 `partial/compliant/exit 4`，不能证明完整源码合规；原安装、目标、配置、策略、宿主相等，owned 进程／监听退出。基于两种入口实测冻结的[独立真实 IFX 参考预算](../performance/0.6-ifx-budget.json)已由预算冻结后的块03e CLI [18 次](../acceptance/20261011-0.6-ifx-step03e-cli-qualification.md)和块03f Web [18 次](../acceptance/20261011-0.6-ifx-step03f-ui-qualification.md)新样本分别通过。默认串行不变；独立人工体验、旧版副本生命周期与最终审计仍待关闭。
 
 2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
 

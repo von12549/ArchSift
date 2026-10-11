@@ -10,6 +10,26 @@ namespace ArchSift.IntegrationTests;
 public sealed class SetupTests
 {
     [Fact]
+    public async Task Upgrade050To060KeepsLegacyConfigPathCatalogAndSelectionAndRollbackPreservesLaterSelection()
+    {
+        using var fixture = new Fixture(); var service = new SetupService();
+        var first = fixture.Package("0.5.0"); var install = service.PlanInstall(fixture.Install, first, SetupFiles.FileHash(first), fixture.Config, false);
+        var installed = await service.ApplyAsync(install, install.PlanId, default);
+        var oldPath = Path.Combine(fixture.Install, "config", "ifx.json"); File.Move(installed.After.ConfigPath, oldPath);
+        SetupFiles.Atomic(SetupService.Selection(fixture.Install), installed.After with { ConfigPath = oldPath });
+        var catalog = Path.Combine(fixture.Install, "config", "profiles.json"); var selection = Path.Combine(fixture.Install, "config", "selection.json");
+        SetupFiles.Atomic(catalog, new ProfileCatalog(1, null, [])); SetupFiles.Atomic(selection, new ProfileSelection(1, new string('a', 32)));
+        var catalogHash = SetupFiles.FileHash(catalog); var stateHash = SetupFiles.Capture(oldPath, fixture.Config.RulesDirectory!).Sha256;
+        var next = fixture.Package("0.6.0"); var plan = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        var upgraded = await service.ApplyAsync(plan, plan.PlanId, default);
+        Assert.Equal(oldPath, upgraded.After.ConfigPath); Assert.Equal(stateHash, upgraded.AfterState.Sha256);
+        SetupFiles.Atomic(selection, new ProfileSelection(1, new string('b', 32))); var laterSelection = SetupFiles.FileHash(selection);
+        var reverted = service.Rollback(fixture.Install, upgraded.Id, SetupFiles.FileHash(SetupService.Selection(fixture.Install)));
+        Assert.Equal("0.5.0", reverted.After.SelectedVersion); Assert.Equal(oldPath, reverted.After.ConfigPath);
+        Assert.Equal(catalogHash, SetupFiles.FileHash(catalog)); Assert.Equal(laterSelection, SetupFiles.FileHash(selection));
+    }
+
+    [Fact]
     public async Task InstallAdoptUpgradeNoOpRollbackPreserveRegistryTombstonesAndDanglingChains()
     {
         using var fixture = new Fixture(); var service = new SetupService();
@@ -18,6 +38,7 @@ public sealed class SetupTests
         Assert.False(Directory.Exists(fixture.Install));
         var installed = await service.ApplyAsync(plan, plan.PlanId, default);
         Assert.Equal("0.4.0", installed.After.SelectedVersion);
+        Assert.Equal("default.json", Path.GetFileName(installed.After.ConfigPath));
         Assert.Empty(ConfigLoader.Load(installed.After.ConfigPath).Rulesets);
         var library = new RulesetLibrary(fixture.Config.RulesDirectory!, fixture.Target);
         // Use a real bundled template, then retain the tombstone and chain reference after deletion.
@@ -58,6 +79,9 @@ public sealed class SetupTests
         var receipt = await service.ApplyAsync(plan, plan.PlanId, default);
         Assert.Equal(hash, SetupFiles.FileHash(path)); Assert.Equal("adopt", receipt.Operation);
         Assert.Equal("adopted-local-payload", receipt.After.Versions[0].PackageSha256);
+        var next = fixture.Package("0.6.0");
+        Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false));
+        Assert.Equal(hash, SetupFiles.FileHash(path));
     }
 
     [Theory]
@@ -72,8 +96,8 @@ public sealed class SetupTests
     {
         using var fixture = new Fixture(); var service = new SetupService();
         var first = fixture.Package("0.4.0"); var install = service.PlanInstall(fixture.Install, first, SetupFiles.FileHash(first), fixture.Config, false);
-        await service.ApplyAsync(install, install.PlanId, default);
-        var before = SetupFiles.Capture(Path.Combine(fixture.Install, "config", "project.json"), fixture.Config.RulesDirectory!);
+        var installed = await service.ApplyAsync(install, install.PlanId, default);
+        var before = SetupFiles.Capture(installed.After.ConfigPath, fixture.Config.RulesDirectory!);
         var next = fixture.Package("0.5.0"); var plan = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
         var faulty = new SetupService(current => { if (current == phase) throw new IOException("Injected interrupted write/checkpoint."); });
         await Assert.ThrowsAsync<IOException>(() => faulty.ApplyAsync(plan, plan.PlanId, default));
@@ -97,7 +121,7 @@ public sealed class SetupTests
         await Assert.ThrowsAsync<ConfigurationException>(() => service.ApplyAsync(SetupService.Seal(install with { ExpiresUtc = DateTimeOffset.UtcNow.AddHours(-1) }), install.PlanId, default));
         await service.ApplyAsync(install, install.PlanId, default);
         var next = fixture.Package("0.5.0"); var upgrade = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
-        var configPath = Path.Combine(fixture.Install, "config", "project.json"); File.AppendAllText(configPath, "\n");
+        var configPath = SetupService.LoadInstallation(fixture.Install).ConfigPath; File.AppendAllText(configPath, "\n");
         await Assert.ThrowsAsync<ConfigurationException>(() => service.ApplyAsync(upgrade, upgrade.PlanId, default));
         upgrade = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
         var receipt = await service.ApplyAsync(upgrade, upgrade.PlanId, default);
@@ -193,7 +217,7 @@ public sealed class SetupTests
         {
             var files = new Dictionary<string, byte[]> { ["archsift.exe"] = Encoding.UTF8.GetBytes(alternate ? "different synthetic CLI" : "synthetic CLI; never execute"),
                 ["web/ArchSift.Web.exe"] = Encoding.UTF8.GetBytes("synthetic Web; never execute"), ["LICENSE"] = Encoding.UTF8.GetBytes("synthetic license") };
-            if (version.StartsWith("0.5.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
+            if (version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
             var manifest = new PackageManifest(1, version, "win-x64", true, "candidate", new string('a', 40), false, false, new string('b', 64),
                 files.Select(p => new PackageFile(p.Key, p.Value.Length, SetupFiles.Hash(p.Value))).ToArray(), true);
             files["package-manifest.json"] = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonContract.Options);

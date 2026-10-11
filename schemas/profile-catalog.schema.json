@@ -1,0 +1,14 @@
+{
+  "$schema":"http://json-schema.org/draft-07/schema#",
+  "$id":"urn:archsift:profile-catalog:v1",
+  "type":"object","additionalProperties":false,
+  "required":["schemaVersion","defaultProfileId","profiles"],
+  "properties":{
+    "schemaVersion":{"const":1},
+    "defaultProfileId":{"anyOf":[{"type":"string","pattern":"^[a-f0-9]{32}$"},{"type":"null"}]},
+    "profiles":{"type":"array","maxItems":100,"items":{
+      "type":"object","additionalProperties":false,"required":["profileId","name","configPath"],
+      "properties":{"profileId":{"type":"string","pattern":"^[a-f0-9]{32}$"},"name":{"type":"string","minLength":1},"configPath":{"type":"string","minLength":1}}
+    }}
+  }
+}

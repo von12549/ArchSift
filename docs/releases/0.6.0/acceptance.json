@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "version": "0.6.0",
+  "status": "accepted-with-limitations",
+  "sourceCommit": "de222c2462e182191b2f71499421bfe086ea7bab",
+  "rid": "win-x64",
+  "selfContained": true,
+  "assets": [
+    {
+      "name": "archsift-0.6.0-win-x64.zip",
+      "bytes": 89272099,
+      "sha256": "64af0fb70ea8548b99373151c7005c15b0365784d8faedd3890989d3d040a560"
+    },
+    {
+      "name": "ArchSift.Setup.exe",
+      "bytes": 74124574,
+      "sha256": "6327fcf10700aeec00f0b84da4201d4c3ad8b10d51d3f894766db4a2c55debab"
+    }
+  ],
+  "manifestSha256": "a70f55859cf276ea786df2e68fcae4599cacc7c62cca9fcde20d27d6655f5e2b",
+  "payloadEntryCount": 647,
+  "gates": {
+    "windowsTests": 200,
+    "ubuntuTests": 200,
+    "nativePackageSmoke": 17,
+    "setupSmoke": 13,
+    "officialSarifSchema": true,
+    "syntheticBrowserChecks": true,
+    "independentDraftDownload": true,
+    "realIfxCliSamples": 18,
+    "realIfxWebSamples": 18,
+    "realIfxFrozenBudget": true,
+    "externalCopyUpgradeRollback": true,
+    "independentHumanUi": true,
+    "humanChecksPassed": 8,
+    "humanConfidenceOfFive": 5,
+    "humanRecordedHighestSeverity": "L1",
+    "humanRecordedNotes": "none",
+    "humanClarifiedSeverity": "none",
+    "humanClarification": "Operator confirmed the L1 selection was a mistake and there was no issue; original questionnaire retained unchanged.",
+    "postHumanMachineAudit": true,
+    "hostStateEqual": true
+  },
+  "evidence": {
+    "humanResultSha256": "ec906a304320340834b76e54a2b423c286865ce65ccb0d1fca5d45334a880339",
+    "humanAnswersSha256": "783f2aeff7b84d946fcfb3600fc04b6e3c7e46ae0912ef2ca6338c0644200f6e",
+    "finalMachineAuditResultSha256": "f092dfe605869431d080deff97cc8e9c7ac47b635e73355707ce07be44083206"
+  },
+  "limits": [
+    "Real IFX declaration-only checks were partial/compliant/exit 4 with no assembly binding; full current-source compliance and policy adoption are not claimed.",
+    "Physical operation on an SDK-free host, minimum Windows version, ARM64, Linux self-contained/Web, and publisher signature were not certified.",
+    "No schema migration, uninstall, multi-managed profiles, C/D/E coverage, or profiles outside config protection."
+  ],
+  "publisherSignatureVerified": false
+}

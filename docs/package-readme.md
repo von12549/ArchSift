@@ -1,4 +1,4 @@
-# ArchSift 0.5.0 package
+# ArchSift 0.6.0 package
 
 Windows x64 self-contained CLI and loopback workbench. Declared project discovery requires no SDK or Guard installation and makes no persistent PATH/Profile changes. Isolated builds need supported target SDKs/targeting packs and default to offline restore. This package is a candidate until its exact bytes pass the release acceptance gates.
 
@@ -11,9 +11,12 @@ After extracting, run in PowerShell:
 ./archsift.exe chain verify --config D:/your-config/archsift.json --chain D:/your-rules/chains/architecture.json
 ./archsift.exe changes --config D:/your-config/archsift.json
 ./archsift.exe ui --config D:/your-config/archsift.json
+./archsift.exe launch --root D:/your-owned-installation
 ```
 
 Changes requires local Git and compares HEAD with the final worktree by default; explicit --base/--head local commits must be supplied together. It does not fetch, checkout or write to the target. CLI UI forwards stdout/stderr and prints URL/PID/waiting state; a private control pipe ends Web on parent exit. Use Safe shutdown or Ctrl+C; closing the browser alone does not stop it. Never publish the token.
+
+The 0.6.0 launcher presents profiles before loading target JSON and owns the workbench lifetime. New installs use config/default.json, with profiles.json and selection.json under config; Setup protects only its single registered configuration and library. Other JSON files remain external, even if placed in config. Existing config paths and prior version guides remain available. Current tool version and actual chain stages are visible; --max-concurrency 1..4 defaults to serial, shares evidence and keeps report order. No workflow dependency graph or conditional triggers are provided.
 
 The separate self-contained Windows ArchSift.Setup.exe supports reviewed plan/apply installation, explicit adoption, compatible side-by-side upgrade, receipt rollback and journal recovery. It does not change PATH or install an SDK. --notices prints embedded runtime licenses. Unknown schema/migration rejects; ruleset entry IDs, tombstones and chain references are preserved. See docs/setup.md and docs/installation.md. Setup does not analyze/build targets or adopt policy.
 

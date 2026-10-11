@@ -1,0 +1,6 @@
+{
+  "$schema":"http://json-schema.org/draft-07/schema#",
+  "$id":"urn:archsift:chain-run-options:v1",
+  "type":"object","additionalProperties":false,
+  "properties":{"maxConcurrency":{"type":"integer","minimum":1,"maximum":4,"default":1}}
+}

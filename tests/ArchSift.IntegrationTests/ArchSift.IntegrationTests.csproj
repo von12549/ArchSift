@@ -5,6 +5,6 @@
     <ProjectReference Include="../../src/ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../../src/ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
     <ProjectReference Include="../../src/ArchSift.Cli/ArchSift.Cli.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/ArchSift.Web/ArchSift.Web.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/ArchSift.Web/ArchSift.Web.csproj" />
   </ItemGroup>
 </Project>

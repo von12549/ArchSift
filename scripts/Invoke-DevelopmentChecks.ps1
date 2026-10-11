@@ -86,7 +86,7 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
         $stderr = $process.StandardError.ReadToEndAsync()
         $peak = 0L
         while (-not $process.WaitForExit(50) -and $timer.Elapsed.TotalSeconds -lt 180) {
-            try { $peak = [Math]::Max($peak, $process.PeakWorkingSet64) } catch { }
+            try { $process.Refresh(); $peak = [Math]::Max($peak, $process.PeakWorkingSet64) } catch { }
         }
         $timedOut = -not $process.HasExited
         if ($timedOut) { $process.Kill($true); $process.WaitForExit() }

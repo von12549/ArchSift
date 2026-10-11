@@ -1,6 +1,6 @@
-# Windows installation and configuration — 0.5.0
+# Windows installation and configuration — 0.6.0 development
 
-**0.5.0 is published and independently downloaded/verified.** It adds CLI UI output/lifetime repair and a separate portable setup with install/adopt/upgrade/rollback/recovery. Obtain the four official assets from the [v0.5.0 Release](https://github.com/von12549/ArchSift/releases/tag/v0.5.0), verify them against the [publication record](releases/0.5.0-publication.md), then follow [setup commands and transaction boundaries](setup.md). The [0.4.0 manual guide](installation-0.4.md) preserves its original checksums and launcher workaround.
+**0.6.0 is in development, not accepted or published.** This guide describes its new launcher and default configuration path. The current verified release remains 0.5.0: use the [0.5.0 installation guide](installation-0.5.md), [0.5.0 Setup guide](setup-0.5.md) and [publication record](releases/0.5.0-publication.md) for its exact assets and behavior. The [0.4.0 manual guide](installation-0.4.md) remains historical.
 
 ## Requirements
 
@@ -21,7 +21,13 @@ Windows ARM64 and minimum Windows release are not established support guarantees
 
 Obtain version-specific ZIP, separate ArchSift.Setup.exe, SHA256SUMS.txt and acceptance.json. Compare every asset's length/hash with that release's publication record before execution. Never reuse 0.4.0 hashes for 0.5.0. The immutable manifest's candidate status records packaging time; final acceptance binds exact ZIP/Setup identities. Hash agreement is integrity evidence, not an independent publisher signature.
 
-The installation root holds versions/<version>, config/project.json, rules, reports, downloads, operations/<id> and install.json. Config/library may be external. Payload contains archsift.exe, package-manifest.json, setup-compatibility.json, web/ArchSift.Web.exe, schemas/templates/docs and licenses. Preserve the complete package. The separate single-file Setup embeds licenses available through --notices.
+New 0.6.0 installations use config/default.json. Existing installations retain their registered config filename. The root holds versions/<version>, config, rules, reports, downloads, operations/<id> and install.json. Preserve the complete payload and its licenses. Setup retains one ConfigPath/library state; config/profiles.json and config/selection.json are separate launcher metadata, preserved but excluded from receipt backup/rollback state. Only the registered config inside config is protected; putting another JSON there does not enroll it. Config outside config receives no 0.6.0 protection, and legacy managed paths outside config require a separate relocation review before upgrade.
+
+## 0.6.0 profile launcher
+
+Use the verified 0.6.0 executable's absolute path: `archsift.exe launch --root <install-root>`. The launcher opens a loopback selection page independently of the target JSON. Register an existing file by its full path, or review normalized JSON before creating an unused file inside config. It lists names, paths, targets, output/library directories, health and resource protection. The default/recent item is only preselected; click Open selected workbench explicitly. No discovery/build/restore happens on selection.
+
+The launcher owns the workbench process and stays alive. Reopen workbench reuses its private session; browser-tab closure does not stop it. Finish/cancel jobs and save/export or explicitly discard edits before closing and selecting a different profile. Config edits in the workbench remain in memory unless exported; they are not automatically written into the original file. Session URLs/tokens are not saved in metadata or logs. Keep `ui --config <JSON>` for explicit direct sessions, whose ownership/protection is not inferred from filenames. Never upgrade while the launcher or workbench is active.
 
 Planning displays generated JSON, normalized paths and identities before apply. First-install defaults: existing, explicit TFM, Debug, allowNetwork:false, empty rulesets and JSON/HTML/SARIF. Existing config requires explicit adoption and is never overwritten. Installation does not select policy or prove source compliance. See [setup workflow](setup.md).
 

@@ -39,7 +39,7 @@ function User-StateHash([string]$Config,[string]$Library){
     [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes(($records|ConvertTo-Json -Depth 5 -Compress)))).ToLowerInvariant()
 }
 try{
-    if((Invoke-Setup 'setup-version' @('--version')).Trim()-cne'archsift-setup 0.5.0'){throw 'Setup version mismatch.'}
+    if((Invoke-Setup 'setup-version' @('--version')).Trim()-cne'archsift-setup 0.6.0'){throw 'Setup version mismatch.'}
     $notices=Invoke-Setup 'embedded-notices' @('--notices')
     if(-not$notices.Contains('THIRD-PARTY-NOTICES')-or-not$notices.Contains('ArchSift-LICENSE')){throw 'Standalone Setup notices incomplete.'}
     $target=Join-Path $run 'synthetic-source';[void][IO.Directory]::CreateDirectory($target)
@@ -50,7 +50,7 @@ try{
     if(Test-Path -LiteralPath $newRoot){throw 'Read-only plan created root.'}
     $plan=$text|ConvertFrom-Json;$path=Save-Plan 'install-plan' $text
     $install=(Invoke-Setup 'apply-install-and-private-ui-smoke' @('apply','--plan',$path,'--plan-id',$plan.planId))|ConvertFrom-Json
-    if($install.after.selectedVersion-cne'0.5.0'-or$install.outcome-cne'success'){throw 'Install selection mismatch.'}
+    if($install.after.selectedVersion-cne'0.6.0'-or$install.outcome-cne'success'){throw 'Install selection mismatch.'}
     [void](Invoke-Setup 'inspect-install' @('inspect','--root',$newRoot))
     [void](Invoke-Setup 'stale-install-rejected' @('apply','--plan',$path,'--plan-id',$plan.planId) 2)
     if(Test-Path -LiteralPath (Join-Path $newRoot 'reports')){throw 'Setup performed analysis.'}
@@ -62,7 +62,8 @@ try{
     [IO.File]::WriteAllText((Join-Path $library '.archsift-library.json'),(@{schemaVersion=1;entries=@(@{entryId=$active;fileName='policy.json';rulesetId='template-naming';deleted=$false},@{entryId=$deleted;fileName='deleted.json';rulesetId='deleted-policy';deleted=$true})}|ConvertTo-Json -Depth 6))
     [IO.File]::WriteAllText((Join-Path $library '.archsift-library.lock'),'')
     [IO.File]::WriteAllText((Join-Path $library 'chains/retained.json'),(@{schemaVersion=1;id='retained';version='1';description='Synthetic dangling reference';entries=@(@{entryId=$active},@{entryId=$deleted})}|ConvertTo-Json -Depth 6))
-    $configPath=Join-Path $legacy 'config.json'
+    [void][IO.Directory]::CreateDirectory((Join-Path $legacy 'config'))
+    $configPath=Join-Path $legacy 'config/ifx.json'
     [IO.File]::WriteAllText($configPath,(@{schemaVersion=1;target=@{root=$target;entry='Synthetic.csproj'};rulesets=@();build=@{mode='existing';targetFramework='net10.0';configuration='Debug';allowNetwork=$false};output=@{directory=(Join-Path $legacy 'reports');formats=@('json','html','sarif')};rulesDirectory=$library}|ConvertTo-Json -Depth 8))
     $stateBefore=User-StateHash $configPath $library
     $text=Invoke-Setup 'plan-adopt' @('plan','adopt','--root',$legacy,'--version-directory',$oldVersion,'--config',$configPath)
@@ -82,6 +83,6 @@ try{
     if(Test-Path -LiteralPath (Join-Path $legacy 'reports')){throw 'Setup performed analysis.'}
     $residual=@(Get-Process -Name 'archsift','ArchSift.Web' -ErrorAction SilentlyContinue|Where-Object {$_.Path-and$_.Path.StartsWith($run+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)})
     if($residual.Count){throw 'Setup owned process remains.'}
-    $result=@{status='pass';version='0.5.0';checks=$checks.ToArray();zipSha256=$zipHash;setupSha256=(Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant();stateSha256=$stateBefore;targetUnchanged=$true;noOwnedProcess=$true;hostStateEqual=((Get-ArchSiftHostHash)-ceq$before);invalidDotnetRootsUsed=$true;processPathPreserved=$true;limits=@('Synthetic targets only; no real IFX installation.', 'Host has SDKs; unavailable explicit dotnet paths test self-contained fallback, not a physically SDK-free host.')}
+    $result=@{status='pass';version='0.6.0';checks=$checks.ToArray();zipSha256=$zipHash;setupSha256=(Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant();stateSha256=$stateBefore;targetUnchanged=$true;noOwnedProcess=$true;hostStateEqual=((Get-ArchSiftHostHash)-ceq$before);invalidDotnetRootsUsed=$true;processPathPreserved=$true;limits=@('Synthetic targets only; no real IFX installation.', 'Host has SDKs; unavailable explicit dotnet paths test self-contained fallback, not a physically SDK-free host.')}
     [IO.File]::WriteAllText((Join-Path $run 'setup-smoke-result.json'),($result|ConvertTo-Json -Depth 8));$result|ConvertTo-Json -Depth 8
 }finally{$equal=(Get-ArchSiftHostHash)-ceq$before;Write-Output ('setup-smoke-run='+$run+' final-host-state-equal='+$equal);if(-not$equal){throw 'Host drift; preserve evidence.'}}

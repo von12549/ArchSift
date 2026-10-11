@@ -8,11 +8,12 @@ using ArchSift.Core;
 
 namespace ArchSift.Web;
 
-public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
+public sealed class Workbench(RunConfiguration initial, string rulesDirectory, SessionProfile? profile = null)
 {
     private RunConfiguration current = initial;
     private readonly ConcurrentDictionary<string, Job> jobs = new();
     private readonly SemaphoreSlim gate = new(1, 1);
+    private volatile bool dirty;
     public string Token { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
 
     public void Map(WebApplication app)
@@ -43,7 +44,16 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             { context.Response.StatusCode = 500; await context.Response.WriteAsJsonAsync(new { error = error.Message }); }
         });
         app.UseDefaultFiles(); app.UseStaticFiles();
-        app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory }, JsonContract.Options));
+        app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory, toolVersion = ToolIdentity.Version, profile }, JsonContract.Options));
+        app.MapGet("/api/session", () => Results.Json(new { processId = Environment.ProcessId, running = jobs.Values.Any(j => j.State == "running"), dirty }));
+        app.MapPost("/api/session/dirty", async (HttpContext context) =>
+        {
+            using var doc = await JsonDocument.ParseAsync(context.Request.Body);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object || doc.RootElement.EnumerateObject().Count() != 1 ||
+                !doc.RootElement.TryGetProperty("dirty", out var value) || value.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+                throw new ConfigurationException("Expected a dirty boolean.");
+            dirty = value.GetBoolean(); return Results.Ok();
+        });
         app.MapPost("/api/config", async (HttpContext context) =>
         {
             using var doc = await JsonDocument.ParseAsync(context.Request.Body);
@@ -120,9 +130,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain")) return Results.BadRequest(new { error = "Unknown operation." });
             ChangeRequest request = new();
             using var document = await JsonDocument.ParseAsync(context.Request.Body);
+            SchemaValidation.ValidateDocument(document.RootElement, JsonSerializer.SerializeToElement(new { type = "object" }));
             if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p =>
                     p.Name != "targetKind" && (operation != "changes" || p.Name is not ("base" or "head")) &&
-                    (operation != "ruleset" || p.Name != "entryId") && (operation != "chain" || p.Name != "chainId")))
+                    (operation != "ruleset" || p.Name != "entryId") && (operation != "chain" || p.Name is not ("chainId" or "maxConcurrency"))))
                 throw new ConfigurationException("Run request contains unsupported fields.");
             var targetKind = document.RootElement.TryGetProperty("targetKind", out var kind) ? kind.GetString() : "real";
             if (targetKind is not ("real" or "fixture")) throw new ConfigurationException("Target kind must be real or fixture.");
@@ -130,7 +141,16 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
                 document.RootElement.TryGetProperty("base", out var @base) && @base.ValueKind != JsonValueKind.Null ? @base.GetString() : null,
                 document.RootElement.TryGetProperty("head", out var head) && head.ValueKind != JsonValueKind.Null ? head.GetString() : null);
             var config = current;
-            LoadedRuleset? selected = null; PreparedChain? chain = null;
+            var options = new ChainRunOptions();
+            if (operation == "chain" && document.RootElement.TryGetProperty("maxConcurrency", out var concurrency))
+            {
+                var optionJson = JsonSerializer.SerializeToElement(new Dictionary<string, JsonElement> { ["maxConcurrency"] = concurrency });
+                SchemaValidation.Validate(optionJson, "chain-run-options"); options = optionJson.Deserialize<ChainRunOptions>(JsonContract.Options)!;
+            }
+            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            LoadedRuleset? selected = null; CapturedChain? chain = null;
+            try
+            {
             if (operation == "ruleset")
             {
                 if (!document.RootElement.TryGetProperty("entryId", out var entryId) || entryId.ValueKind != JsonValueKind.String)
@@ -142,10 +162,12 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             {
                 if (!document.RootElement.TryGetProperty("chainId", out var chainId) || chainId.ValueKind != JsonValueKind.String)
                     throw new ConfigurationException("Chain verification requires a saved chain ID.");
-                chain = ChainService.Prepare(config, new ChainStore(Library()).Read(chainId.GetString()!), Library(), targetKind!);
+                var library = new RulesetLibrary(rulesDirectory, config.Target.Root);
+                chain = ChainService.Capture(config, new ChainStore(library).Read(chainId.GetString()!), library, targetKind!);
                 config = config with { Rulesets = chain.Rulesets.Where(r => r is not null).Select(r => r!.Identity.Path).ToArray() };
             }
-            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            }
+            catch { gate.Release(); throw; }
             var job = new Job(Guid.NewGuid().ToString("N"), operation, config, targetKind, selected?.Ruleset.Id ?? chain?.Chain.Id); jobs[job.Id] = job;
             _ = Task.Run(async () =>
             {
@@ -154,7 +176,8 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
                     if (operation == "chain")
                     {
                         var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
-                        job.Chain = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config, chain!, job.Cancel.Token);
+                        job.Chain = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunCapturedAsync(config, chain!, job.Cancel.Token,
+                            progress => job.Progress = progress, job.Id, options);
                         job.ExitCode = job.Chain.ExitCode; job.State = job.Chain.Execution;
                     }
                     else if (operation == "draft")
@@ -189,7 +212,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -241,10 +264,16 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
             var path = PathSafety.Under(job.Chain.Snapshot.OutputDirectory, relative + "/" + (entry.Diagnostic is null ? "report." : "diagnostic.") + format);
             return Results.File(File.ReadAllBytes(path), format == "html" ? "text/html" : format == "sarif" ? "application/sarif+json" : "application/json", Path.GetFileName(path));
         });
-        app.MapPost("/api/shutdown", () =>
+        app.MapPost("/api/shutdown", async (HttpContext context) =>
         {
             if (jobs.Values.Any(job => job.State == "running"))
                 return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            if (dirty)
+            {
+                using var doc = await JsonDocument.ParseAsync(context.Request.Body);
+                if (!doc.RootElement.TryGetProperty("discardChanges", out var discard) || discard.ValueKind != JsonValueKind.True)
+                    return Results.Conflict(new { error = "Unsaved changes remain. Export/save them or explicitly discard them." });
+            }
             _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); });
             return Results.Accepted();
         });
@@ -289,5 +318,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory)
         public RuleDraft? Draft { get; set; }
         public ComparisonReport? Comparison { get; set; }
         public ChainSummary? Chain { get; set; }
+        private ChainProgress? progress;
+        public ChainProgress? Progress { get => Volatile.Read(ref progress); set => Volatile.Write(ref progress, value); }
     }
 }

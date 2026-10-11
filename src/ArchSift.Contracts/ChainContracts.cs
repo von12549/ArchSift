@@ -10,7 +10,11 @@ public sealed record ChainEntrySnapshot(string EntryId, string? SourcePath, Rule
     string? ErrorCode, string? ErrorMessage);
 public sealed record ChainSnapshot(string ChainId, string ChainVersion, ChainEntrySnapshot[] Entries,
     TargetSettings Target, BuildSettings Build, InputIdentity InputIdentity, InputIdentity BuildInputIdentity,
-    string OutputDirectory, string TargetKind);
+    string OutputDirectory, string TargetKind)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public ChainRunOptions? ExecutionOptions { get; init; }
+}
 public sealed record ChainDiagnostic(string EntryId, string Code, string Message)
 {
     public int SchemaVersion { get; init; } = 1;
@@ -19,12 +23,15 @@ public sealed record ChainDiagnostic(string EntryId, string Code, string Message
 public sealed record ChainChild(string EntryId, string Execution, string Compliance, int? ExitCode,
     string? ReportDirectory, ChainDiagnostic? Diagnostic, Coverage Coverage, string Binding,
     RuleResult[] RuleResults, Finding[] Findings, string[] Limitations);
+public sealed record ChainTimings(long Preparation, long Evidence, long Evaluation, long InputVerification, long ReportWriting, long Total);
 public sealed record ChainSummary(ChainSnapshot Snapshot, string Execution, string Compliance, int ExitCode,
     int ProjectCount, ChainChild[] Entries, string[] Limitations, RunMetadata RunMetadata)
 {
     public int SchemaVersion { get; init; } = 1;
     public string Kind { get; init; } = "chain-summary";
     public string ToolVersion { get; init; } = ToolIdentity.Version;
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public ChainTimings? Timings { get; init; }
     [System.Text.Json.Serialization.JsonIgnore]
     public IReadOnlyDictionary<string, AnalysisReport> AnalysisReports { get; init; } = new Dictionary<string, AnalysisReport>();
 }

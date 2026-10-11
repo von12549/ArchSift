@@ -8,6 +8,7 @@ public static class ConfigLoader
     public static RunConfiguration Load(string path)
     {
         var full = Path.GetFullPath(path);
+        if (new FileInfo(full).Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Config exceeds 4 MiB.");
         var bytes = File.ReadAllBytes(full);
         if (bytes.Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Config exceeds 4 MiB.");
         try
@@ -16,7 +17,13 @@ public static class ConfigLoader
             using var doc = JsonDocument.Parse(bytes.AsMemory(offset));
             SchemaValidation.Validate(doc.RootElement, "config");
             var config = doc.RootElement.Deserialize<RunConfiguration>(JsonContract.Options)!;
-            var directory = Path.GetDirectoryName(full)!;
+            return ResolvePaths(config, Path.GetDirectoryName(full)!);
+        }
+        catch (JsonException e) { throw new ConfigurationException("Invalid config JSON: " + e.Message); }
+    }
+
+    public static RunConfiguration ResolvePaths(RunConfiguration config, string directory)
+    {
             string Resolve(string value) => Path.GetFullPath(value, directory);
             if (config.Build.AllowNetwork && config.Build.Sources.Length == 0)
                 throw new ConfigurationException("Network restore requires explicit sources.");
@@ -36,7 +43,5 @@ public static class ConfigLoader
                 Output = config.Output with { Directory = Resolve(config.Output.Directory) },
                 RulesDirectory = config.RulesDirectory is { } r ? Resolve(r) : null
             };
-        }
-        catch (JsonException e) { throw new ConfigurationException("Invalid config JSON: " + e.Message); }
     }
 }

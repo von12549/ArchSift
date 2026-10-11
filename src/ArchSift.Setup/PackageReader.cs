@@ -25,7 +25,8 @@ public static class PackageReader
             throw new ConfigurationException("Missing source identity.");
         if (manifest.Version != "0.4.0")
         {
-            if (!manifest.Version.StartsWith("0.5.", StringComparison.Ordinal)) throw new ConfigurationException("Unknown package compatibility; migration is unsupported.");
+            if (!manifest.Version.StartsWith("0.5.", StringComparison.Ordinal) && !manifest.Version.StartsWith("0.6.", StringComparison.Ordinal))
+                throw new ConfigurationException("Unknown package compatibility; migration is unsupported.");
             var compatibility = SetupFiles.Parse<SetupCompatibility>(read("setup-compatibility.json"));
             if (compatibility != new SetupCompatibility(1, 1, 1, 1)) throw new ConfigurationException("Unsupported config/library/chain schema migration.");
         }

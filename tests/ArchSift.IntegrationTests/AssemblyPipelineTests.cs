@@ -8,6 +8,27 @@ namespace ArchSift.IntegrationTests;
 
 public sealed class AssemblyPipelineTests
 {
+    [Fact]
+    public async Task ParallelChainSharesOneRealBuildAndIsolatesArchUnitWorkers()
+    {
+        using var fixture = new Fixture(); fixture.CreateSource(true);
+        var config = fixture.Config with { RulesDirectory = Path.Combine(fixture.Output, "rules") };
+        var library = new RulesetLibrary(config.RulesDirectory, fixture.Source);
+        var original = Rules().Documents[0].Ruleset;
+        var first = library.Import("first.json", JsonSerializer.SerializeToUtf8Bytes(original with { Id = "first" }, JsonContract.Options));
+        var second = library.Import("second.json", JsonSerializer.SerializeToUtf8Bytes(original with { Id = "second" }, JsonContract.Options));
+        var progress = new List<ChainProgress>();
+        var summary = await new ChainService(new AnalysisService(fixture.Worker.EvaluateAsync)).RunAsync(config,
+            new(1, "real-workers", "1", "Synthetic compiled target; never execute its entry point", [new(first.EntryId), new(second.EntryId)]), library,
+            progress: p => progress.Add(p), options: new() { MaxConcurrency = 2 });
+        Assert.Equal("noncompliant", summary.Compliance);
+        Assert.All(summary.Entries, e => { Assert.Equal("source-bound", e.Binding); Assert.Equal("violation", Assert.Single(e.RuleResults).Status); });
+        Assert.Single(Directory.GetFiles(Path.Combine(summary.Snapshot.OutputDirectory, "build"), "assembly-manifest.json", SearchOption.AllDirectories));
+        Assert.Contains(progress, p => p.RunningCount == 2);
+        Assert.False(File.Exists(Path.Combine(fixture.Source, "target-was-executed.txt")));
+        Assert.False(Directory.Exists(Path.Combine(fixture.Source, "bin"))); Assert.False(Directory.Exists(Path.Combine(fixture.Source, "obj")));
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
