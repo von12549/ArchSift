@@ -1,6 +1,6 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
-2026-10-12 0.7.0：用户已授权实施四个工作包、逐阶段验证后提交和推送，以及后续 PR／合并／发布。见[ArchSift 0.7.0 改进计划](20261012-archsift-0.7.0-improvement-plan.md)。0.7-0／1／2／3 完成，最新 [Workbench／Launcher 验收](../acceptance/20261012-0.7-workbench-launcher.md)为 207 项回归、八模板校验、406 行真实浏览器／双语／窄屏／JSON 不变及宿主哈希一致。0.7-4 包与真实 IFX／独立人工门禁进行中，未发布。真实 IFX 人工操作与候选策略采用边界不变；以下历史阶段记录保持原状态。
+2026-10-12 0.7.0：用户授权实施、逐阶段提交／推送和后续 PR／合并／发布。[计划](20261012-archsift-0.7.0-improvement-plan.md)的 0.7-0／1／2／3 完成，0.7-4 自动候选门禁通过：[e5147a5 候选](../acceptance/20261012-0.7-candidate-readiness.md)的两平台 CI、208 项 Release 回归、17 ZIP／13 Setup 原生检查、冻结预算／SARIF 与原生双语浏览器门禁通过，宿主／目标／状态一致。真实 IFX 取证与独立人工 UI 等待操作员首个审查命令结果，原安装未升级，B 类未证明通过；PR #5 保持 draft，未合并／发布。真实 IFX 操作与候选策略采用边界不变；以下历史阶段记录保持原状态。
 
 2026-10-11 0.6.0 最新状态：替代候选的真实 IFX 机器门禁、用户独立 UI 验收及人工后审计通过；[PR #3](https://github.com/von12549/ArchSift/pull/3) 合并后，`v0.6.0` 已[正式发布并完成四资产独立下载、原生 ZIP/Setup smoke 与发布后审计](../releases/0.6.0-publication.md)。原 IFX 目标、原安装和宿主状态相等。当前 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；下面旧段落保留形成时的历史状态。
 
