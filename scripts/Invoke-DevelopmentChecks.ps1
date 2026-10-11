@@ -85,7 +85,10 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
         $stdout = $process.StandardOutput.ReadToEndAsync()
         $stderr = $process.StandardError.ReadToEndAsync()
         $peak = 0L
-        while (-not $process.WaitForExit(50) -and $timer.Elapsed.TotalSeconds -lt 180) {
+        // Full SDK evidence fixtures hash many files on hosted Windows runners. This is a suite cap,
+        // separate from each child-process timeout and the unchanged product performance budgets.
+        $timeoutSeconds = if ($Name -eq 'test') { 600 } else { 180 }
+        while (-not $process.WaitForExit(50) -and $timer.Elapsed.TotalSeconds -lt $timeoutSeconds) {
             try { $process.Refresh(); $peak = [Math]::Max($peak, $process.PeakWorkingSet64) } catch { }
         }
         $timedOut = -not $process.HasExited
