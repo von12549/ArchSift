@@ -6,7 +6,13 @@ public sealed record AnalysisScope(
     string[] IncludedProjects, string[] UnlistedProjects, string[] ExternalReferences,
     string[] UnresolvedReferences, string[] UnsupportedConstructs, string Model = "declared");
 public sealed record BuildContext(
-    string Mode, string? TargetFramework, string Configuration, string? Sdk, string Binding);
+    string Mode, string? TargetFramework, string Configuration, string? Sdk, string Binding)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? EvidenceOrigin { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? EvidenceSha256 { get; init; }
+}
 public sealed record Finding(
     string Id, string RuleId, string SubjectKind, string Subject, string Message, string Severity,
     string? Source = null, string? Target = null, string? Location = null,

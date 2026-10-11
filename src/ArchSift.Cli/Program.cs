@@ -52,12 +52,39 @@ public static class Program
             {
                 Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
+                Console.WriteLine("evidence capture --config <JSON> --inputs <external-input-paths JSON array> --output <new capture JSON>; evidence seal --config <JSON> --capture <JSON> --review <JSON> --output <new manifest JSON>; evidence validate --config <JSON>");
                 Console.WriteLine("chain verify --config <JSON> --chain <JSON> [--target-kind real|fixture] [--max-concurrency 1..4]");
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
                 Console.WriteLine("rules validate --file <JSON>; rules render --file <JSON> --output <new Markdown>");
                 Console.WriteLine("rules draft --config <JSON> --output <directory>; ui --config <JSON>");
                 Console.WriteLine("launch --root <verified-install-root>; choose a profile before starting the workbench.");
                 Console.WriteLine("changes --config <JSON> [--base <local commit> --head <local commit>]; default HEAD vs final worktree."); return 0;
+            }
+            if (args.Length >= 2 && args[0] == "evidence")
+            {
+                var flags = Flags(args[2..], ["--config", "--inputs", "--output", "--capture", "--review"]);
+                var config = ConfigLoader.Load(Required(flags, "--config"));
+                if (args[1] == "capture")
+                {
+                    var output = Path.GetFullPath(Required(flags, "--output")); PathSafety.EnsureDisjoint(config.Target.Root, output);
+                    var paths = JsonSerializer.Deserialize<string[]>(File.ReadAllBytes(Required(flags, "--inputs")), JsonContract.Options)!;
+                    var capture = ExternalBuildEvidence.Capture(config, paths);
+                    ExternalBuildEvidence.WriteNew(output, capture);
+                    ExternalBuildEvidence.WriteNew(output + ".review-template.json", ExternalBuildEvidence.Template(capture, AssemblyArtifacts.FileHash(output)));
+                    Console.WriteLine(output); return 0;
+                }
+                if (args[1] == "seal")
+                {
+                    ExternalBuildEvidence.Seal(config, Required(flags, "--capture"), Required(flags, "--review"), Required(flags, "--output"));
+                    Console.WriteLine(Path.GetFullPath(Required(flags, "--output"))); return 0;
+                }
+                if (args[1] == "validate")
+                {
+                    var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
+                    var inputs = AssemblyArtifacts.Existing(config, snapshot);
+                    Console.WriteLine(JsonSerializer.Serialize(inputs, JsonContract.Options)); return inputs.SourceBound ? 0 : 4;
+                }
+                throw new ConfigurationException("Unknown evidence command.");
             }
             if (args.Length >= 2 && args[0] == "rules" && args[1] is "validate" or "render")
             {

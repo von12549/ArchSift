@@ -433,6 +433,8 @@
               "sourceBound"
             ]
           },
+          "evidenceOrigin": { "const": "external-reviewed" },
+          "evidenceSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
           "binding": {
             "enum": [
               "none",

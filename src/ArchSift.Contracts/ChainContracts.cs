@@ -22,7 +22,13 @@ public sealed record ChainDiagnostic(string EntryId, string Code, string Message
 }
 public sealed record ChainChild(string EntryId, string Execution, string Compliance, int? ExitCode,
     string? ReportDirectory, ChainDiagnostic? Diagnostic, Coverage Coverage, string Binding,
-    RuleResult[] RuleResults, Finding[] Findings, string[] Limitations);
+    RuleResult[] RuleResults, Finding[] Findings, string[] Limitations)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? EvidenceOrigin { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? EvidenceSha256 { get; init; }
+}
 public sealed record ChainTimings(long Preparation, long Evidence, long Evaluation, long InputVerification, long ReportWriting, long Total);
 public sealed record ChainSummary(ChainSnapshot Snapshot, string Execution, string Compliance, int ExitCode,
     int ProjectCount, ChainChild[] Entries, string[] Limitations, RunMetadata RunMetadata)

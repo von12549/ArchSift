@@ -6,7 +6,7 @@ namespace ArchSift.Core;
 /// <summary>Evaluates the draft-07 keywords used by the fixed bundled schemas. No remote schemas are loaded.</summary>
 public static class SchemaValidation
 {
-    private static readonly string[] Names = ["ruleset", "config", "report", "assembly-manifest", "comparison", "library", "chain", "chain-diagnostic", "chain-summary", "chain-summary-v2", "chain-run-options", "chain-progress", "profile-catalog", "profile-selection"];
+    private static readonly string[] Names = ["ruleset", "config", "report", "assembly-manifest", "assembly-manifest-v2", "evidence-capture", "external-build-review", "comparison", "library", "chain", "chain-diagnostic", "chain-summary", "chain-summary-v2", "chain-run-options", "chain-progress", "profile-catalog", "profile-selection"];
 
     public static void Validate(JsonElement value, string name)
     {

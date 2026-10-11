@@ -59,7 +59,7 @@ try {
     Copy-Item -LiteralPath (Join-Path $root 'docs/package-readme.md') -Destination (Join-Path $payload 'README.md')
     foreach($folder in @('schemas','templates','samples')){Copy-Item -LiteralPath (Join-Path $root $folder) -Destination (Join-Path $payload $folder) -Recurse}
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'docs'))
-    foreach($file in @('cli.md','changes.md','reports.md','rules.md','build-inputs.md','installation.md','installation-0.4.md','installation-0.5.md','setup.md','setup-0.5.md')){Copy-Item -LiteralPath (Join-Path $root ('docs/'+$file)) -Destination (Join-Path $payload ('docs/'+$file))}
+    foreach($file in @('cli.md','changes.md','reports.md','rules.md','build-inputs.md','external-build-evidence.md','installation.md','installation-0.4.md','installation-0.5.md','setup.md','setup-0.5.md')){Copy-Item -LiteralPath (Join-Path $root ('docs/'+$file)) -Destination (Join-Path $payload ('docs/'+$file))}
     [IO.File]::WriteAllText((Join-Path $payload 'setup-compatibility.json'),'{"schemaVersion":1,"configSchemaVersion":1,"librarySchemaVersion":1,"chainSchemaVersion":1}')
     Copy-Item -LiteralPath (Join-Path $root 'docs/migration/third-party-notices.md') -Destination (Join-Path $licenseRoot 'third-party-notices.md')
     Copy-Item -LiteralPath (Join-Path $root 'docs/migration/licenses') -Destination (Join-Path $licenseRoot 'libraries') -Recurse

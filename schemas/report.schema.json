@@ -185,6 +185,13 @@
             "assemblies-only",
             "source-bound"
           ]
+        },
+        "evidenceOrigin": {
+          "const": "external-reviewed"
+        },
+        "evidenceSha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
         }
       },
       "required": [
