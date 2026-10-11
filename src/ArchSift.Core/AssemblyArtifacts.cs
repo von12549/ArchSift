@@ -22,6 +22,8 @@ public static class AssemblyArtifacts
         var directory = Path.GetDirectoryName(Path.GetFullPath(manifestPath))!;
         var paths = new List<string>(); var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
         var bound = true;
+        if (snapshot.Projects.Length == 0 || manifest.Assemblies.All(a => a.SourceProject == "@dependency"))
+        { bound = false; limits.Add("Current-source binding requires a discovered first-party project and assembly."); }
         ExternalBuildReview? review = null;
         var evidenceHashes = new Dictionary<string, string>(StringComparer.Ordinal);
         if (version == 2)

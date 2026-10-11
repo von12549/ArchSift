@@ -119,6 +119,8 @@ public sealed class LauncherTests
             var activeRejected = await client.PostAsJsonAsync("/api/launcher/start", new { profileId = entry.ProfileId }, timeout.Token);
             Assert.Equal(HttpStatusCode.BadRequest, activeRejected.StatusCode);
             Assert.Equal(HttpStatusCode.OK, (await workbench.GetAsync("/api/session", timeout.Token)).StatusCode); // Rejection must not cancel the active child.
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsJsonAsync("/api/launcher/shutdown", new { }, timeout.Token)).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await workbench.GetAsync("/api/session", timeout.Token)).StatusCode);
             await workbench.PostAsJsonAsync("/api/session/dirty", new { dirty = true }, timeout.Token);
             Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsJsonAsync("/api/launcher/stop", new { discardChanges = false }, timeout.Token)).StatusCode);
             Assert.True((await client.PostAsJsonAsync("/api/launcher/stop", new { discardChanges = true }, timeout.Token)).IsSuccessStatusCode);

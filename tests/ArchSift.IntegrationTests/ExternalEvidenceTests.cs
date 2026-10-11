@@ -41,6 +41,7 @@ public sealed class ExternalEvidenceTests
             File.WriteAllText(Path.Combine(source, "Directory.Build.props"), props);
             File.WriteAllText(Path.Combine(source, "Types.cs"), "namespace Domain { public class Model { " +
                 (violation ? "public Forbidden.Type Value;" : "public int Value;") + " } } namespace Forbidden { public class Type {} }");
+            File.WriteAllText(Path.Combine(source, "BProbes.cs"), BProbes(violation));
             foreach (var path in Directory.GetFiles(source)) File.Copy(path, Path.Combine(build, Path.GetFileName(path)));
             var config = new RunConfiguration { SchemaVersion = 1, Target = new() { Root = source }, Build = new() { Mode = "existing", TargetFramework = "net10.0" }, Output = new() { Directory = evidence } };
             var home = Path.Combine(root, "cli-home");
@@ -57,9 +58,17 @@ public sealed class ExternalEvidenceTests
             var tool = Path.Combine(sdkRoot, "MSBuild.dll");
             var frameworks = Directory.GetFiles(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
                 .Where(p => { try { _ = AssemblyName.GetAssemblyName(p); return true; } catch (BadImageFormatException) { return false; } }).ToArray();
-            var sdkInputs = Directory.GetFiles(sdkRoot, "*", SearchOption.AllDirectories)
-                .Where(p => Path.GetExtension(p) is ".dll" or ".props" or ".targets" || Path.GetFileName(p) == ".version").ToArray();
-            var capture = ExternalBuildEvidence.Capture(config, frameworks.Concat(sdkInputs).Distinct().ToArray());
+            var sdkInputs = Directory.GetFiles(sdkRoot, "*", SearchOption.AllDirectories);
+            var dotnetRoot = Directory.GetParent(sdkRoot)!.Parent!.FullName;
+            var packRoot = Path.Combine(dotnetRoot, "packs", "Microsoft.NETCore.App.Ref");
+            var references = Directory.GetDirectories(packRoot).Where(p => Path.GetFileName(p).StartsWith("10.", StringComparison.Ordinal))
+                .OrderBy(p => Version.Parse(Path.GetFileName(p))).Last();
+            var referenceFiles = Directory.GetFiles(Path.Combine(references, "ref", "net10.0"), "*.dll");
+            var priorRuntime = Directory.GetDirectories(Directory.GetParent(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory().TrimEnd(Path.DirectorySeparatorChar))!.FullName)
+                .Where(p => Path.GetFileName(p).StartsWith("9.", StringComparison.Ordinal)).Select(p => Path.Combine(p, "System.Runtime.dll")).FirstOrDefault(File.Exists);
+            var frameworkProof = referenceFiles.Concat(priorRuntime is null ? [] : new[] { priorRuntime }).ToArray();
+            var capture = ExternalBuildEvidence.Capture(config, frameworks.Concat(sdkInputs).Concat(Directory.GetFiles(references, "*", SearchOption.AllDirectories))
+                .Concat(frameworkProof).Distinct().ToArray(), ["ARCHSIFT_TEST_LOCAL_FEED"]);
             var capturePath = Path.Combine(evidence, "capture.json"); ExternalBuildEvidence.WriteNew(capturePath, capture);
             var nuget = Path.Combine(evidence, "NuGet.Config"); File.WriteAllText(nuget, "<configuration><packageSources><clear /></packageSources></configuration>");
             var restore = new List<string> { "restore", "Example.csproj", "--configfile", nuget, "--packages", Path.Combine(root, "packages"), "--disable-build-servers", "-p:NuGetAudit=false" };
@@ -75,8 +84,9 @@ public sealed class ExternalEvidenceTests
                 CaptureSha256 = AssemblyArtifacts.FileHash(capturePath), Approved = true, InputsComplete = true, Reviewer = "Synthetic integration fixture",
                 Sdk = sdk, SdkToolPath = tool, TargetFramework = "net10.0", Configuration = "Debug", Command = command, ExitCode = built.ExitCode,
                 Projects = [new("Example.csproj", "Example", "net10.0", new() { ["CI"] = values.GetProperty("CI").GetString()!, ["NoWarn"] = values.GetProperty("NoWarn").GetString()! })],
-                Assemblies = [new("Example.csproj", Path.Combine(evidence, "Example.dll"))], FrameworkPaths = frameworks,
-                Materials = [Material(log, "build-log"), Material(Path.Combine(evidence, "build.binlog"), "evaluation-trace"), Material(notes, "review-notes")], Unknowns = []
+                Assemblies = [new("Example.csproj", Path.Combine(evidence, "Example.dll"))], FrameworkPaths = frameworkProof,
+                Materials = new[] { Material(log, "build-log"), Material(Path.Combine(evidence, "build.binlog"), "evaluation-trace"), Material(notes, "review-notes") }
+                    .Concat(Directory.GetFiles(Path.Combine(build, "obj"), "*", SearchOption.AllDirectories).Select(p => Material(p, "generated-input"))).ToArray(), Unknowns = []
             };
             var reviewPath = Path.Combine(evidence, "review.json"); ExternalBuildEvidence.WriteNew(reviewPath, review);
             var manifest = Path.Combine(evidence, "assembly-manifest.json");
@@ -103,6 +113,9 @@ public sealed class ExternalEvidenceTests
             };
             var result = AssemblyWorker.Evaluate(new(inputs, [set])); Assert.Empty(result.Errors);
             Assert.Equal(violation ? "violation" : "pass", Assert.Single(result.Results).Status);
+            var probes = BProbeRules(set);
+            var probeResults = AssemblyWorker.Evaluate(new(inputs, [probes])); Assert.Empty(probeResults.Errors); Assert.Equal(6, probeResults.Results.Length);
+            Assert.All(probeResults.Results, r => { Assert.True(r.Matched > 0); Assert.Equal(violation ? "violation" : "pass", r.Status); });
             var zero = set with { Rules = [set.Rules[0] with { Scope = new() { Kind = "namespace", Match = "exact", Value = "Absent" } }] };
             Assert.Equal("inconclusive", Assert.Single(AssemblyWorker.Evaluate(new(inputs, [zero])).Results).Status);
             Assert.Throws<IOException>(() => ExternalBuildEvidence.Seal(config, capturePath, reviewPath, manifest));
@@ -110,6 +123,7 @@ public sealed class ExternalEvidenceTests
             foreach (var broken in new[] { review with { Approved = false }, review with { InputsComplete = false }, review with { Unknowns = ["Untracked generator"] },
                 review with { ExitCode = 1 }, review with { Sdk = "different" }, review with { TargetFramework = "net9.0" }, review with { Configuration = "Release" },
                 review with { Projects = [] }, review with { FrameworkPaths = [] }, review with { Materials = review.Materials.Where(m => m.Role != "evaluation-trace").ToArray() },
+                review with { Materials = review.Materials.Where(m => m.Role != "generated-input").ToArray() },
                 review with { Imports = [Path.Combine(evidence, "not-captured.targets")] } })
             {
                 File.WriteAllBytes(reviewPath, JsonSerializer.SerializeToUtf8Bytes(broken, JsonContract.Options));
@@ -136,5 +150,32 @@ public sealed class ExternalEvidenceTests
             Assert.False(Directory.Exists(Path.Combine(source, "bin"))); Assert.False(Directory.Exists(Path.Combine(source, "obj")));
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); Directory.Delete(root, true); }
+    }
+
+    private static string BProbes(bool violation)
+    {
+        var domain = violation ? "public Microsoft.EntityFrameworkCore.DbContext Value;" : "public int Value;";
+        var application = violation ? "public System.IServiceProvider Services; public IFX.Platform.Primitives.Token Platform;" : "public IPort Port;";
+        var infrastructure = violation ? "public System.Transactions.TransactionScope Transaction; public Newtonsoft.Json.Linq.JObject Json; public IFX.IntegrationHub.ProviderRegistry.Infrastructure.Provider Hub;" : "public int Value;";
+        return $"namespace IFX.Modules.CRM.Domain {{ public class Entity {{ {domain} }} }} " +
+            $"namespace IFX.Modules.CRM.Application {{ public interface IPort {{}} public class UseCase {{ {application} }} }} " +
+            $"namespace IFX.Modules.CRM.Infrastructure {{ public class Adapter {{ {infrastructure} }} }} " +
+            "namespace Microsoft.EntityFrameworkCore { public class DbContext {} } namespace Newtonsoft.Json.Linq { public class JObject {} } " +
+            "namespace IFX.Platform.Primitives { public class Token {} } namespace IFX.IntegrationHub.ProviderRegistry.Infrastructure { public class Provider {} }";
+    }
+    private static Ruleset BProbeRules(Ruleset template)
+    {
+        var cases = new[] {
+            ("B01", "IFX.Modules.CRM.Domain", "namespace", "Microsoft.EntityFrameworkCore"),
+            ("B02", "IFX.Modules.CRM.Application", "type", "System.IServiceProvider"),
+            ("B03", "IFX.Modules.CRM.Infrastructure", "type", "System.Transactions.TransactionScope"),
+            ("B04", "IFX.Modules.CRM.Infrastructure", "namespace", "IFX.IntegrationHub.ProviderRegistry.Infrastructure"),
+            ("B05", "IFX.Modules.CRM.Infrastructure", "namespace", "Newtonsoft.Json.Linq"),
+            ("B07", "IFX.Modules.CRM.Application", "namespace", "IFX.Platform.Primitives") };
+        return template with { Id = "synthetic-B-probes", Rules = cases.Select(c => template.Rules[0] with
+        {
+            Id = "synthetic-" + c.Item1, Scope = new() { Kind = "namespace", Match = "exact", Value = c.Item2 },
+            Parameters = JsonSerializer.SerializeToElement(new { source = new { kind = "namespace", match = "exact", value = c.Item2 }, forbiddenTarget = new { kind = c.Item3, match = "exact", value = c.Item4 } })
+        }).ToArray() };
     }
 }

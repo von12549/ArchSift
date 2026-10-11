@@ -106,7 +106,8 @@
             "enum": [
               "build-log",
               "evaluation-trace",
-              "review-notes"
+              "review-notes",
+              "generated-input"
             ]
           }
         }

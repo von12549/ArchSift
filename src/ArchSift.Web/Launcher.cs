@@ -18,6 +18,7 @@ public sealed class Launcher(string root) : IAsyncDisposable
     private Uri? address;
     private SessionProfile? current;
     private string? childError;
+    private volatile bool closing;
     public string Token { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
     private ProfileStore Store() => new(installRoot);
 
@@ -45,6 +46,7 @@ public sealed class Launcher(string root) : IAsyncDisposable
         app.UseStaticFiles();
         app.MapGet("/", () => Results.File(Path.Combine(AppContext.BaseDirectory, "wwwroot", "launcher.html"), "text/html"));
         app.MapGet("/api/launcher/session", () => Results.Json(new { busy = ownedTask is { IsCompleted: false },
+            closing,
             session = ownedTask is { IsCompleted: false } ? current : null,
             workbenchUrl = ownedTask is { IsCompleted: false } ? address?.AbsoluteUri : null }, JsonContract.Options));
         app.MapGet("/api/launcher/state", () =>
@@ -64,19 +66,29 @@ public sealed class Launcher(string root) : IAsyncDisposable
         });
         app.MapPost("/api/launcher/register", async (HttpContext context) =>
         {
-            EnsureInstallationLease();
             using var doc = await Body(context, ["name", "configPath", "catalogSha256"]);
-            var entry = Store().Register(Text(doc, "name"), Text(doc, "configPath"), NullableText(doc, "catalogSha256"));
-            return Results.Json(entry, JsonContract.Options);
+            await gate.WaitAsync(context.RequestAborted);
+            try
+            {
+                EnsureInstallationLease();
+                var entry = Store().Register(Text(doc, "name"), Text(doc, "configPath"), NullableText(doc, "catalogSha256"));
+                return Results.Json(entry, JsonContract.Options);
+            }
+            finally { gate.Release(); }
         });
         app.MapPost("/api/launcher/create", async (HttpContext context) =>
         {
-            EnsureInstallationLease();
             using var doc = await Body(context, ["name", "configPath", "catalogSha256", "config"]);
             SchemaValidation.Validate(doc.RootElement.GetProperty("config"), "config");
-            var entry = Store().Register(Text(doc, "name"), Text(doc, "configPath"), NullableText(doc, "catalogSha256"),
-                doc.RootElement.GetProperty("config").Deserialize<RunConfiguration>(JsonContract.Options)!);
-            return Results.Json(entry, JsonContract.Options);
+            await gate.WaitAsync(context.RequestAborted);
+            try
+            {
+                EnsureInstallationLease();
+                var entry = Store().Register(Text(doc, "name"), Text(doc, "configPath"), NullableText(doc, "catalogSha256"),
+                    doc.RootElement.GetProperty("config").Deserialize<RunConfiguration>(JsonContract.Options)!);
+                return Results.Json(entry, JsonContract.Options);
+            }
+            finally { gate.Release(); }
         });
         app.MapPost("/api/launcher/preview", async (HttpContext context) =>
         {
@@ -92,6 +104,7 @@ public sealed class Launcher(string root) : IAsyncDisposable
             var startedNew = false;
             try
             {
+                if (closing) throw new ConfigurationException("Launcher shutdown has already been accepted.");
                 if (ownedTask is { IsCompleted: false }) throw new ConfigurationException("Close the current workbench safely before switching profiles.");
                 var store = Store();
                 if (store.CatalogHash != NullableText(doc, "catalogSha256")) throw new ConfigurationException("Catalog changed; reload before starting.");
@@ -137,11 +150,21 @@ public sealed class Launcher(string root) : IAsyncDisposable
         app.MapPost("/api/launcher/shutdown", async (HttpContext context) =>
         {
             using var doc = await Body(context, []);
-            if (ownedTask is { IsCompleted: false }) throw new ConfigurationException("Close the current workbench safely before closing the launcher.");
-            _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); }); return Results.Accepted();
+            await gate.WaitAsync(context.RequestAborted);
+            try
+            {
+                if (ownedTask is { IsCompleted: false }) throw new ConfigurationException("Close the current workbench safely before closing the launcher.");
+                if (!closing) { closing = true; _ = Task.Run(async () => { await Task.Delay(100); app.Lifetime.StopApplication(); }); }
+                return Results.Accepted(value: new { accepted = true });
+            }
+            finally { gate.Release(); }
         });
     }
-    private void EnsureInstallationLease() { if (installationLease is null) throw new ConfigurationException(childError ?? "Installation is unavailable or busy."); }
+    private void EnsureInstallationLease()
+    {
+        if (closing) throw new ConfigurationException("Launcher shutdown has already been accepted.");
+        if (installationLease is null) throw new ConfigurationException(childError ?? "Installation is unavailable or busy.");
+    }
     private async Task StopAsync(bool discardChanges)
     {
         if (ownedTask is not { IsCompleted: false }) return;

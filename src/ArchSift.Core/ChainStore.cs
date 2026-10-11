@@ -10,11 +10,17 @@ public sealed class ChainStore(RulesetLibrary library)
     public ChainDocument[] List() => Directory.Exists(DirectoryPath)
         ? Directory.GetFiles(DirectoryPath, "*.json").Order(StringComparer.Ordinal).Select(Load).ToArray() : [];
     public ChainDocument Read(string id) => Load(FilePath(id));
-    public void Save(string id, byte[] bytes)
+    public void Save(string id, byte[] bytes, bool allowUpdate = true)
     {
         var parsed = Parse(bytes);
         if (parsed.Id != id) throw new ConfigurationException("Chain ID does not match the filename.");
         var path = FilePath(id);
+        Directory.CreateDirectory(DirectoryPath);
+        var lockPath = PathSafety.Under(DirectoryPath, ".archsift-chains.lock");
+        using var fileLock = new FileStream(lockPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        if (Directory.GetFiles(DirectoryPath).Any(p => Path.GetFileName(p).Equals(id + ".json", StringComparison.OrdinalIgnoreCase) &&
+            (!allowUpdate || !Path.GetFileName(p).Equals(id + ".json", StringComparison.Ordinal))))
+            throw new ConfigurationException("Chain ID conflict: " + id);
         var previous = File.Exists(path) ? Load(path).Entries.Select(e => e.EntryId).ToHashSet(StringComparer.Ordinal) : [];
         foreach (var entry in parsed.Entries)
         {
@@ -22,9 +28,14 @@ public sealed class ChainStore(RulesetLibrary library)
             if ((found is null || found.Deleted || !File.Exists(library.FilePath(found.FileName))) && !previous.Contains(entry.EntryId))
                 throw new ConfigurationException("New chain entries must select an existing saved library ruleset: " + entry.EntryId);
         }
-        RulesetLibrary.AtomicFile(path, bytes);
+        RulesetLibrary.AtomicFile(path, bytes, allowUpdate);
     }
-    public void Delete(string id) { var path = FilePath(id); if (!File.Exists(path)) throw new ConfigurationException("Missing chain."); File.Delete(path); }
+    public void Delete(string id)
+    {
+        var path = FilePath(id); Directory.CreateDirectory(DirectoryPath);
+        using var fileLock = new FileStream(PathSafety.Under(DirectoryPath, ".archsift-chains.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        if (!File.Exists(path)) throw new ConfigurationException("Missing chain."); File.Delete(path);
+    }
     public static ChainDocument Load(string path) { PathSafety.EnsureNoLinks(path); return Parse(File.ReadAllBytes(path)); }
     public static ChainDocument Parse(byte[] bytes)
     {

@@ -41,14 +41,14 @@ public sealed class RulesetLibrary
         return Locked(registry =>
         {
             var previous = registry.Entries.FirstOrDefault(e => !e.Deleted && e.FileName.Equals(name, StringComparison.OrdinalIgnoreCase));
-            if (!allowUpdate && (previous is not null || File.Exists(path)))
+            if (!allowUpdate && (previous is not null || File.Exists(path) || Directory.GetFiles(DirectoryPath).Any(p => Path.GetFileName(p).Equals(name, StringComparison.OrdinalIgnoreCase))))
                 throw new ConfigurationException("Import filename conflict: " + name);
-            if (registry.Entries.Any(e => !e.Deleted && e.RulesetId == parsed.Id && e.EntryId != previous?.EntryId))
+            if (registry.Entries.Any(e => !e.Deleted && e.RulesetId.Equals(parsed.Id, StringComparison.OrdinalIgnoreCase) && e.EntryId != previous?.EntryId))
                 throw new ConfigurationException("Ruleset ID conflict: " + parsed.Id);
             var entry = new LibraryEntry(previous?.EntryId ?? Guid.NewGuid().ToString("N"), name, parsed.Id, false);
             var entries = registry.Entries.Where(e => e.EntryId != entry.EntryId).Append(entry).ToArray();
             var oldBytes = File.Exists(path) ? File.ReadAllBytes(path) : null;
-            AtomicFile(path, bytes);
+            AtomicFile(path, bytes, allowUpdate);
             try { WriteRegistry(new(1, entries)); }
             catch { if (oldBytes is null) File.Delete(path); else AtomicFile(path, oldBytes); throw; }
             return new LibraryCard(entry.EntryId, name, parsed.Id, true, new(parsed.Id, parsed.Version, ContentHash.Bytes(bytes), path), parsed, null);
@@ -112,11 +112,11 @@ public sealed class RulesetLibrary
             !name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) throw new ConfigurationException("Use a JSON filename in the managed rules directory.");
         return PathSafety.Under(DirectoryPath, name);
     }
-    internal static void AtomicFile(string path, byte[] bytes)
+    internal static void AtomicFile(string path, byte[] bytes, bool overwrite = true)
     {
         PathSafety.EnsureNoLinks(path); Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         var temp = path + ".save-" + Guid.NewGuid().ToString("N");
-        try { File.WriteAllBytes(temp, bytes); File.Move(temp, path, true); }
+        try { File.WriteAllBytes(temp, bytes); File.Move(temp, path, overwrite); }
         finally { if (File.Exists(temp)) File.Delete(temp); }
     }
 }

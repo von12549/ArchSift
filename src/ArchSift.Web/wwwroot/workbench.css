@@ -1,4 +1,5 @@
 :root{--ink:#17324d;--canvas:#edf3f8;--action:#155bc0;--pass:#146438;--warning:#8a4b00;--error:#b42332}
+.rule-sort-controls{margin-block:8px}.rule-sort-controls button{min-width:86px}.rule-sort-controls button:focus-visible{outline:3px solid var(--action);outline-offset:3px}
 dialog{border:2px solid #17324d;border-radius:6px;padding:24px;color:var(--ink);max-width:min(520px,90vw)}dialog::backdrop{background:#17324d88}#confirm-message{white-space:pre-wrap;overflow-wrap:anywhere}
 [hidden]{display:none!important}
 body{background:var(--canvas);color:var(--ink);font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:15px}

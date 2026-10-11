@@ -95,6 +95,12 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             return Results.File(library.Export(entryId), "application/json", entry.FileName);
         });
         app.MapPost("/api/library/{entryId}/delete", (string entryId) => { Library().Delete(entryId); return Results.Ok(); });
+        app.MapGet("/api/library/{entryId}/draft", (string entryId) => Results.Json(Library().Capture(entryId).Ruleset, JsonContract.Options));
+        app.MapPost("/api/library/create/{name}", async (string name, HttpContext context) =>
+        {
+            using var buffer = new MemoryStream(); await context.Request.Body.CopyToAsync(buffer, context.RequestAborted);
+            return Results.Json(Library().Save(name, buffer.ToArray(), false), JsonContract.Options);
+        });
         app.MapGet("/api/chains", () => Results.Json(new ChainStore(Library()).List(), JsonContract.Options));
         app.MapGet("/api/chains/{id}", (string id) => Results.Json(new ChainStore(Library()).Read(id), JsonContract.Options));
         app.MapPost("/api/chains/{id}", async (string id, HttpContext context) =>
@@ -103,6 +109,11 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             new ChainStore(Library()).Save(id, buffer.ToArray()); return Results.Ok();
         });
         app.MapPost("/api/chains/{id}/delete", (string id) => { new ChainStore(Library()).Delete(id); return Results.Ok(); });
+        app.MapPost("/api/chains/create/{id}", async (string id, HttpContext context) =>
+        {
+            using var buffer = new MemoryStream(); await context.Request.Body.CopyToAsync(buffer, context.RequestAborted);
+            new ChainStore(Library()).Save(id, buffer.ToArray(), false); return Results.Ok();
+        });
         app.MapGet("/api/rules", () => Results.Json(Directory.Exists(rulesDirectory)
             ? Directory.GetFiles(rulesDirectory, "*.json").Select(Path.GetFileName).Where(n => !n!.StartsWith('.')).Order().ToArray() : []));
         app.MapGet("/api/rules/{name}", (string name) =>

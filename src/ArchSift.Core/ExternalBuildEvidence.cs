@@ -8,8 +8,10 @@ namespace ArchSift.Core;
 /// <summary>Hashes and verifies externally reviewed facts; never invokes the target build or application.</summary>
 public static class ExternalBuildEvidence
 {
-    public static EvidenceCapture Capture(RunConfiguration config, string[] externalInputs)
+    public static EvidenceCapture Capture(RunConfiguration config, string[] externalInputs, string[]? environmentInputs = null)
     {
+        if (externalInputs.Any(string.IsNullOrWhiteSpace) || (environmentInputs ?? []).Any(p => string.IsNullOrWhiteSpace(p) || p.Contains('=') || p.Contains('\0')))
+            throw new ConfigurationException("Evidence input paths/environment names must be nonblank and valid.");
         var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
         var tfm = config.Build.TargetFramework ?? throw new ConfigurationException("Evidence capture requires an explicit TFM.");
         var properties = snapshot.InputIdentity.Files.Where(f => Path.GetExtension(f.Path) is ".csproj" or ".props" or ".targets")
@@ -25,7 +27,8 @@ public static class ExternalBuildEvidence
         InputCapture.VerifyUnchanged(config.Target.Root, snapshot.InputIdentity);
         return new(1, config.Target.Root, config.Target.Entry, tfm, config.Build.Configuration, snapshot.InputIdentity,
             new(AssemblyArtifacts.FileIdentity(buildFiles), buildFiles), files,
-            properties.ToDictionary(p => p, EnvironmentHash, StringComparer.Ordinal), properties);
+            properties.Concat(environmentInputs ?? []).Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal)
+                .ToDictionary(p => p, EnvironmentHash, StringComparer.Ordinal), properties);
     }
 
     public static ExternalBuildReview Template(EvidenceCapture capture, string captureHash) => new()
@@ -93,9 +96,11 @@ public static class ExternalBuildEvidence
             string.IsNullOrWhiteSpace(review.Sdk)) Fail("SDK/TFM/Configuration proof is inconsistent.");
         var currentProperties = Capture(config, []).PropertyNames;
         if (!currentProperties.SequenceEqual(capture.PropertyNames, StringComparer.Ordinal) ||
-            capture.EnvironmentHashes.Count != currentProperties.Length) Fail("Conditional environment/property capture is incomplete.");
+            currentProperties.Any(p => !capture.EnvironmentHashes.ContainsKey(p))) Fail("Conditional environment/property capture is incomplete.");
         foreach (var property in currentProperties)
             if (!capture.EnvironmentHashes.TryGetValue(property, out var expected) || expected != EnvironmentHash(property)) Fail("Condition input changed: " + property);
+        foreach (var environment in capture.EnvironmentHashes)
+            if (environment.Value != EnvironmentHash(environment.Key)) Fail("Reviewed environment input changed: " + environment.Key);
         foreach (var file in capture.ExternalInputs)
         {
             if (!Path.IsPathFullyQualified(file.Path) || PathSafety.IsUnder(file.Path, config.Target.Root)) { Fail("Invalid external input path."); continue; }
@@ -113,7 +118,7 @@ public static class ExternalBuildEvidence
                 File.ReadAllLines(sdkVersionPath).ElementAtOrDefault(1) != review.Sdk)
                 Fail("SDK version differs from the captured SDK installation.");
         }
-        foreach (var role in new[] { "build-log", "evaluation-trace", "review-notes" })
+        foreach (var role in new[] { "build-log", "evaluation-trace", "review-notes", "generated-input" })
             if (!review.Materials.Any(m => m.Role == role && m.Length > 0)) Fail("Missing review material: " + role);
         foreach (var material in review.Materials)
         {
@@ -141,11 +146,19 @@ public static class ExternalBuildEvidence
     internal static void ValidateClosure(string[] paths, string[] frameworkPaths, List<string> limits)
     {
         var identities = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var path in paths.Concat(frameworkPaths))
+        foreach (var path in paths)
         {
             PathSafety.EnsureNoLinks(path);
             var identity = AssemblyName.GetAssemblyName(path);
             if (!identities.TryAdd(identity.Name!, identity.FullName)) limits.Add("External evidence: Duplicate closure identity: " + identity.Name);
+        }
+        // SDK reference surfaces can legitimately contain several framework versions (netstandard/net8/net10).
+        // Match exact PE identities; never substitute a newer same-name framework or relax non-framework conflicts.
+        var frameworks = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var path in frameworkPaths)
+        {
+            PathSafety.EnsureNoLinks(path);
+            if (!frameworks.Add(AssemblyName.GetAssemblyName(path).FullName)) limits.Add("External evidence: Duplicate framework identity.");
         }
         foreach (var path in paths)
         {
@@ -158,7 +171,8 @@ public static class ExternalBuildEvidence
                 var expected = new AssemblyName { Name = name, Version = reference.Version, CultureName = reader.GetString(reference.Culture) };
                 if ((reference.Flags & AssemblyFlags.PublicKey) != 0) expected.SetPublicKey(reader.GetBlobBytes(reference.PublicKeyOrToken));
                 else expected.SetPublicKeyToken(reader.GetBlobBytes(reference.PublicKeyOrToken));
-                if (!identities.TryGetValue(name, out var actual) || actual != expected.FullName) limits.Add("External evidence: Missing/mismatched dependency closure: " + name);
+                if (identities.TryGetValue(name, out var actual) ? actual != expected.FullName : !frameworks.Contains(expected.FullName))
+                    limits.Add("External evidence: Missing/mismatched dependency closure: " + name);
             }
         }
     }
