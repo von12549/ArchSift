@@ -36,6 +36,8 @@
     "humanConfidenceOfFive": 5,
     "humanRecordedHighestSeverity": "L1",
     "humanRecordedNotes": "none",
+    "humanClarifiedSeverity": "none",
+    "humanClarification": "Operator confirmed the L1 selection was a mistake and there was no issue; original questionnaire retained unchanged.",
     "postHumanMachineAudit": true,
     "hostStateEqual": true
   },
