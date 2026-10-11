@@ -35,10 +35,27 @@ public sealed class CreateFromTests : IDisposable
         var outcomes = await Task.WhenAll(new[] { first, second }.Select(bytes => Task.Run(() =>
         {
             try { Library.Save("copy.json", bytes, false); return true; }
-            catch (Exception error) when (error is ConfigurationException or IOException) { return false; }
+            catch (ConfigurationException) { return false; }
         })));
         Assert.Equal(1, outcomes.Count(x => x)); var saved = File.ReadAllBytes(Path.Combine(root, "rules", "copy.json"));
         Assert.True(saved.SequenceEqual(first) || saved.SequenceEqual(second)); Assert.Equal(2, Library.List().Length);
+    }
+    [Fact]
+    public async Task ConcurrentLibraryReadWaitsForAnOwnedRegistryTransaction()
+    {
+        Library.Import("source.json", Bytes(Policy("source")));
+        var fileLock = new FileStream(Path.Combine(root, "rules", ".archsift-library.lock"), FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        Task<LibraryCard[]>? pending = null;
+        try
+        {
+            var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            pending = Task.Run(() => { started.SetResult(); return Library.List(); });
+            await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await Task.Delay(100);
+            Assert.False(pending.IsCompleted);
+        }
+        finally { fileLock.Dispose(); }
+        Assert.Equal("source", Assert.Single(await pending!.WaitAsync(TimeSpan.FromSeconds(5))).RulesetId);
     }
     [Fact]
     public async Task ChainCopiesRetainOrderedStableReferencesAndRejectDuplicateOrMissingCreates()
@@ -49,7 +66,7 @@ public sealed class CreateFromTests : IDisposable
         var copy = store.Read(source.Id) with { Id = "copy", Version = "2", Entries = [new(b.EntryId), new(a.EntryId)] };
         var outcomes = await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => Task.Run(() =>
         {
-            try { store.Save(copy.Id, Bytes(copy), false); return true; } catch (Exception error) when (error is ConfigurationException or IOException) { return false; }
+            try { store.Save(copy.Id, Bytes(copy), false); return true; } catch (ConfigurationException) { return false; }
         })));
         Assert.Equal(1, outcomes.Count(x => x)); Assert.Equal(original, File.ReadAllBytes(sourcePath)); Assert.Equal(copy.Entries, store.Read(copy.Id).Entries);
         Assert.Throws<ConfigurationException>(() => store.Save("COPY", Bytes(copy with { Id = "COPY" }), false));

@@ -78,8 +78,21 @@ public sealed class RulesetLibrary
     {
         PathSafety.EnsureDisjoint(targetRoot, DirectoryPath); Directory.CreateDirectory(DirectoryPath);
         var lockPath = Path.Combine(DirectoryPath, ".archsift-library.lock"); PathSafety.EnsureNoLinks(lockPath);
-        using var fileLock = new FileStream(lockPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        using var fileLock = AcquireFileLock(lockPath);
         return action(ReadRegistry());
+    }
+    internal static FileStream AcquireFileLock(string path)
+    {
+        var timer = System.Diagnostics.Stopwatch.StartNew();
+        while (true)
+        {
+            try { return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            catch (IOException error) when (((error.HResult & 0xffff) is 11 or 32 or 33) && timer.Elapsed < TimeSpan.FromSeconds(5))
+            {
+                // Another request/process owns the short registry transaction. Never retry permissions or other I/O errors.
+                Thread.Sleep(20);
+            }
+        }
     }
     private LibraryRegistry ReadRegistry()
     {

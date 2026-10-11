@@ -17,7 +17,7 @@ public sealed class ChainStore(RulesetLibrary library)
         var path = FilePath(id);
         Directory.CreateDirectory(DirectoryPath);
         var lockPath = PathSafety.Under(DirectoryPath, ".archsift-chains.lock");
-        using var fileLock = new FileStream(lockPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        using var fileLock = RulesetLibrary.AcquireFileLock(lockPath);
         if (Directory.GetFiles(DirectoryPath).Any(p => Path.GetFileName(p).Equals(id + ".json", StringComparison.OrdinalIgnoreCase) &&
             (!allowUpdate || !Path.GetFileName(p).Equals(id + ".json", StringComparison.Ordinal))))
             throw new ConfigurationException("Chain ID conflict: " + id);
@@ -33,7 +33,7 @@ public sealed class ChainStore(RulesetLibrary library)
     public void Delete(string id)
     {
         var path = FilePath(id); Directory.CreateDirectory(DirectoryPath);
-        using var fileLock = new FileStream(PathSafety.Under(DirectoryPath, ".archsift-chains.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        using var fileLock = RulesetLibrary.AcquireFileLock(PathSafety.Under(DirectoryPath, ".archsift-chains.lock"));
         if (!File.Exists(path)) throw new ConfigurationException("Missing chain."); File.Delete(path);
     }
     public static ChainDocument Load(string path) { PathSafety.EnsureNoLinks(path); return Parse(File.ReadAllBytes(path)); }

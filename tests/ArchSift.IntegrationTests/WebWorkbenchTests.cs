@@ -113,8 +113,10 @@ public sealed class WebWorkbenchTests
             Assert.Equal(registryHash, AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, ".archsift-library.json")));
             var copiedDraft = await client.GetFromJsonAsync<Ruleset>("/api/library/" + secondCard.EntryId + "/draft", JsonContract.Options, timeout.Token);
             var copy = copiedDraft! with { Id = "http-copy" };
-            var createdCopy = await client.PostAsync("/api/library/create/copy.json", JsonContent.Create(copy, options: JsonContract.Options), timeout.Token);
-            createdCopy.EnsureSuccessStatusCode(); var copiedCard = (await Cards()).Single(c => c.RulesetId == copy.Id);
+            var creates = await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => client.PostAsync("/api/library/create/copy.json", JsonContent.Create(copy, options: JsonContract.Options), timeout.Token)));
+            Assert.Single(creates, response => response.StatusCode == HttpStatusCode.OK);
+            Assert.Single(creates, response => response.StatusCode == HttpStatusCode.BadRequest);
+            var copiedCard = (await Cards()).Single(c => c.RulesetId == copy.Id);
             Assert.NotEqual(secondCard.EntryId, copiedCard.EntryId); Assert.Equal(importedBytes, await client.GetByteArrayAsync("/api/library/" + secondCard.EntryId + "/json", timeout.Token));
             Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/library/create/COPY.json", JsonContent.Create(copy, options: JsonContract.Options), timeout.Token)).StatusCode);
             Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/library/create/case-id.json", JsonContent.Create(copy with { Id = "HTTP-COPY" }, options: JsonContract.Options), timeout.Token)).StatusCode);
