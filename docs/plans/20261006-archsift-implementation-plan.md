@@ -1,6 +1,6 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
-2026-10-11 0.6.0 替代候选最新状态：Agent 完成新根安装、冻结策略、CLI/Web 各 18 次真实 IFX 测量、外置 0.5→0.6→0.5 副本生命周期；用户完成独立 UI 视觉与实际操作，八项 yes、信心 5/5；人工后只读机器审计通过，原 IFX 目标、原安装和宿主状态相等。见[最终验收](../acceptance/20261011-0.6-final-acceptance.md)。状态 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；下面旧段落保留形成时的历史状态。
+2026-10-11 0.6.0 最新状态：替代候选的真实 IFX 机器门禁、用户独立 UI 验收及人工后审计通过；[PR #3](https://github.com/von12549/ArchSift/pull/3) 合并后，`v0.6.0` 已[正式发布并完成四资产独立下载、原生 ZIP/Setup smoke 与发布后审计](../releases/0.6.0-publication.md)。原 IFX 目标、原安装和宿主状态相等。当前 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；下面旧段落保留形成时的历史状态。
 
 日期：2026-10-06（Australia/Sydney）
 
