@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 后续方向：用户要求为可信外部程序集证据、Ruleset／Chain `Create From`、Results 规则结果排序和 Launcher 关闭反馈建立 0.7.0 计划。见[ArchSift 0.7.0 改进计划](20261012-archsift-0.7.0-improvement-plan.md)；该计划尚未实施、测试或发布，以下历史阶段记录保持原状态。
+
 2026-10-11 0.6.0 最新状态：替代候选的真实 IFX 机器门禁、用户独立 UI 验收及人工后审计通过；[PR #3](https://github.com/von12549/ArchSift/pull/3) 合并后，`v0.6.0` 已[正式发布并完成四资产独立下载、原生 ZIP/Setup smoke 与发布后审计](../releases/0.6.0-publication.md)。原 IFX 目标、原安装和宿主状态相等。当前 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；下面旧段落保留形成时的历史状态。
 
 日期：2026-10-06（Australia/Sydney）
