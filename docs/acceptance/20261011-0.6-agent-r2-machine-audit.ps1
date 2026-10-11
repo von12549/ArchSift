@@ -40,7 +40,7 @@ function Check-Payload([string]$Root,[string]$ManifestHash,[string]$Version,[str
     if(@(Get-ChildItem -LiteralPath $Root -Recurse -File -Force).Count-ne($manifest.entries.Count+1)){throw 'Payload contains unexpected files.'}
     return @{version=$Version;manifestSha256=$ManifestHash;fileCount=$manifest.entries.Count}
 }
-function Git-Read([string[]]$Arguments){
+function Product-Git-Read([string[]]$Arguments){
     $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=(Get-Command git).Source;$start.UseShellExecute=$false;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
     foreach($arg in (@('--no-optional-locks','--no-replace-objects','-c','core.fsmonitor=false','-c','core.untrackedCache=false','-C',$repoRoot)+$Arguments)){[void]$start.ArgumentList.Add($arg)}
     $process=[Diagnostics.Process]::Start($start)
@@ -57,11 +57,11 @@ try{
     if($cli.status-cne'cli-measurements-for-review'-or$ui.status-cne'ui-measurements-for-review'-or$cli.completedCount-ne18-or$ui.completedCount-ne18-or$cli.semanticSha256-cne$ui.semanticSha256-or$rollback.status-cne'external-copy-rollback-passed'-or-not$rollback.laterManagedEditRejected-or-not$rollback.backupEqual){throw 'Prerequisite gates are incomplete.'}
     $targetBefore=Target-State;$originalBefore=Original-State
     if(-not(Same-Target $targetBefore $freeze.target)-or-not(Same-Original $originalBefore $freeze.original)){throw 'Target or original installation differs from frozen input.'}
-    if((Git-Read @('status','--porcelain=v1','--untracked-files=normal')).Trim()){throw 'ArchSift checkout is not clean.'}
-    [void](Git-Read @('merge-base','--is-ancestor','de222c2462e182191b2f71499421bfe086ea7bab','HEAD'))
-    $changes=@((Git-Read @('diff','--name-only','de222c2462e182191b2f71499421bfe086ea7bab','HEAD') -split '[\r\n]+')|Where-Object {$_})
+    if((Product-Git-Read @('status','--porcelain=v1','--untracked-files=normal')).Trim()){throw 'ArchSift checkout is not clean.'}
+    [void](Product-Git-Read @('merge-base','--is-ancestor','de222c2462e182191b2f71499421bfe086ea7bab','HEAD'))
+    $changes=@((Product-Git-Read @('diff','--name-only','de222c2462e182191b2f71499421bfe086ea7bab','HEAD') -split '[\r\n]+')|Where-Object {$_})
     foreach($path in $changes){if($path-cne'AGENTS.md'-and$path-notmatch'^docs/(acceptance|plans)/'){throw 'Product sources changed after frozen candidate.'}}
-    $checks.source=@{head=(Git-Read @('rev-parse','HEAD')).Trim();productCommit='de222c2462e182191b2f71499421bfe086ea7bab';documentationOnlyChanges=$changes.Count;clean=$true}
+    $checks.source=@{head=(Product-Git-Read @('rev-parse','HEAD')).Trim();productCommit='de222c2462e182191b2f71499421bfe086ea7bab';documentationOnlyChanges=$changes.Count;clean=$true}
     if((Hash-File (Join-Path $AssetRoot 'archsift-0.6.0-win-x64.zip'))-cne'64af0fb70ea8548b99373151c7005c15b0365784d8faedd3890989d3d040a560'-or(Hash-File (Join-Path $AssetRoot 'ArchSift.Setup.exe'))-cne'6327fcf10700aeec00f0b84da4201d4c3ad8b10d51d3f894766db4a2c55debab'){throw 'Independent candidate assets differ.'}
     $checks.assets=$true
     $install=Get-Content -LiteralPath (Safe-Path (Join-Path $NewInstallRoot 'install.json')) -Raw|ConvertFrom-Json
