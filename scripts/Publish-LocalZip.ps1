@@ -1,12 +1,12 @@
 [CmdletBinding()]
-param([string]$LabRoot='D:\ArchSift-lab',[string]$LocalFeed=(Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),[string]$Version='0.6.0',[switch]$RequireCommittedSource)
+param([string]$LabRoot='D:\ArchSift-lab',[string]$LocalFeed=(Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages'),[string]$Version='0.7.0',[switch]$RequireCommittedSource)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $lab=[IO.Path]::GetFullPath($LabRoot)
 if($lab-eq$root-or$lab.StartsWith($root+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Package output must be outside source.'}
 if($Version-notmatch'^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?$'){throw 'Invalid package version.'}
-$productScope=@('src','schemas','templates','samples','scripts','.github','Directory.Build.props','Directory.Packages.props','global.json','NuGet.Config','LICENSE','docs/migration','docs/package-readme.md','docs/installation.md','docs/installation-0.4.md','docs/installation-0.5.md','docs/setup-0.5.md','docs/setup.md','docs/cli.md','docs/changes.md','docs/reports.md','docs/rules.md','docs/build-inputs.md')
+$productScope=@('src','schemas','templates','samples','scripts','.github','Directory.Build.props','Directory.Packages.props','global.json','NuGet.Config','LICENSE','docs/migration','docs/package-readme.md','docs/installation.md','docs/installation-0.4.md','docs/installation-0.5.md','docs/setup-0.5.md','docs/setup.md','docs/cli.md','docs/changes.md','docs/reports.md','docs/rules.md','docs/build-inputs.md','docs/external-build-evidence.md')
 $sourceCommitBefore=(& git -C $root rev-parse HEAD).Trim()
 function Product-Hash {
     $paths=((& git -C $root ls-files -z --cached --others --exclude-standard -- @productScope)-join "`n").Split([char]0,[StringSplitOptions]::RemoveEmptyEntries)

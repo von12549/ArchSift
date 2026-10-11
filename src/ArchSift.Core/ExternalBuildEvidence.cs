@@ -101,6 +101,18 @@ public static class ExternalBuildEvidence
             if (!capture.EnvironmentHashes.TryGetValue(property, out var expected) || expected != EnvironmentHash(property)) Fail("Condition input changed: " + property);
         foreach (var environment in capture.EnvironmentHashes)
             if (environment.Value != EnvironmentHash(environment.Key)) Fail("Reviewed environment input changed: " + environment.Key);
+        foreach (var role in new[] { "build-log", "evaluation-trace", "review-notes", "generated-input" })
+            if (!review.Materials.Any(m => m.Role == role && m.Length > 0)) Fail("Missing review material: " + role);
+        if (!snapshot.Projects.Select(p => p.Id).Order(StringComparer.Ordinal).SequenceEqual(review.Projects.Select(p => p.SourceProject).Order(StringComparer.Ordinal)))
+            Fail("Evaluated project coverage is incomplete/duplicate.");
+        if (Path.IsPathFullyQualified(review.SdkToolPath))
+        {
+            var versionFile = Path.Combine(Path.GetDirectoryName(review.SdkToolPath)!, ".version");
+            if (!File.Exists(versionFile) || File.ReadAllLines(versionFile).ElementAtOrDefault(1) != review.Sdk)
+                Fail("SDK version differs from the captured SDK installation.");
+        }
+        // An already rejected review cannot bind. Avoid repeatedly hashing an entire SDK for such requests.
+        if (limits.Count > 0) return limits;
         foreach (var file in capture.ExternalInputs)
         {
             if (!Path.IsPathFullyQualified(file.Path) || PathSafety.IsUnder(file.Path, config.Target.Root)) { Fail("Invalid external input path."); continue; }

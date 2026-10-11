@@ -32,11 +32,13 @@ public static class AssemblyArtifacts
             var link = manifest.ReviewedBuild ?? throw new ConfigurationException("Missing reviewed build proof.");
             var capturePath = Path.GetFullPath(link.CapturePath); var reviewPath = Path.GetFullPath(link.ReviewPath);
             PathSafety.EnsureDisjoint(config.Target.Root, capturePath); PathSafety.EnsureDisjoint(config.Target.Root, reviewPath);
-            if (FileHash(capturePath) != link.CaptureSha256 || FileHash(reviewPath) != link.ReviewSha256)
+            var reviewBytesBound = FileHash(capturePath) == link.CaptureSha256 && FileHash(reviewPath) == link.ReviewSha256;
+            if (!reviewBytesBound)
             { bound = false; limits.Add("External evidence: Capture/review bytes differ from seal."); }
             review = ExternalBuildEvidence.Read<ExternalBuildReview>(reviewPath);
             var capture = ExternalBuildEvidence.Read<EvidenceCapture>(capturePath);
-            limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, evidenceHashes));
+            if (reviewBytesBound)
+                limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, evidenceHashes));
             if (review.Sdk != manifest.Sdk || review.Configuration != manifest.Configuration || review.TargetFramework != manifest.TargetFramework)
                 limits.Add("External evidence: Sealed build context differs from review.");
             if (limits.Count > 0) bound = false;
