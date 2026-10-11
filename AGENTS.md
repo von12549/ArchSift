@@ -21,6 +21,16 @@
 - `Signed-off-by` does not replace `Co-Authored-By`. This rule does not authorize creating a commit, pushing, or rewriting existing history.
 - Keep the current human Git author as the primary author unless the user explicitly requests a change. Append agent attribution as trailers; do not change the primary author identity to implement co-authorship. Do not amend or rewrite existing commits solely to add attribution.
 
+## Pull request attribution
+
+- When Codex creates or updates a pull request for Codex-contributed changes, append this exact signature at the end of the PR description, separated from the body by a blank line:
+
+  ```text
+  Co-Authored-By: Codex <noreply@openai.com>
+  ```
+
+- Preserve the signature when revising the PR description, without duplicating it. PR attribution does not replace the required commit trailers or authorize creating, updating, merging, or publishing a PR.
+
 ## Source and migration
 
 - Treat analyzed target repositories, Guard and IFX source checkouts as read-only. Preserve user changes. ArchSift product development files may be edited for an authorized implementation task.
