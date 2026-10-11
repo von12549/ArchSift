@@ -59,7 +59,8 @@ try{
     if(-not(Same-Target $targetBefore $freeze.target)-or-not(Same-Original $originalBefore $freeze.original)){throw 'Target or original installation differs from frozen input.'}
     if((Product-Git-Read @('status','--porcelain=v1','--untracked-files=normal')).Trim()){throw 'ArchSift checkout is not clean.'}
     [void](Product-Git-Read @('merge-base','--is-ancestor','de222c2462e182191b2f71499421bfe086ea7bab','HEAD'))
-    $changes=@((Product-Git-Read @('diff','--name-only','de222c2462e182191b2f71499421bfe086ea7bab','HEAD') -split '[\r\n]+')|Where-Object {$_})
+    $diffText=Product-Git-Read @('diff','--name-only','de222c2462e182191b2f71499421bfe086ea7bab','HEAD')
+    $changes=@(($diffText -split '[\r\n]+')|Where-Object {$_})
     foreach($path in $changes){if($path-cne'AGENTS.md'-and$path-notmatch'^docs/(acceptance|plans)/'){throw "Product sources changed after frozen candidate: $path"}}
     $checks.source=@{head=(Product-Git-Read @('rev-parse','HEAD')).Trim();productCommit='de222c2462e182191b2f71499421bfe086ea7bab';documentationOnlyChanges=$changes.Count;clean=$true}
     if((Hash-File (Join-Path $AssetRoot 'archsift-0.6.0-win-x64.zip'))-cne'64af0fb70ea8548b99373151c7005c15b0365784d8faedd3890989d3d040a560'-or(Hash-File (Join-Path $AssetRoot 'ArchSift.Setup.exe'))-cne'6327fcf10700aeec00f0b84da4201d4c3ad8b10d51d3f894766db4a2c55debab'){throw 'Independent candidate assets differ.'}
