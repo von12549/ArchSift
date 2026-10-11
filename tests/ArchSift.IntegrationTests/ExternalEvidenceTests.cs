@@ -36,7 +36,7 @@ public sealed class ExternalEvidenceTests
         try
         {
             const string project = "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework><AssemblyName>Example</AssemblyName></PropertyGroup></Project>";
-            const string props = "<Project><PropertyGroup Condition=\"'$(CI)' != 'true'\"><NoWarn>$(NoWarn);CS0649</NoWarn></PropertyGroup></Project>";
+            const string props = "<Project><PropertyGroup Condition=\"'$(CI)' != 'true'\"><NoWarn>$(NoWarn);CS0649</NoWarn></PropertyGroup><PropertyGroup Condition=\"$(MSBuildProjectName.EndsWith('Example'))\"><NoWarn>$(NoWarn);CS0649</NoWarn></PropertyGroup></Project>";
             File.WriteAllText(Path.Combine(source, "Example.csproj"), project);
             File.WriteAllText(Path.Combine(source, "Directory.Build.props"), props);
             File.WriteAllText(Path.Combine(source, "Types.cs"), "namespace Domain { public class Model { " +
@@ -51,7 +51,7 @@ public sealed class ExternalEvidenceTests
                 Assert.True(result.ExitCode == 0, result.Output + result.Error); return result;
             }
             var sdk = (await Run("--version")).Output.Trim();
-            var evaluation = await Run("msbuild", "Example.csproj", "-getProperty:MSBuildBinPath,CI,NoWarn", "-nologo");
+            var evaluation = await Run("msbuild", "Example.csproj", "-getProperty:MSBuildBinPath,MSBuildProjectName,CI,NoWarn", "-nologo");
             using var evaluated = JsonDocument.Parse(evaluation.Output);
             var values = evaluated.RootElement.GetProperty("Properties");
             var sdkRoot = values.GetProperty("MSBuildBinPath").GetString()!;
@@ -83,7 +83,7 @@ public sealed class ExternalEvidenceTests
             {
                 CaptureSha256 = AssemblyArtifacts.FileHash(capturePath), Approved = true, InputsComplete = true, Reviewer = "Synthetic integration fixture",
                 Sdk = sdk, SdkToolPath = tool, TargetFramework = "net10.0", Configuration = "Debug", Command = command, ExitCode = built.ExitCode,
-                Projects = [new("Example.csproj", "Example", "net10.0", new() { ["CI"] = values.GetProperty("CI").GetString()!, ["NoWarn"] = values.GetProperty("NoWarn").GetString()! })],
+                Projects = [new("Example.csproj", "Example", "net10.0", new() { ["CI"] = values.GetProperty("CI").GetString()!, ["NoWarn"] = values.GetProperty("NoWarn").GetString()!, ["MSBuildProjectName"] = values.GetProperty("MSBuildProjectName").GetString()! })],
                 Assemblies = [new("Example.csproj", Path.Combine(evidence, "Example.dll"))], FrameworkPaths = frameworkProof,
                 Materials = new[] { Material(log, "build-log"), Material(Path.Combine(evidence, "build.binlog"), "evaluation-trace"), Material(notes, "review-notes") }
                     .Concat(Directory.GetFiles(Path.Combine(build, "obj"), "*", SearchOption.AllDirectories).Select(p => Material(p, "generated-input"))).ToArray(), Unknowns = []

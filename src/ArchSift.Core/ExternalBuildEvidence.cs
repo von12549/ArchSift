@@ -15,7 +15,7 @@ public static class ExternalBuildEvidence
         var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
         var tfm = config.Build.TargetFramework ?? throw new ConfigurationException("Evidence capture requires an explicit TFM.");
         var properties = snapshot.InputIdentity.Files.Where(f => Path.GetExtension(f.Path) is ".csproj" or ".props" or ".targets")
-            .SelectMany(f => Regex.Matches(File.ReadAllText(PathSafety.Under(config.Target.Root, f.Path)), @"\$\(([A-Za-z_][A-Za-z0-9_]*)\)",
+            .SelectMany(f => Regex.Matches(File.ReadAllText(PathSafety.Under(config.Target.Root, f.Path)), @"\$\(([A-Za-z_][A-Za-z0-9_]*)(?=[).])",
                 RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)).Select(m => m.Groups[1].Value))
             .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal).ToArray();
         var files = externalInputs.Select(Path.GetFullPath).Distinct(PathComparer).Order(StringComparer.Ordinal).Select(p =>
