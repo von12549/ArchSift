@@ -1,5 +1,9 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 独立人工 Workbench 回传已记录：bc936cb 的 Rulesets／Chains 复制、B 结果、排序／历史／中英文宽窄布局符合预期；空文件名误报会话不可用需要修复。会话安全关闭、原件／宿主一致，[实际反馈](../acceptance/20261012-0.7-human-workbench-bc936cb.md)保留来源与报告。已补提交前双语必填校验和非认证 HTTP 错误分类，前端回归通过；开发／替代固定候选复验进行，Launcher／整体评分未提供，未合并发布。
+
+2026-10-12 用户开始独立人工 UI：固定 bc936cb 的 Workbench 已启动，全新外置库／报告会话 human-ui-0.7-a409b4d22ecb4f01b8d736dbce513286，固定载荷／原件／宿主启动前后一致。用户操作和评分尚未完成，Launcher 及关闭后审计待继续；机器门禁保持通过，PR draft、未合并发布。
+
 2026-10-12 0.7 收尾机器门禁 COMPLETE：冻结产品 `bc936cb` 的两平台实际 SDK 10.0.401 各222项、本地SDK10.0.303／222项／八模板、17ZIP／13Setup／原预算／SARIF、真实 source-bound 105 contexts／406B＋182A、真实库6组／6截图、Launcher4组／10截图、外置生命周期及最终653新载荷／647原载荷／14状态历史／782tracked＋783capture／宿主和进程审计全部通过。[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)与机器JSON保留精确身份；partial／compliant／exit4和外部审查边界不变。P2 COMPLETE／P3 MACHINE COMPLETE／HUMAN UI PENDING；更新记录后提交推送，PR5保留draft，人工用户完成及后审计前不合并发布、不采用B策略。后文尚未答复／不能绑定／待机器复验为历史。
 
 2026-10-12 P3 首候选 b56d652 的 CI／包／原生真实 A/B／外置生命周期通过，但真实库浏览器发现 chain 编辑器内容不可见，候选不关闭；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保留各失败。已改显式编辑面板并加入未保存关闭保护，222 项／八模板和真实库四组针对性浏览器开发检查通过、原件／宿主一致。修复阶段提交推送后重建替代固定候选，P3／独立人工 UI 仍未完成，未合并／发布。

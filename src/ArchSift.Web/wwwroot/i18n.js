@@ -51,6 +51,7 @@ const zhTranslations={
   "Each row is finding evidence. Color indicates severity.": "以下每一行都是独立 finding；颜色表示严重程度，不代表项目本体。",
   "Job status": "任务状态",
   "Session or service unavailable. Reopen the launch URL.": "会话或服务不可用；使用启动地址重新打开。",
+  "Enter a JSON filename before saving.": "保存前请填写 JSON 文件名。",
   "Exception ID / reason": "例外 ID / 理由",
   "Exception ID": "例外 ID",
   "Exception reason": "例外理由",

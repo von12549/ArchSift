@@ -125,6 +125,24 @@ assert.equal(JSON.stringify(sourceRules),savedRulesBytes);
 const beforeCancel=run('JSON.stringify(currentRuleset())');
 const cancelledCopy=run('createRulesetFrom({entryId:"other-entry",fileName:"other.json"})');await Promise.resolve();get('confirm-no').onclick();await cancelledCopy;
 assert.equal(run('JSON.stringify(currentRuleset())'),beforeCancel);
+get('ruleset-id').value='copy-with-required-file';
+for(const lang of ['en','zh']) {
+ run('locale='+JSON.stringify(lang)+';');
+ for(const file of ['', '   ']) {
+  get('filename').value=file;const before=run('JSON.stringify(currentRuleset())');const count=requests.length;
+  await get('save-rule').onclick();
+  assert.equal(get('editor-message').textContent,lang==='en'?'Enter a JSON filename before saving.':'保存前请填写 JSON 文件名。');
+  assert.equal(requests.length,count,'Blank filename must not submit an empty route');
+  assert.equal(get('save-rule').disabled,false);assert.equal(run('JSON.stringify(currentRuleset())'),before);
+ }
+}
+run('locale="en";');
+const copyFetch=context.fetch;
+context.fetch=async()=>({ok:false,status:404,json:async()=>{throw new SyntaxError('Empty response');}});
+await assert.rejects(run('api("missing-route")'),/Request failed: 404/);
+context.fetch=async()=>({ok:false,status:401,json:async()=>{throw new SyntaxError('Empty response');}});
+await assert.rejects(run('api("expired-session")'),/Session or service unavailable/);
+context.fetch=copyFetch;
 run('dirtySections.delete("chain");');await run('editChain(sourceChain,true)');assert.equal(get('chain-id').value,'');assert.equal(get('chain-id').disabled,false);assert.equal(run('chainDraft[0].entryId'),'missing-stable-id');
 assert.equal(get('chain-editor').hidden,false);
 const cancelledChainClose=get('chain-close').onclick();await Promise.resolve();get('confirm-no').onclick();assert.equal(await cancelledChainClose,false);assert.equal(get('chain-editor').hidden,false);assert.equal(run('chainDraft[0].entryId'),'missing-stable-id');

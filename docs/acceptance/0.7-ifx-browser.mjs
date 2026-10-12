@@ -46,7 +46,18 @@ try {
  await page.waitForFunction(()=>!document.querySelector('#editor-panel').hidden&&document.querySelector('#ruleset-id').value==='');
  assert.equal(await page.locator('#ruleset-id').inputValue(),'');assert.equal(await page.locator('#filename').inputValue(),'');
  assert.equal(await page.locator('#rule-list details.editor-rule').count(),406);
- await page.locator('#ruleset-id').fill('ifx-b-native-review-copy');await page.locator('#filename').fill('ifx-b-native-review-copy.json');
+ await page.locator('#ruleset-id').fill('ifx-b-native-review-copy');
+ let createRequests=0;const countCreates=request=>{if(new URL(request.url()).pathname.startsWith('/api/library/create/'))createRequests++;};page.on('request',countCreates);
+ for(const lang of ['en','zh']){
+  await page.locator('#locale').selectOption(lang);
+  for(const value of ['', '   ']){
+   await page.locator('#filename').fill(value);await page.locator('#save-rule').click();
+   await page.waitForFunction(message=>document.querySelector('#editor-message').textContent===message,lang==='en'?'Enter a JSON filename before saving.':'保存前请填写 JSON 文件名。');
+   assert.equal(await page.locator('#ruleset-id').inputValue(),'ifx-b-native-review-copy');assert.ok(await page.locator('#save-rule').isEnabled());assert.ok(await page.locator('#editor-panel').isVisible());assert.equal(createRequests,0);
+  }
+ }
+ page.off('request',countCreates);await page.locator('#locale').selectOption('en');await page.locator('#filename').fill('ifx-b-native-review-copy.json');
+ checks.push('Blank/whitespace copy filenames show precise en/zh validation, keep the draft and make no create request; valid save recovers.');
  await page.locator('#ruleset-version').fill('0.7-machine-review');await page.locator('#rule-filter').fill('b03');
  await page.locator('#editor-panel').evaluate(el=>el.scrollIntoView({block:'start'}));await capture('ifx-copy-en-desktop.png');
  await page.locator('#locale').selectOption('zh');await page.setViewportSize({width:480,height:900});await page.locator('#editor-panel').evaluate(el=>el.scrollIntoView({block:'start'}));await capture('ifx-copy-zh-narrow.png');
