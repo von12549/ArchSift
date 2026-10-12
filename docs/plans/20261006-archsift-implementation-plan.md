@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 0.7 收尾机器门禁 COMPLETE：冻结产品 `bc936cb` 的两平台实际 SDK 10.0.401 各222项、本地SDK10.0.303／222项／八模板、17ZIP／13Setup／原预算／SARIF、真实 source-bound 105 contexts／406B＋182A、真实库6组／6截图、Launcher4组／10截图、外置生命周期及最终653新载荷／647原载荷／14状态历史／782tracked＋783capture／宿主和进程审计全部通过。[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)与机器JSON保留精确身份；partial／compliant／exit4和外部审查边界不变。P2 COMPLETE／P3 MACHINE COMPLETE／HUMAN UI PENDING；更新记录后提交推送，PR5保留draft，人工用户完成及后审计前不合并发布、不采用B策略。后文尚未答复／不能绑定／待机器复验为历史。
+
 2026-10-12 P3 首候选 b56d652 的 CI／包／原生真实 A/B／外置生命周期通过，但真实库浏览器发现 chain 编辑器内容不可见，候选不关闭；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保留各失败。已改显式编辑面板并加入未保存关闭保护，222 项／八模板和真实库四组针对性浏览器开发检查通过、原件／宿主一致。修复阶段提交推送后重建替代固定候选，P3／独立人工 UI 仍未完成，未合并／发布。
 
 2026-10-12 P2 真实上下文绑定与本轮 A/B 复验 COMPLETE：105 contexts／sourceBound=true，406 B＋182 A 全部 pass、零 finding／execution error，仍 partial／compliant／exit 4；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保存精确材料与报告身份。审查补强后 222 项 Release／八模板通过、原件与宿主一致。阶段修复和记录提交／推送后进入 P3 新固定候选；人工 UI 未执行，未合并／发布。

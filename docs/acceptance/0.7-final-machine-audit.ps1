@@ -14,8 +14,12 @@ function Save([string]$name,$value) { [IO.File]::WriteAllText((Join-Path $audit 
 $before=Get-ArchSiftHostHash
 $target='D:\IFX-10-Root\IFX-New'
 $preflight=Get-Content -Raw 'D:\ArchSift-lab\evidence\ifx-0.7-preflight-527f4137255440f3b682467a9fbbf0ec\result.json'|ConvertFrom-Json
+$originalBaseline=Get-Content -Raw 'D:\ArchSift-lab\evidence\0.7-baseline-64449e4d9a8e4d4cad7eaa184785882d\result.json'|ConvertFrom-Json
+$originalFrozen=@($originalBaseline.frozenFiles|Where-Object {$_.path.StartsWith('D:\IFX-10-Root\ArchSift\',[StringComparison]::OrdinalIgnoreCase)})
+if($originalFrozen.Count -ne 14) { throw 'Full original state/history baseline required.' }
 if((& git -C $target rev-parse HEAD).Trim() -cne $preflight.target.commit -or (& git -C $target status --porcelain)) { throw 'Original IFX commit/worktree changed.' }
 foreach($file in $preflight.original.frozenFiles) { if((Hash $file.path) -cne $file.sha256) { throw 'Original IFX state changed.' } }
+foreach($file in $originalFrozen) { if((Hash $file.path) -cne $file.sha256 -or (Get-Item -LiteralPath $file.path).Length -ne $file.bytes) { throw 'Original installation/state/history changed.' } }
 $tracked=@(& git -C $target -c core.quotepath=false ls-files)
 if($LASTEXITCODE -ne 0) { throw 'Cannot enumerate target tracked inputs.' }
 $records=@($tracked|Sort-Object|ForEach-Object{[ordered]@{path=$_;sha256=(Hash (Join-Path $target $_))}})
@@ -28,6 +32,11 @@ if($Stage -eq 'Baseline') {
 } else {
     $baseline=Get-Content -Raw (Join-Path $audit 'baseline.json')|ConvertFrom-Json
     if($before -cne $baseline.hostSha256 -or $sourceHash -cne $baseline.trackedSha256) { throw 'Baseline host/source drift; preserve evidence.' }
+    $capturedSources=Get-Content -Raw 'D:\ArchSift-lab\runs\ifx-external-0.7-0a1aba1205ce4267a3b66d002729a909\source-files.json'|ConvertFrom-Json
+    foreach($file in $capturedSources) {
+        $p=[IO.Path]::GetFullPath((Join-Path $target $file.path))
+        if(!$p.StartsWith($target+'\',[StringComparison]::OrdinalIgnoreCase) -or (Hash $p) -cne $file.sha256) { throw 'Captured original input changed, including ignored inputs.' }
+    }
     $candidate=[IO.Path]::GetFullPath($CandidateRoot)
     if(!$candidate.StartsWith('D:\ArchSift-lab\packages\release-',[StringComparison]::OrdinalIgnoreCase)) { throw 'Recorded external candidate required.' }
     $package=Get-Content -Raw (Join-Path $candidate 'package-result.json')|ConvertFrom-Json
@@ -47,7 +56,7 @@ if($Stage -eq 'Baseline') {
     $ids=@($processes|ForEach-Object ProcessId)
     $listeners=@(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue|Where-Object {$_.OwningProcess -in $ids}|Select-Object LocalPort,OwningProcess)
     $after=Get-ArchSiftHostHash
-    Save 'result.json' ([ordered]@{status=$(if($processes.Count -or $listeners.Count -or $after -cne $before){'fail'}else{'pass'});sourceCommit=$package.sourceCommit;candidateRoot=$candidate;zipSha256=$package.zipSha256;setupSha256=$package.setupSha256;payloadEntryCount=$manifest.entries.Count;originalPayloadEntryCount=$originalManifest.entries.Count;originalFrozenFileCount=$preflight.original.frozenFiles.Count;targetTrackedFileCount=$records.Count;targetTrackedSha256=$sourceHash;originalUnchanged=$true;hostBeforeSha256=$before;hostAfterSha256=$after;hostStateEqual=($before -ceq $after);residualProcesses=@($processes|Select-Object ProcessId,Name);residualListeners=$listeners;humanUiAcceptance='pending'})
+    Save 'result.json' ([ordered]@{status=$(if($processes.Count -or $listeners.Count -or $after -cne $before){'fail'}else{'pass'});sourceCommit=$package.sourceCommit;candidateRoot=$candidate;zipSha256=$package.zipSha256;setupSha256=$package.setupSha256;payloadEntryCount=$manifest.entries.Count;originalPayloadEntryCount=$originalManifest.entries.Count;originalFrozenFileCount=$originalFrozen.Count;targetTrackedFileCount=$records.Count;targetCapturedFileCount=$capturedSources.Count;targetTrackedSha256=$sourceHash;originalUnchanged=$true;hostBeforeSha256=$before;hostAfterSha256=$after;hostStateEqual=($before -ceq $after);residualProcesses=@($processes|Select-Object ProcessId,Name);residualListeners=$listeners;humanUiAcceptance='pending'})
     if($processes.Count -or $listeners.Count -or $after -cne $before) { throw 'Final machine safety audit failed; preserve evidence.' }
     [ordered]@{auditRoot=$audit;status='pass';hostStateEqual=$true;originalUnchanged=$true;noOwnedProcess=$true;payloadCount=$manifest.entries.Count}|ConvertTo-Json -Compress
 }
