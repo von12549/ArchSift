@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-publication-verification",
+  "date": "2026-10-12",
+  "timezone": "Australia/Sydney",
+  "version": "0.7.0",
+  "status": "published-verified",
+  "acceptanceStatus": "accepted-with-limitations",
+  "productSourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+  "productInputsSha256": "301cd8e5e2b9e74a346e1c2bcb8c86525dc548f88958def45fe1dee5b3ea0746",
+  "tag": "v0.7.0",
+  "tagCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+  "releaseUrl": "https://github.com/von12549/ArchSift/releases/tag/v0.7.0",
+  "publishedAt": "2026-10-12T12:34:00Z",
+  "draft": false,
+  "prerelease": false,
+  "userAuthorization": {
+    "source": "Direct user response in this task",
+    "response": "正式授权",
+    "scope": [
+      "Merge PR #5",
+      "Publish verified v0.7.0 assets and perform public verification"
+    ]
+  },
+  "pullRequest": {
+    "url": "https://github.com/von12549/ArchSift/pull/5",
+    "state": "MERGED",
+    "mergeCommit": "2b375624dc42a7b0d89a0f01b464b71ac982336f",
+    "mergedAt": "2026-10-12T12:28:17Z"
+  },
+  "ci": {
+    "latestPrRunId": 38248611402,
+    "latestPr": [
+      {
+        "platform": "windows",
+        "sdk": "10.0.401",
+        "testsPassed": 222,
+        "configuration": "Release",
+        "checks": {
+          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-b1030c4\\regression-windows-latest\\runs\\development-b7a96bbd524c42768d146aca3cccfec4\\checks.json",
+          "sha256": "eecdaf622de077ffab1542ed0c4d0a7773c23a73ab10cef59f41f6057c351426"
+        },
+        "hostStateEqual": true
+      },
+      {
+        "platform": "ubuntu",
+        "sdk": "10.0.401",
+        "testsPassed": 222,
+        "configuration": "Release",
+        "checks": {
+          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-b1030c4\\regression-ubuntu-latest\\runs\\development-01de8de019254b94b041b3c6c9d2c5f0\\checks.json",
+          "sha256": "184670feb2d5a290157b1f453c8ce21006399ba30694113a5e286331f2cc7eb2"
+        },
+        "hostStateEqual": true
+      }
+    ],
+    "mergedMainRunId": 38249231183,
+    "mergedMain": [
+      {
+        "platform": "windows",
+        "sdk": "10.0.401",
+        "testsPassed": 222,
+        "configuration": "Release",
+        "checks": {
+          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-main-2b37562\\regression-windows-latest\\runs\\development-e8f8b1b5ee3a4397a887780d1786abf3\\checks.json",
+          "sha256": "c68c097efad40c44a40afeb94ea2e1987b3c67b6622a83534cd0b3d07ca748ef"
+        },
+        "hostStateEqual": true
+      },
+      {
+        "platform": "ubuntu",
+        "sdk": "10.0.401",
+        "testsPassed": 222,
+        "configuration": "Release",
+        "checks": {
+          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-main-2b37562\\regression-ubuntu-latest\\runs\\development-32f5e4689eb14cf690db0a888ba5f5ae\\checks.json",
+          "sha256": "b47fe2c0b9422761a6cd93413d2046b996df7f4b736e81ec19c2efe04cadc0c2"
+        },
+        "hostStateEqual": true
+      }
+    ]
+  },
+  "independentPublicDownload": {
+    "path": "D:\\ArchSift-lab\\packages\\published-0.7.0-verify-5478a73e87e74ec8b89f1648990d843f\\result.json",
+    "sha256": "d3c6c1612226ecfccfdcf9f361201214fde9f0ec2bbcc611c08a2b13aec457d0"
+  },
+  "assets": [
+    {
+      "name": "archsift-0.7.0-win-x64.zip",
+      "bytes": 89365009,
+      "sha256": "696cd970e9dc449d34af26543560fc35831c3320e8046e68e2611d0d57647b07"
+    },
+    {
+      "name": "ArchSift.Setup.exe",
+      "bytes": 74212126,
+      "sha256": "71097ac685947295223df30509ac24a02d64996f3e9c28813591ee0c645c4647"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 178,
+      "sha256": "9d8f8feb56c317aac4a69d9e055928a76e38eeb4ad1eb0f19a21a0e8ffe44153"
+    },
+    {
+      "name": "acceptance.json",
+      "bytes": 2344,
+      "sha256": "5c46a18f985d8572e7fc10d781624c45f01bbc2b4f12451a2eb75bd3c2946753"
+    }
+  ],
+  "zipSmoke": {
+    "path": "D:\\ArchSift-lab\\packages\\smoke-3a0fcfeebfe941b08652413012507600\\smoke-result.json",
+    "sha256": "e0681d4334d02c7f03f26a67d609023b2d3dfabcbfa06d96ae7ae811cf693520"
+  },
+  "zipChecks": 17,
+  "frozenPerformanceBudgetPassed": true,
+  "officialSarifSchemaVerified": true,
+  "setupSmoke": {
+    "path": "D:\\ArchSift-lab\\packages\\setup-smoke-545eba41a7ba4d1ebef6a5dac2e68da4\\setup-smoke-result.json",
+    "sha256": "f331db066825d64f8cd4690642258eb258aed5a2304df471a009f75cb326a392"
+  },
+  "setupChecks": 13,
+  "postPublicationAudit": {
+    "path": "D:\\ArchSift-lab\\evidence\\0.7-closure-published-8c520e654ca04a57a35a3bad087f99a9\\result.json",
+    "sha256": "98cba1a04a2b63cf95b0434da70de1ab62d4263aa3b1f57f9e28b4bec0bef214"
+  },
+  "hostStateEqual": true,
+  "originalUnchanged": true,
+  "ownedProcessesExited": true,
+  "originalIfxInstallationUpgraded": false,
+  "ifxBPolicyAdopted": false,
+  "publisherSignatureVerified": false,
+  "limitations": [
+    "Declaration model still has unevaluated MSBuild condition/expression limitations; partial/compliant/exit 4 is retained.",
+    "External-reviewed evidence directly verifies identities; build causality is supported by reviewed actual logs, not an ArchSift target rebuild.",
+    "B policy remains limited to existing type/namespace selectors; no full architecture, dynamic loading, deployment RID or signature/runtime certification.",
+    "Synthetic budget and invalid dotnet paths do not certify physical absence of SDKs or IFX performance bounds."
+  ]
+}

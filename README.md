@@ -1,10 +1,10 @@
 # ArchSift
 
-ArchSift is an independent local .NET architecture and dependency analyzer. **0.6.0 is published and independently verified.** It provides a profile launcher, chain progress, optional bounded parallel validation and a separate portable Windows setup with install/adopt/upgrade/rollback/recovery. The workbench retains the reusable ruleset library, independent chains, English/Chinese UI, eight rule templates, real ArchUnitNET checks, JSON/HTML/SARIF reports and Git comparison.
+ArchSift is an independent local .NET architecture and dependency analyzer. **0.7.0 is published and independently verified.** It provides a profile launcher, chain progress, optional bounded parallel validation and a separate portable Windows setup with install/adopt/upgrade/rollback/recovery. The workbench retains the reusable ruleset library, independent chains, English/Chinese UI, eight rule templates, real ArchUnitNET checks, JSON/HTML/SARIF reports and Git comparison.
 
-0.7.0 is [in acceptance](docs/plans/20261012-archsift-0.7.0-improvement-plan.md): reviewed external build evidence with per-project dependency contexts, saved Ruleset/Chain copies, result sorting and launcher shutdown feedback. Current-source IFX evidence and candidate qualification are recorded separately; independent human UI acceptance remains pending. Source guides describe candidate behavior without claiming publication.
+0.7.0 adds reviewed external build evidence with per-project dependency contexts, saved Ruleset/Chain copies, result sorting and launcher shutdown feedback. Its [final acceptance](docs/acceptance/20261012-0.7-final-acceptance.md) includes 105 source-bound IFX project contexts, 406 B rules and 182 A rules passing, and independent human Workbench/Launcher acceptance with usability 5/5. Declaration-model limitations remain; the overall IFX result is still partial/compliant/exit 4.
 
-Obtain the stable Windows x64 package and separate Setup from the [v0.6.0 Release](https://github.com/von12549/ArchSift/releases/tag/v0.6.0), then verify all assets against the [0.6.0 publication record](docs/releases/0.6.0-publication.md). Earlier release records and guides remain historical. Acceptance retains declaration-level IFX limitations; it does not adopt the tested IFX candidate policy.
+Obtain the stable Windows x64 package and separate Setup from the [v0.7.0 Release](https://github.com/von12549/ArchSift/releases/tag/v0.7.0), then verify all assets against the [0.7.0 publication record](docs/releases/0.7.0-publication.md), SHA256SUMS.txt and acceptance.json. The public ZIP and Setup passed 17 and 13 native checks. Earlier release records and guides remain historical. Acceptance does not adopt the tested IFX candidate policy or claim full architecture compliance.
 
 The tool runs on .NET 10 and targets SDK-style C# net8/net9/net10. Windows x64 is the self-contained distribution; running that package does not require an installed .NET SDK/runtime or Guard. Linux CLI is tested separately. Start with [Windows installation and environment requirements](docs/installation.md) and [portable setup](docs/setup.md). [0.5.0 execution and release gates](docs/plans/20261010-archsift-0.5.0-plan.md) record progress. ArchSift uses the [MIT license](LICENSE), with separate third-party notices.
 
@@ -32,7 +32,7 @@ Projects reference Contracts and Core in one direction: Core owns analysis/servi
 ## Guidance and evidence
 
 - [Windows installation and environment requirements](docs/installation.md)
-- [0.5.0 publication and verified asset hashes](docs/releases/0.5.0-publication.md)
+- [0.7.0 publication and verified asset hashes](docs/releases/0.7.0-publication.md)
 - [Installer and upgrade design](docs/plans/20261010-installation-upgrade-design.md)
 - [CLI and configuration](docs/cli.md)
 - [Rules and schema boundaries](docs/rules.md)

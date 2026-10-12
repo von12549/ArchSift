@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 0.7.0 COMPLETE／ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED：用户直接“正式授权”后，最新PR与合并后main两平台各222项CI通过，PR5合并，v0.7.0正式发布；四公开资产独立下载摘要／字节、ZIP17／Setup13／冻结预算／SARIF和最终原件／宿主／进程审计通过，见[发布回验](../releases/0.7.0-publication.md)。独立人工Workbench／Launcher符合预期，可用性5/5；原IFX安装保持0.6、B策略未采用。下文待批准／pending／失败是原形成时点。
+
 2026-10-12 0.7.0合并／发布准备完成：用户独立UI5/5、人工后终审、最终a2c9f27两平台各222项CI、四项草稿服务器digest／独立下载／ZIP17／Setup13与新安全终审全部通过，见[准备记录](../releases/0.7.0-readiness.md)。PR5 ready未合并，release为draft。自动审批拒绝合并，要求当前可信用户明确授权；等待明确批准合并及公开发布，不绕过拒绝。技术验收完成，版本尚未公开，原IFX安装／B策略保持。
 
 2026-10-12 0.7.0最终验收 COMPLETE：固定ff9a7d1全部机器门禁通过后，用户确认Workbench／Launcher符合预期、可用性5/5；人工会话exit0、owned进程／端点退出、原件／宿主和完整终审通过，见[最终验收](../acceptance/20261012-0.7-final-acceptance.md)。0.7-0–0.7-4与P0–P3完成，ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED；提交推送后推进已授权合并／发布及公开下载回验，原IFX安装未升级、B策略未采用。以下pending／失败保留历史时点。
