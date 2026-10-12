@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 0.7.0合并／发布准备完成：用户独立UI5/5、人工后终审、最终a2c9f27两平台各222项CI、四项草稿服务器digest／独立下载／ZIP17／Setup13与新安全终审全部通过，见[准备记录](../releases/0.7.0-readiness.md)。PR5 ready未合并，release为draft。自动审批拒绝合并，要求当前可信用户明确授权；等待明确批准合并及公开发布，不绕过拒绝。技术验收完成，版本尚未公开，原IFX安装／B策略保持。
+
 2026-10-12 0.7.0最终验收 COMPLETE：固定ff9a7d1全部机器门禁通过后，用户确认Workbench／Launcher符合预期、可用性5/5；人工会话exit0、owned进程／端点退出、原件／宿主和完整终审通过，见[最终验收](../acceptance/20261012-0.7-final-acceptance.md)。0.7-0–0.7-4与P0–P3完成，ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED；提交推送后推进已授权合并／发布及公开下载回验，原IFX安装未升级、B策略未采用。以下pending／失败保留历史时点。
 
 2026-10-12 人工问题最终修复候选 ff9a7d1：文件名必填／错误分类与父进程metadata lease回收均已实施、提交推送；本地及双平台222项、ZIP17／Setup13／原预算／SARIF、105 source-bound contexts／406B＋182A、完整browser7组／6截图、Launcher4组／10截图、外置生命周期和653新载荷／647原载荷／14历史状态／782tracked＋783capture／宿主／进程终审全部通过，见[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)。两轮占用与一次关闭超时保留。先前用户Workbench其他观察符合；新包提示确认／Launcher／评分待用户，PR5 draft、未合并发布。
