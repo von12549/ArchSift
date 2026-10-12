@@ -128,11 +128,18 @@ public sealed class ChainService(AnalysisService analysis)
                 { buildError = error.Message; }
             }
             if (assemblies is not null)
-                foreach (var path in assemblies.Paths)
+            {
+                foreach (var path in assemblies.Paths.Order(StringComparer.Ordinal))
                 {
                     evidenceChecks[path] = assemblies.Sha256[path];
-                    buildFiles.Add(new("@assembly/" + Path.GetFileName(path), assemblies.Sha256[path], new FileInfo(path).Length, "evidence"));
+                    buildFiles.Add(new("@assembly/" + (assemblies.Contexts.Length > 0 ? ContentHash.Text(path)[..16] + "/" : "") + Path.GetFileName(path), assemblies.Sha256[path], new FileInfo(path).Length, "evidence"));
                 }
+                foreach (var evidence in assemblies.EvidenceHashes.OrderBy(p => p.Key, StringComparer.Ordinal))
+                {
+                    evidenceChecks[evidence.Key] = evidence.Value;
+                    buildFiles.Add(new("@external-evidence/" + buildFiles.Count, evidence.Value, new FileInfo(evidence.Key).Length, "evidence"));
+                }
+            }
             CheckInputs();
         }
         catch (OperationCanceledException) { cancelled = true; }
@@ -249,7 +256,9 @@ public sealed class ChainService(AnalysisService analysis)
                     reports[entry.EntryId] = report;
                     var childLimits = report.Limitations.Concat(report.ExecutionErrors).Concat(report.RuleResults.SelectMany(r => r.Limitations)).Distinct().ToArray();
                     Complete(index, new(entry.EntryId, report.Execution, report.Compliance ?? "inconclusive", drift ? 4 : outcome.ExitCode,
-                        entry.EntryId + "/" + report.RunMetadata.RunId, null, report.Coverage, report.BuildContext.Binding, report.RuleResults, report.Findings, childLimits));
+                        entry.EntryId + "/" + report.RunMetadata.RunId, null, report.Coverage, report.BuildContext.Binding, report.RuleResults, report.Findings, childLimits)
+                        { EvidenceOrigin = report.BuildContext.EvidenceOrigin, EvidenceSha256 = report.BuildContext.EvidenceSha256,
+                            AssemblyBindingMode = report.BuildContext.AssemblyBindingMode, AssemblyContextCount = report.BuildContext.AssemblyContextCount });
                 }
             }
             catch (OperationCanceledException)
@@ -279,6 +288,8 @@ public sealed class ChainService(AnalysisService analysis)
                 try { PathSafety.EnsureNoLinks(path); if ((File.Exists(path) ? AssemblyArtifacts.FileHash(path) : null) != expected) throw new SourceChangedException(); }
                 catch (Exception error) when (error is IOException or ConfigurationException or UnauthorizedAccessException) { throw new SourceChangedException(); }
             }
+            if (assemblies?.EvidenceOrigin is not null && assemblies.SourceBound && !AssemblyArtifacts.Existing(config, prepared.Source).SourceBound)
+                throw new SourceChangedException();
         }
     }
     public static string Aggregate(IEnumerable<ChainChild> entries)

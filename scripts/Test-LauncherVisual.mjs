@@ -42,7 +42,7 @@ try{
  await capture('launcher-two-profiles-en-desktop.png');await page.locator('#locale').selectOption('zh');await capture('launcher-two-profiles-zh-desktop.png');await page.setViewportSize({width:480,height:900});await capture('launcher-two-profiles-zh-narrow.png');await page.locator('#locale').selectOption('en');await capture('launcher-two-profiles-en-narrow.png');
  checks.push('managed configuration template prefilled; external file only created after review; per-resource protection; desktop/480px; en/zh; no horizontal overflow');
  await page.setViewportSize({width:1440,height:1000});await page.locator('#profiles input[type=radio]').first().check();
- const popupPromise=context.waitForEvent('page');await page.locator('#start-profile').click();const workbench=await popupPromise;await workbench.waitForSelector('#product-version');await workbench.waitForFunction(()=>document.querySelector('#product-version').textContent.includes('0.6.0'));
+ const popupPromise=context.waitForEvent('page');await page.locator('#start-profile').click();const workbench=await popupPromise;await workbench.waitForSelector('#product-version');await workbench.waitForFunction(()=>document.querySelector('#product-version').textContent.includes('0.7.0'));
  assert.equal(await workbench.locator('#session-profile-name').textContent(),'default.json');assert.ok((await workbench.locator('#session-profile-path').textContent()).includes('default.json'));
  const profileHeight=await workbench.locator('#session-profile').evaluate(element=>element.getBoundingClientRect().height);
  assert.ok(profileHeight<=110,'Desktop profile strip remains too tall: '+profileHeight);
@@ -53,8 +53,8 @@ try{
  await workbench.locator('#shutdown').click();await workbench.locator('#confirm-yes').click();await page.waitForFunction(()=>document.querySelector('#active-session').hidden,{timeout:15000});
  await fs.writeFile(external,'{}');await page.locator('#refresh').click();await page.waitForFunction(()=>document.querySelector('#profiles').textContent.includes('invalid'));await capture('launcher-invalid-profile-en-desktop.png');
  assert.equal(errors.length,0);checks.push('safe workbench exit reflected by launcher; damaged external config visible; no browser script errors');
- await page.locator('#launcher-close').click();
- await fs.writeFile(path.join(outputRoot,'visual-result.json'),JSON.stringify({status:'pass',version:'0.6.0',checks,screens,scope:'synthetic native package; not independent operator attestation; no target analysis/build or entry-point execution'},null,2));
+ await page.locator('#launcher-close').click();await page.locator('#confirm-dialog').waitFor({state:'visible'});await page.locator('#confirm-no').click();assert.ok(await page.locator('#launcher-close').isEnabled());await page.locator('#launcher-close').click();await page.locator('#confirm-yes').click();await page.waitForFunction(()=>document.querySelector('#launcher-status').textContent.includes('no longer reachable'),{timeout:15000});assert.ok(await page.locator('#launcher-close').isDisabled());await capture('launcher-closed-en-desktop.png');checks.push('confirmed shutdown; cancelled confirmation preserved session; accepted endpoint exit observed with cautious process wording');
+ await fs.writeFile(path.join(outputRoot,'visual-result.json'),JSON.stringify({status:'pass',version:'0.7.0',checks,screens,scope:'synthetic native package; not independent operator attestation; no target analysis/build or entry-point execution'},null,2));
  console.log('PASS: native launcher/profile/browser QA; screenshots='+screens.length);
 }finally{
  if(browser)await browser.close();

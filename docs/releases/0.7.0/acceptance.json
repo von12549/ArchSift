@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.0",
+  "status": "accepted-with-limitations",
+  "sourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+  "rid": "win-x64",
+  "selfContained": true,
+  "assets": [
+    {
+      "name": "archsift-0.7.0-win-x64.zip",
+      "bytes": 89365009,
+      "sha256": "696cd970e9dc449d34af26543560fc35831c3320e8046e68e2611d0d57647b07"
+    },
+    {
+      "name": "ArchSift.Setup.exe",
+      "bytes": 74212126,
+      "sha256": "71097ac685947295223df30509ac24a02d64996f3e9c28813591ee0c645c4647"
+    }
+  ],
+  "manifestSha256": "4b6b82c99ad0a30a3065e4851a4bc396809761b54ad6ccba3a9a4fb2a838a6d8",
+  "productInputsSha256": "301cd8e5e2b9e74a346e1c2bcb8c86525dc548f88958def45fe1dee5b3ea0746",
+  "payloadEntryCount": 653,
+  "gates": {
+    "windowsTests": 222,
+    "ubuntuTests": 222,
+    "nativePackageSmoke": 17,
+    "setupSmoke": 13,
+    "officialSarifSchema": true,
+    "realIfxSourceBoundContexts": 105,
+    "realIfxBRulesPassed": 406,
+    "realIfxARulesPassed": 182,
+    "realIfxBrowserGroups": 7,
+    "launcherBrowserGroups": 4,
+    "externalCopyUpgradeRollback": true,
+    "independentHumanUi": true,
+    "humanUsabilityOfFive": 5,
+    "humanFinalResponse": "Workbench和Launcher的检查结果均符合预期。可用性5",
+    "postHumanMachineAudit": true,
+    "hostStateEqual": true
+  },
+  "evidence": {
+    "machineRecordSha256": "b6f74a19a4f80b2564719f50f64e35925cbf9b236b5e2e4cfd1681e64422457e",
+    "finalAcceptanceSha256": "447994cf38f0ac0b99211a5a9fc1cb065b36d443fb26ba552ef6819fc9c4b394",
+    "humanSessionExitSha256": "200c1cdb08479b00d4a6a446061957d8494e3080673b46d95a29c03e0f0a9701",
+    "postHumanMachineAuditSha256": "98cba1a04a2b63cf95b0434da70de1ab62d4263aa3b1f57f9e28b4bec0bef214"
+  },
+  "limits": [
+    "Declaration model still has unevaluated MSBuild condition/expression limitations; partial/compliant/exit 4 is retained.",
+    "External-reviewed evidence directly verifies identities; build causality is supported by reviewed actual logs, not an ArchSift target rebuild.",
+    "B policy remains limited to existing type/namespace selectors; no full architecture, dynamic loading, deployment RID or signature/runtime certification.",
+    "Synthetic budget and invalid dotnet paths do not certify physical absence of SDKs or IFX performance bounds."
+  ],
+  "publisherSignatureVerified": false
+}

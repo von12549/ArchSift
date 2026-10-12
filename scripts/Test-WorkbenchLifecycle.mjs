@@ -100,3 +100,54 @@ get('locale').value='zh';await get('locale').onchange();
 assert.match(textTree(get('results')).join(' '),/规则链进度/);
 assert.equal(JSON.stringify(context.progressFixture),progressBytes,'Locale does not alter machine progress');
 console.log('PASS: failed submission, filter-after-error, polling failure, history isolation, cancelled downloads, 182-rule collapsed editor/search, en/zh state preservation, translation catalog and current chain progress');
+
+// 0.7 sorting and copy drafts exercise the actual UI handlers against frozen saved objects.
+context.sortRows=Array.from({length:406},(_,i)=>({ruleId:'rule-'+String(405-i).padStart(3,'0'),status:['pass','violation','inconclusive','error','not-applicable'][i%5],matched:i,limitations:[]}));
+const unsorted=JSON.stringify(context.sortRows);
+const sortView=run('ruleResultsTable(sortRows,"entry/")');
+const sortControls=sortView.children[0];
+const renderedIds=()=>sortView.children[3].children[0].children.slice(1).map(row=>row.children[0].textContent);
+assert.equal(renderedIds().length,406);assert.equal(renderedIds()[0],'entry/rule-405');
+await sortControls.children[0].onclick();assert.equal(renderedIds()[0],'entry/rule-000');
+await sortControls.children[0].onclick();assert.equal(renderedIds()[0],'entry/rule-405');
+await sortControls.children[0].onclick();assert.equal(renderedIds()[0],'entry/rule-405');
+await sortControls.children[1].onclick();assert.equal(sortView.children[3].children[0].children[1].children[1].children[0].textContent,run('stateLabels.violation'));
+await sortControls.children[1].onclick();assert.equal(sortView.children[3].children[0].children[1].children[1].children[0].textContent,run('stateLabels["not-applicable"]'));
+await sortControls.children[2].onclick();assert.equal(renderedIds()[0],'entry/rule-405');assert.equal(JSON.stringify(context.sortRows),unsorted);
+const sourceRules=structuredClone(run('ruleset'));sourceRules.id='source';sourceRules.version='2';sourceRules.description='Saved bytes';
+const savedRulesBytes=JSON.stringify(sourceRules);
+context.savedCopyRules=sourceRules;context.sourceChain={schemaVersion:1,id:'source-chain',version:'2',description:'Saved chain',entries:[{entryId:'missing-stable-id'}]};
+const requests=[];context.fetch=async(path,options)=>{requests.push({path,options});let result={};if(path.endsWith('/draft'))result=sourceRules;else if(path.endsWith('/chains/source-chain'))result=context.sourceChain;else if(path.endsWith('/library'))result={entries:[],external:[]};else if(path.endsWith('/chains'))result=[];return {ok:true,text:async()=>JSON.stringify(result)};};
+run('dirtySections.clear();savedEditorJson=JSON.stringify(currentRuleset());');
+await run('createRulesetFrom({entryId:"source-entry",fileName:"source.json"})');
+assert.equal(get('ruleset-id').value,'');assert.equal(get('filename').value,'');assert.equal(run('ruleset.version'),'2');assert.equal(run('selectedEntryId'),null);
+assert.equal(JSON.stringify(sourceRules),savedRulesBytes);
+const beforeCancel=run('JSON.stringify(currentRuleset())');
+const cancelledCopy=run('createRulesetFrom({entryId:"other-entry",fileName:"other.json"})');await Promise.resolve();get('confirm-no').onclick();await cancelledCopy;
+assert.equal(run('JSON.stringify(currentRuleset())'),beforeCancel);
+get('ruleset-id').value='copy-with-required-file';
+for(const lang of ['en','zh']) {
+ run('locale='+JSON.stringify(lang)+';');
+ for(const file of ['', '   ']) {
+  get('filename').value=file;const before=run('JSON.stringify(currentRuleset())');const count=requests.length;
+  await get('save-rule').onclick();
+  assert.equal(get('editor-message').textContent,lang==='en'?'Enter a JSON filename before saving.':'保存前请填写 JSON 文件名。');
+  assert.equal(requests.length,count,'Blank filename must not submit an empty route');
+  assert.equal(get('save-rule').disabled,false);assert.equal(run('JSON.stringify(currentRuleset())'),before);
+ }
+}
+run('locale="en";');
+const copyFetch=context.fetch;
+context.fetch=async()=>({ok:false,status:404,json:async()=>{throw new SyntaxError('Empty response');}});
+await assert.rejects(run('api("missing-route")'),/Request failed: 404/);
+context.fetch=async()=>({ok:false,status:401,json:async()=>{throw new SyntaxError('Empty response');}});
+await assert.rejects(run('api("expired-session")'),/Session or service unavailable/);
+context.fetch=copyFetch;
+run('dirtySections.delete("chain");');await run('editChain(sourceChain,true)');assert.equal(get('chain-id').value,'');assert.equal(get('chain-id').disabled,false);assert.equal(run('chainDraft[0].entryId'),'missing-stable-id');
+assert.equal(get('chain-editor').hidden,false);
+const cancelledChainClose=get('chain-close').onclick();await Promise.resolve();get('confirm-no').onclick();assert.equal(await cancelledChainClose,false);assert.equal(get('chain-editor').hidden,false);assert.equal(run('chainDraft[0].entryId'),'missing-stable-id');
+const acceptedChainClose=get('chain-close').onclick();await Promise.resolve();get('confirm-yes').onclick();assert.equal(await acceptedChainClose,true);assert.equal(get('chain-editor').hidden,true);assert.equal(run('dirtySections.has("chain")'),false);assert.equal(run('chainDraft.length'),0);
+await run('editChain(sourceChain,true)');assert.equal(get('chain-editor').hidden,false);
+assert.ok(textTree(get('chain-entries')).join(' ').includes('Missing / invalid')||textTree(get('chain-entries')).join(' ').includes('缺失'));
+assert.ok(!requests.some(r=>r.options?.method==='POST'&&!r.path.endsWith('/session/dirty')),'Creating drafts does not save or run verification');
+console.log('PASS: 406-row stable sorting/default and report immutability; saved-byte ruleset/chain copies; cancelled copy preserves draft; missing stable reference visible');

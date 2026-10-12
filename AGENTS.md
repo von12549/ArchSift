@@ -21,6 +21,16 @@
 - `Signed-off-by` does not replace `Co-Authored-By`. This rule does not authorize creating a commit, pushing, or rewriting existing history.
 - Keep the current human Git author as the primary author unless the user explicitly requests a change. Append agent attribution as trailers; do not change the primary author identity to implement co-authorship. Do not amend or rewrite existing commits solely to add attribution.
 
+## Pull request attribution
+
+- When Codex creates or updates a pull request for Codex-contributed changes, append this exact signature at the end of the PR description, separated from the body by a blank line:
+
+  ```text
+  Co-Authored-By: Codex <noreply@openai.com>
+  ```
+
+- Preserve the signature when revising the PR description, without duplicating it. PR attribution does not replace the required commit trailers or authorize creating, updating, merging, or publishing a PR.
+
 ## Source and migration
 
 - Treat analyzed target repositories, Guard and IFX source checkouts as read-only. Preserve user changes. ArchSift product development files may be edited for an authorized implementation task.
@@ -37,6 +47,7 @@
 - Do not execute target application entry points. An isolated MSBuild snapshot is not a full sandbox; custom targets may execute commands. Restore defaults to offline and explicit sources; do not silently enable network or ignore restore failures.
 - Capture a safe environment/Profile hash baseline before .NET build/install/real integration operations, compare at relevant checkpoints and completion, and print only hashes/equality, never raw environment values. Stop and preserve evidence on persistent drift; do not repair it automatically.
 - Guard/IFX real integration remains operator-driven unless the user explicitly delegates a specific run to the Agent. For the 0.6.0 replacement candidate, the user authorized Agent execution of all acceptance work except the final human UI visual and hands-on usability review. Execute delegated real gates sequentially with reviewed commands, inspect each result before the next gate, preserve evidence, and stop on drift; do not run the final human UI review or fill its answers. Read-only metadata checks and ArchSift synthetic tests alone do not authorize other Guard installers or real IFX integration.
+- For ArchSift 0.7.0 acceptance, on 2026-10-12 the user explicitly delegated all remaining machine-verifiable work, including IFX preflight, external snapshot build/evidence, integration and lifecycle gates, to the Agent. The final independent human UI visual and hands-on acceptance remains with the user. Keep the reviewed sequential gate, evidence, read-only target, offline restore and host-drift requirements above; do not fill the human answers or treat this delegation as IFX policy adoption or authorization for unrelated Guard work.
 - Clean only precisely recorded tool artifacts after checking their absolute path and containment. Never recursively delete a repository/source root or broad directory. Prefer recoverable cleanup and the app's worktree lifecycle tools when appropriate.
 
 ## Verification and reporting

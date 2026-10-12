@@ -11,7 +11,12 @@ archsift launch --root D:/Tools/ArchSift
 archsift rules validate --file architecture.json
 archsift rules render --file architecture.json --output architecture.md
 archsift rules draft --config config.json --output D:/archsift-output/drafts
+archsift evidence capture --config config.json --inputs external-input-paths.json --output D:/archsift-evidence/capture.json
+archsift evidence seal --config config.json --capture D:/archsift-evidence/capture.json --review D:/archsift-evidence/review.json --output D:/archsift-evidence/assembly-manifest.json
+archsift evidence validate --config config.json
 ```
+
+0.7.0 的外部构建证据流程见[取证指南](external-build-evidence.md)。capture／seal／validate 不运行目标构建或入口；未审查、陈旧或不完整的证据不会得到源码绑定。
 
 `analyze` discovers declared projects without policy (`compliance=null`). Legacy `verify` composes all configured ruleset paths into one report, retaining global rule-ID uniqueness and cross-file checks. `chain verify` runs each referenced saved library ruleset independently in order and writes child reports plus a separate summary. It requires a managed library in `rulesDirectory`, or defaults to `<output.directory>/rules`. `--target-kind` is `real` by default or `fixture`; it labels context and does not change analysis semantics. A child partial/error/missing-ruleset result does not stop later entries. Invalid global input, input drift or cancellation has separate stopping behavior.
 

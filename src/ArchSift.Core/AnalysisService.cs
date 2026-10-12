@@ -55,7 +55,7 @@ public sealed class AnalysisService(
                         : AssemblyArtifacts.Existing(config, snapshot);
                     binding = assemblyInputs.SourceBound ? "source-bound" : "assemblies-only";
                     sdk = assemblyInputs.Sdk; framework = assemblyInputs.TargetFramework ?? framework;
-                    assemblyCount = assemblyInputs.Paths.Length;
+                    assemblyCount = assemblyInputs.Contexts.Length > 0 ? assemblyInputs.Contexts.Length : assemblyInputs.Paths.Length;
                     limits.AddRange(assemblyInputs.Limitations);
                     if (needsAssembly)
                     {
@@ -79,8 +79,14 @@ public sealed class AnalysisService(
             foreach (var document in frozenBundle is null ? bundle.Documents : [])
                 if (AssemblyArtifacts.FileHash(document.Identity.Path) != document.Identity.Sha256) throw new SourceChangedException();
             if (assemblyInputs is not null)
+            {
                 foreach (var path in assemblyInputs.Paths)
                     if (AssemblyArtifacts.FileHash(path) != assemblyInputs.Sha256[path]) throw new SourceChangedException();
+                foreach (var evidence in assemblyInputs.EvidenceHashes)
+                    if (AssemblyArtifacts.FileHash(evidence.Key) != evidence.Value) throw new SourceChangedException();
+                if (assemblyInputs.EvidenceOrigin is not null && assemblyInputs.SourceBound && !AssemblyArtifacts.Existing(config, snapshot).SourceBound)
+                    throw new SourceChangedException();
+            }
         }
         catch (OperationCanceledException)
         {
@@ -108,8 +114,10 @@ public sealed class AnalysisService(
             : results.Count == 0 || results.All(r => r.Status == "not-applicable") ? "not-applicable" : "compliant";
         var empty = new InputIdentity(ContentHash.Text(""), []);
         var sourceIdentity = snapshot?.InputIdentity ?? empty;
-        var evidenceFiles = assemblyInputs?.Paths.Select(p => new InputFile("@assembly/" + Path.GetFileName(p),
-            assemblyInputs.Sha256[p], SafeLength(p), "evidence")).ToArray() ?? [];
+        var evidenceFiles = (assemblyInputs?.Paths.Order(StringComparer.Ordinal).Select(p => new InputFile("@assembly/" +
+            (assemblyInputs.Contexts.Length > 0 ? ContentHash.Text(p)[..16] + "/" : "") + Path.GetFileName(p),
+            assemblyInputs.Sha256[p], SafeLength(p), "evidence")) ?? []).Concat(assemblyInputs?.EvidenceHashes
+            .OrderBy(p => p.Key, StringComparer.Ordinal).Select((p, i) => new InputFile("@external-evidence/" + i, p.Value, SafeLength(p.Key), "evidence")) ?? []).ToArray();
         var policyFiles = bundle.Documents.Select(d => new InputFile("@rules/" + d.Ruleset.Id + "/" + Path.GetFileName(d.Identity.Path),
             d.Identity.Sha256, SafeLength(d.Identity.Path), "analysis")).ToArray();
         var runIdentity = new InputIdentity(ContentHash.Text(sourceIdentity.Sha256 + "\n" +
@@ -123,7 +131,13 @@ public sealed class AnalysisService(
             RulesetIdentities = bundle.Documents.Select(d => d.Identity).ToArray(),
             Scope = snapshot?.Scope ?? new([], [], [], [], ["No source snapshot was captured."]),
             Projects = snapshot?.Projects ?? [],
-            BuildContext = new(config.Build.Mode, framework, config.Build.Configuration, sdk, binding),
+            BuildContext = new(config.Build.Mode, framework, config.Build.Configuration, sdk, binding)
+            {
+                EvidenceOrigin = assemblyInputs?.EvidenceOrigin,
+                AssemblyBindingMode = assemblyInputs?.Contexts.Length > 0 ? "project-contexts" : null,
+                AssemblyContextCount = assemblyInputs?.Contexts.Length > 0 ? assemblyInputs.Contexts.Length : null,
+                EvidenceSha256 = assemblyInputs?.EvidenceOrigin is null ? null : AssemblyArtifacts.FileIdentity(evidenceFiles.Where(f => f.Path.StartsWith("@external-evidence/", StringComparison.Ordinal)).ToArray())
+            },
             EngineVersions = engines, Execution = execution, Compliance = compliance,
             RuleResults = results.OrderBy(r => r.RuleId, StringComparer.Ordinal).ToArray(),
             Findings = findings.DistinctBy(f => f.Id).OrderBy(f => f.Id, StringComparer.Ordinal).ToArray(),

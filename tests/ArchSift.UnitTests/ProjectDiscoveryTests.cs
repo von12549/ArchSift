@@ -85,6 +85,22 @@ public sealed class ProjectDiscoveryTests
         Assert.Equal(InputCapture.Capture(fixture.Root).Sha256, InputCapture.Capture(fixture.Root).Sha256);
     }
 
+    [Theory]
+    [InlineData(".editorconfig")]
+    [InlineData("src/.editorconfig")]
+    [InlineData(".globalconfig")]
+    [InlineData("analysis.globalconfig")]
+    [InlineData("analysis.ruleset")]
+    public void ImplicitCompilerConfigurationChangesInvalidateCapturedSource(string path)
+    {
+        using var fixture = new Fixture();
+        fixture.Write("A.cs", "class A {}"); fixture.Write(path, "original compiler configuration");
+        var before = InputCapture.Capture(fixture.Root);
+        Assert.Contains(before.Files, f => f.Path == path);
+        fixture.Write(path, "changed compiler configuration");
+        Assert.Throws<SourceChangedException>(() => InputCapture.VerifyUnchanged(fixture.Root, before));
+    }
+
     [Fact]
     public void RootTraversalOutputOverlapAndUnsupportedProjectsAreExplicit()
     {

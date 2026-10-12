@@ -111,6 +111,16 @@ public sealed class WebWorkbenchTests
             var registryHash = AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, ".archsift-library.json"));
             Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/library/import/second.json", new ByteArrayContent(importedBytes), timeout.Token)).StatusCode);
             Assert.Equal(registryHash, AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, ".archsift-library.json")));
+            var copiedDraft = await client.GetFromJsonAsync<Ruleset>("/api/library/" + secondCard.EntryId + "/draft", JsonContract.Options, timeout.Token);
+            var copy = copiedDraft! with { Id = "http-copy" };
+            var creates = await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => client.PostAsync("/api/library/create/copy.json", JsonContent.Create(copy, options: JsonContract.Options), timeout.Token)));
+            Assert.Single(creates, response => response.StatusCode == HttpStatusCode.OK);
+            Assert.Single(creates, response => response.StatusCode == HttpStatusCode.BadRequest);
+            var copiedCard = (await Cards()).Single(c => c.RulesetId == copy.Id);
+            Assert.NotEqual(secondCard.EntryId, copiedCard.EntryId); Assert.Equal(importedBytes, await client.GetByteArrayAsync("/api/library/" + secondCard.EntryId + "/json", timeout.Token));
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/library/create/COPY.json", JsonContent.Create(copy, options: JsonContract.Options), timeout.Token)).StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/library/create/case-id.json", JsonContent.Create(copy with { Id = "HTTP-COPY" }, options: JsonContract.Options), timeout.Token)).StatusCode);
+            (await client.PostAsJsonAsync("/api/library/" + copiedCard.EntryId + "/delete", new { }, timeout.Token)).EnsureSuccessStatusCode();
             async Task<JsonDocument> NewJob(string operation, object request)
             {
                 var response = await client.PostAsJsonAsync("/api/run/" + operation, request, timeout.Token); response.EnsureSuccessStatusCode();
@@ -134,6 +144,12 @@ public sealed class WebWorkbenchTests
             }
             var chain = new ChainDocument(1, "http-chain", "1", "User-authored 原文", [new(firstCard.EntryId), new(secondCard.EntryId)]);
             (await client.PostAsync("/api/chains/http-chain", JsonContent.Create(chain, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            var oldChainHash = AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, "chains", "http-chain.json"));
+            var chainCopy = chain with { Id = "http-copy", Entries = chain.Entries.Reverse().ToArray() };
+            (await client.PostAsync("/api/chains/create/http-copy", JsonContent.Create(chainCopy, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/chains/create/HTTP-COPY", JsonContent.Create(chainCopy with { Id = "HTTP-COPY" }, options: JsonContract.Options), timeout.Token)).StatusCode);
+            Assert.Equal(oldChainHash, AssemblyArtifacts.FileHash(Path.Combine(rulesDirectory, "chains", "http-chain.json")));
+            (await client.PostAsJsonAsync("/api/chains/http-copy/delete", new { }, timeout.Token)).EnsureSuccessStatusCode();
             foreach (var invalid in new[] { "0", "5", "1.5", "\"2\"" })
                 Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/run/chain", new StringContent("{\"chainId\":\"http-chain\",\"maxConcurrency\":" + invalid + "}", Encoding.UTF8, "application/json"), timeout.Token)).StatusCode);
             Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/api/run/chain", new StringContent("{\"chainId\":\"http-chain\",\"maxConcurrency\":1,\"maxConcurrency\":2}", Encoding.UTF8, "application/json"), timeout.Token)).StatusCode);

@@ -1,6 +1,8 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Project build contexts: ":"项目构建上下文：",
+  " · Only first-party owners are counted as analysis sources.":" · 仅统计所属的第一方程序集作为分析源。",
   "Chain progress":"规则链进度",
   "Maximum concurrent rulesets":"同时运行的规则集上限",
   "1 · Serial (default)":"1 · 串行（默认）",
@@ -49,6 +51,7 @@ const zhTranslations={
   "Each row is finding evidence. Color indicates severity.": "以下每一行都是独立 finding；颜色表示严重程度，不代表项目本体。",
   "Job status": "任务状态",
   "Session or service unavailable. Reopen the launch URL.": "会话或服务不可用；使用启动地址重新打开。",
+  "Enter a JSON filename before saving.": "保存前请填写 JSON 文件名。",
   "Exception ID / reason": "例外 ID / 理由",
   "Exception ID": "例外 ID",
   "Exception reason": "例外理由",
@@ -385,3 +388,9 @@ Object.assign(zhTranslations,{
 function localizedMessage(message){if(locale!=="zh")return message;if(zhTranslations[message])return zhTranslations[message];const prefix=Object.keys(zhTranslations).find(k=>k.endsWith(": ")&&message.startsWith(k));if(prefix)return zhTranslations[prefix]+message.slice(prefix.length);const separator=message.indexOf(": ");if(separator>=0){const tail=message.slice(separator+2),translated=localizedMessage(tail);if(tail!==translated)return message.slice(0,separator+2)+translated;}return message;}
 Object.assign(zhTranslations,{"Workbench sections":"工作台分区","Library ruleset":"规则库规则集"});
 function applyLocale(){document.documentElement.lang=locale==="zh"?"zh-CN":"en";for(const element of document.querySelectorAll("[data-i18n-aria-label]"))element.setAttribute("aria-label",t(element.dataset.i18nAriaLabel));for(const element of document.querySelectorAll("[data-i18n]"))if(!["status","context-title","result-title"].includes(element.id))element.textContent=t(element.dataset.i18n);for(const element of document.querySelectorAll("[data-i18n-placeholder]"))element.placeholder=t(element.dataset.i18nPlaceholder);}
+
+Object.assign(zhTranslations,{
+"Chain ID conflict: ":"规则链 ID 冲突：","New chain entries must select an existing saved library ruleset: ":"新规则链条目必须选择已保存且有效的规则集：","Launcher shutdown has already been accepted.":"启动器关闭请求已接受。","Close the current workbench safely before closing the launcher.":"关闭启动器前，请先安全关闭当前工作台。",
+"Create From":"从此创建","Default order":"报告默认顺序","Ascending":"升序","Descending":"降序","Result order: violation → error → inconclusive → pass → not-applicable":"结果升序：违规 → 错误 → 无法判定 → 通过 → 不适用",
+"Discard unsaved chain changes?":"放弃未保存的 chain 修改？","Use a different ruleset ID and filename for the copy.":"副本必须使用不同的规则集 ID 和文件名。","Use a different chain ID for the copy.":"副本必须使用不同的 chain ID。","Enter a new ruleset ID and filename. Internal rule IDs are retained; legacy composed verify may conflict with the source.":"请填写新规则集 ID 和文件名。内部规则 ID 保留；与源对象一起执行旧版组合 verify 时可能冲突。","Enter a new chain ID. Missing references must be repaired before saving.":"请填写新的 chain ID。保存前必须修复缺失引用。","Externally reviewed build evidence: ":"外部审查构建证据："
+});

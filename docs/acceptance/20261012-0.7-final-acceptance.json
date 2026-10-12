@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-final-acceptance",
+  "date": "2026-10-12",
+  "timezone": "Australia/Sydney",
+  "version": "0.7.0",
+  "status": "accepted-with-limitations",
+  "productSourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+  "productInputsSha256": "301cd8e5e2b9e74a346e1c2bcb8c86525dc548f88958def45fe1dee5b3ea0746",
+  "machineRecord": {
+    "sha256": "b6f74a19a4f80b2564719f50f64e35925cbf9b236b5e2e4cfd1681e64422457e",
+    "historicalHumanPending": true,
+    "status": "pass",
+    "path": "docs/acceptance/20261012-0.7-machine-gates.json"
+  },
+  "humanUiAcceptance": {
+    "status": "pass",
+    "source": "Direct user messages in this Codex task",
+    "initialProductSourceCommit": "bc936cb6588da4d433d7d4efe5cf8241a35bdefd",
+    "initialFeedback": "Workbench 已关闭。Rulesets和Chains的复制功能可以正常工作，唯一问题是复制Rulesets时，如果不填写文件名，错误信息提示为“Session or service unavailable. Reopen the launch URL.”。B chain的验证结果也符合。排序，历史结果，中英文和宽窄布局均符合预期。",
+    "finalProductSourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+    "finalFeedback": "Workbench和Launcher的检查结果均符合预期。可用性5",
+    "usabilityOfFive": 5,
+    "filenameFixConfirmation": "Accepted through the final Workbench review response",
+    "launcherConfirmation": "Accepted through the final Launcher review response",
+    "sessionExit": {
+      "originalUnchanged": true,
+      "path": "D:\\ArchSift-lab\\runs\\human-launcher-0.7-0e6ee4ceb57e4d55b34ce0a76c770404\\launcher-exit.json",
+      "sha256": "200c1cdb08479b00d4a6a446061957d8494e3080673b46d95a29c03e0f0a9701",
+      "hostStateEqual": true,
+      "allOwnedProcessesExited": true,
+      "exitCode": 0,
+      "listenerClosed": true
+    }
+  },
+  "postHumanAudit": {
+    "path": "D:\\ArchSift-lab\\evidence\\0.7-closure-post-human-9e58214949c646598e013fd54ed980e1\\result.json",
+    "sha256": "98cba1a04a2b63cf95b0434da70de1ab62d4263aa3b1f57f9e28b4bec0bef214",
+    "status": "pass",
+    "payloadEntries": 653,
+    "originalPayloadEntries": 647,
+    "originalFrozenFiles": 14,
+    "targetTrackedFiles": 782,
+    "targetCapturedFiles": 783,
+    "originalUnchanged": true,
+    "hostStateEqual": true,
+    "residualProcesses": [],
+    "residualListeners": [],
+    "machineScriptHumanPendingField": "The machine script does not assess human answers; the actual user response is recorded separately above."
+  },
+  "releaseAuthorized": true,
+  "publicationStatus": "not-yet-published",
+  "ifxOriginalInstallationUpgraded": false,
+  "ifxBPolicyAdopted": false,
+  "limitations": [
+    "Declaration model still has unevaluated MSBuild condition/expression limitations; partial/compliant/exit 4 is retained.",
+    "External-reviewed evidence directly verifies identities; build causality is supported by reviewed actual logs, not an ArchSift target rebuild.",
+    "B policy remains limited to existing type/namespace selectors; no full architecture, dynamic loading, deployment RID or signature/runtime certification.",
+    "Synthetic budget and invalid dotnet paths do not certify physical absence of SDKs or IFX performance bounds."
+  ]
+}

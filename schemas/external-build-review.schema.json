@@ -1,0 +1,199 @@
+{
+  "required": [
+    "schemaVersion",
+    "origin",
+    "captureSha256",
+    "approved",
+    "inputsComplete",
+    "reviewer",
+    "sdk",
+    "sdkToolPath",
+    "targetFramework",
+    "configuration",
+    "command",
+    "exitCode",
+    "globalProperties",
+    "materials",
+    "projects",
+    "assemblies",
+    "frameworkPaths",
+    "imports",
+    "generatorsAndTasks",
+    "unknowns"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "origin": {
+      "const": "external-reviewed"
+    },
+    "captureSha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "approved": {
+      "type": "boolean"
+    },
+    "inputsComplete": {
+      "type": "boolean"
+    },
+    "reviewer": {
+      "type": "string"
+    },
+    "sdk": {
+      "type": "string"
+    },
+    "sdkToolPath": {
+      "type": "string"
+    },
+    "targetFramework": {
+      "enum": [
+        "net8.0",
+        "net9.0",
+        "net10.0"
+      ]
+    },
+    "configuration": {
+      "enum": [
+        "Debug",
+        "Release"
+      ]
+    },
+    "command": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "exitCode": {
+      "type": "integer"
+    },
+    "globalProperties": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "materials": {
+      "items": {
+        "required": [
+          "path",
+          "sha256",
+          "length",
+          "role"
+        ],
+        "additionalProperties": false,
+        "type": "object",
+        "properties": {
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "length": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "role": {
+            "enum": [
+              "build-log",
+              "evaluation-trace",
+              "review-notes",
+              "generated-input"
+            ]
+          }
+        }
+      },
+      "type": "array"
+    },
+    "projects": {
+      "items": {
+        "required": [
+          "sourceProject",
+          "assemblyName",
+          "targetFramework",
+          "evaluatedProperties"
+        ],
+        "additionalProperties": false,
+        "type": "object",
+        "properties": {
+          "sourceProject": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "assemblyName": {
+            "type": "string"
+          },
+          "targetFramework": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "evaluatedProperties": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          }
+        }
+      },
+      "type": "array"
+    },
+    "assemblies": {
+      "items": {
+        "required": [
+          "sourceProject",
+          "path"
+        ],
+        "additionalProperties": false,
+        "type": "object",
+        "properties": {
+          "sourceProject": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "type": "array"
+    },
+    "frameworkPaths": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "imports": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "generatorsAndTasks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "unknowns": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    }
+  }
+}

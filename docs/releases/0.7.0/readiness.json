@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-release-readiness",
+  "version": "0.7.0",
+  "date": "2026-10-12",
+  "status": "accepted-pending-explicit-merge-and-publication-approval",
+  "productSourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+  "testedPrHead": "a2c9f275c9f3af028e6ef99bc669bee9b78f7a9b",
+  "finalAcceptance": {
+    "path": "D:\\ArchSift\\docs\\acceptance\\20261012-0.7-final-acceptance.json",
+    "sha256": "447994cf38f0ac0b99211a5a9fc1cb065b36d443fb26ba552ef6819fc9c4b394"
+  },
+  "finalPrCi": {
+    "runId": 38247305382,
+    "status": "pass",
+    "platforms": [
+      {
+        "platform": "windows",
+        "sdk": "10.0.401",
+        "testsPassed": 222,
+        "configuration": "Release",
+        "checksPath": "D:\\ArchSift-lab\\evidence\\0.7-ci-a2c9f27\\regression-windows-latest\\runs\\development-928b601c5a39405096a219461fda78b7\\checks.json",
+        "checksSha256": "58c8a5091cf88962eed8851d8cad1fdb4b32354639eb4b10456cfcb1aa13d29e",
+        "hostStateEqual": true
+      },
+      {
+        "platform": "ubuntu",
+        "sdk": "10.0.401",
+        "testsPassed": 222,
+        "configuration": "Release",
+        "checksPath": "D:\\ArchSift-lab\\evidence\\0.7-ci-a2c9f27\\regression-ubuntu-latest\\runs\\development-1006d51fc2f349a6a7cc389b0182893c\\checks.json",
+        "checksSha256": "83dc199df81a5692f37cf866ec734fb01e9dbbf054a36120005c1940cbadd8f5",
+        "hostStateEqual": true
+      }
+    ]
+  },
+  "draft": {
+    "releaseId": 410565198,
+    "url": "https://github.com/von12549/ArchSift/releases/tag/untagged-a38292b6a801c5c7bc38",
+    "publiclyPublished": false,
+    "download": {
+      "path": "D:\\ArchSift-lab\\packages\\draft-0.7-independent-e3dea5d5b4a54bb2a6039ff96a06b0c4\\download-result.json",
+      "sha256": "ea55e0633598f136ef3aa41cbb14406ed7d9e144d98797948a244bb40f7f41f8"
+    },
+    "assets": [
+      {
+        "name": "archsift-0.7.0-win-x64.zip",
+        "bytes": 89365009,
+        "sha256": "696cd970e9dc449d34af26543560fc35831c3320e8046e68e2611d0d57647b07",
+        "serverDigest": "sha256:696cd970e9dc449d34af26543560fc35831c3320e8046e68e2611d0d57647b07"
+      },
+      {
+        "name": "ArchSift.Setup.exe",
+        "bytes": 74212126,
+        "sha256": "71097ac685947295223df30509ac24a02d64996f3e9c28813591ee0c645c4647",
+        "serverDigest": "sha256:71097ac685947295223df30509ac24a02d64996f3e9c28813591ee0c645c4647"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "bytes": 178,
+        "sha256": "9d8f8feb56c317aac4a69d9e055928a76e38eeb4ad1eb0f19a21a0e8ffe44153",
+        "serverDigest": "sha256:9d8f8feb56c317aac4a69d9e055928a76e38eeb4ad1eb0f19a21a0e8ffe44153"
+      },
+      {
+        "name": "acceptance.json",
+        "bytes": 2344,
+        "sha256": "5c46a18f985d8572e7fc10d781624c45f01bbc2b4f12451a2eb75bd3c2946753",
+        "serverDigest": "sha256:5c46a18f985d8572e7fc10d781624c45f01bbc2b4f12451a2eb75bd3c2946753"
+      }
+    ],
+    "zipSmoke": {
+      "path": "D:\\ArchSift-lab\\packages\\smoke-9314653d7bf54f289014ae078f726271\\smoke-result.json",
+      "sha256": "d3b7d373ba31ba2cd6449d66515985ec6b5ebe8d1ea2adf331f60880469e469c"
+    },
+    "zipChecks": 17,
+    "setupSmoke": {
+      "path": "D:\\ArchSift-lab\\packages\\setup-smoke-7adf4e1cac5e47e6a117ea665a9575b8\\setup-smoke-result.json",
+      "sha256": "545d6e4e859b4d2c7adb67c3dd802d298d8a4a3067de09ec7897355456a6fc49"
+    },
+    "setupChecks": 13,
+    "prePublicationSafetyAudit": {
+      "path": "D:\\ArchSift-lab\\evidence\\0.7-closure-draft-ready-5c0325f26d0748aeb07168ed1378e6c3\\result.json",
+      "sha256": "98cba1a04a2b63cf95b0434da70de1ab62d4263aa3b1f57f9e28b4bec0bef214"
+    }
+  },
+  "approval": {
+    "status": "explicit-user-approval-required",
+    "blockedAction": "Merge PR #5 into the default branch",
+    "reason": "Automatic approval review accepted authorization for acceptance, commits and pushes but rejected this merge because the trusted user messages did not explicitly authorize it.",
+    "mergePerformed": false,
+    "publicationPerformed": false,
+    "requestedNextActions": [
+      "Merge PR #5 after checks pass on its exact latest head",
+      "Publish the verified four v0.7.0 assets, with the tag bound directly to frozen product ff9a7d1",
+      "Independently download and verify public assets and record publication verification"
+    ]
+  },
+  "ifxOriginalInstallationUpgraded": false,
+  "ifxBPolicyAdopted": false
+}

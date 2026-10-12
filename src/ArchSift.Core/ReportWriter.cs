@@ -22,6 +22,10 @@ public static class ReportWriter
         text.Append($"<p>Run {E(report.RunMetadata.RunId)} · {E(report.Execution)} · compliance {E(report.Compliance)}</p>");
         if (report.Execution != "completed") text.Append("<p style=\"border-left:4px solid #8a4b00;background:#fff1d2;padding:1rem\">This run is incomplete. Passing rules do not imply full coverage. Review limitations and source binding.</p>");
         text.Append($"<p>Target: {E(report.RunMetadata.TargetRoot)} · model: {E(report.Scope.Model)} · source binding: {E(report.BuildContext.Binding)}</p>");
+        if (report.BuildContext.EvidenceOrigin is { } origin)
+            text.Append($"<p>Evidence origin: {E(origin)} · SHA-256: {E(report.BuildContext.EvidenceSha256)}. Build causality is externally reviewed; ArchSift verifies identities without rebuilding the target.</p>");
+        if (report.BuildContext.AssemblyContextCount is { } count)
+            text.Append($"<p>Assembly binding: {E(report.BuildContext.AssemblyBindingMode)}; project contexts: {count}. Only first-party owners are counted as analysis sources.</p>");
         text.Append($"<p>Projects {report.Coverage.ProjectCount} / assemblies {report.Coverage.AssemblyCount}; effective violations {report.Findings.Count(f => f.ExceptionId is null && report.RuleResults.Any(r => r.RuleId == f.RuleId && r.Status == "violation"))}; exceptions {report.Findings.Count(f => f.ExceptionId is not null)}</p>");
         text.Append("<h2>Rule results</h2><table><tr><th>Rule</th><th>Status</th><th>Matched</th><th>Limitations</th></tr>");
         foreach (var rule in report.RuleResults)

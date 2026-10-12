@@ -1,5 +1,41 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 0.7.0合并／发布准备完成：用户独立UI5/5、人工后终审、最终a2c9f27两平台各222项CI、四项草稿服务器digest／独立下载／ZIP17／Setup13与新安全终审全部通过，见[准备记录](../releases/0.7.0-readiness.md)。PR5 ready未合并，release为draft。自动审批拒绝合并，要求当前可信用户明确授权；等待明确批准合并及公开发布，不绕过拒绝。技术验收完成，版本尚未公开，原IFX安装／B策略保持。
+
+2026-10-12 0.7.0最终验收 COMPLETE：固定ff9a7d1全部机器门禁通过后，用户确认Workbench／Launcher符合预期、可用性5/5；人工会话exit0、owned进程／端点退出、原件／宿主和完整终审通过，见[最终验收](../acceptance/20261012-0.7-final-acceptance.md)。0.7-0–0.7-4与P0–P3完成，ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED；提交推送后推进已授权合并／发布及公开下载回验，原IFX安装未升级、B策略未采用。以下pending／失败保留历史时点。
+
+2026-10-12 人工问题最终修复候选 ff9a7d1：文件名必填／错误分类与父进程metadata lease回收均已实施、提交推送；本地及双平台222项、ZIP17／Setup13／原预算／SARIF、105 source-bound contexts／406B＋182A、完整browser7组／6截图、Launcher4组／10截图、外置生命周期和653新载荷／647原载荷／14历史状态／782tracked＋783capture／宿主／进程终审全部通过，见[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)。两轮占用与一次关闭超时保留。先前用户Workbench其他观察符合；新包提示确认／Launcher／评分待用户，PR5 draft、未合并发布。
+
+2026-10-12 人工反馈修复的 59cde17 中间候选：空文件名双语／CI各222项／ZIP17／Setup13通过，但完整 B 浏览器两轮在工具副本清理出现句柄占用，保持inconclusive失败。已改父进程在Worker退出后回收唯一受控lease，真实子进程成功／失败／取消与邻接保护、222项／八模板及宿主通过，见[清理记录](../acceptance/20261012-0.7-worker-cleanup.md)。重新冻结产品和全部适用机器门禁后继续人工修复确认／Launcher／评分；旧反馈与失败保留，未合并发布。
+
+2026-10-12 独立人工 Workbench 回传已记录：bc936cb 的 Rulesets／Chains 复制、B 结果、排序／历史／中英文宽窄布局符合预期；空文件名误报会话不可用需要修复。会话安全关闭、原件／宿主一致，[实际反馈](../acceptance/20261012-0.7-human-workbench-bc936cb.md)保留来源与报告。已补提交前双语必填校验和非认证 HTTP 错误分类，前端回归通过；开发／替代固定候选复验进行，Launcher／整体评分未提供，未合并发布。
+
+2026-10-12 用户开始独立人工 UI：固定 bc936cb 的 Workbench 已启动，全新外置库／报告会话 human-ui-0.7-a409b4d22ecb4f01b8d736dbce513286，固定载荷／原件／宿主启动前后一致。用户操作和评分尚未完成，Launcher 及关闭后审计待继续；机器门禁保持通过，PR draft、未合并发布。
+
+2026-10-12 0.7 收尾机器门禁 COMPLETE：冻结产品 `bc936cb` 的两平台实际 SDK 10.0.401 各222项、本地SDK10.0.303／222项／八模板、17ZIP／13Setup／原预算／SARIF、真实 source-bound 105 contexts／406B＋182A、真实库6组／6截图、Launcher4组／10截图、外置生命周期及最终653新载荷／647原载荷／14状态历史／782tracked＋783capture／宿主和进程审计全部通过。[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)与机器JSON保留精确身份；partial／compliant／exit4和外部审查边界不变。P2 COMPLETE／P3 MACHINE COMPLETE／HUMAN UI PENDING；更新记录后提交推送，PR5保留draft，人工用户完成及后审计前不合并发布、不采用B策略。后文尚未答复／不能绑定／待机器复验为历史。
+
+2026-10-12 P3 首候选 b56d652 的 CI／包／原生真实 A/B／外置生命周期通过，但真实库浏览器发现 chain 编辑器内容不可见，候选不关闭；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保留各失败。已改显式编辑面板并加入未保存关闭保护，222 项／八模板和真实库四组针对性浏览器开发检查通过、原件／宿主一致。修复阶段提交推送后重建替代固定候选，P3／独立人工 UI 仍未完成，未合并／发布。
+
+2026-10-12 P2 真实上下文绑定与本轮 A/B 复验 COMPLETE：105 contexts／sourceBound=true，406 B＋182 A 全部 pass、零 finding／execution error，仍 partial／compliant／exit 4；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保存精确材料与报告身份。审查补强后 222 项 Release／八模板通过、原件与宿主一致。阶段修复和记录提交／推送后进入 P3 新固定候选；人工 UI 未执行，未合并／发布。
+
+2026-10-12 中断后接手收尾：用户再次授权更新记录、审查剩余修改、逐阶段提交／推送及所有机器验收，最终 UI 自行完成。[分区收尾](../acceptance/20261012-0.7-context-closure.md)已复验完整快照的 105 项目 source-bound／B 406 pass，审查补强后 Release 222 项与八模板通过、宿主相等。本轮 A 顺序复验进行；P2 提交与 P3 新固定候选／机器门禁未完成。后文“分区尚未答复”“B 仍无法绑定”为历史阶段，未合并／发布。
+
+2026-10-12 分区闭包 P1 实现验收通过：新 v3／review v2、实际解析证明、唯一第一方 owner／跨上下文结果聚合及 JSON／HTML／SARIF／chain／双语 UI；220 项 Release／八模板、零警告错误与宿主一致，见[实现验收](../acceptance/20261012-0.7-context-implementation.md)。P2 继续真实 IFX 新快照取证；新固定包和最后人工 UI 尚未完成，未合并／发布。
+
+2026-10-12 用户已明确将项目／加载上下文分区闭包纳入 0.7，并要求完成 IFX 源码绑定、各阶段提交／推送、最后 UI 自行验收。[新增设计](../decisions/20261012-0.7-project-context-closure.md)冻结 v3／review v2、实际解析选择证明、第一方所属源聚合与兼容／安全边界；P0 COMPLETE，P1 产品实现开始。旧单闭包拒绝记录保持原状态，未合并／发布。
+
+2026-10-12 最新固定候选 `27c993a` 的两平台 CI、214 项 Release、原生 ZIP／Setup、真实 IFX 外置生命周期、真实库／Launcher 机器浏览器与最终宿主／原件／进程审计通过，见最新 0.7 候选记录。当前 B 源码绑定仍因三组多版本闭包 inconclusive；产品分区范围选择尚未答复，最终人工 UI 未执行。整体0.7-4未关闭，PR保持draft，未合并／发布。
+
+2026-10-12 真实 406 规则库浏览器回归发现并修复短时 registry 锁争用 500 和长标识窄屏溢出；214 项 Release／八模板及真实库五组／六截图开发检查通过，原件／宿主一致。最终固定源码原生复验继续进行；可信 B 结论仍受多版本上下文限制，人工 UI 不由 Agent 代填。
+
+2026-10-12 真实 IFX 已完成外置离线 Debug 构建（零警告错误）与全部 105 项目求值核对；[取证审查](../acceptance/20261012-0.7-ifx-external-evidence.md)发现三组同名不同版本依赖，保持未批准并验证 seal 拒绝。B 的当前 105 DLL／406 条源类型均匹配，但 sourceBound=false、全部 inconclusive；A 的 182 声明规则 pass，partial／exit 4 不变。机器证据已由 Agent 执行，可信 B 结论与最终人工 UI 尚未完成；0.7-4 不关闭，PR 保持 draft。
+
+2026-10-12 真实 IFX 离线快照恢复已通过；构建输入审查发现隐式编译配置缺口，补齐 `.editorconfig`／`.globalconfig`／`.ruleset` 的源码身份及五项变更失效测试。213 项 Release 回归、八模板、构建零警告错误与宿主一致已记录在 0.7 计划；旧 e5147a5 候选保留为历史通过材料，当前修复须重新冻结候选。真实构建取证进行中，最终人工 UI 待用户完成。
+
+2026-10-12 0.7.0 执行分工更新：用户将最后 UI 视觉／实际操作之外的全部剩余验收委托 Agent，包括真实 IFX 预检、外置构建取证、机器集成与生命周期门禁。按审查过的命令逐块执行并保存结果，宿主漂移即停，目标源码保持只读；独立人工 UI 仍待用户完成。下文“等待操作员首块”的段落保留此前形成时点；当前 0.7-4 机器门禁恢复进行，未完成／未发布。
+
+2026-10-12 0.7.0：用户授权实施、逐阶段提交／推送和后续 PR／合并／发布。[计划](20261012-archsift-0.7.0-improvement-plan.md)的 0.7-0／1／2／3 完成，0.7-4 自动候选门禁通过：[e5147a5 候选](../acceptance/20261012-0.7-candidate-readiness.md)的两平台 CI、208 项 Release 回归、17 ZIP／13 Setup 原生检查、冻结预算／SARIF 与原生双语浏览器门禁通过，宿主／目标／状态一致。真实 IFX 取证与独立人工 UI 等待操作员首个审查命令结果，原安装未升级，B 类未证明通过；PR #5 保持 draft，未合并／发布。真实 IFX 操作与候选策略采用边界不变；以下历史阶段记录保持原状态。
+
 2026-10-11 0.6.0 最新状态：替代候选的真实 IFX 机器门禁、用户独立 UI 验收及人工后审计通过；[PR #3](https://github.com/von12549/ArchSift/pull/3) 合并后，`v0.6.0` 已[正式发布并完成四资产独立下载、原生 ZIP/Setup smoke 与发布后审计](../releases/0.6.0-publication.md)。原 IFX 目标、原安装和宿主状态相等。当前 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；下面旧段落保留形成时的历史状态。
 
 日期：2026-10-06（Australia/Sydney）

@@ -1,4 +1,4 @@
-# ArchSift 0.6.0 package
+# ArchSift 0.7.0 candidate package
 
 Windows x64 self-contained CLI and loopback workbench. Declared project discovery requires no SDK or Guard installation and makes no persistent PATH/Profile changes. Isolated builds need supported target SDKs/targeting packs and default to offline restore. This package is a candidate until its exact bytes pass the release acceptance gates.
 

@@ -1,0 +1,191 @@
+{
+  "required": [
+    "schemaVersion",
+    "targetRoot",
+    "entry",
+    "targetFramework",
+    "configuration",
+    "inputIdentity",
+    "buildInputIdentity",
+    "externalInputs",
+    "environmentHashes",
+    "propertyNames"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "targetRoot": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "entry": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "targetFramework": {
+      "enum": [
+        "net8.0",
+        "net9.0",
+        "net10.0"
+      ]
+    },
+    "configuration": {
+      "enum": [
+        "Debug",
+        "Release"
+      ]
+    },
+    "inputIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "length": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kind": {
+                "enum": [
+                  "analysis",
+                  "build",
+                  "evidence"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "length",
+              "kind"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "sha256",
+        "files"
+      ]
+    },
+    "buildInputIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "length": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kind": {
+                "enum": [
+                  "analysis",
+                  "build",
+                  "evidence"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "length",
+              "kind"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "sha256",
+        "files"
+      ]
+    },
+    "externalInputs": {
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "length": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "kind": {
+            "enum": [
+              "analysis",
+              "build",
+              "evidence"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "length",
+          "kind"
+        ]
+      },
+      "type": "array"
+    },
+    "environmentHashes": {
+      "additionalProperties": {
+        "pattern": "^[a-f0-9]{64}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "propertyNames": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    }
+  }
+}

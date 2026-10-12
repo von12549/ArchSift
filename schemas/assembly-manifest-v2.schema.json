@@ -1,0 +1,201 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:assembly-manifest:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "inputIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "length": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kind": {
+                "enum": [
+                  "analysis",
+                  "build",
+                  "evidence"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "length",
+              "kind"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "sha256",
+        "files"
+      ]
+    },
+    "buildInputIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "length": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kind": {
+                "enum": [
+                  "analysis",
+                  "build",
+                  "evidence"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "length",
+              "kind"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "sha256",
+        "files"
+      ]
+    },
+    "sdk": {
+      "type": "string",
+      "minLength": 1
+    },
+    "targetFramework": {
+      "enum": [
+        "net8.0",
+        "net9.0",
+        "net10.0"
+      ]
+    },
+    "configuration": {
+      "enum": [
+        "Debug",
+        "Release"
+      ]
+    },
+    "generation": {
+      "const": "external"
+    },
+    "assemblies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "assemblyName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceProject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "assemblyName",
+          "sourceProject",
+          "path",
+          "sha256"
+        ]
+      },
+      "minItems": 1
+    },
+    "reviewedBuild": {
+      "required": [
+        "capturePath",
+        "captureSha256",
+        "reviewPath",
+        "reviewSha256"
+      ],
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "capturePath": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "captureSha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "reviewPath": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "reviewSha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "inputIdentity",
+    "buildInputIdentity",
+    "sdk",
+    "targetFramework",
+    "configuration",
+    "generation",
+    "assemblies",
+    "reviewedBuild"
+  ],
+  "definitions": {}
+}
