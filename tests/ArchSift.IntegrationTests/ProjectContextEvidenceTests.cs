@@ -103,6 +103,21 @@ public sealed class ProjectContextEvidenceTests
             var both = result.Findings.Where(f => f.RuleId == "both-contexts").ToArray(); Assert.Equal(2, both.Length); Assert.Equal(2, both.Select(f => f.Id).Distinct().Count()); Assert.All(both, f => Assert.StartsWith("@context/", f.Location));
             Assert.Equal("pass", result.Results.Single(r => r.RuleId == "no-violation").Status); Assert.Equal("inconclusive", result.Results.Single(r => r.RuleId == "zero-source").Status);
             Assert.Empty(Directory.GetDirectories(evidence, "context-worker-*"));
+            var cliDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+            while (cliDirectory is not null && !File.Exists(Path.Combine(cliDirectory.FullName, "ArchSift.slnx"))) cliDirectory = cliDirectory.Parent;
+            var configuration = typeof(ProjectContextEvidenceTests).Assembly.GetCustomAttributes(false).OfType<AssemblyConfigurationAttribute>().Single().Configuration;
+            var client = new AssemblyWorkerClient(Path.Combine(cliDirectory!.FullName, "src", "ArchSift.Cli", "bin", configuration, "net10.0", "archsift.dll"));
+            var sibling = Path.Combine(evidence, "preserved-sibling.txt"); File.WriteAllText(sibling, "not a worker artifact");
+            var bundle = new RuleBundle([new(policy, new(policy.Id, policy.Version, ContentHash.Text("fixture"), "fixture.json"))]);
+            var childResult = await client.EvaluateAsync(inputs, bundle, evidence, CancellationToken.None);
+            Assert.Empty(childResult.Errors); Assert.Equal(result.AssemblyCount, childResult.AssemblyCount);
+            Assert.Equal(result.Results.Select(r => (r.RuleId, r.Status, r.Matched)), childResult.Results.Select(r => (r.RuleId, r.Status, r.Matched)));
+            Assert.Equal("not a worker artifact", File.ReadAllText(sibling)); Assert.Empty(Directory.GetDirectories(evidence, "worker-contexts-*"));
+            var brokenChild = await client.EvaluateAsync(inputs with { Contexts = [inputs.Contexts[0] with { PrimaryPath = Path.Combine(root, "absent.dll") }] }, bundle, evidence, CancellationToken.None);
+            Assert.NotEmpty(brokenChild.Errors); Assert.Empty(Directory.GetDirectories(evidence, "worker-contexts-*")); Assert.True(File.Exists(sibling));
+            using var cancelled = new CancellationTokenSource(); cancelled.Cancel();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => client.EvaluateAsync(inputs, bundle, evidence, cancelled.Token));
+            Assert.Empty(Directory.GetDirectories(evidence, "worker-contexts-*")); Assert.True(File.Exists(sibling));
             var naming = RuleLoader.Parse(System.Text.Encoding.UTF8.GetBytes(RuleTemplates.Json("naming")));
             naming = naming with { Rules = [naming.Rules[0] with { Scope = new() { Kind = "assembly", Match = "glob", Value = "**" },
                 Parameters = JsonSerializer.SerializeToElement(new { subjectKind = "assembly", requiredName = new { match = "glob", value = "**" } }) }] };

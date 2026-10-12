@@ -15,6 +15,7 @@ public sealed record AssemblyAnalysisContext(string Id, string SourceProject, st
 public sealed record WorkerRequest(AssemblyInputs Inputs, Ruleset[] Rulesets)
 {
     public string? ContextWorkspace { get; init; }
+    public bool ParentOwnsContextCleanup { get; init; }
 }
 public sealed record AssemblyEvaluation(RuleResult[] Results, Finding[] Findings, int AssemblyCount, string[] Errors,
     Dictionary<string, string> EngineVersions);

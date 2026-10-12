@@ -225,7 +225,8 @@ public static class AssemblyWorker
         }
         finally
         {
-            if (Directory.Exists(root)) { PathSafety.EnsureNoLinks(root); if (!PathSafety.IsUnder(root, parent)) throw new IOException("Unsafe context cleanup."); Directory.Delete(root, true); }
+            // The process client reclaims its dedicated lease after exit, when metadata readers can no longer hold files open.
+            if (!request.ParentOwnsContextCleanup && Directory.Exists(root)) { PathSafety.EnsureNoLinks(root); if (!PathSafety.IsUnder(root, parent)) throw new IOException("Unsafe context cleanup."); Directory.Delete(root, true); }
         }
     }
 
