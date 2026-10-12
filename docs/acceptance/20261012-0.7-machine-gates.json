@@ -5,17 +5,17 @@
   "timezone": "Australia/Sydney",
   "version": "0.7.0",
   "status": "machine-gates-passed-human-ui-pending",
-  "productSourceCommit": "bc936cb6588da4d433d7d4efe5cf8241a35bdefd",
-  "productInputsSha256": "667b12c468bc9efd2eb59bd3b57e9c4da455bb78f40a50655132857294bc2bf4",
+  "productSourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
+  "productInputsSha256": "301cd8e5e2b9e74a346e1c2bcb8c86525dc548f88958def45fe1dee5b3ea0746",
   "package": {
-    "root": "D:\\ArchSift-lab\\packages\\release-9042409ef067465cbff718a49a68c829",
-    "zipPath": "D:\\ArchSift-lab\\packages\\release-9042409ef067465cbff718a49a68c829\\archsift-0.7.0-win-x64.zip",
-    "zipSha256": "cb64fd0a710f475f93ecd0a4b8e7fedffb47072c511dc0f9afb26afa16acd8ea",
-    "zipBytes": 89363856,
-    "setupPath": "D:\\ArchSift-lab\\packages\\release-9042409ef067465cbff718a49a68c829\\setup\\ArchSift.Setup.exe",
-    "setupSha256": "f7e67d46d3a10bfc80e50f801d77d4a0677441c5560b4d3a688724834e2c2c82",
+    "root": "D:\\ArchSift-lab\\packages\\release-4a076cde1d644b26a3ba6cef4421afce",
+    "zipPath": "D:\\ArchSift-lab\\packages\\release-4a076cde1d644b26a3ba6cef4421afce\\archsift-0.7.0-win-x64.zip",
+    "zipSha256": "696cd970e9dc449d34af26543560fc35831c3320e8046e68e2611d0d57647b07",
+    "zipBytes": 89365009,
+    "setupPath": "D:\\ArchSift-lab\\packages\\release-4a076cde1d644b26a3ba6cef4421afce\\setup\\ArchSift.Setup.exe",
+    "setupSha256": "71097ac685947295223df30509ac24a02d64996f3e9c28813591ee0c645c4647",
     "setupBytes": 74212126,
-    "manifestSha256": "2bfd569f87f955e1ff225a3b1dc4684bd04ec31f12b5c8fb2dc0ac75c37993a9",
+    "manifestSha256": "4b6b82c99ad0a30a3065e4851a4bc396809761b54ad6ccba3a9a4fb2a838a6d8",
     "payloadEntryCount": 653,
     "sourceDirty": false,
     "productSourceDirty": false
@@ -29,14 +29,14 @@
     "evidence": {
       "name": "development",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\runs\\development-5903de1908d64c06b582763004e3fbeb\\checks.json",
-      "sha256": "3b956f2877c1e4ef440f835cdc0eeeea642124d55b7bcd404cf0a0511405abc1"
+      "path": "D:\\ArchSift-lab\\runs\\development-97efdbdddf574848b1609e0420e0996b\\checks.json",
+      "sha256": "86caa39f4be6a0fdc5a1317f62d0ad6feb55a7d8678552329deeebd23b004e5c"
     }
   },
   "ci": {
-    "runId": 38221829165,
-    "url": "https://github.com/von12549/ArchSift/actions/runs/38221829165",
-    "sourceCommit": "bc936cb6588da4d433d7d4efe5cf8241a35bdefd",
+    "runId": 38241788680,
+    "url": "https://github.com/von12549/ArchSift/actions/runs/38241788680",
+    "sourceCommit": "ff9a7d1e6c7973b07de08f03583d3aa605496865",
     "platforms": [
       {
         "platform": "windows",
@@ -48,8 +48,8 @@
         "evidence": {
           "name": "windows-ci",
           "status": "pass",
-          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-bc936cb\\regression-windows-latest\\runs\\development-594e66a2ed0e4f00862112f1be8fa57d\\checks.json",
-          "sha256": "cad00b959479cbe8996075a28c9b4f77c48071b20c2e568bd42a973094973bc7"
+          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-ff9a7d1\\regression-windows-latest\\runs\\development-531287674d4a41bfae82add0e4cd3c99\\checks.json",
+          "sha256": "c1aac7d266f68b470f88ab71fa5d62feeb958fd71e3080f241807fb53eda4c26"
         }
       },
       {
@@ -62,8 +62,8 @@
         "evidence": {
           "name": "ubuntu-ci",
           "status": "pass",
-          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-bc936cb\\regression-ubuntu-latest\\runs\\development-112d2e40ba254a8d9de2999e3e93fbf3\\checks.json",
-          "sha256": "981d49a058aea39f61869d523181e2cb193f4ad815bb2cf33e33bab26819fa4e"
+          "path": "D:\\ArchSift-lab\\evidence\\0.7-ci-ff9a7d1\\regression-ubuntu-latest\\runs\\development-e3337e63f23645dabd534ad2b755a4af\\checks.json",
+          "sha256": "773813ac6343c4cd65a7e5b435cb234ee02635695844d9ca0c03a51735c11ef9"
         }
       }
     ]
@@ -86,8 +86,8 @@
     "bReport": {
       "name": "current-source-b-report",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\runs\\ifx-bound-0.7-2f42e51241864b419e7a1b69bdbcbb14\\reports\\bd57da15759147e0a2e1df45eb1f90ce\\2c6569663f4046d598366ef6c27265d5\\483e54e6006047b68dbe8b481e2a8bca\\report.json",
-      "sha256": "5c280ee9f3f51b52e46dcf8ba6f584ccca572d15cbd5b926c4ccab2f9e4d052a"
+      "path": "D:\\ArchSift-lab\\runs\\ifx-bound-0.7-1255fbc8d94c42c3b61cdb02831309dd\\reports\\f34072d25daa40e2b533363f13ab264a\\2c6569663f4046d598366ef6c27265d5\\fe3821324b2d49958e09e84d46b4fd0d\\report.json",
+      "sha256": "dc93056fa55a58cfd81fd478c99f4355cd71e4955f59e8cc02c637dc7b9d9739"
     },
     "reportInputSha256": "4393f429348182da5f9f972bde488ddca582d7db55da9518c18fc93c9100161d",
     "minimumBMatched": 1.0,
@@ -97,50 +97,50 @@
     {
       "name": "package-build",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\packages\\release-9042409ef067465cbff718a49a68c829\\package-result.json",
-      "sha256": "cbc25d7635ebff0bbe4b937123f367e5325c46047ae1da5987b2b2cfca2d2fed"
+      "path": "D:\\ArchSift-lab\\packages\\release-4a076cde1d644b26a3ba6cef4421afce\\package-result.json",
+      "sha256": "863856f2a9634407ef3d1de8e4d350bec2b948ae3055c064526204455b9708db"
     },
     {
       "name": "zip-smoke-budget-sarif",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\packages\\smoke-e3eddb27039641a6aa5895c120b33d80\\smoke-result.json",
-      "sha256": "92542db4905436136ef0f30093ff0eba84ec6cf6eaf8f9dd494f523ae3518d91"
+      "path": "D:\\ArchSift-lab\\packages\\smoke-832ba703400848bcbcd87a2e84943992\\smoke-result.json",
+      "sha256": "9e7ff7e011153c84a32362d016f3545967b9d2409999293b8ebc53b4999b2cf8"
     },
     {
       "name": "setup-smoke",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\packages\\setup-smoke-1968ae729abc46bb8db6c40ae7cc1593\\setup-smoke-result.json",
-      "sha256": "c212ebd7b9691c9d209ddf96a93377709ab13abb6f54d0ba07c4da244f9c8475"
+      "path": "D:\\ArchSift-lab\\packages\\setup-smoke-f34cc9d7263a462cbc51a5fcead3afc3\\setup-smoke-result.json",
+      "sha256": "19f442079830e1c18e9bd192f2840ee285328bb86a7b274d49483b3c7651805f"
     },
     {
       "name": "native-ifx-binding-reports-contracts",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\runs\\ifx-bound-0.7-2f42e51241864b419e7a1b69bdbcbb14\\result.json",
-      "sha256": "956f4f25c057339b17c10024d412d10356a4a158e46e999d1109db54fca01abc"
+      "path": "D:\\ArchSift-lab\\runs\\ifx-bound-0.7-1255fbc8d94c42c3b61cdb02831309dd\\result.json",
+      "sha256": "45f4a9b47f50d5a470c43dfc2a459ddc98c92b66f88c7c5ebd45cf39c0197057"
     },
     {
       "name": "real-copy-lifecycle",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\runs\\ifx-lifecycle-0.7-e8342040eb414ad789aabe208de87d35\\result.json",
-      "sha256": "9ddd2f1260c5911663b3dc54b0759cf2fb84ea33800b654e68af51e08ca27cec"
+      "path": "D:\\ArchSift-lab\\runs\\ifx-lifecycle-0.7-b5ce1319a30c4b158fe089b3d2da17aa\\result.json",
+      "sha256": "f2e77523fe0f533970c6c6654dfc7c83cc06a98bea3dcf08f5b84f8bef0f40bc"
     },
     {
       "name": "native-real-library-browser",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\runs\\ifx-browser-0.7-62d9b76ac0134110be5bb3bf3b792af1\\result.json",
-      "sha256": "dd8af2a1f9ddd76e9fedc98f29e9873cf235463d6a6e44a3b4a187d563f343ea"
+      "path": "D:\\ArchSift-lab\\runs\\ifx-browser-0.7-b15d97a74a984c4990060a2e261eb6a6\\result.json",
+      "sha256": "42d1cb94c476caccb864035377e365924fbdb4d512c17bd60791699bdf978e04"
     },
     {
       "name": "native-launcher-browser",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\runs\\native-launcher-0.7-7f9ab22fcc874efab959d304d66afbbe\\visual-result.json",
+      "path": "D:\\ArchSift-lab\\runs\\native-launcher-0.7-147ab98901bc40f1a6e29bbc8491fa62\\visual-result.json",
       "sha256": "e7fbefe132f73b02aa8ce7a093794aeac8e9bf521d55a9a8b32c769454506fe0"
     },
     {
       "name": "final-safety-audit",
       "status": "pass",
-      "path": "D:\\ArchSift-lab\\evidence\\0.7-closure-20261012-handoff\\result.json",
-      "sha256": "2cd39e7105cede263952b5713945be769e7023ddde9cdb68f0632fe27d83ff27"
+      "path": "D:\\ArchSift-lab\\evidence\\0.7-closure-filename-fix-20261012\\result.json",
+      "sha256": "98cba1a04a2b63cf95b0434da70de1ab62d4263aa3b1f57f9e28b4bec0bef214"
     }
   ],
   "safety": {

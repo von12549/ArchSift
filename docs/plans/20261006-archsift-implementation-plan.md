@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 人工问题最终修复候选 ff9a7d1：文件名必填／错误分类与父进程metadata lease回收均已实施、提交推送；本地及双平台222项、ZIP17／Setup13／原预算／SARIF、105 source-bound contexts／406B＋182A、完整browser7组／6截图、Launcher4组／10截图、外置生命周期和653新载荷／647原载荷／14历史状态／782tracked＋783capture／宿主／进程终审全部通过，见[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)。两轮占用与一次关闭超时保留。先前用户Workbench其他观察符合；新包提示确认／Launcher／评分待用户，PR5 draft、未合并发布。
+
 2026-10-12 人工反馈修复的 59cde17 中间候选：空文件名双语／CI各222项／ZIP17／Setup13通过，但完整 B 浏览器两轮在工具副本清理出现句柄占用，保持inconclusive失败。已改父进程在Worker退出后回收唯一受控lease，真实子进程成功／失败／取消与邻接保护、222项／八模板及宿主通过，见[清理记录](../acceptance/20261012-0.7-worker-cleanup.md)。重新冻结产品和全部适用机器门禁后继续人工修复确认／Launcher／评分；旧反馈与失败保留，未合并发布。
 
 2026-10-12 独立人工 Workbench 回传已记录：bc936cb 的 Rulesets／Chains 复制、B 结果、排序／历史／中英文宽窄布局符合预期；空文件名误报会话不可用需要修复。会话安全关闭、原件／宿主一致，[实际反馈](../acceptance/20261012-0.7-human-workbench-bc936cb.md)保留来源与报告。已补提交前双语必填校验和非认证 HTTP 错误分类，前端回归通过；开发／替代固定候选复验进行，Launcher／整体评分未提供，未合并发布。
