@@ -231,6 +231,14 @@
           "evaluationPath": {
             "minLength": 1,
             "type": "string"
+          },
+          "runtimePaths": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         },
         "type": "object",

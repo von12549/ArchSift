@@ -42,12 +42,12 @@ public sealed class ProjectContextEvidenceTests
             var second = await Dependency("SharedLib", "2.0.0.0", "namespace Lib.Shared { public class Legacy {} public class Modern {} } namespace Domain { public class Foreign {} }");
             var transit = await Dependency("Transit", "1.0.0.0", "namespace Transit { public class Bridge { public Lib.Shared.Legacy Value = new(); } }", first);
             File.WriteAllText(Path.Combine(source, "Directory.Build.props"), "<Project><PropertyGroup Condition=\"'$(CI)' != 'false'\"><NoWarn>$(NoWarn);CS1591</NoWarn></PropertyGroup><PropertyGroup Condition=\"$(MSBuildProjectName.EndsWith('Owner'))\"><NoWarn>$(NoWarn);CS0169</NoWarn></PropertyGroup></Project>");
-            foreach (var (folder, dependency, member) in new[] { ("FirstOwner", first, "Legacy"), ("SecondOwner", second, "Modern") })
+            foreach (var (folder, dependency, member) in new[] { ("FirstOwner", first, "Legacy"), ("SecondOwner", second, "Modern"), ("ThirdOwner", first, "Legacy") })
             {
                 var directory = Path.Combine(source, folder); Directory.CreateDirectory(directory);
-                File.WriteAllText(Path.Combine(directory, folder + ".csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework><AssemblyName>Owner</AssemblyName></PropertyGroup><ItemGroup><Reference Include=\"SharedLib\"><HintPath>" + System.Security.SecurityElement.Escape(dependency) + "</HintPath></Reference>" +
+                File.WriteAllText(Path.Combine(directory, folder + ".csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework><AssemblyName>" + (folder == "ThirdOwner" ? "OtherOwner" : "Owner") + "</AssemblyName></PropertyGroup><ItemGroup><Reference Include=\"SharedLib\"><HintPath>" + System.Security.SecurityElement.Escape(dependency) + "</HintPath></Reference>" +
                     (folder == "SecondOwner" ? "<Reference Include=\"Transit\"><HintPath>" + System.Security.SecurityElement.Escape(transit) + "</HintPath></Reference>" : "") + "</ItemGroup></Project>");
-                File.WriteAllText(Path.Combine(directory, "Types.cs"), "namespace Domain; public class Shared { public Lib.Shared." + member + " Value = new(); }");
+                File.WriteAllText(Path.Combine(directory, "Types.cs"), "namespace " + (folder == "ThirdOwner" ? "Other" : "Domain") + "; public class Shared { public Lib.Shared." + member + " Value = new(); }");
             }
             foreach (var file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
             {
@@ -64,18 +64,19 @@ public sealed class ProjectContextEvidenceTests
             var capturePath = Path.Combine(evidence, "capture.json"); ExternalBuildEvidence.WriteNew(capturePath, capture);
             var projects = new List<ReviewedProject>(); var assemblies = new List<ReviewedAssembly>(); var contexts = new List<ReviewedAssemblyContext>(); var materials = new List<EvidenceMaterial>();
             EvidenceMaterial Material(string p, string role) { var file = ExternalBuildEvidence.FileFact(p, "evidence"); return new(p, file.Sha256, file.Length, role); }
-            foreach (var folder in new[] { "FirstOwner", "SecondOwner" })
+            foreach (var folder in new[] { "FirstOwner", "SecondOwner", "ThirdOwner" })
             {
                 var entry = folder + "/" + folder + ".csproj"; await Restore(build, entry);
                 var built = await Run(build, "build", entry, "--no-restore", "--disable-build-servers", "-p:UseSharedCompilation=false", "-bl:" + Path.Combine(evidence, folder + ".binlog"));
                 var log = Path.Combine(evidence, folder + ".log"); File.WriteAllText(log, built.Output + built.Error); materials.Add(Material(log, "build-log")); materials.Add(Material(Path.Combine(evidence, folder + ".binlog"), "evaluation-trace"));
                 var names = capture.PropertyNames.Concat(["MSBuildProjectFullPath", "AssemblyName", "TargetPath", "TargetFramework", "Configuration"]).Distinct().ToArray();
-                var evaluated = await Run(build, "msbuild", entry, "-nologo", "-t:ResolveReferences", "-p:BuildProjectReferences=false", "-p:Configuration=Debug", "-getProperty:" + string.Join(',', names), "-getItem:ReferencePath");
+                var evaluated = await Run(build, "msbuild", entry, "-nologo", "-t:ResolveReferences", "-p:BuildProjectReferences=false", "-p:Configuration=Debug", "-getProperty:" + string.Join(',', names), "-getItem:ReferencePath,ReferenceCopyLocalPaths");
                 var tracePath = Path.Combine(evidence, folder + "-evaluation.json"); File.WriteAllText(tracePath, evaluated.Output); materials.Add(Material(tracePath, "evaluation-trace"));
                 using var trace = JsonDocument.Parse(evaluated.Output); var values = trace.RootElement.GetProperty("Properties");
                 var path = values.GetProperty("TargetPath").GetString()!;
-                projects.Add(new(entry, "Owner", "net10.0", capture.PropertyNames.ToDictionary(p => p, p => values.GetProperty(p).GetString()!)));
-                assemblies.Add(new(entry, path)); contexts.Add(new(folder, entry, path, tracePath, trace.RootElement.GetProperty("Items").GetProperty("ReferencePath").EnumerateArray().Select(i => i.GetProperty("FullPath").GetString()!).ToArray()));
+                projects.Add(new(entry, values.GetProperty("AssemblyName").GetString()!, "net10.0", capture.PropertyNames.ToDictionary(p => p, p => values.GetProperty(p).GetString()!)));
+                assemblies.Add(new(entry, path)); contexts.Add(new(folder, entry, path, tracePath, trace.RootElement.GetProperty("Items").GetProperty("ReferencePath").EnumerateArray().Select(i => i.GetProperty("FullPath").GetString()!).ToArray())
+                { RuntimePaths = trace.RootElement.GetProperty("Items").GetProperty("ReferenceCopyLocalPaths").EnumerateArray().Select(i => i.GetProperty("FullPath").GetString()!).ToArray() });
             }
             foreach (var file in Directory.GetFiles(build, "*", SearchOption.AllDirectories).Where(f => f.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.Ordinal))) materials.Add(Material(file, "generated-input"));
             var notes = Path.Combine(evidence, "review.md"); File.WriteAllText(notes, "Actual offline synthetic builds: same-named owners, SharedLib 1/2 in independent compiler contexts, Transit requested 1 but MSBuild selected 2; exact actual trace and token/culture still required. No target application invoked."); materials.Add(Material(notes, "review-notes"));
@@ -89,33 +90,53 @@ public sealed class ProjectContextEvidenceTests
             var manifest = Path.Combine(root, "manifest.json"); ExternalBuildEvidence.Seal(config, capturePath, reviewPath, manifest);
             config = config with { Build = config.Build with { AssemblyManifest = manifest } };
             var snapshot = ProjectDiscovery.Discover(source, targetFramework: "net10.0"); var inputs = AssemblyArtifacts.Existing(config, snapshot);
-            Assert.True(inputs.SourceBound, string.Join('\n', inputs.Limitations)); Assert.Equal(2, inputs.Contexts.Length);
+            Assert.True(inputs.SourceBound, string.Join('\n', inputs.Limitations)); Assert.Equal(3, inputs.Contexts.Length);
             var template = RuleLoader.Parse(System.Text.Encoding.UTF8.GetBytes(RuleTemplates.Json("type-dependency")));
             Rule Rule(string id, string kind, string target, string sourceNamespace = "Domain") => template.Rules[0] with { Id = id, Scope = new() { Kind = "namespace", Match = "exact", Value = sourceNamespace }, Parameters = JsonSerializer.SerializeToElement(new { source = new { kind = "namespace", match = "exact", value = sourceNamespace }, forbiddenTarget = new { kind, match = "exact", value = target } }) };
-            var policy = template with { Rules = [Rule("version-one-only", "type", "Lib.Shared.Legacy"), Rule("both-contexts", "namespace", "Lib.Shared"), Rule("no-violation", "type", "Missing.Target"), Rule("zero-source", "type", "Lib.Shared.Legacy", "Absent")] };
+            var policy = template with { Rules = [Rule("version-one-only", "type", "Lib.Shared.Legacy"), Rule("both-contexts", "namespace", "Lib.Shared"), Rule("no-violation", "type", "Missing.Target"), Rule("zero-source", "type", "Lib.Shared.Legacy", "Absent"), Rule("compatible-batch-owner", "type", "Lib.Shared.Legacy", "Other")] };
             var result = AssemblyWorker.Evaluate(new(inputs, [policy]) { ContextWorkspace = evidence }); Assert.Empty(result.Errors);
-            Assert.Equal(2, result.AssemblyCount); Assert.All(result.Results.Where(r => r.RuleId != "zero-source"), r => Assert.Equal(2, r.Matched));
+            Assert.Equal(3, result.AssemblyCount); Assert.All(result.Results.Where(r => r.RuleId is not ("zero-source" or "compatible-batch-owner")), r => Assert.Equal(2, r.Matched));
+            var batched = result.Results.Single(r => r.RuleId == "compatible-batch-owner"); Assert.Equal(1, batched.Matched); Assert.Equal("violation", batched.Status);
+            Assert.Contains(result.Findings, f => f.RuleId == "compatible-batch-owner" && f.Location!.Contains("ThirdOwner", StringComparison.Ordinal));
             Assert.Equal("violation", result.Results.Single(r => r.RuleId == "version-one-only").Status);
             Assert.Single(result.Findings, f => f.RuleId == "version-one-only");
             var both = result.Findings.Where(f => f.RuleId == "both-contexts").ToArray(); Assert.Equal(2, both.Length); Assert.Equal(2, both.Select(f => f.Id).Distinct().Count()); Assert.All(both, f => Assert.StartsWith("@context/", f.Location));
             Assert.Equal("pass", result.Results.Single(r => r.RuleId == "no-violation").Status); Assert.Equal("inconclusive", result.Results.Single(r => r.RuleId == "zero-source").Status);
             Assert.Empty(Directory.GetDirectories(evidence, "context-worker-*"));
+            var naming = RuleLoader.Parse(System.Text.Encoding.UTF8.GetBytes(RuleTemplates.Json("naming")));
+            naming = naming with { Rules = [naming.Rules[0] with { Scope = new() { Kind = "assembly", Match = "glob", Value = "**" },
+                Parameters = JsonSerializer.SerializeToElement(new { subjectKind = "assembly", requiredName = new { match = "glob", value = "**" } }) }] };
+            var failed = AssemblyWorker.Evaluate(new(inputs with { Contexts = [inputs.Contexts[0] with { PrimaryPath = Path.Combine(root, "missing.dll") }] }, [naming]) { ContextWorkspace = evidence });
+            Assert.NotEmpty(failed.Errors); Assert.Equal("inconclusive", Assert.Single(failed.Results).Status);
             var originalReview = File.ReadAllBytes(reviewPath);
             foreach (var broken in new[] {
                 review with { ProjectContexts = [contexts[0]] }, review with { ProjectContexts = [contexts[0], contexts[0]] },
-                review with { ProjectContexts = [contexts[0] with { ReferencePaths = contexts[1].ReferencePaths }, contexts[1]] },
-                review with { ProjectContexts = [contexts[0] with { EvaluationPath = contexts[1].EvaluationPath }, contexts[1]] },
-                review with { ProjectContexts = [contexts[0] with { ReferencePaths = contexts[0].ReferencePaths.Concat([second]).ToArray() }, contexts[1]] },
+                review with { ProjectContexts = [contexts[0] with { ReferencePaths = contexts[1].ReferencePaths }, contexts[1], contexts[2]] },
+                review with { ProjectContexts = [contexts[0] with { EvaluationPath = contexts[1].EvaluationPath }, contexts[1], contexts[2]] },
+                review with { ProjectContexts = [contexts[0] with { RuntimePaths = contexts[1].RuntimePaths }, contexts[1], contexts[2]] },
+                review with { ProjectContexts = [contexts[0] with { ReferencePaths = contexts[0].ReferencePaths.Concat([second]).ToArray() }, contexts[1], contexts[2]] },
                 review with { BuildSnapshotRoot = source }, review with { Materials = review.Materials.Where(m => m.Path != contexts[0].EvaluationPath).ToArray() } })
             {
                 File.WriteAllBytes(reviewPath, JsonSerializer.SerializeToUtf8Bytes(broken, JsonContract.Options));
                 Assert.Throws<ConfigurationException>(() => ExternalBuildEvidence.Seal(config, capturePath, reviewPath, Path.Combine(root, "rejected.json")));
                 Assert.False(File.Exists(Path.Combine(root, "rejected.json"))); Assert.False(AssemblyArtifacts.Existing(config, snapshot).SourceBound);
             }
+            var evaluationFile = contexts[0].EvaluationPath;
+            var originalEvaluation = File.ReadAllBytes(evaluationFile);
+            foreach (var (bytes, reason) in new[] { (System.Text.Encoding.UTF8.GetBytes("{}"), "Malformed project evaluation"),
+                (new byte[ProjectContextEvidence.MaximumJsonBytes + 1], "Evaluation material is too large") })
+            {
+                File.WriteAllBytes(evaluationFile, bytes);
+                var malformed = review with { Materials = review.Materials.Select(m => m.Path == evaluationFile ? Material(evaluationFile, "evaluation-trace") : m).ToArray() };
+                File.WriteAllBytes(reviewPath, JsonSerializer.SerializeToUtf8Bytes(malformed, JsonContract.Options));
+                Assert.Contains(reason, Assert.Throws<ConfigurationException>(() => ExternalBuildEvidence.Seal(config, capturePath, reviewPath, Path.Combine(root, "rejected.json"))).Message);
+                Assert.False(File.Exists(Path.Combine(root, "rejected.json")));
+            }
+            File.WriteAllBytes(evaluationFile, originalEvaluation);
             File.WriteAllBytes(reviewPath, originalReview);
             var report = await new AnalysisService((data, bundle, output, token) => Task.FromResult(AssemblyWorker.Evaluate(new(data, bundle.Documents.Select(d => d.Ruleset).ToArray()) { ContextWorkspace = output })))
                 .RunSelectedAsync(config, new(policy, new(policy.Id, policy.Version, ContentHash.Text("fixture"), "fixture.json")));
-            Assert.True(report.Report.Coverage.SourceBound); Assert.Equal("project-contexts", report.Report.BuildContext.AssemblyBindingMode); Assert.Equal(2, report.Report.BuildContext.AssemblyContextCount);
+            Assert.True(report.Report.Coverage.SourceBound); Assert.Equal("project-contexts", report.Report.BuildContext.AssemblyBindingMode); Assert.Equal(3, report.Report.BuildContext.AssemblyContextCount);
             File.AppendAllText(Path.Combine(build, "Directory.Build.props"), "<!--changed snapshot-->"); Assert.False(AssemblyArtifacts.Existing(config, snapshot).SourceBound);
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); if (Directory.Exists(root)) Directory.Delete(root, true); }
@@ -125,7 +146,9 @@ public sealed class ProjectContextEvidenceTests
     [InlineData("Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Shared, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null", true)]
     [InlineData("Shared, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null", "Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", false)]
     [InlineData("Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Shared, Version=2.0.0.0, Culture=en-US, PublicKeyToken=null", false)]
-    [InlineData("Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Shared, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60", false)]
+    [InlineData("Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Shared, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60", true)]
+    [InlineData("Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60", "Shared, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c8d65537854e1f03", false)]
+    [InlineData("Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60", "Shared, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null", false)]
     public void ProjectResolutionRequiresCompatibleVersionAndExactCultureToken(string requested, string selected, bool valid)
         => Assert.Equal(valid, ProjectContextEvidence.CanResolve(new AssemblyName(requested), new AssemblyName(selected)));
 

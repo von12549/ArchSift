@@ -8,6 +8,7 @@ import {pathToFileURL} from 'node:url';
 import assert from 'node:assert/strict';
 const [payload,inputConfigPath,output,modules,webExecutable]=process.argv.slice(2);
 const config=JSON.parse(await fs.readFile(inputConfigPath,'utf8'));
+const sourceBound=Boolean(config.build.assemblyManifest);
 assert.ok(path.resolve(config.rulesDirectory).toLowerCase().startsWith('d:\\archsift-lab\\'));
 await fs.mkdir(output,{recursive:true});
 await fs.cp(config.rulesDirectory,path.join(output,'rules'),{recursive:true,errorOnExist:true,force:false});
@@ -67,25 +68,27 @@ try {
  const chainCopy=await api('chains/ifx-A-native-review-copy');assert.deepEqual(chainCopy.entries,[sourceChain.entries[1],sourceChain.entries[0],...sourceChain.entries.slice(2)]);
  assert.equal(hash(await fs.readFile(originalChainFile)),hash(chainBytes));await capture('ifx-chain-copy-en-desktop.png');checks.push('Actual A chain copy reorders stable entryIds and preserves the original chain.');
  await page.locator('[data-panel=rulesets]').click();await page.locator('#library-cards article').filter({hasText:'ifx-b-native-review-copy'}).getByRole('button',{name:'Verify',exact:true}).click();
- await page.waitForSelector('#results .result-table',{timeout:90000});assert.equal(await page.locator('#results .result-table tr').count(),407);
+ await page.waitForSelector('#results .result-table',{timeout:600000});assert.equal(await page.locator('#results .result-table tr').count(),407);
  const job=(await api('jobs')).find(j=>j.operation==='ruleset');assert.ok(job);
  const reportBytes=await bytes('jobs/'+job.id+'/report/json'),report=JSON.parse(reportBytes);
- assert.equal(report.coverage.projectCount,105);assert.equal(report.coverage.assemblyCount,105);assert.equal(report.coverage.sourceBound,false);
- assert.ok(report.ruleResults.every(r=>r.status==='inconclusive'&&r.matched>0));
+ assert.equal(report.coverage.projectCount,105);assert.equal(report.coverage.assemblyCount,105);assert.equal(report.coverage.sourceBound,sourceBound);
+ assert.ok(report.ruleResults.every(r=>r.status===(sourceBound?'pass':'inconclusive')&&r.matched>0));
+ assert.equal(report.executionErrors.length,0);
+ if(sourceBound){assert.equal(report.buildContext.assemblyBindingMode,'project-contexts');assert.equal(report.buildContext.assemblyContextCount,105);assert.equal(report.buildContext.evidenceOrigin,'external-reviewed');}
  const controls=page.locator('#results .rule-sort-controls');await controls.getByRole('button',{name:'Rule',exact:true}).press('Enter');await controls.getByRole('button',{name:'Rule ↑',exact:true}).click();
  assert.equal(await page.locator('#results .result-table tr').nth(1).locator('td').first().textContent(),report.ruleResults.map(r=>r.ruleId).sort().reverse()[0]);
  assert.equal(await page.locator('#results .result-table th').first().getAttribute('aria-sort'),'descending');await controls.getByRole('button',{name:'Result',exact:true}).click();
  await capture('ifx-results-en-desktop.png');await page.locator('#locale').selectOption('zh');await page.setViewportSize({width:480,height:900});await page.locator('#results .policy-region').evaluate(el=>el.scrollIntoView({block:'start'}));await capture('ifx-results-zh-narrow.png');
- assert.equal(hash(await bytes('jobs/'+job.id+'/report/json')),hash(reportBytes));checks.push('Actual 105-DLL / 406-match inconclusive report; Rule/Result sorting, keyboard/aria, desktop/480px en/zh, immutable download.');
+ assert.equal(hash(await bytes('jobs/'+job.id+'/report/json')),hash(reportBytes));checks.push('Actual 105-DLL / 406-match '+(sourceBound?'source-bound pass':'inconclusive')+' report; Rule/Result sorting, keyboard/aria, desktop/480px en/zh, immutable download.');
  await page.locator('#locale').selectOption('en');await page.setViewportSize({width:1440,height:1000});await page.locator('[data-panel=chains]').click();
  await page.locator('#chain-cards article').filter({hasText:'ifx-A-native-review-copy'}).getByRole('button',{name:'Verify Chain',exact:true}).click();
- await page.waitForFunction(()=>document.querySelectorAll('#results .rule-sort-controls').length===4,{timeout:90000});
+ await page.waitForFunction(()=>document.querySelectorAll('#results .rule-sort-controls').length===4,null,{timeout:600000});
  const child=page.locator('#results details').filter({has:page.locator('.rule-sort-controls')}).first();await child.locator('summary').click();await child.locator('.rule-sort-controls').getByRole('button',{name:'Rule',exact:true}).click();await capture('ifx-A-child-sort-en-desktop.png');
  checks.push('Actual copied A chain four independent child sorting controls.');
  assert.equal(hash(await fs.readFile(originalFile)),hash(sourceBytes));assert.equal(hash(await fs.readFile(originalChainFile)),hash(chainBytes));assert.equal(errors.length,0);
  const exited=once(owned,'exit');await api('shutdown',{discardChanges:true});await Promise.race([exited,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Owned shutdown timeout.')),10000))]);assert.equal(owned.exitCode,0);
  await assert.rejects(fetch(base+'/api/session',{headers:{'X-ArchSift-Token':token}}));
- await fs.writeFile(path.join(output,'result.json'),JSON.stringify({status:'pass',version:'0.7.0',scope:'Delegated machine browser regression; not independent human UI acceptance and not current-source B compliance',checks,screens,sourceRulesSha256:hash(sourceBytes),sourceChainSha256:hash(chainBytes),ownedPid:owned.pid,ownedExitCode:owned.exitCode,endpointClosed:true},null,2));
+ await fs.writeFile(path.join(output,'result.json'),JSON.stringify({status:'pass',version:'0.7.0',scope:'Delegated machine browser regression; independent human UI acceptance remains pending',sourceBound,reportCoverage:report.coverage,reportRuleCounts:{pass:report.ruleResults.filter(r=>r.status==='pass').length,inconclusive:report.ruleResults.filter(r=>r.status==='inconclusive').length},checks,screens,sourceRulesSha256:hash(sourceBytes),sourceChainSha256:hash(chainBytes),ownedPid:owned.pid,ownedExitCode:owned.exitCode,endpointClosed:true},null,2));
  console.log('PASS actual IFX machine browser: '+checks.length+' groups, '+screens.length+' screenshots; owned exit 0.');
 }catch(error){const message=String(error.stack||error).replaceAll(token||'[none]','[redacted]');await fs.writeFile(path.join(output,'failure.txt'),message);console.error(message);process.exitCode=1;}
 finally {if(browser)await browser.close();if(owned.exitCode===null){owned.stdin.end();await Promise.race([once(owned,'exit'),new Promise(resolve=>setTimeout(resolve,10000))]);}if(owned.exitCode===null){owned.kill();throw new Error('Owned native Web required forced termination; retain evidence.');}}

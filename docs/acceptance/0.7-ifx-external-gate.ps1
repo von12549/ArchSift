@@ -1,6 +1,9 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('PrepareRestore','Capture','Build','Evaluate','Reports')][string]$Stage='PrepareRestore',
+    [ValidateSet('PrepareRestore','Capture','Build','Evaluate','EvaluateRuntime','Reports','Bind','BoundReports')][string]$Stage='PrepareRestore',
+    [ValidateSet('single','project')][string]$ContextModel='single',
+    [string]$ReviewFile='review-project-contexts.json',
+    [string]$ReportTag='bound',
     [string]$RunRoot,
     [string]$TargetRoot='D:\IFX-10-Root\IFX-New'
 )
@@ -92,25 +95,64 @@ try {
             if ($file.FullName.Contains('\obj\')) { [void]$inputs.Add($file.FullName) }
         }
         [void]$inputs.Add((Join-Path $run 'NuGet.Config'))
+        [void]$inputs.Add('C:\Program Files\dotnet\dotnet.exe')
+        foreach($file in Get-ChildItem -LiteralPath 'C:\Program Files\dotnet\host\fxr\10.0.11' -File) { [void]$inputs.Add($file.FullName) }
         Save (Join-Path $run 'external-input-paths.json') @($inputs | Sort-Object)
         $config=Get-Content -Raw 'D:\IFX-10-Root\ArchSift\config\ifx.json' | ConvertFrom-Json
         $config.output.directory=Join-Path $run 'reports'
         $config.rulesDirectory=Join-Path $run 'rules'
         Save (Join-Path $run 'config.json') $config
-        RunDotnet 'capture-focused' @('D:\ArchSift\src\ArchSift.Cli\bin\Release\net10.0\archsift.dll','evidence','capture','--config',(Join-Path $run 'config.json'),'--inputs',(Join-Path $run 'external-input-paths.json'),'--output',(Join-Path $run 'capture-focused.json'))
+        RunDotnet 'capture-focused' @('D:\ArchSift\src\ArchSift.Cli\bin\Release\net10.0\archsift.dll','evidence','capture','--context-model',$ContextModel,'--config',(Join-Path $run 'config.json'),'--inputs',(Join-Path $run 'external-input-paths.json'),'--output',(Join-Path $run 'capture-focused.json'))
         $capture=Get-Content -Raw (Join-Path $run 'capture-focused.json') | ConvertFrom-Json
+        foreach($file in $capture.inputIdentity.files) {
+            $original=[IO.Path]::GetFullPath((Join-Path $target $file.path))
+            $destination=[IO.Path]::GetFullPath((Join-Path $snapshot $file.path))
+            if(!$original.StartsWith($target+'\',[StringComparison]::OrdinalIgnoreCase) -or !$destination.StartsWith($snapshot+'\',[StringComparison]::OrdinalIgnoreCase)) { throw 'Unsafe captured snapshot path.' }
+            if(!(Test-Path -LiteralPath $destination)) {
+                [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($destination))
+                [IO.File]::Copy($original,$destination,$false)
+            }
+            if((Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant() -ne $file.sha256) { throw 'Captured snapshot byte mismatch.' }
+            if(!@($sourceFiles|Where-Object path -EQ $file.path).Count) { $sourceFiles+=[pscustomobject]@{path=$file.path;sha256=$file.sha256} }
+        }
+        Save (Join-Path $run 'source-files.json') $sourceFiles
         [IO.File]::WriteAllText((Join-Path $run 'capture-compact.json'),($capture|ConvertTo-Json -Depth 30 -Compress),[Text.UTF8Encoding]::new($false))
         Write-Output ('capture-bytes='+(Get-Item -LiteralPath (Join-Path $run 'capture-compact.json')).Length)
-    } elseif ($Stage -eq 'Evaluate') {
+    } elseif ($Stage -in 'Evaluate','EvaluateRuntime') {
         $sourceFiles=@(Get-Content -Raw (Join-Path $run 'source-files.json') | ConvertFrom-Json)
         $capture=Get-Content -Raw (Join-Path $run 'capture-compact.json') | ConvertFrom-Json
-        $properties=@($capture.propertyNames)+@('AssemblyName','TargetPath','TargetFramework','MSBuildBinPath','MSBuildAllProjects','RepositoryRoot','Configuration','NuGetAudit','ContinuousIntegrationBuild','UseMicrosoftTestingPlatformRunner','IsTestProject','TargetFrameworkRootPath')
+        $properties=@($capture.propertyNames)+@('MSBuildProjectFullPath','AssemblyName','TargetPath','TargetFramework','MSBuildBinPath','MSBuildAllProjects','RepositoryRoot','Configuration','NuGetAudit','ContinuousIntegrationBuild','UseMicrosoftTestingPlatformRunner','IsTestProject','TargetFrameworkRootPath')
         $properties=@($properties | Sort-Object -Unique)
         $index=0
         foreach($project in @($sourceFiles | Where-Object {$_.path.EndsWith('.csproj',[StringComparison]::OrdinalIgnoreCase)})) {
-            RunDotnet ('evaluate-'+$index.ToString('D3')) @('msbuild',$project.path,'-nologo','-t:ResolveReferences','-p:Configuration=Debug','-p:NuGetAudit=false','-p:BuildProjectReferences=false','-p:UseSharedCompilation=false',('-getProperty:'+($properties -join ',')),'-getItem:Compile,Analyzer,AdditionalFiles,EditorConfigFiles,ReferencePath') 180
+            $prefix=if($Stage -eq 'EvaluateRuntime'){'resolve-runtime-'}else{'evaluate-'}
+            RunDotnet ($prefix+$index.ToString('D3')) @('msbuild',$project.path,'-nologo','-t:ResolveReferences','-p:Configuration=Debug','-p:NuGetAudit=false','-p:BuildProjectReferences=false','-p:UseSharedCompilation=false',('-getProperty:'+($properties -join ',')),'-getItem:Compile,Analyzer,AdditionalFiles,EditorConfigFiles,ReferencePath,ReferenceCopyLocalPaths') 180
             $index++
         }
+    } elseif ($Stage -eq 'Bind') {
+        if($ContextModel -ne 'project') { throw 'Partition binding requires project context mode.' }
+        $sourceFiles=@(Get-Content -Raw (Join-Path $run 'source-files.json') | ConvertFrom-Json)
+        $cli='D:\ArchSift\src\ArchSift.Cli\bin\Release\net10.0\archsift.dll'
+        RunDotnet 'context-seal' @($cli,'evidence','seal','--config',(Join-Path $run 'config.json'),'--capture',(Join-Path $run 'capture-compact.json'),'--review',(Join-Path $run $ReviewFile),'--output',(Join-Path $run 'assembly-manifest-v3.json')) 600
+        $config=Get-Content -Raw (Join-Path $run 'config.json')|ConvertFrom-Json
+        $config.build|Add-Member -NotePropertyName assemblyManifest -NotePropertyValue (Join-Path $run 'assembly-manifest-v3.json')
+        Save (Join-Path $run 'config-bound.json') $config
+        RunDotnet 'context-validate' @($cli,'evidence','validate','--config',(Join-Path $run 'config-bound.json')) 600
+        $validated=Get-Content -Raw (Join-Path $run 'context-validate.stdout.log')|ConvertFrom-Json
+        if(!$validated.sourceBound -or $validated.contexts.Count -ne 105) { throw 'All 105 current-source contexts must bind.' }
+    } elseif ($Stage -eq 'BoundReports') {
+        $sourceFiles=@(Get-Content -Raw (Join-Path $run 'source-files.json') | ConvertFrom-Json)
+        $cli='D:\ArchSift\src\ArchSift.Cli\bin\Release\net10.0\archsift.dll'
+        $rulesRoot=Join-Path $run 'rules'
+        if(!(Test-Path -LiteralPath $rulesRoot)) { Copy-Item -LiteralPath 'D:\IFX-10-Root\ArchSift\rules' -Destination $rulesRoot -Recurse }
+        foreach($file in Get-ChildItem -LiteralPath 'D:\IFX-10-Root\ArchSift\rules' -File -Recurse) {
+            $destination=Join-Path $rulesRoot ([IO.Path]::GetRelativePath('D:\IFX-10-Root\ArchSift\rules',$file.FullName))
+            if((Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash) { throw 'Copied real library changed; do not reuse.' }
+        }
+        RunDotnet ('class-B-'+$ReportTag) @($cli,'chain','verify','--config',(Join-Path $run 'config-bound.json'),'--chain',(Join-Path $rulesRoot 'chains\ifx-06-class-B-test.json'),'--target-kind','real') 600 4
+        RunDotnet ('class-A-'+$ReportTag) @($cli,'chain','verify','--config',(Join-Path $run 'config-bound.json'),'--chain',(Join-Path $rulesRoot 'chains\ifx-04-class-A-test.json'),'--target-kind','real') 600 4
+        $summary=Get-Content -Raw (Join-Path $run ('class-B-'+$ReportTag+'.stdout.log'))|ConvertFrom-Json
+        if($summary.entries.Count -ne 1 -or !$summary.entries[0].coverage.sourceBound -or $summary.entries[0].ruleResults.Count -ne 406 -or @($summary.entries[0].ruleResults|Where-Object {$_.status -notin 'pass','violation','not-applicable'}).Count) { throw 'B conformance must be current-source and fully decidable.' }
     } elseif ($Stage -eq 'Reports') {
         $sourceFiles=@(Get-Content -Raw (Join-Path $run 'source-files.json') | ConvertFrom-Json)
         $cli='D:\ArchSift\src\ArchSift.Cli\bin\Release\net10.0\archsift.dll'

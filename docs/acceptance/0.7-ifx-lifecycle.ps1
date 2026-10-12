@@ -1,5 +1,6 @@
 param(
-    [string]$CandidateRoot='D:\ArchSift-lab\packages\release-9404fe66144347649c5a35fe3a16d7d1'
+    [string]$CandidateRoot='D:\ArchSift-lab\packages\release-9404fe66144347649c5a35fe3a16d7d1',
+    [string]$CandidateSha256='bbddb2f46a05447909293818648a96b254cc7d352cffb91b942d95e65303e8bf'
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
@@ -53,7 +54,7 @@ function ApplyPlan([string]$name,$plan) {
 }
 try {
     CheckOriginal
-    if((Hash $zip) -ne 'bbddb2f46a05447909293818648a96b254cc7d352cffb91b942d95e65303e8bf' -or (Hash $oldZip) -ne '64af0fb70ea8548b99373151c7005c15b0365784d8faedd3890989d3d040a560') { throw 'Frozen package mismatch.' }
+    if($CandidateSha256 -notmatch '^[a-f0-9]{64}$' -or (Hash $zip) -ne $CandidateSha256 -or (Hash $oldZip) -ne '64af0fb70ea8548b99373151c7005c15b0365784d8faedd3890989d3d040a560') { throw 'Frozen package mismatch.' }
     [void][IO.Directory]::CreateDirectory($oldPayload)
     [IO.Compression.ZipFile]::ExtractToDirectory($oldZip,$oldPayload)
     $library=Join-Path $installation 'rules'

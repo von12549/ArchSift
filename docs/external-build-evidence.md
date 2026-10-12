@@ -2,13 +2,17 @@
 
 ## 项目分区证据（manifest v3／review v2）
 
-对不同项目实际选择同名不同版本依赖的目标，使用 `evidence capture ... --context-model project` 生成未批准的 review v2 模板。构建快照必须与 capture 的当前源码字节一致；构建与逐项目求值在源根外完成。每项目求值命令须包含 `-t:ResolveReferences -getProperty:MSBuildProjectFullPath,TargetPath,AssemblyName,TargetFramework,Configuration,<capture 中的 propertyNames> -getItem:ReferencePath`，保留实际输出作 evaluation-trace 材料，并审查实际成功构建日志与生成输入。
+对不同项目实际选择同名不同版本依赖的目标，使用 `evidence capture ... --context-model project` 生成未批准的 review v2 模板。构建快照必须与 capture 的当前源码字节一致；构建与逐项目求值在源根外完成。每项目求值命令须包含 `-t:ResolveReferences -getProperty:MSBuildProjectFullPath,TargetPath,AssemblyName,TargetFramework,Configuration,<capture 中的 propertyNames> -getItem:ReferencePath,ReferenceCopyLocalPaths`，保留实际输出作 evaluation-trace 材料，并审查实际成功构建日志与生成输入。
 
 填写 buildSnapshotRoot，以及每个 projectContexts 的稳定 id、sourceProject、实际 assemblyPath、evaluationPath、**求值输出全部 ReferencePath.FullPath** 和显式 `dotnet-reference-path` 策略。所有发现项目必须恰好有一个 primary owner；引用文件在验证时保持可读取，框架与外部引用须已预捕获，第一方依赖必须匹配本次同一构建的当前 DLL。review.assemblies 只列第一方 owner，global frameworkPaths 可为空（每上下文的实际框架选择已在 referencePaths 中）。未知输入／解析缺项仍不可批准。
 
 `evidence seal` 生成 v3，再 `evidence validate`／ordinary verify／chain verify 复用该证明。上下文内名字／culture／token 必须一致，选中版本必须不低于请求且与实际求值绑定；不会扫描目录猜最高版本。旧 v1／v2 仍严格核对精确闭包。Worker 分别读取每个上下文的元数据，仅统计所属第一方源；不运行程序集或测试入口，不证明任意运行时动态加载行为。报告显示 project-contexts、context count 和外部审查来源；声明模型限制与整体 partial／exit 4 可能仍存在。
 
-capture 与旧证据的 4 MiB 界限保持，新的 v3 manifest／review v2 最多 16 MiB，不能靠删除引用或材料满足大小限制。完整契约和阶段门禁见 `docs/decisions/20261012-0.7-project-context-closure.md`。
+需要实现依赖补全时，将全部 `ReferenceCopyLocalPaths.FullPath` 填入可选 `runtimePaths`；不得按目录扫描补猜。每个文件仍须有构建前捕获或本次生成证明。便携编译使用未限定 RID 的实际托管资产；其他 RID 候选、卫星资源及 native/data 文件保留哈希，但不作为中性托管程序集选择，不证明部署 RID 或动态加载行为。非 SDK 编译引用可由兼容的实际 copy-local 实现替代；带 token 的请求要求精确相符，无 token 请求允许已证明的强名称选择。旧 v2 的精确身份规则保持。
+
+静态实现闭包从每个 owner 递归检查。Worker 可合批解析共享简单名所选 DLL 身份和字节完全一致、且 owner 名称互不重复的上下文；结果仍保留每个 owner 的稳定上下文身份，版本冲突的上下文继续隔离。
+
+capture 与旧证据的 4 MiB 界限保持，新的 v3 manifest／review v2 和每份求值 JSON 最多 16 MiB，读取求值 JSON 前先检查大小和材料结构，不能靠删除引用或材料满足大小限制。完整契约和阶段门禁见 `docs/decisions/20261012-0.7-project-context-closure.md`。
 
 ## 单闭包证据（manifest v2／review v1）
 

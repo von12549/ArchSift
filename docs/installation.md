@@ -1,6 +1,6 @@
-# Windows installation and configuration — 0.6.0 development
+# Windows installation and configuration — 0.7.0 candidate
 
-**0.6.0 is in development, not accepted or published.** This guide describes its new launcher and default configuration path. The current verified release remains 0.5.0: use the [0.5.0 installation guide](installation-0.5.md), [0.5.0 Setup guide](setup-0.5.md) and [publication record](releases/0.5.0-publication.md) for its exact assets and behavior. The [0.4.0 manual guide](installation-0.4.md) remains historical.
+**0.7.0 is a candidate, not accepted or published.** This guide retains the 0.6 launcher/default configuration behavior and adds 0.7 shutdown feedback. The current verified release is 0.6.0: use its [publication record](releases/0.6.0-publication.md) for exact assets and accepted limitations. Earlier [0.5.0 installation](installation-0.5.md), [Setup](setup-0.5.md) and [0.4.0 manual](installation-0.4.md) guides remain historical.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ New 0.6.0 installations use config/default.json. Existing installations retain t
 
 ## 0.6.0 profile launcher
 
-Use the verified 0.6.0 executable's absolute path: `archsift.exe launch --root <install-root>`. The launcher opens a loopback selection page independently of the target JSON. Register an existing file by its full path, or review normalized JSON before creating an unused file inside config. It lists names, paths, targets, output/library directories, health and resource protection. The default/recent item is only preselected; click Open selected workbench explicitly. No discovery/build/restore happens on selection.
+Use the selected version's verified executable by absolute path: `archsift.exe launch --root <install-root>`. The launcher opens a loopback selection page independently of the target JSON. Register an existing file by its full path, or review normalized JSON before creating an unused file inside config. It lists names, paths, targets, output/library directories, health and resource protection. The default/recent item is only preselected; click Open selected workbench explicitly. No discovery/build/restore happens on selection.
 
 The launcher owns the workbench process and stays alive. Reopen workbench reuses its private session; browser-tab closure does not stop it. Finish/cancel jobs and save/export or explicitly discard edits before closing and selecting a different profile. Config edits in the workbench remain in memory unless exported; they are not automatically written into the original file. Session URLs/tokens are not saved in metadata or logs. Keep `ui --config <JSON>` for explicit direct sessions, whose ownership/protection is not inferred from filenames. Never upgrade while the launcher or workbench is active.
 

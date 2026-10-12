@@ -14,7 +14,8 @@ public static class AssemblyWorker
     public static AssemblyEvaluation Evaluate(WorkerRequest request)
         => request.Inputs.Contexts.Length > 0 ? EvaluateContexts(request) : EvaluateSingle(request);
 
-    private static AssemblyEvaluation EvaluateSingle(WorkerRequest request, string? contextId = null, string? primary = null, string[]? frameworks = null)
+    private static AssemblyEvaluation EvaluateSingle(WorkerRequest request, string? contextId = null, string? primary = null, string[]? frameworks = null,
+        Dictionary<string, string>? owners = null)
     {
         var engine = new ArchUnitEngine();
         var versions = new Dictionary<string, string> { ["archunitnet"] = engine.Version, ["archunitnetAssembly"] = engine.LoadedAssemblyVersion };
@@ -37,8 +38,11 @@ public static class AssemblyWorker
             }
             if (primary is not null)
             {
-                var closure = new List<string>(); ProjectContextEvidence.ValidateClosure(request.Inputs.Paths, closure, frameworks);
-                limits.AddRange(closure); complete &= closure.Count == 0;
+                if (owners is null)
+                {
+                    var closure = new List<string>(); ProjectContextEvidence.ValidateClosure(request.Inputs.Paths, closure, frameworks, primary);
+                    limits.AddRange(closure); complete &= closure.Count == 0;
+                }
             }
             else
             {
@@ -85,12 +89,12 @@ public static class AssemblyWorker
             }
             }
             var loader = new ArchLoader().WithoutArchitectureCache().WithoutRuleEvaluationCache();
-            foreach (var path in primary is null ? request.Inputs.Paths : new[] { primary })
+            foreach (var path in owners is not null ? request.Inputs.Paths.Where(p => owners.ContainsKey(AssemblyArtifacts.Inspect(p).Name)) : primary is null ? request.Inputs.Paths : new[] { primary })
                 loader.LoadFilteredDirectory(Path.GetDirectoryName(path)!, Path.GetFileName(path));
             var architecture = loader.Build();
             var primaryName = primary is null ? null : AssemblyArtifacts.Inspect(primary).Name;
             var types = architecture.Types.Where(t => !t.IsStub && !t.IsGenericParameter &&
-                (primaryName is null ? inspected.ContainsKey(t.Assembly.Name) : t.Assembly.Name == primaryName)).ToArray();
+                (owners is not null ? owners.ContainsKey(t.Assembly.Name) : primaryName is null ? inspected.ContainsKey(t.Assembly.Name) : t.Assembly.Name == primaryName)).ToArray();
             foreach (var rule in rules)
             {
                 var current = new List<Finding>(); var matched = 0; var allowEmpty = rule.Scope.AllowEmpty;
@@ -112,7 +116,7 @@ public static class AssemblyWorker
                     var required = RuleSemantics.NameSelector(rule);
                     if (required.Kind == "assembly")
                     {
-                        var names = inspected.Keys.Where(n => (primaryName is null || n == primaryName) && SelectorMatcher.Matches(rule.Scope, n)).ToArray(); matched = names.Length;
+                        var names = inspected.Keys.Where(n => (owners is not null ? owners.ContainsKey(n) : primaryName is null || n == primaryName) && SelectorMatcher.Matches(rule.Scope, n)).ToArray(); matched = names.Length;
                         foreach (var name in names)
                             if (!SelectorMatcher.Matches(required, name)) Add("assembly", name, "Assembly name does not match the naming rule.");
                     }
@@ -137,15 +141,16 @@ public static class AssemblyWorker
                 void Add(string kind, string subject, string message, string? source = null, string? target = null, string? location = null)
                 {
                     var identity = string.Join("\0", rule.Id, kind, subject, source ?? "", target ?? "");
-                    if (contextId is not null) identity += "\0" + contextId;
+                    var owner = owners is not null ? owners[(location?.Split(':')[0]) ?? subject] : contextId;
+                    if (owner is not null) identity += "\0" + owner;
                     current.Add(new(ContentHash.Text(identity), rule.Id, kind, subject, message, rule.Severity, source, target,
-                        contextId is null ? location : "@context/" + contextId + "/" + (location ?? primaryName)));
+                        owner is null ? location : "@context/" + owner + "/" + (location ?? subject)));
                 }
             }
             foreach (var path in request.Inputs.Paths)
                 if (AssemblyArtifacts.FileHash(path) != request.Inputs.Sha256[path]) throw new InvalidDataException("Assembly changed during analysis.");
             return new(results.OrderBy(r => r.RuleId, StringComparer.Ordinal).ToArray(),
-                findings.DistinctBy(f => f.Id).OrderBy(f => f.Id, StringComparer.Ordinal).ToArray(), primary is null ? inspected.Count : 1, [], versions);
+                findings.DistinctBy(f => f.Id).OrderBy(f => f.Id, StringComparer.Ordinal).ToArray(), owners?.Count ?? (primary is null ? inspected.Count : 1), [], versions);
         }
         catch (Exception error) when (error is IOException or InvalidDataException or BadImageFormatException or InvalidOperationException or ArgumentException)
         {
@@ -162,12 +167,25 @@ public static class AssemblyWorker
         {
             if (Directory.Exists(root)) throw new IOException("Context workspace already exists.");
             Directory.CreateDirectory(root);
-            var index = 0;
+            var batches = new List<(Dictionary<string, string> Files, Dictionary<string, string> Hashes, Dictionary<string, string> Owners)>();
             foreach (var context in request.Inputs.Contexts)
             {
+                var closure = new List<string>(); ProjectContextEvidence.ValidateClosure(context.Paths, closure, context.FrameworkPaths, context.PrimaryPath);
+                if (closure.Count > 0) throw new InvalidDataException(string.Join("; ", closure));
+                var selections = context.Paths.ToDictionary(p => AssemblyArtifacts.Inspect(p).Name, p => p, StringComparer.Ordinal);
+                var ownerName = AssemblyArtifacts.Inspect(context.PrimaryPath).Name;
+                var batchIndex = batches.FindIndex(b => !b.Owners.ContainsKey(ownerName) && selections.All(s => !b.Hashes.TryGetValue(s.Key, out var previous) || previous == request.Inputs.Sha256[s.Value]));
+                if (batchIndex < 0) { batchIndex = batches.Count; batches.Add((new(StringComparer.Ordinal), new(StringComparer.Ordinal), new(StringComparer.Ordinal))); }
+                var batch = batches[batchIndex];
+                foreach (var selection in selections) { batch.Files.TryAdd(selection.Key, selection.Value); batch.Hashes.TryAdd(selection.Key, request.Inputs.Sha256[selection.Value]); }
+                batch.Owners.Add(ownerName, context.Id);
+            }
+            var index = 0;
+            foreach (var batch in batches)
+            {
                 var directory = PathSafety.Under(root, (index++).ToString("D4")); Directory.CreateDirectory(directory);
-                var paths = new List<string>(); var hashes = new Dictionary<string, string>(StringComparer.Ordinal); var frameworks = new List<string>(); string? primary = null;
-                foreach (var original in context.Paths)
+                var paths = new List<string>(); var hashes = new Dictionary<string, string>(StringComparer.Ordinal); string? primary = null;
+                foreach (var original in batch.Files.Values)
                 {
                     PathSafety.EnsureNoLinks(original);
                     if (!request.Inputs.Sha256.TryGetValue(original, out var expected) || AssemblyArtifacts.FileHash(original) != expected)
@@ -176,12 +194,11 @@ public static class AssemblyWorker
                     File.Copy(original, destination, false);
                     if (AssemblyArtifacts.FileHash(destination) != expected) throw new InvalidDataException("Context copy changed.");
                     paths.Add(destination); hashes[destination] = expected;
-                    if (context.FrameworkPaths.Any(p => p.Equals(original, PathSafety.Comparison))) frameworks.Add(destination);
-                    if (original.Equals(context.PrimaryPath, PathSafety.Comparison)) primary = destination;
+                    if (batch.Owners.ContainsKey(AssemblyArtifacts.Inspect(original).Name)) primary ??= destination;
                 }
                 if (primary is null) throw new InvalidDataException("Context primary assembly is missing.");
                 var inputs = request.Inputs with { Paths = paths.ToArray(), Sha256 = hashes, Contexts = [] };
-                evaluations.Add(EvaluateSingle(new(inputs, request.Rulesets), context.Id, primary, frameworks.ToArray()));
+                evaluations.Add(EvaluateSingle(new(inputs, request.Rulesets), primary: primary, owners: batch.Owners));
             }
             foreach (var file in request.Inputs.Paths)
                 if (AssemblyArtifacts.FileHash(file) != request.Inputs.Sha256[file]) throw new InvalidDataException("Context input changed during analysis.");
@@ -201,7 +218,9 @@ public static class AssemblyWorker
         }
         catch (Exception error) when (error is IOException or InvalidDataException or BadImageFormatException or ArgumentException or InvalidOperationException)
         {
-            return new(request.Rulesets.SelectMany(s => s.Rules).Where(r => r.Enabled && r.Type == "type-dependency").Select(r => new RuleResult(r.Id, "inconclusive", 0, [], [error.Message])).ToArray(),
+            return new(request.Rulesets.SelectMany(s => s.Rules).Where(r => r.Enabled &&
+                (r.Type == "type-dependency" || r.Type == "naming" && r.Parameters.GetProperty("subjectKind").GetString() is "type" or "assembly"))
+                .Select(r => new RuleResult(r.Id, "inconclusive", 0, [], [error.Message])).ToArray(),
                 [], 0, [error.Message], new(StringComparer.Ordinal));
         }
         finally

@@ -26,7 +26,11 @@ public sealed record ReviewedProject(string SourceProject, string AssemblyName, 
     Dictionary<string, string> EvaluatedProperties);
 public sealed record ReviewedAssembly(string SourceProject, string Path);
 public sealed record ReviewedAssemblyContext(string Id, string SourceProject, string AssemblyPath,
-    string EvaluationPath, string[] ReferencePaths, string ResolutionPolicy = "dotnet-reference-path");
+    string EvaluationPath, string[] ReferencePaths, string ResolutionPolicy = "dotnet-reference-path")
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? RuntimePaths { get; init; }
+}
 public sealed record ExternalBuildReview
 {
     public int SchemaVersion { get; init; } = 1;
