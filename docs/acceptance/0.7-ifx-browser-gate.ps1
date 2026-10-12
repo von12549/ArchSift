@@ -1,7 +1,8 @@
 param(
     [string]$PayloadRoot='D:\ArchSift-lab\packages\release-6b1174cde4544a699d5f689944694763\payload',
     [string]$ConfigPath='D:\ArchSift-lab\runs\ifx-external-0.7-6fb8ea0cfb1f4608920d57d4563b6ea4\config-unbound.json',
-    [string]$WebExecutable
+    [string]$WebExecutable,
+    [switch]$CopiesOnly
 )
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot '../../scripts/HostState.ps1')
@@ -17,6 +18,7 @@ function CheckOriginal {
 CheckOriginal
 $arguments=@((Join-Path $PSScriptRoot '0.7-ifx-browser.mjs'),$PayloadRoot,$ConfigPath,$qaRoot,'C:\Users\von12\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules')
 if($WebExecutable) { $arguments+=$WebExecutable }
+if($CopiesOnly) { if(!$WebExecutable){$arguments+=''};$arguments+='copies-only' }
 & 'C:\Program Files\nodejs\node.exe' @arguments
 $qaExit=$LASTEXITCODE
 $qaAfter=Get-ArchSiftHostHash
