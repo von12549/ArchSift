@@ -192,6 +192,13 @@
         "evidenceSha256": {
           "pattern": "^[a-f0-9]{64}$",
           "type": "string"
+        },
+        "assemblyBindingMode": {
+          "const": "project-contexts"
+        },
+        "assemblyContextCount": {
+          "minimum": 1,
+          "type": "integer"
         }
       },
       "required": [

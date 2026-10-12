@@ -64,6 +64,7 @@ public static class SarifWriter
             ["archsiftExecution"] = report.Execution, ["archsiftCompliance"] = report.Compliance,
             ["inputIdentity"] = report.InputIdentity.Sha256,
             ["coverage"] = JsonSerializer.SerializeToNode(report.Coverage, JsonContract.Options),
+            ["buildContext"] = JsonSerializer.SerializeToNode(report.BuildContext, JsonContract.Options),
             ["ruleResults"] = JsonSerializer.SerializeToNode(report.RuleResults, JsonContract.Options)
         };
         return run;
@@ -77,7 +78,8 @@ public static class SarifWriter
             ["kind"] = status == "violation" ? "fail" : "review", ["message"] = new JsonObject { ["text"] = finding.Message + " " + finding.Subject },
             ["partialFingerprints"] = new JsonObject { ["archsiftFindingId/v1"] = finding.Id },
             ["properties"] = new JsonObject { ["ruleStatus"] = status, ["subjectKind"] = finding.SubjectKind,
-                ["subject"] = finding.Subject, ["source"] = finding.Source, ["target"] = finding.Target, ["exceptionId"] = finding.ExceptionId }
+                ["subject"] = finding.Subject, ["source"] = finding.Source, ["target"] = finding.Target, ["exceptionId"] = finding.ExceptionId,
+                ["evidenceLocation"] = finding.Location }
         };
         if (finding.ExceptionId is not null)
             result["suppressions"] = new JsonArray(new JsonObject { ["kind"] = "external", ["status"] = "accepted", ["justification"] = finding.ExceptionReason ?? finding.ExceptionId });

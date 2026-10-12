@@ -10,7 +10,7 @@ public sealed class AssemblyWorkerClient(string cliAssembly)
     {
         PathSafety.EnsureNoLinks(outputRoot);
         var home = Path.Combine(outputRoot, "workers", Guid.NewGuid().ToString("N"), "cli-home");
-        var request = JsonSerializer.Serialize(new WorkerRequest(inputs, bundle.Documents.Select(d => d.Ruleset).ToArray()), JsonContract.Options);
+        var request = JsonSerializer.Serialize(new WorkerRequest(inputs, bundle.Documents.Select(d => d.Ruleset).ToArray()) { ContextWorkspace = outputRoot }, JsonContract.Options);
         if (request.Length > 16 * 1024 * 1024) throw new ConfigurationException("Worker request exceeds 16 MiB.");
         var self = Environment.ProcessPath;
         var useSelf = self is not null && !Path.GetFileNameWithoutExtension(self).Equals("dotnet", StringComparison.OrdinalIgnoreCase) &&

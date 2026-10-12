@@ -12,6 +12,10 @@ public sealed record BuildContext(
     public string? EvidenceOrigin { get; init; }
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? EvidenceSha256 { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? AssemblyBindingMode { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public int? AssemblyContextCount { get; init; }
 }
 public sealed record Finding(
     string Id, string RuleId, string SubjectKind, string Subject, string Message, string Severity,

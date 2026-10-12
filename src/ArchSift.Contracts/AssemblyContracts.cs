@@ -13,6 +13,8 @@ public sealed record AssemblyManifest
     public required AssemblyEntry[] Assemblies { get; init; }
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public ReviewedBuildLink? ReviewedBuild { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public ReviewedAssemblyContext[]? ProjectContexts { get; init; }
 }
 
 public sealed record ReviewedBuildLink(string CapturePath, string CaptureSha256, string ReviewPath, string ReviewSha256);
@@ -23,6 +25,8 @@ public sealed record EvidenceMaterial(string Path, string Sha256, long Length, s
 public sealed record ReviewedProject(string SourceProject, string AssemblyName, string TargetFramework,
     Dictionary<string, string> EvaluatedProperties);
 public sealed record ReviewedAssembly(string SourceProject, string Path);
+public sealed record ReviewedAssemblyContext(string Id, string SourceProject, string AssemblyPath,
+    string EvaluationPath, string[] ReferencePaths, string ResolutionPolicy = "dotnet-reference-path");
 public sealed record ExternalBuildReview
 {
     public int SchemaVersion { get; init; } = 1;
@@ -45,4 +49,8 @@ public sealed record ExternalBuildReview
     public string[] Imports { get; init; } = [];
     public string[] GeneratorsAndTasks { get; init; } = [];
     public string[] Unknowns { get; init; } = ["Review the actual build input trace before approval."];
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? BuildSnapshotRoot { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public ReviewedAssemblyContext[]? ProjectContexts { get; init; }
 }

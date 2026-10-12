@@ -1,5 +1,17 @@
 # 经审查的外部构建证据（0.7.0）
 
+## 项目分区证据（manifest v3／review v2）
+
+对不同项目实际选择同名不同版本依赖的目标，使用 `evidence capture ... --context-model project` 生成未批准的 review v2 模板。构建快照必须与 capture 的当前源码字节一致；构建与逐项目求值在源根外完成。每项目求值命令须包含 `-t:ResolveReferences -getProperty:MSBuildProjectFullPath,TargetPath,AssemblyName,TargetFramework,Configuration,<capture 中的 propertyNames> -getItem:ReferencePath`，保留实际输出作 evaluation-trace 材料，并审查实际成功构建日志与生成输入。
+
+填写 buildSnapshotRoot，以及每个 projectContexts 的稳定 id、sourceProject、实际 assemblyPath、evaluationPath、**求值输出全部 ReferencePath.FullPath** 和显式 `dotnet-reference-path` 策略。所有发现项目必须恰好有一个 primary owner；引用文件在验证时保持可读取，框架与外部引用须已预捕获，第一方依赖必须匹配本次同一构建的当前 DLL。review.assemblies 只列第一方 owner，global frameworkPaths 可为空（每上下文的实际框架选择已在 referencePaths 中）。未知输入／解析缺项仍不可批准。
+
+`evidence seal` 生成 v3，再 `evidence validate`／ordinary verify／chain verify 复用该证明。上下文内名字／culture／token 必须一致，选中版本必须不低于请求且与实际求值绑定；不会扫描目录猜最高版本。旧 v1／v2 仍严格核对精确闭包。Worker 分别读取每个上下文的元数据，仅统计所属第一方源；不运行程序集或测试入口，不证明任意运行时动态加载行为。报告显示 project-contexts、context count 和外部审查来源；声明模型限制与整体 partial／exit 4 可能仍存在。
+
+capture 与旧证据的 4 MiB 界限保持，新的 v3 manifest／review v2 最多 16 MiB，不能靠删除引用或材料满足大小限制。完整契约和阶段门禁见 `docs/decisions/20261012-0.7-project-context-closure.md`。
+
+## 单闭包证据（manifest v2／review v1）
+
 用于 existing 模式，assembly-manifest v2 标注 `external-reviewed`。ArchSift 验证输入、材料、DLL 和依赖身份；操作员负责依据实际构建记录审查“这些 DLL 由这些输入成功编译”的因果关系。完整 JSON 或一个总哈希不自行证明构建真实性。v1 与 isolated 的保守限制保持兼容。
 
 1. 在目标根外建立取证目录。配置指定 existing、明确 TFM／Configuration。先审查外部快照构建命令、离线 restore 来源、生成器／任务风险和输出路径，不运行目标入口。

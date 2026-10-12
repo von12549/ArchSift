@@ -129,10 +129,10 @@ public sealed class ChainService(AnalysisService analysis)
             }
             if (assemblies is not null)
             {
-                foreach (var path in assemblies.Paths)
+                foreach (var path in assemblies.Paths.Order(StringComparer.Ordinal))
                 {
                     evidenceChecks[path] = assemblies.Sha256[path];
-                    buildFiles.Add(new("@assembly/" + Path.GetFileName(path), assemblies.Sha256[path], new FileInfo(path).Length, "evidence"));
+                    buildFiles.Add(new("@assembly/" + (assemblies.Contexts.Length > 0 ? ContentHash.Text(path)[..16] + "/" : "") + Path.GetFileName(path), assemblies.Sha256[path], new FileInfo(path).Length, "evidence"));
                 }
                 foreach (var evidence in assemblies.EvidenceHashes.OrderBy(p => p.Key, StringComparer.Ordinal))
                 {
@@ -257,7 +257,8 @@ public sealed class ChainService(AnalysisService analysis)
                     var childLimits = report.Limitations.Concat(report.ExecutionErrors).Concat(report.RuleResults.SelectMany(r => r.Limitations)).Distinct().ToArray();
                     Complete(index, new(entry.EntryId, report.Execution, report.Compliance ?? "inconclusive", drift ? 4 : outcome.ExitCode,
                         entry.EntryId + "/" + report.RunMetadata.RunId, null, report.Coverage, report.BuildContext.Binding, report.RuleResults, report.Findings, childLimits)
-                        { EvidenceOrigin = report.BuildContext.EvidenceOrigin, EvidenceSha256 = report.BuildContext.EvidenceSha256 });
+                        { EvidenceOrigin = report.BuildContext.EvidenceOrigin, EvidenceSha256 = report.BuildContext.EvidenceSha256,
+                            AssemblyBindingMode = report.BuildContext.AssemblyBindingMode, AssemblyContextCount = report.BuildContext.AssemblyContextCount });
                 }
             }
             catch (OperationCanceledException)

@@ -55,7 +55,7 @@ public sealed class AnalysisService(
                         : AssemblyArtifacts.Existing(config, snapshot);
                     binding = assemblyInputs.SourceBound ? "source-bound" : "assemblies-only";
                     sdk = assemblyInputs.Sdk; framework = assemblyInputs.TargetFramework ?? framework;
-                    assemblyCount = assemblyInputs.Paths.Length;
+                    assemblyCount = assemblyInputs.Contexts.Length > 0 ? assemblyInputs.Contexts.Length : assemblyInputs.Paths.Length;
                     limits.AddRange(assemblyInputs.Limitations);
                     if (needsAssembly)
                     {
@@ -114,7 +114,8 @@ public sealed class AnalysisService(
             : results.Count == 0 || results.All(r => r.Status == "not-applicable") ? "not-applicable" : "compliant";
         var empty = new InputIdentity(ContentHash.Text(""), []);
         var sourceIdentity = snapshot?.InputIdentity ?? empty;
-        var evidenceFiles = (assemblyInputs?.Paths.Select(p => new InputFile("@assembly/" + Path.GetFileName(p),
+        var evidenceFiles = (assemblyInputs?.Paths.Order(StringComparer.Ordinal).Select(p => new InputFile("@assembly/" +
+            (assemblyInputs.Contexts.Length > 0 ? ContentHash.Text(p)[..16] + "/" : "") + Path.GetFileName(p),
             assemblyInputs.Sha256[p], SafeLength(p), "evidence")) ?? []).Concat(assemblyInputs?.EvidenceHashes
             .OrderBy(p => p.Key, StringComparer.Ordinal).Select((p, i) => new InputFile("@external-evidence/" + i, p.Value, SafeLength(p.Key), "evidence")) ?? []).ToArray();
         var policyFiles = bundle.Documents.Select(d => new InputFile("@rules/" + d.Ruleset.Id + "/" + Path.GetFileName(d.Identity.Path),
@@ -133,6 +134,8 @@ public sealed class AnalysisService(
             BuildContext = new(config.Build.Mode, framework, config.Build.Configuration, sdk, binding)
             {
                 EvidenceOrigin = assemblyInputs?.EvidenceOrigin,
+                AssemblyBindingMode = assemblyInputs?.Contexts.Length > 0 ? "project-contexts" : null,
+                AssemblyContextCount = assemblyInputs?.Contexts.Length > 0 ? assemblyInputs.Contexts.Length : null,
                 EvidenceSha256 = assemblyInputs?.EvidenceOrigin is null ? null : AssemblyArtifacts.FileIdentity(evidenceFiles.Where(f => f.Path.StartsWith("@external-evidence/", StringComparison.Ordinal)).ToArray())
             },
             EngineVersions = engines, Execution = execution, Compliance = compliance,

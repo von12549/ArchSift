@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-12 分区闭包 P1 实现验收通过：新 v3／review v2、实际解析证明、唯一第一方 owner／跨上下文结果聚合及 JSON／HTML／SARIF／chain／双语 UI；220 项 Release／八模板、零警告错误与宿主一致，见[实现验收](../acceptance/20261012-0.7-context-implementation.md)。P2 继续真实 IFX 新快照取证；新固定包和最后人工 UI 尚未完成，未合并／发布。
+
 2026-10-12 用户已明确将项目／加载上下文分区闭包纳入 0.7，并要求完成 IFX 源码绑定、各阶段提交／推送、最后 UI 自行验收。[新增设计](../decisions/20261012-0.7-project-context-closure.md)冻结 v3／review v2、实际解析选择证明、第一方所属源聚合与兼容／安全边界；P0 COMPLETE，P1 产品实现开始。旧单闭包拒绝记录保持原状态，未合并／发布。
 
 2026-10-12 最新固定候选 `27c993a` 的两平台 CI、214 项 Release、原生 ZIP／Setup、真实 IFX 外置生命周期、真实库／Launcher 机器浏览器与最终宿主／原件／进程审计通过，见最新 0.7 候选记录。当前 B 源码绑定仍因三组多版本闭包 inconclusive；产品分区范围选择尚未答复，最终人工 UI 未执行。整体0.7-4未关闭，PR保持draft，未合并／发布。

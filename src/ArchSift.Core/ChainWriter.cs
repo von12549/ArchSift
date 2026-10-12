@@ -25,6 +25,7 @@ public static class ChainWriter
             var entry = summary.Snapshot.Entries.Single(e => e.EntryId == child.EntryId);
             html.Append($"<section><h2>{E(entry.RulesetIdentity?.Id ?? child.EntryId)}</h2><p>Entry: {E(child.EntryId)}; execution: {E(child.Execution)}; compliance: {E(child.Compliance)}; exit: {child.ExitCode}</p><p>Source: {E(entry.SourcePath)}; SHA-256: {E(entry.RulesetIdentity?.Sha256)}</p><p>Projects: {child.Coverage.ProjectCount}; assemblies: {child.Coverage.AssemblyCount}; source-bound: {child.Coverage.SourceBound}; binding: {E(child.Binding)}</p>");
             if (child.EvidenceOrigin is { } origin) html.Append($"<p>Evidence origin: {E(origin)}; SHA-256: {E(child.EvidenceSha256)}; build causality is externally reviewed.</p>");
+            if (child.AssemblyContextCount is { } count) html.Append($"<p>Assembly binding: {E(child.AssemblyBindingMode)}; project contexts: {count}.</p>");
             if (child.ReportDirectory is { } relative)
                 foreach (var format in new[] { "json", "html", "sarif" })
                     html.Append($"<a href=\"{E(relative + "/" + (child.Diagnostic is null ? "report." : "diagnostic.") + format)}\">{format.ToUpperInvariant()}</a> ");

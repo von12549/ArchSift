@@ -27,6 +27,10 @@ public sealed record ChainChild(string EntryId, string Execution, string Complia
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? EvidenceOrigin { get; init; }
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? AssemblyBindingMode { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public int? AssemblyContextCount { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? EvidenceSha256 { get; init; }
 }
 public sealed record ChainTimings(long Preparation, long Evidence, long Evaluation, long InputVerification, long ReportWriting, long Total);

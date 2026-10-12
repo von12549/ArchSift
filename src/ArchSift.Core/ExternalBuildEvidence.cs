@@ -40,12 +40,21 @@ public static class ExternalBuildEvidence
                 capture.PropertyNames.ToDictionary(p => p, _ => "REVIEW ACTUAL EVALUATED VALUE", StringComparer.Ordinal))).ToArray()
     };
 
+    public static ExternalBuildReview ProjectTemplate(EvidenceCapture capture, string captureHash) => Template(capture, captureHash) with
+    {
+        SchemaVersion = 2, BuildSnapshotRoot = "REVIEW ACTUAL BUILD SNAPSHOT ROOT",
+        ProjectContexts = capture.InputIdentity.Files.Where(f => f.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
+            .Select(f => new ReviewedAssemblyContext("project-" + ContentHash.Text(f.Path)[..16], f.Path,
+                "REVIEW ACTUAL ASSEMBLY PATH", "REVIEW ACTUAL EVALUATION PATH", [])).ToArray()
+    };
+
     public static void Seal(RunConfiguration config, string capturePath, string reviewPath, string output)
     {
         capturePath = Path.GetFullPath(capturePath); reviewPath = Path.GetFullPath(reviewPath); output = Path.GetFullPath(output);
         PathSafety.EnsureDisjoint(config.Target.Root, output);
         var capture = Read<EvidenceCapture>(capturePath);
         var review = Read<ExternalBuildReview>(reviewPath);
+        if (review.SchemaVersion == 2) { ProjectContextEvidence.Seal(config, capture, review, capturePath, reviewPath, output); return; }
         var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
         var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
         var limits = ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes);
@@ -82,7 +91,7 @@ public static class ExternalBuildEvidence
     {
         var limits = new List<string>();
         void Fail(string message) => limits.Add("External evidence: " + message);
-        if (capture.SchemaVersion != 1 || review.SchemaVersion != 1 || review.Origin != "external-reviewed") Fail("Unsupported capture/review identity.");
+        if (capture.SchemaVersion != 1 || review.SchemaVersion is not (1 or 2) || review.Origin != "external-reviewed") Fail("Unsupported capture/review identity.");
         if (!review.Approved || !review.InputsComplete || review.Unknowns.Length != 0 || string.IsNullOrWhiteSpace(review.Reviewer)) Fail("Review is incomplete or has unresolved inputs.");
         if (review.ExitCode != 0 || review.Command.Length == 0 || review.Command.Any(string.IsNullOrWhiteSpace)) Fail("Successful build command/log proof is missing.");
         if (AssemblyArtifacts.FileHash(capturePath) != review.CaptureSha256) Fail("Review does not bind capture bytes.");
@@ -192,10 +201,13 @@ public static class ExternalBuildEvidence
     public static T Read<T>(string path)
     {
         PathSafety.EnsureNoLinks(path);
+        var maximum = typeof(T) == typeof(EvidenceCapture) ? RuleLoader.MaximumJsonBytes : ProjectContextEvidence.MaximumJsonBytes;
+        if (new FileInfo(path).Length > maximum) throw new ConfigurationException("Evidence JSON exceeds its bounded size limit.");
         var bytes = File.ReadAllBytes(path);
-        if (bytes.Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Evidence JSON exceeds 4 MiB.");
         using var document = JsonDocument.Parse(bytes);
-        SchemaValidation.Validate(document.RootElement, typeof(T) == typeof(EvidenceCapture) ? "evidence-capture" : "external-build-review");
+        var partitioned = typeof(T) == typeof(ExternalBuildReview) && document.RootElement.GetProperty("schemaVersion").GetInt32() == 2;
+        if (!partitioned && bytes.Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Evidence JSON exceeds 4 MiB.");
+        SchemaValidation.Validate(document.RootElement, typeof(T) == typeof(EvidenceCapture) ? "evidence-capture" : partitioned ? "external-build-review-v2" : "external-build-review");
         return document.RootElement.Deserialize<T>(JsonContract.Options)!;
     }
     public static void WriteNew<T>(string path, T value)

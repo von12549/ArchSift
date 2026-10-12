@@ -6,7 +6,7 @@ namespace ArchSift.Core;
 /// <summary>Evaluates the draft-07 keywords used by the fixed bundled schemas. No remote schemas are loaded.</summary>
 public static class SchemaValidation
 {
-    private static readonly string[] Names = ["ruleset", "config", "report", "assembly-manifest", "assembly-manifest-v2", "evidence-capture", "external-build-review", "comparison", "library", "chain", "chain-diagnostic", "chain-summary", "chain-summary-v2", "chain-run-options", "chain-progress", "profile-catalog", "profile-selection"];
+    private static readonly string[] Names = ["ruleset", "config", "report", "assembly-manifest", "assembly-manifest-v2", "assembly-manifest-v3", "evidence-capture", "external-build-review", "external-build-review-v2", "comparison", "library", "chain", "chain-diagnostic", "chain-summary", "chain-summary-v2", "chain-run-options", "chain-progress", "profile-catalog", "profile-selection"];
 
     public static void Validate(JsonElement value, string name)
     {
@@ -95,6 +95,15 @@ public static class SchemaValidation
         }
         if (value.ValueKind == JsonValueKind.Array)
         {
+            if (schema.TryGetProperty("uniqueItems", out var unique) && unique.ValueKind == JsonValueKind.True)
+            {
+                var seen = new List<JsonElement>();
+                foreach (var item in value.EnumerateArray())
+                {
+                    if (seen.Any(previous => JsonElement.DeepEquals(previous, item))) { errors.Add(path + ": duplicate item."); break; }
+                    seen.Add(item);
+                }
+            }
             if (schema.TryGetProperty("minItems", out var minimum) && value.GetArrayLength() < minimum.GetInt32())
                 errors.Add(path + ": too few items.");
             if (schema.TryGetProperty("maxItems", out var maximum) && value.GetArrayLength() > maximum.GetInt32())

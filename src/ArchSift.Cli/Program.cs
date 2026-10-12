@@ -62,7 +62,7 @@ public static class Program
             }
             if (args.Length >= 2 && args[0] == "evidence")
             {
-                var flags = Flags(args[2..], ["--config", "--inputs", "--environment-inputs", "--output", "--capture", "--review"]);
+                var flags = Flags(args[2..], ["--config", "--inputs", "--environment-inputs", "--output", "--capture", "--review", "--context-model"]);
                 var config = ConfigLoader.Load(Required(flags, "--config"));
                 if (args[1] == "capture")
                 {
@@ -70,9 +70,12 @@ public static class Program
                     var paths = JsonSerializer.Deserialize<string[]>(File.ReadAllBytes(Required(flags, "--inputs")), JsonContract.Options)!;
                     var environments = flags.TryGetValue("--environment-inputs", out var environmentFiles)
                         ? JsonSerializer.Deserialize<string[]>(File.ReadAllBytes(environmentFiles.Single()), JsonContract.Options)! : [];
+                    var model = flags.TryGetValue("--context-model", out var models) ? models.Single() : "single";
+                    if (model is not ("single" or "project")) throw new ConfigurationException("Context model must be single or project.");
                     var capture = ExternalBuildEvidence.Capture(config, paths, environments);
                     ExternalBuildEvidence.WriteNew(output, capture);
-                    ExternalBuildEvidence.WriteNew(output + ".review-template.json", ExternalBuildEvidence.Template(capture, AssemblyArtifacts.FileHash(output)));
+                    ExternalBuildEvidence.WriteNew(output + ".review-template.json", model == "project"
+                        ? ExternalBuildEvidence.ProjectTemplate(capture, AssemblyArtifacts.FileHash(output)) : ExternalBuildEvidence.Template(capture, AssemblyArtifacts.FileHash(output)));
                     Console.WriteLine(output); return 0;
                 }
                 if (args[1] == "seal")

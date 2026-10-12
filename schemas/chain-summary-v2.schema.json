@@ -448,8 +448,13 @@
               "sourceBound"
             ]
           },
-          "evidenceOrigin": { "const": "external-reviewed" },
-          "evidenceSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "evidenceOrigin": {
+            "const": "external-reviewed"
+          },
+          "evidenceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
           "binding": {
             "enum": [
               "none",
@@ -597,6 +602,13 @@
               "type": "string",
               "minLength": 1
             }
+          },
+          "assemblyBindingMode": {
+            "const": "project-contexts"
+          },
+          "assemblyContextCount": {
+            "minimum": 1,
+            "type": "integer"
           }
         },
         "required": [

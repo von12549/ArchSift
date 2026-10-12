@@ -1,6 +1,8 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Project build contexts: ":"项目构建上下文：",
+  " · Only first-party owners are counted as analysis sources.":" · 仅统计所属的第一方程序集作为分析源。",
   "Chain progress":"规则链进度",
   "Maximum concurrent rulesets":"同时运行的规则集上限",
   "1 · Serial (default)":"1 · 串行（默认）",

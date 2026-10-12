@@ -12,10 +12,12 @@ public static class AssemblyArtifacts
     {
         if (config.Build.AssemblyManifest is not { } manifestPath)
             return Unbound(config.Build.AssemblyPaths, config.Build, ["No source/build-bound assembly manifest."]);
+        if (new FileInfo(manifestPath).Length > ProjectContextEvidence.MaximumJsonBytes) throw new ConfigurationException("Assembly manifest exceeds its bounded size limit.");
         var bytes = File.ReadAllBytes(manifestPath);
-        if (bytes.Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Assembly manifest exceeds 4 MiB.");
         using var document = JsonDocument.Parse(bytes);
         var version = document.RootElement.GetProperty("schemaVersion").GetInt32();
+        if (version == 3) return ProjectContextEvidence.Existing(config, snapshot, document.RootElement);
+        if (bytes.Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Assembly manifest exceeds 4 MiB.");
         SchemaValidation.Validate(document.RootElement, version == 2 ? "assembly-manifest-v2" : "assembly-manifest");
         var manifest = document.RootElement.Deserialize<AssemblyManifest>(JsonContract.Options)!;
         var limits = new List<string>();
@@ -36,6 +38,7 @@ public static class AssemblyArtifacts
             if (!reviewBytesBound)
             { bound = false; limits.Add("External evidence: Capture/review bytes differ from seal."); }
             review = ExternalBuildEvidence.Read<ExternalBuildReview>(reviewPath);
+            if (review.SchemaVersion != 1) { bound = false; limits.Add("External evidence: Partitioned review requires manifest v3."); }
             var capture = ExternalBuildEvidence.Read<EvidenceCapture>(capturePath);
             if (reviewBytesBound)
                 limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, evidenceHashes));

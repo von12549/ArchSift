@@ -12,6 +12,9 @@ namespace ArchSift.ArchUnit;
 public static class AssemblyWorker
 {
     public static AssemblyEvaluation Evaluate(WorkerRequest request)
+        => request.Inputs.Contexts.Length > 0 ? EvaluateContexts(request) : EvaluateSingle(request);
+
+    private static AssemblyEvaluation EvaluateSingle(WorkerRequest request, string? contextId = null, string? primary = null, string[]? frameworks = null)
     {
         var engine = new ArchUnitEngine();
         var versions = new Dictionary<string, string> { ["archunitnet"] = engine.Version, ["archunitnetAssembly"] = engine.LoadedAssemblyVersion };
@@ -32,6 +35,13 @@ public static class AssemblyWorker
                 var metadata = AssemblyArtifacts.Inspect(path);
                 if (!inspected.TryAdd(metadata.Name, path)) throw new InvalidDataException("Duplicate assembly identity.");
             }
+            if (primary is not null)
+            {
+                var closure = new List<string>(); ProjectContextEvidence.ValidateClosure(request.Inputs.Paths, closure, frameworks);
+                limits.AddRange(closure); complete &= closure.Count == 0;
+            }
+            else
+            {
             var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             var frameworkNames = Directory.GetFiles(runtimeDirectory, "*.dll").Select(Path.GetFileNameWithoutExtension).ToHashSet(StringComparer.Ordinal);
             var ownDeps = Path.ChangeExtension(System.Reflection.Assembly.GetEntryAssembly()!.Location, ".deps.json");
@@ -73,11 +83,14 @@ public static class AssemblyWorker
                     { complete = false; limits.Add("Assembly closure version/token mismatch: " + name); }
                 }
             }
+            }
             var loader = new ArchLoader().WithoutArchitectureCache().WithoutRuleEvaluationCache();
-            foreach (var path in request.Inputs.Paths)
+            foreach (var path in primary is null ? request.Inputs.Paths : new[] { primary })
                 loader.LoadFilteredDirectory(Path.GetDirectoryName(path)!, Path.GetFileName(path));
             var architecture = loader.Build();
-            var types = architecture.Types.Where(t => !t.IsStub && !t.IsGenericParameter && inspected.ContainsKey(t.Assembly.Name)).ToArray();
+            var primaryName = primary is null ? null : AssemblyArtifacts.Inspect(primary).Name;
+            var types = architecture.Types.Where(t => !t.IsStub && !t.IsGenericParameter &&
+                (primaryName is null ? inspected.ContainsKey(t.Assembly.Name) : t.Assembly.Name == primaryName)).ToArray();
             foreach (var rule in rules)
             {
                 var current = new List<Finding>(); var matched = 0; var allowEmpty = rule.Scope.AllowEmpty;
@@ -99,7 +112,7 @@ public static class AssemblyWorker
                     var required = RuleSemantics.NameSelector(rule);
                     if (required.Kind == "assembly")
                     {
-                        var names = inspected.Keys.Where(n => SelectorMatcher.Matches(rule.Scope, n)).ToArray(); matched = names.Length;
+                        var names = inspected.Keys.Where(n => (primaryName is null || n == primaryName) && SelectorMatcher.Matches(rule.Scope, n)).ToArray(); matched = names.Length;
                         foreach (var name in names)
                             if (!SelectorMatcher.Matches(required, name)) Add("assembly", name, "Assembly name does not match the naming rule.");
                     }
@@ -123,18 +136,77 @@ public static class AssemblyWorker
                     ruleLimits.Distinct().Order(StringComparer.Ordinal).ToArray()));
                 void Add(string kind, string subject, string message, string? source = null, string? target = null, string? location = null)
                 {
-                    current.Add(new(ContentHash.Text(string.Join("\0", rule.Id, kind, subject, source ?? "", target ?? "")),
-                        rule.Id, kind, subject, message, rule.Severity, source, target, location));
+                    var identity = string.Join("\0", rule.Id, kind, subject, source ?? "", target ?? "");
+                    if (contextId is not null) identity += "\0" + contextId;
+                    current.Add(new(ContentHash.Text(identity), rule.Id, kind, subject, message, rule.Severity, source, target,
+                        contextId is null ? location : "@context/" + contextId + "/" + (location ?? primaryName)));
                 }
             }
             foreach (var path in request.Inputs.Paths)
                 if (AssemblyArtifacts.FileHash(path) != request.Inputs.Sha256[path]) throw new InvalidDataException("Assembly changed during analysis.");
             return new(results.OrderBy(r => r.RuleId, StringComparer.Ordinal).ToArray(),
-                findings.DistinctBy(f => f.Id).OrderBy(f => f.Id, StringComparer.Ordinal).ToArray(), inspected.Count, [], versions);
+                findings.DistinctBy(f => f.Id).OrderBy(f => f.Id, StringComparer.Ordinal).ToArray(), primary is null ? inspected.Count : 1, [], versions);
         }
         catch (Exception error) when (error is IOException or InvalidDataException or BadImageFormatException or InvalidOperationException or ArgumentException)
         {
             return new(rules.Select(r => new RuleResult(r.Id, "inconclusive", 0, [], [error.Message])).ToArray(), [], 0, [error.Message], versions);
+        }
+    }
+
+    private static AssemblyEvaluation EvaluateContexts(WorkerRequest request)
+    {
+        var parent = Path.GetFullPath(request.ContextWorkspace ?? Path.GetTempPath()); PathSafety.EnsureNoLinks(parent);
+        var root = PathSafety.Under(parent, "context-worker-" + Guid.NewGuid().ToString("N"));
+        var evaluations = new List<AssemblyEvaluation>();
+        try
+        {
+            if (Directory.Exists(root)) throw new IOException("Context workspace already exists.");
+            Directory.CreateDirectory(root);
+            var index = 0;
+            foreach (var context in request.Inputs.Contexts)
+            {
+                var directory = PathSafety.Under(root, (index++).ToString("D4")); Directory.CreateDirectory(directory);
+                var paths = new List<string>(); var hashes = new Dictionary<string, string>(StringComparer.Ordinal); var frameworks = new List<string>(); string? primary = null;
+                foreach (var original in context.Paths)
+                {
+                    PathSafety.EnsureNoLinks(original);
+                    if (!request.Inputs.Sha256.TryGetValue(original, out var expected) || AssemblyArtifacts.FileHash(original) != expected)
+                        throw new InvalidDataException("Context assembly changed or is unbound.");
+                    var destination = PathSafety.Under(directory, AssemblyArtifacts.Inspect(original).Name + ".dll");
+                    File.Copy(original, destination, false);
+                    if (AssemblyArtifacts.FileHash(destination) != expected) throw new InvalidDataException("Context copy changed.");
+                    paths.Add(destination); hashes[destination] = expected;
+                    if (context.FrameworkPaths.Any(p => p.Equals(original, PathSafety.Comparison))) frameworks.Add(destination);
+                    if (original.Equals(context.PrimaryPath, PathSafety.Comparison)) primary = destination;
+                }
+                if (primary is null) throw new InvalidDataException("Context primary assembly is missing.");
+                var inputs = request.Inputs with { Paths = paths.ToArray(), Sha256 = hashes, Contexts = [] };
+                evaluations.Add(EvaluateSingle(new(inputs, request.Rulesets), context.Id, primary, frameworks.ToArray()));
+            }
+            foreach (var file in request.Inputs.Paths)
+                if (AssemblyArtifacts.FileHash(file) != request.Inputs.Sha256[file]) throw new InvalidDataException("Context input changed during analysis.");
+            var results = evaluations.SelectMany(e => e.Results).GroupBy(r => r.RuleId, StringComparer.Ordinal).Select(group =>
+            {
+                var matched = group.Sum(r => r.Matched);
+                var relevant = group.Where(r => r.Matched > 0 || r.Limitations.Any(l => l != "Source selector matched zero types/assemblies.")).ToArray();
+                var status = !request.Inputs.SourceBound ? "inconclusive" : group.Any(r => r.Status == "violation") ? "violation"
+                    : relevant.Any(r => r.Status is "inconclusive" or "error") ? "inconclusive" : matched > 0 ? "pass"
+                    : group.All(r => r.Status == "not-applicable") ? "not-applicable" : "inconclusive";
+                var limitations = relevant.SelectMany(r => r.Limitations).Distinct().Order(StringComparer.Ordinal).ToArray();
+                if (matched == 0 && status == "inconclusive") limitations = [.. limitations, "Source selector matched zero types/assemblies."];
+                return new RuleResult(group.Key, status, matched, group.SelectMany(r => r.FindingIds).Distinct().Order(StringComparer.Ordinal).ToArray(), limitations);
+            }).OrderBy(r => r.RuleId, StringComparer.Ordinal).ToArray();
+            return new(results, evaluations.SelectMany(e => e.Findings).DistinctBy(f => f.Id).OrderBy(f => f.Id, StringComparer.Ordinal).ToArray(),
+                evaluations.Sum(e => e.AssemblyCount), evaluations.SelectMany(e => e.Errors).Distinct().ToArray(), evaluations.First().EngineVersions);
+        }
+        catch (Exception error) when (error is IOException or InvalidDataException or BadImageFormatException or ArgumentException or InvalidOperationException)
+        {
+            return new(request.Rulesets.SelectMany(s => s.Rules).Where(r => r.Enabled && r.Type == "type-dependency").Select(r => new RuleResult(r.Id, "inconclusive", 0, [], [error.Message])).ToArray(),
+                [], 0, [error.Message], new(StringComparer.Ordinal));
+        }
+        finally
+        {
+            if (Directory.Exists(root)) { PathSafety.EnsureNoLinks(root); if (!PathSafety.IsUnder(root, parent)) throw new IOException("Unsafe context cleanup."); Directory.Delete(root, true); }
         }
     }
 
