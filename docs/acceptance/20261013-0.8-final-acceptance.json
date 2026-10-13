@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-final-acceptance",
+  "date": "2026-10-13",
+  "timezone": "Australia/Sydney",
+  "version": "0.8.0",
+  "status": "accepted-with-limitations",
+  "productSourceCommit": "ab3d2eac5d7eded6c993f0aee1876f592419f845",
+  "candidate": {
+    "zipPath": "D:\\ArchSift-lab\\packages\\release-d0ad9b1cde1c45ecac21e95d0950d64c\\archsift-0.8.0-win-x64.zip",
+    "zipSha256": "a39de3098a966d9eb0222bd2a2dabc1f4c269e56fd9b4b0c373fe5ea9f0c42d2",
+    "setupPath": "D:\\ArchSift-lab\\packages\\release-d0ad9b1cde1c45ecac21e95d0950d64c\\setup\\ArchSift.Setup.exe",
+    "setupSha256": "1c45497b3b6338573af6866d40874b15ab5944c891a17c70d48e1b303d4d0790"
+  },
+  "machineQualification": {
+    "status": "pass",
+    "localTests": 248,
+    "templateChecks": 8,
+    "zipChecks": 17,
+    "setupChecks": 20,
+    "ifxContexts": 105,
+    "classBPass": 406,
+    "classAPass": 182,
+    "ifxOverall": "partial/compliant/exit 4",
+    "windowsUbuntuCi": "pass",
+    "record": "docs/acceptance/20261013-0.8-s4-retirement-retest.md"
+  },
+  "humanUiAcceptance": {
+    "status": "pass-with-observation",
+    "source": "Direct user messages in this Codex task",
+    "feedback": "独立人工 UI 验收已完成，观察符合预期，可用性信心4",
+    "followUp": "L0, safe shutdown后弹出确认窗，确认后页面冻结，cli返回命令行。没有未测。",
+    "usabilityOfFive": 4,
+    "assistanceLevel": "L0",
+    "untestedItems": [],
+    "safeShutdownObservation": "After confirmation, the page froze and the CLI returned to the command prompt.",
+    "humanSessionExitCodeVerified": false,
+    "humanSessionListenerVerified": false
+  },
+  "postHumanAudit": {
+    "status": "pass",
+    "path": "D:\\ArchSift-lab\\evidence\\0.8-closure-post-human-3f275aa5dda349f6b8bd31aa72007627\\result.json",
+    "sha256": "6852f037a94acca84acbcc0d26e60625ae47335bc703daa4b2b7686116e8eeb9",
+    "originalSelectedVersion": "0.7.0",
+    "originalFrozenFilesEqual": true,
+    "targetClean": true,
+    "candidateOwnedProcessCount": 0,
+    "hostStateEqual": true
+  },
+  "releaseAuthorized": true,
+  "publicationStatus": "not-yet-published",
+  "ifxOriginalInstallationUpgraded": false,
+  "ifxPolicyAdopted": false,
+  "limitations": [
+    "IFX reports remain partial/compliant/exit 4 under the declaration-model boundary.",
+    "Real IFX installation retirement was not executed; synthetic retention checks passed.",
+    "Human UI feedback has no per-control log; session exit code and listener closure were not independently verified.",
+    "Physical no-SDK hosts, minimum Windows version, ARM64, Linux self-contained Web, and publisher signature were not certified."
+  ]
+}

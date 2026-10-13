@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8.0 最终验收：修订固定候选 `ab3d2ea` 的 248 项、ZIP17、Setup20、两平台 CI、真实 IFX 只读重验及 Class B406/A182 机器门禁通过。用户独立 UI 反馈符合预期、4/5、L0、无未测；Safe shutdown 确认后页面冻结、CLI 返回命令行。人工后只读终审通过，人工会话退出码/监听未独立取证。详见 [最终验收](../acceptance/20261013-0.8-final-acceptance.md)；0.8-5 COMPLETE／ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED／NOT YET PUBLISHED。下文旧进度保留历史时点。
+
 2026-10-13 0.8.0 第五阶段机器资格进度：固定 c10ceb9 候选 ZIP17／Setup13、245 项/八模板、Windows/Ubuntu CI、10 组机器浏览器通过；用户委托的单次真实 IFX 外置 105 项构建已实际材料审查、seal v3、独立 sourceBound 校验，Class B 406／Class A 182 与 schema 门禁通过，最终只读预检和宿主相等，见 [第五阶段机器记录](../acceptance/20261013-0.8-5-machine-qualification.md)。S4 版本清理/卸载无 Setup 命令而未执行，用户独立人工 UI 未执行；0.8-5 仍 IN PROGRESS，整体 NOT ACCEPTED／NOT RELEASED。
 
 2026-10-13 0.8-3 MACHINE COMPLETE／4 IN PROGRESS：实际review scope/责任与理由、分页材料预览、create-new review/seal v3、独立validate/配置规则库副本接CLI/Web，244项/八模板及9组机器浏览器8截图、宿主通过，见 [第三阶段记录](../acceptance/20261013-0.8-3-review-seal.md)。空SDK库缺TFM属性拒绝保留；仅合成实际封存，不是当前IFX或独立人工验证。第四阶段开始，尚未固定包/验收/发布。
