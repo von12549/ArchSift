@@ -43,6 +43,14 @@ function User-StateHash([string]$Config,[string]$Library){
     if(Test-Path -LiteralPath $Library){$records+=@(Get-ChildItem -LiteralPath $Library -Recurse -File|Sort-Object FullName|ForEach-Object{[ordered]@{path=[IO.Path]::GetRelativePath($Library,$_.FullName).Replace('\','/');sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})}
     [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes(($records|ConvertTo-Json -Depth 5 -Compress)))).ToLowerInvariant()
 }
+function Evidence-Hash([string[]]$Roots){
+    $records=@(foreach($evidenceRoot in $Roots){
+        foreach($file in Get-ChildItem -LiteralPath $evidenceRoot -Recurse -File | Sort-Object FullName){
+            [ordered]@{root=$evidenceRoot;path=[IO.Path]::GetRelativePath($evidenceRoot,$file.FullName).Replace('\','/');sha256=(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
+        }
+    })
+    [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes(($records|ConvertTo-Json -Depth 5 -Compress)))).ToLowerInvariant()
+}
 try{
     if((Invoke-Setup 'setup-version' @('--version')).Trim()-cne('archsift-setup '+$Version)){throw 'Setup version mismatch.'}
     $notices=Invoke-Setup 'embedded-notices' @('--notices')
@@ -59,10 +67,10 @@ try{
     [void](Invoke-Setup 'inspect-install' @('inspect','--root',$newRoot))
     [void](Invoke-Setup 'stale-install-rejected' @('apply','--plan',$path,'--plan-id',$plan.planId) 2)
     if(Test-Path -LiteralPath (Join-Path $newRoot 'reports')){throw 'Setup performed analysis.'}
-    $legacy=Join-Path $run 'legacy-install';$oldVersion=Join-Path $legacy 'old-payload'
-    [void][IO.Directory]::CreateDirectory($oldVersion);[IO.Compression.ZipFile]::ExtractToDirectory($oldZip,$oldVersion)
+    $legacy=Join-Path $run 'legacy-install';$oldPayloadPath=Join-Path $legacy 'old-payload'
+    [void][IO.Directory]::CreateDirectory($oldPayloadPath);[IO.Compression.ZipFile]::ExtractToDirectory($oldZip,$oldPayloadPath)
     $library=Join-Path $legacy 'rules';[void][IO.Directory]::CreateDirectory((Join-Path $library 'chains'))
-    Copy-Item -LiteralPath (Join-Path $oldVersion 'templates/rules/naming.json') -Destination (Join-Path $library 'policy.json')
+    Copy-Item -LiteralPath (Join-Path $oldPayloadPath 'templates/rules/naming.json') -Destination (Join-Path $library 'policy.json')
     $active='11111111111111111111111111111111';$deleted='22222222222222222222222222222222'
     [IO.File]::WriteAllText((Join-Path $library '.archsift-library.json'),(@{schemaVersion=1;entries=@(@{entryId=$active;fileName='policy.json';rulesetId='template-naming';deleted=$false},@{entryId=$deleted;fileName='deleted.json';rulesetId='deleted-policy';deleted=$true})}|ConvertTo-Json -Depth 6))
     [IO.File]::WriteAllText((Join-Path $library '.archsift-library.lock'),'')
@@ -71,23 +79,37 @@ try{
     $configPath=Join-Path $legacy 'config/ifx.json'
     [IO.File]::WriteAllText($configPath,(@{schemaVersion=1;target=@{root=$target;entry='Synthetic.csproj'};rulesets=@();build=@{mode='existing';targetFramework='net10.0';configuration='Debug';allowNetwork=$false};output=@{directory=(Join-Path $legacy 'reports');formats=@('json','html','sarif')};rulesDirectory=$library}|ConvertTo-Json -Depth 8))
     $stateBefore=User-StateHash $configPath $library
-    $text=Invoke-Setup 'plan-adopt' @('plan','adopt','--root',$legacy,'--version-directory',$oldVersion,'--config',$configPath)
+    $evidenceRoots=@((Join-Path $legacy 'evidence'),(Join-Path $run 'custom-evidence'))
+    foreach($evidenceRoot in $evidenceRoots){
+        foreach($status in @('success','failed','cancelled')){
+            $runEvidence=Join-Path $evidenceRoot ('project-identity/run-'+$status)
+            [void][IO.Directory]::CreateDirectory((Join-Path $runEvidence 'attempts'))
+            [IO.File]::WriteAllText((Join-Path $runEvidence 'job.json'),('{"syntheticStatus":"'+$status+'"}'))
+            [IO.File]::WriteAllText((Join-Path $runEvidence 'attempts/attempt-1.log'),('synthetic '+$status+' material'))
+            if($status-eq'success'){[IO.File]::WriteAllText((Join-Path $runEvidence 'assembly-manifest-v3.json'),'synthetic retained manifest bytes')}
+        }
+    }
+    $evidenceBefore=Evidence-Hash $evidenceRoots
+    $text=Invoke-Setup 'plan-adopt' @('plan','adopt','--root',$legacy,'--version-directory',$oldPayloadPath,'--config',$configPath)
     $plan=$text|ConvertFrom-Json;$path=Save-Plan 'adopt-plan' $text
     [void](Invoke-Setup 'apply-adopt' @('apply','--plan',$path,'--plan-id',$plan.planId))
+    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore){throw 'Adopt changed default or custom evidence bytes.'}
     $text=Invoke-Setup 'plan-upgrade' @('plan','upgrade','--root',$legacy,'--package',$zip,'--sha256',$zipHash,'--smoke','true')
     $plan=$text|ConvertFrom-Json;$path=Save-Plan 'upgrade-plan' $text
     $upgrade=(Invoke-Setup 'apply-upgrade-and-private-ui-smoke' @('apply','--plan',$path,'--plan-id',$plan.planId))|ConvertFrom-Json
     if((User-StateHash $configPath $library)-cne$stateBefore){throw 'Upgrade changed user state bytes/entry IDs/tombstones/chains.'}
+    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore){throw 'Upgrade changed success, failed or cancelled evidence bytes.'}
     $text=Invoke-Setup 'plan-current-version' @('plan','upgrade','--root',$legacy,'--package',$zip,'--sha256',$zipHash)
     $plan=$text|ConvertFrom-Json;$path=Save-Plan 'noop-plan' $text
     if(((Invoke-Setup 'checked-no-op' @('apply','--plan',$path,'--plan-id',$plan.planId))|ConvertFrom-Json).outcome-cne'no-op'){throw 'Repeat version not a checked no-op.'}
     $selection=Join-Path $legacy 'install.json';$selectionHash=(Get-FileHash -LiteralPath $selection -Algorithm SHA256).Hash.ToLowerInvariant()
     $rollback=(Invoke-Setup 'receipt-rollback' @('rollback','--root',$legacy,'--receipt',$upgrade.id,'--selection-sha256',$selectionHash))|ConvertFrom-Json
     if($rollback.after.selectedVersion-cne$OldVersion-or(User-StateHash $configPath $library)-cne$stateBefore){throw 'Rollback failed version/state preservation.'}
+    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore){throw 'Rollback changed default or custom evidence bytes.'}
     if((Get-FileHash -LiteralPath (Join-Path $target 'Synthetic.csproj') -Algorithm SHA256).Hash-cne$targetHash){throw 'Synthetic target changed.'}
     if(Test-Path -LiteralPath (Join-Path $legacy 'reports')){throw 'Setup performed analysis.'}
     $residual=@(Get-Process -Name 'archsift','ArchSift.Web' -ErrorAction SilentlyContinue|Where-Object {$_.Path-and$_.Path.StartsWith($run+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)})
     if($residual.Count){throw 'Setup owned process remains.'}
-    $result=@{status='pass';version=$Version;oldVersion=$OldVersion;checks=$checks.ToArray();zipSha256=$zipHash;setupSha256=(Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant();stateSha256=$stateBefore;targetUnchanged=$true;noOwnedProcess=$true;hostStateEqual=((Get-ArchSiftHostHash)-ceq$before);invalidDotnetRootsUsed=$true;processPathPreserved=$true;limits=@('Synthetic targets only; no real IFX installation.', 'Host has SDKs; unavailable explicit dotnet paths test self-contained fallback, not a physically SDK-free host.')}
+    $result=@{status='pass';version=$Version;oldVersion=$OldVersion;checks=$checks.ToArray();zipSha256=$zipHash;setupSha256=(Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant();stateSha256=$stateBefore;evidenceSha256=$evidenceBefore;evidenceRoots=$evidenceRoots;evidenceStatuses=@('success','failed','cancelled');targetUnchanged=$true;noOwnedProcess=$true;hostStateEqual=((Get-ArchSiftHostHash)-ceq$before);invalidDotnetRootsUsed=$true;processPathPreserved=$true;limits=@('Synthetic targets only; no real IFX installation.', 'Host has SDKs; unavailable explicit dotnet paths test self-contained fallback, not a physically SDK-free host.')}
     [IO.File]::WriteAllText((Join-Path $run 'setup-smoke-result.json'),($result|ConvertTo-Json -Depth 8));$result|ConvertTo-Json -Depth 8
 }finally{$equal=(Get-ArchSiftHostHash)-ceq$before;Write-Output ('setup-smoke-run='+$run+' final-host-state-equal='+$equal);if(-not$equal){throw 'Host drift; preserve evidence.'}}
