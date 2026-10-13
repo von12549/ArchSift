@@ -75,6 +75,8 @@ public static class Program
                     return result.Stage == "validated" ? 0 : result.Stage == "cancelled" ? 130 : 3;
                 }
                 if (args[1] == "export-config") { Console.WriteLine(JsonSerializer.Serialize(EvidenceReviewService.ExportConfiguration(Required(flags, "--job"), config.Target.Root), JsonContract.Options)); return 0; }
+                if (args[1] == "recover") { Console.WriteLine(JsonSerializer.Serialize(EvidenceLifecycle.Recover(Required(flags, "--job"), config.Target.Root, false), JsonContract.Options)); return 0; }
+                if (args[1] == "revalidate") { var validated = EvidenceLifecycle.Revalidate(Required(flags, "--job"), config.Target.Root, cancel.Token); Console.WriteLine(JsonSerializer.Serialize(validated, JsonContract.Options)); return validated.SourceBound ? 0 : 4; }
                 if (args[1] is "preview" or "build")
                 {
                     var requestPath = Path.GetFullPath(Required(flags, "--request")); PathSafety.EnsureNoLinks(requestPath);

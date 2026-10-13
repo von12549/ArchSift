@@ -1,6 +1,21 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Recover and preserve evidence":"恢复状态与保留证据",
+  "Inspect recorded task state":"查看已记录任务状态",
+  "Revalidate before reuse":"复用前重新验证",
+  "New recoverable archive directory":"新的可恢复归档目录",
+  "Reference scan directories (one per line)":"引用扫描目录（每行一个）",
+  "Preview complete archive":"预览完整归档",
+  "Create archive and keep original":"创建归档并保留原件",
+  "Explicit owned-file cleanup":"明确选择 owned 文件清理",
+  "Cleanup requires verified recovery bytes and no references. Unknown files and directories are retained.":"清理需已核验的恢复字节及无保留引用；未知文件和目录均保留。",
+  "Preview exact owned files":"预览精确 owned 文件",
+  "I reviewed the exact files and reference impact":"我已审查具体文件及引用影响",
+  "Clean selected archived owned files":"清理已归档的选定 owned 文件",
+  "No automatic restart or current verification from history.":"不会自动重启任务，也不从历史推导当前已验证。",
+  "Original bytes retained; archive is not directly portable.":"原字节保留；归档不代表可直接迁移验证。",
+  "Review the exact cleanup preview first.":"先审查精确清理预览。",
   "Review actual build materials":"审查实际构建材料",
   "Evidence run directory":"证据运行目录",
   "Inspect current review scope":"检查当前审查范围",
@@ -491,6 +506,7 @@ Object.assign(zhTranslations,{
   "What naming patterns apply to projects, assemblies, types or source files?": "项目、程序集、类型或源码文件需要什么命名模式？",
   "Are any exceptions needed, with explicit rule ID, scope and reason?": "是否需要带明确规则 ID、范围和理由的例外？"
 });
+Object.assign(zhTranslations,{"Cancellation requested; waiting for the owned process and evidence cleanup.":"已请求取消，正在等待所属进程退出及证据清理完成。"});
 function localizedMessage(message){if(locale!=="zh")return message;if(zhTranslations[message])return zhTranslations[message];const prefix=Object.keys(zhTranslations).find(k=>k.endsWith(": ")&&message.startsWith(k));if(prefix)return zhTranslations[prefix]+message.slice(prefix.length);const separator=message.indexOf(": ");if(separator>=0){const tail=message.slice(separator+2),translated=localizedMessage(tail);if(tail!==translated)return message.slice(0,separator+2)+translated;}return message;}
 Object.assign(zhTranslations,{"Workbench sections":"工作台分区","Library ruleset":"规则库规则集"});
 function applyLocale(){document.documentElement.lang=locale==="zh"?"zh-CN":"en";for(const element of document.querySelectorAll("[data-i18n-aria-label]"))element.setAttribute("aria-label",t(element.dataset.i18nAriaLabel));for(const element of document.querySelectorAll("[data-i18n]"))if(!["status","context-title","result-title"].includes(element.id))element.textContent=t(element.dataset.i18n);for(const element of document.querySelectorAll("[data-i18n-placeholder]"))element.placeholder=t(element.dataset.i18nPlaceholder);}

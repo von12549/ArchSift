@@ -30,6 +30,9 @@ public static class EvidenceArtifactStore
             var match = Regex.Match(line, @"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*[:=]", RegexOptions.CultureInvariant);
             if (match.Success && (environment.Contains(match.Groups[1].Value) || Sensitive(match.Groups[1].Value)))
                 result.AppendLine(match.Groups[1].Value + " = [value redacted]");
+            else if (Regex.IsMatch(line, @"(?:^|[\s;,:\-])(?:[A-Za-z0-9_.-]*(?:token|password|secret|credential|api.?key)[A-Za-z0-9_.-]*)\s*[:=]",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                result.AppendLine("[sensitive setting line redacted]");
             else result.AppendLine(line);
         }
         foreach (var key in environment.Where(Sensitive))

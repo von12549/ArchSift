@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8.0 第四阶段机器支持范围完成：恢复/完整重验、全字节归档与精确清理门禁、文本日志/原始 binlog 策略和哈希成本记录，经 244 项/八模板与机器浏览器检查，宿主相等；见 [第四阶段记录](../acceptance/20261013-0.8-4-lifecycle.md)。第五阶段开始，固定包/真实 IFX/S4 与用户独立人工 UI 尚待，整体 NOT ACCEPTED／NOT RELEASED。
+
 2026-10-13 0.8-3 MACHINE COMPLETE／4 IN PROGRESS：实际review scope/责任与理由、分页材料预览、create-new review/seal v3、独立validate/配置规则库副本接CLI/Web，244项/八模板及9组机器浏览器8截图、宿主通过，见 [第三阶段记录](../acceptance/20261013-0.8-3-review-seal.md)。空SDK库缺TFM属性拒绝保留；仅合成实际封存，不是当前IFX或独立人工验证。第四阶段开始，尚未固定包/验收/发布。
 
 2026-10-13 0.8-2 MACHINE COMPLETE／3 IN PROGRESS：CLI/Web共享持久证据任务、具体预览/执行审查、同字节快照、离线恢复/捕获/逐项目编译/ResolveReferences、Csc输入audit与Windows owned tree取消实现；244项/八模板/8组机器浏览器7截图、源码与宿主通过，见 [第二阶段记录](../acceptance/20261013-0.8-2-evidence-jobs.md)。只到未批准review-required，未生成manifest或宣称源码合规。第三阶段开始，固定包/真实IFX/独立人工和后续PR发布尚未关闭。

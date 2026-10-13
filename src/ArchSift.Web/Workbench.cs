@@ -80,6 +80,44 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapGet("/api/templates", () => Results.Json(RuleTemplates.Names.ToDictionary(n => n, n => JsonDocument.Parse(RuleTemplates.Json(n)).RootElement.Clone())));
         app.MapGet("/api/evidence", () => Results.Json(EvidenceWorkbench.Details(current), JsonContract.Options));
+        app.MapPost("/api/evidence/recover", async (HttpContext context) =>
+        {
+            var body = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(context.Request.Body, JsonContract.Options);
+            if (body is null || body.Count != 1 || !body.TryGetValue("jobDirectory", out var directory)) throw new ConfigurationException("Evidence job directory is required.");
+            return Results.Json(EvidenceLifecycle.Recover(directory, current.Target.Root, jobs.Values.Any(j => j.State == "running" && j.EvidenceJob?.RunDirectory == directory)), JsonContract.Options);
+        });
+        app.MapPost("/api/evidence/revalidate", async (HttpContext context) =>
+        {
+            var body = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(context.Request.Body, JsonContract.Options);
+            if (body is null || body.Count != 1 || !body.TryGetValue("jobDirectory", out var directory)) throw new ConfigurationException("Evidence job directory is required.");
+            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            try { return Results.Json(EvidenceLifecycle.Revalidate(directory, current.Target.Root, context.RequestAborted), JsonContract.Options); }
+            finally { gate.Release(); }
+        });
+        app.MapPost("/api/evidence/archive/preview", async (HttpContext context) =>
+        {
+            var request = await JsonSerializer.DeserializeAsync<EvidenceArchiveRequest>(context.Request.Body, JsonContract.Options) ?? throw new ConfigurationException("Archive request is required.");
+            return Results.Json(EvidenceLifecycle.PlanArchive(request, current, HostProtectedRoots(), jobs.Values.Any(j => j.State == "running")), JsonContract.Options);
+        });
+        app.MapPost("/api/evidence/archive", async (HttpContext context) =>
+        {
+            var request = await JsonSerializer.DeserializeAsync<EvidenceArchivePlan>(context.Request.Body, JsonContract.Options) ?? throw new ConfigurationException("Reviewed archive preview is required.");
+            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            try { return Results.Json(EvidenceLifecycle.Archive(request, current, HostProtectedRoots(), false), JsonContract.Options); }
+            finally { gate.Release(); }
+        });
+        app.MapPost("/api/evidence/cleanup/preview", async (HttpContext context) =>
+        {
+            var request = await JsonSerializer.DeserializeAsync<EvidenceArchiveRequest>(context.Request.Body, JsonContract.Options) ?? throw new ConfigurationException("Cleanup request is required.");
+            return Results.Json(EvidenceLifecycle.PlanCleanup(request, current, HostProtectedRoots(), jobs.Values.Any(j => j.State == "running")), JsonContract.Options);
+        });
+        app.MapPost("/api/evidence/cleanup", async (HttpContext context) =>
+        {
+            var request = await JsonSerializer.DeserializeAsync<EvidenceCleanupPlan>(context.Request.Body, JsonContract.Options) ?? throw new ConfigurationException("Concrete cleanup preview is required.");
+            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            try { return Results.Json(new { receiptPath = EvidenceLifecycle.CleanupArchived(request, current, HostProtectedRoots(), false) }, JsonContract.Options); }
+            finally { gate.Release(); }
+        });
         app.MapGet("/api/evidence/materials", (string jobDirectory, int? offset, int? limit) => Results.Json(EvidenceReviewService.Materials(jobDirectory, current.Target.Root, offset ?? 0, limit ?? 25), JsonContract.Options));
         app.MapGet("/api/evidence/material", (string jobDirectory, string sha256) => Results.Json(EvidenceReviewService.Material(jobDirectory, current.Target.Root, sha256), JsonContract.Options));
         app.MapPost("/api/evidence/review/scope", async (HttpContext context) =>

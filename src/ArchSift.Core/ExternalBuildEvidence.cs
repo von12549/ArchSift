@@ -48,39 +48,42 @@ public static class ExternalBuildEvidence
                 "REVIEW ACTUAL ASSEMBLY PATH", "REVIEW ACTUAL EVALUATION PATH", [])).ToArray()
     };
 
-    public static void Seal(RunConfiguration config, string capturePath, string reviewPath, string output)
+    public static void Seal(RunConfiguration config, string capturePath, string reviewPath, string output, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         capturePath = Path.GetFullPath(capturePath); reviewPath = Path.GetFullPath(reviewPath); output = Path.GetFullPath(output);
         PathSafety.EnsureDisjoint(config.Target.Root, output);
         var capture = Read<EvidenceCapture>(capturePath);
         var review = Read<ExternalBuildReview>(reviewPath);
-        if (review.SchemaVersion == 2) { ProjectContextEvidence.Seal(config, capture, review, capturePath, reviewPath, output); return; }
-        var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
+        if (review.SchemaVersion == 2) { ProjectContextEvidence.Seal(config, capture, review, capturePath, reviewPath, output, token); return; }
+        var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
         var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-        var limits = ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes);
+        var limits = ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes, token);
         if (limits.Count > 0) throw new ConfigurationException(string.Join("\n", limits));
         var directory = Path.GetDirectoryName(output)!;
         var entries = review.Assemblies.Select(a =>
         {
+            token.ThrowIfCancellationRequested();
             var path = Path.GetFullPath(a.Path);
             var relative = Path.GetRelativePath(directory, path);
             PathSafety.Under(directory, relative);
-            return new AssemblyEntry(AssemblyArtifacts.Inspect(path).Name, a.SourceProject, relative.Replace('\\', '/'), AssemblyArtifacts.FileHash(path));
+            return new AssemblyEntry(AssemblyArtifacts.Inspect(path).Name, a.SourceProject, relative.Replace('\\', '/'), AssemblyArtifacts.FileHash(path, token));
         }).ToArray();
         var manifest = new AssemblyManifest
         {
             SchemaVersion = 2, InputIdentity = capture.InputIdentity, BuildInputIdentity = capture.BuildInputIdentity,
             Sdk = review.Sdk, TargetFramework = review.TargetFramework, Configuration = review.Configuration,
             Generation = "external", Assemblies = entries,
-            ReviewedBuild = new(capturePath, AssemblyArtifacts.FileHash(capturePath), reviewPath, AssemblyArtifacts.FileHash(reviewPath))
+            ReviewedBuild = new(capturePath, AssemblyArtifacts.FileHash(capturePath, token), reviewPath, AssemblyArtifacts.FileHash(reviewPath, token))
         };
         // Validate all mapping, PE metadata and closure before publishing any successful seal.
         var temporary = output + ".check-" + Guid.NewGuid().ToString("N");
         try
         {
             WriteNew(temporary, manifest);
-            var verified = AssemblyArtifacts.Existing(config with { Build = config.Build with { AssemblyManifest = temporary } }, snapshot);
+            var verified = AssemblyArtifacts.Existing(config with { Build = config.Build with { AssemblyManifest = temporary } }, snapshot, token);
             if (!verified.SourceBound) throw new ConfigurationException(string.Join("\n", verified.Limitations));
+            token.ThrowIfCancellationRequested();
             File.Move(temporary, output, false);
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }

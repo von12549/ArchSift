@@ -56,6 +56,41 @@ public sealed class EvidenceJobTests
             var exported = EvidenceReviewService.ExportConfiguration(scope.JobDirectory, source);
             Assert.True(File.Exists(exported.ConfigurationCopyPath));
             var bound = ConfigLoader.Load(exported.ConfigurationCopyPath!); Assert.Equal(approved.ManifestPath, bound.Build.AssemblyManifest);
+            var recovered = EvidenceLifecycle.Recover(scope.JobDirectory, source, false); Assert.False(recovered.AutomaticRestart); Assert.False(recovered.CurrentSourceVerified);
+            Assert.True(EvidenceLifecycle.Revalidate(scope.JobDirectory, source).SourceBound);
+            Directory.CreateDirectory(config.Output.Directory);
+            var archive = EvidenceLifecycle.PlanArchive(new(scope.JobDirectory, Path.Combine(root, "archive"), []), config, [], false);
+            var copied = EvidenceLifecycle.Archive(archive, config, [], false); Assert.True(copied.OriginalRetained); Assert.False(copied.DirectlyPortable);
+            Assert.True(File.Exists(approved.ManifestPath)); Assert.True(File.Exists(copied.ReceiptPath));
+            var activeArchive = EvidenceLifecycle.PlanArchive(new(scope.JobDirectory, Path.Combine(root, "active-archive"), []), config, [], true);
+            Assert.NotEmpty(activeArchive.Blockers);
+            Assert.Throws<ConfigurationException>(() => EvidenceLifecycle.Archive(activeArchive, config, [], true));
+            var rawTrace = Path.Combine(scope.JobDirectory, "unexpected.binlog");
+            File.WriteAllBytes(rawTrace, [0, 1, 2, 3]);
+            var rawBlocked = EvidenceLifecycle.PlanCleanup(new(scope.JobDirectory, copied.ArchiveDirectory, []), config, [], false);
+            Assert.Contains(rawBlocked.Blockers, reason => reason.Contains("Raw binary build traces", StringComparison.Ordinal));
+            File.Delete(rawTrace);
+            var unrelated = Path.Combine(scope.JobDirectory, "user-note.txt"); File.WriteAllText(unrelated, "retain me");
+            File.WriteAllText(Path.Combine(config.Output.Directory, "reference.json"), JsonSerializer.Serialize(new { assemblyManifest = approved.ManifestPath }));
+            var referenced = EvidenceLifecycle.PlanCleanup(new(scope.JobDirectory, copied.ArchiveDirectory, [config.Output.Directory]), config, [], false);
+            Assert.NotEmpty(referenced.References); Assert.NotEmpty(referenced.Blockers);
+            Assert.Throws<ConfigurationException>(() => EvidenceLifecycle.CleanupArchived(referenced, config, [], false));
+            Assert.True(File.Exists(approved.ManifestPath));
+            File.Delete(Path.Combine(config.Output.Directory, "reference.json"));
+            var extraReferences = Path.Combine(root, "extra-references"); Directory.CreateDirectory(extraReferences);
+            var cleanPreview = EvidenceLifecycle.PlanCleanup(new(scope.JobDirectory, copied.ArchiveDirectory, [extraReferences]), config, [], false);
+            Assert.Empty(cleanPreview.Blockers); Assert.NotEmpty(cleanPreview.SelectedOwnedFiles);
+            Assert.Contains("user-note.txt", cleanPreview.RetainedUnknownFiles);
+            var lateReference = Path.Combine(extraReferences, "late.json");
+            File.WriteAllText(lateReference, JsonSerializer.Serialize(new { manifest = approved.ManifestPath }));
+            Assert.Throws<ConfigurationException>(() => EvidenceLifecycle.CleanupArchived(cleanPreview, config, [], false));
+            Assert.True(File.Exists(approved.ManifestPath));
+            File.Delete(lateReference);
+            var receipt = EvidenceLifecycle.CleanupArchived(cleanPreview, config, [], false);
+            Assert.True(File.Exists(receipt)); Assert.False(File.Exists(approved.ManifestPath));
+            Assert.True(Directory.Exists(scope.JobDirectory));
+            Assert.Equal("retain me", File.ReadAllText(unrelated));
+            Assert.All(cleanPreview.RetainedUnknownFiles, relative => Assert.True(File.Exists(PathSafety.Under(scope.JobDirectory, relative))));
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); if (Directory.Exists(root)) Directory.Delete(root, true); }
     }
@@ -106,8 +141,10 @@ public sealed class EvidenceJobTests
         var root = Path.Combine(Path.GetTempPath(), "archsift-redaction-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try
         {
-            var file = Path.Combine(root, "log.txt"); EvidenceArtifactStore.Log(file, "MY_API_SECRET = secret-value\nPATH = raw-path\nCompiler command is reviewable\n");
-            var text = File.ReadAllText(file); Assert.DoesNotContain("secret-value", text); Assert.DoesNotContain("raw-path", text); Assert.Contains("Compiler command", text);
+            var file = Path.Combine(root, "log.txt"); EvidenceArtifactStore.Log(file,
+                "MY_API_SECRET = secret-value\nPATH = raw-path\nCompiler command is reviewable\nmsbuild -p:Password=hidden-value\n");
+            var text = File.ReadAllText(file); Assert.DoesNotContain("secret-value", text); Assert.DoesNotContain("raw-path", text);
+            Assert.DoesNotContain("hidden-value", text); Assert.Contains("Compiler command", text);
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); Directory.Delete(root, true); }
     }

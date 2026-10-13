@@ -54,6 +54,7 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
         RegisterProject(preview.Storage, config);
         var host = EvidenceHostState.Capture(); EvidenceArtifactStore.WriteNew(Path.Combine(root, "host-baseline.json"), host);
         var watch = Stopwatch.StartNew(); var executions = new List<EvidenceExecution>(); var unknowns = new List<string>();
+        using var hashTelemetry = new EvidenceHashTelemetry();
         var job = new EvidenceJobRecord(1, "evidence-job", request.Storage.RunId, "planned", DateTimeOffset.UtcNow.ToString("O"), null, 0, 0,
             request, config, preview, [], null, null, [], null, host.Identity, ToolIdentity.Version);
         void Update(string stage)
@@ -212,6 +213,8 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
             watch.Stop(); var final = EvidenceHostState.Capture(); EvidenceArtifactStore.WriteNew(Path.Combine(root, "host-final.json"), new { equal = final.Identity == host.Identity, hashes = final });
             if (final.Identity != host.Identity) job = job with { Stage = "host-drift", Error = "Host drift; no automatic repair." };
             job = job with { FinishedUtc = DateTimeOffset.UtcNow.ToString("O"), ElapsedMilliseconds = watch.ElapsedMilliseconds }; EvidenceArtifactStore.SaveJob(job); progress?.Invoke(View(job));
+            EvidenceArtifactStore.WriteNew(Path.Combine(root, "hash-statistics.json"), new { statistics = hashTelemetry.Statistics,
+                scope = "AssemblyArtifacts.FileHash reads only; InputCapture/SDK subprocess IO is not included. Timings may overlap and must not be summed." });
         }
         return job;
     }

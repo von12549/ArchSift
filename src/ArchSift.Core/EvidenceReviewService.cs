@@ -84,7 +84,7 @@ public static class EvidenceReviewService
                 Materials = [.. template.Materials.Where(m => m.Role != "review-notes"), EvidenceArtifactStore.Material(notes, "review-notes")] };
             EvidenceArtifactStore.WriteNew(reviewPath, review, true); Stage("review-approved");
             host.Verify(); token.ThrowIfCancellationRequested(); Stage("sealing");
-            ExternalBuildEvidence.Seal(job.Configuration, job.CapturePath!, reviewPath, manifestPath);
+            ExternalBuildEvidence.Seal(job.Configuration, job.CapturePath!, reviewPath, manifestPath, token);
             host.Verify(); token.ThrowIfCancellationRequested(); Stage("validating");
             var config = job.Configuration with { Build = job.Configuration.Build with { Mode = "existing", AssemblyManifest = manifestPath, AssemblyPaths = [] } };
             validated = EvidenceWorkbench.Validate(config, token);

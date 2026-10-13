@@ -120,11 +120,13 @@ public static class AssemblyArtifacts
     {
         token.ThrowIfCancellationRequested();
         using var stream = File.OpenRead(path);
+        var start = System.Diagnostics.Stopwatch.GetTimestamp();
         using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         var buffer = new byte[65536]; int read;
         while ((read = stream.Read(buffer, 0, buffer.Length)) != 0)
         { token.ThrowIfCancellationRequested(); hash.AppendData(buffer, 0, read); }
         token.ThrowIfCancellationRequested();
+        EvidenceHashTelemetry.Record(stream.Length, System.Diagnostics.Stopwatch.GetTimestamp() - start);
         return Convert.ToHexString(hash.GetHashAndReset()).ToLowerInvariant();
     }
 

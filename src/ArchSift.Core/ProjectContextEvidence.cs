@@ -11,28 +11,30 @@ public static class ProjectContextEvidence
 {
     public const int MaximumJsonBytes = 16 * 1024 * 1024;
     public static void Seal(RunConfiguration config, EvidenceCapture capture, ExternalBuildReview review,
-        string capturePath, string reviewPath, string output)
+        string capturePath, string reviewPath, string output, CancellationToken token = default)
     {
-        var source = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
-        var rejected = ExternalBuildEvidence.ValidateReview(config, source, capture, review, capturePath, reviewPath, new(StringComparer.Ordinal));
+        token.ThrowIfCancellationRequested();
+        var source = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
+        var rejected = ExternalBuildEvidence.ValidateReview(config, source, capture, review, capturePath, reviewPath, new(StringComparer.Ordinal), token);
         if (rejected.Count > 0) throw new ConfigurationException(string.Join("\n", rejected));
         var directory = Path.GetDirectoryName(output)!;
         var manifest = new AssemblyManifest
         {
             SchemaVersion = 3, InputIdentity = capture.InputIdentity, BuildInputIdentity = capture.BuildInputIdentity,
             Sdk = review.Sdk, TargetFramework = review.TargetFramework, Configuration = review.Configuration, Generation = "external",
-            ReviewedBuild = new(capturePath, AssemblyArtifacts.FileHash(capturePath), reviewPath, AssemblyArtifacts.FileHash(reviewPath)),
+            ReviewedBuild = new(capturePath, AssemblyArtifacts.FileHash(capturePath, token), reviewPath, AssemblyArtifacts.FileHash(reviewPath, token)),
             ProjectContexts = review.ProjectContexts,
-            Assemblies = review.Assemblies.Select(a => new AssemblyEntry(AssemblyArtifacts.Inspect(a.Path).Name, a.SourceProject,
-                Path.GetRelativePath(directory, a.Path).Replace('\\', '/'), AssemblyArtifacts.FileHash(a.Path))).ToArray()
+            Assemblies = review.Assemblies.Select(a => { token.ThrowIfCancellationRequested(); return new AssemblyEntry(AssemblyArtifacts.Inspect(a.Path).Name, a.SourceProject,
+                Path.GetRelativePath(directory, a.Path).Replace('\\', '/'), AssemblyArtifacts.FileHash(a.Path, token)); }).ToArray()
         };
         var temporary = output + ".check-" + Guid.NewGuid().ToString("N");
         try
         {
             ExternalBuildEvidence.WriteNew(temporary, manifest);
-            var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
-            var result = AssemblyArtifacts.Existing(config with { Build = config.Build with { AssemblyManifest = temporary } }, snapshot);
+            var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
+            var result = AssemblyArtifacts.Existing(config with { Build = config.Build with { AssemblyManifest = temporary } }, snapshot, token);
             if (!result.SourceBound) throw new ConfigurationException(string.Join("\n", result.Limitations));
+            token.ThrowIfCancellationRequested();
             File.Move(temporary, output, false);
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
