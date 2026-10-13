@@ -21,3 +21,11 @@ public sealed record Receipt(int SchemaVersion, string Id, string Operation, str
 public sealed record Journal(int SchemaVersion, string Id, string Phase, SetupPlan Plan, Installation? Before,
     Installation After, StateIdentity BeforeState, StateIdentity? AfterState, string HostSha256);
 public sealed record SetupCompatibility(int SchemaVersion, int ConfigSchemaVersion, int LibrarySchemaVersion, int ChainSchemaVersion);
+public sealed record RetirementPlan(int SchemaVersion, string PlanId, string Operation, DateTimeOffset ExpiresUtc,
+    string Root, string? Version, string ArchiveRoot, string SelectionSha256, string StateSha256,
+    string[] EvidenceRoots, string EvidenceSha256, OwnedVersion[] Versions);
+public sealed record RetirementJournal(int SchemaVersion, string Id, string Phase, RetirementPlan Plan,
+    Installation Before, Installation? After, string HostSha256);
+public sealed record RetirementReceipt(int SchemaVersion, string Id, string Operation, string PlanId,
+    Installation Before, Installation? After, string ArchiveRoot, string[] EvidenceRoots,
+    string EvidenceSha256, string StateSha256, string HostSha256, bool HostStateEqual, string Outcome);

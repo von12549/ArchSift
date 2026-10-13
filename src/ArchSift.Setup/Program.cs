@@ -28,7 +28,10 @@ public static class Program
                 Console.WriteLine("plan install --root <root> --package <zip> --sha256 <hash> --target <root> --entry <relative-entry> --tfm <net8.0|net9.0|net10.0> [--configuration Debug|Release] [--output <reports>] [--library <rules>] [--smoke true|false]");
                 Console.WriteLine("plan adopt --root <root> --version-directory <payload> --config <existing-config>");
                 Console.WriteLine("plan upgrade --root <root> --package <zip> --sha256 <hash> [--smoke true|false]");
+                Console.WriteLine("plan remove-version --root <root> --version <unselected-version> --archive <new-same-volume-directory> --evidence-roots-file <JSON-array-of-custom-roots>");
+                Console.WriteLine("plan uninstall --root <root> --archive <new-same-volume-directory> --evidence-roots-file <JSON-array-of-custom-roots>");
                 Console.WriteLine("apply --plan <reviewed-json> --plan-id <sha256>");
+                Console.WriteLine("apply-retirement --plan <reviewed-json> --plan-id <sha256>; recover-retirement --root <root> --operation <id> --journal-sha256 <hash>");
                 Console.WriteLine("rollback --root <root> --receipt <id> --selection-sha256 <hash>");
                 Console.WriteLine("recover --root <root> --operation <id> --journal-sha256 <hash>");
                 return 0;
@@ -54,6 +57,28 @@ public static class Program
             {
                 var options = Flags(adopt, "--root", "--version-directory", "--config");
                 result = service.PlanAdopt(Required(options, "--root"), Required(options, "--version-directory"), Required(options, "--config"));
+            }
+            else if (args is ["plan", "remove-version", .. var remove])
+            {
+                var options = Flags(remove, "--root", "--version", "--archive", "--evidence-roots-file");
+                result = new RetirementService().Plan("remove-version", Required(options, "--root"), Required(options, "--version"),
+                    Required(options, "--archive"), EvidenceRoots(Required(options, "--evidence-roots-file")));
+            }
+            else if (args is ["plan", "uninstall", .. var uninstall])
+            {
+                var options = Flags(uninstall, "--root", "--archive", "--evidence-roots-file");
+                result = new RetirementService().Plan("uninstall", Required(options, "--root"), null,
+                    Required(options, "--archive"), EvidenceRoots(Required(options, "--evidence-roots-file")));
+            }
+            else if (args is ["apply-retirement", .. var retirement])
+            {
+                var options = Flags(retirement, "--plan", "--plan-id");
+                result = new RetirementService().Apply(SetupFiles.Read<RetirementPlan>(Required(options, "--plan")), Required(options, "--plan-id"));
+            }
+            else if (args is ["recover-retirement", .. var retirementRecovery])
+            {
+                var options = Flags(retirementRecovery, "--root", "--operation", "--journal-sha256");
+                result = new RetirementService().Recover(Required(options, "--root"), Required(options, "--operation"), Required(options, "--journal-sha256"));
             }
             else if (args is ["apply", .. var apply])
             {
@@ -96,6 +121,18 @@ public static class Program
     private static string Required(Dictionary<string, string> options, string key) => options.TryGetValue(key, out var value) ? value : throw new ConfigurationException("Missing " + key);
     private static bool Smoke(Dictionary<string, string> options) => options.GetValueOrDefault("--smoke", "false") switch
     { "true" => true, "false" => false, _ => throw new ConfigurationException("--smoke requires true or false.") };
+    private static string[] EvidenceRoots(string path)
+    {
+        path = SetupFiles.Safe(path);
+        if (new FileInfo(path).Length > 1024 * 1024) throw new ConfigurationException("Evidence roots file exceeds 1 MiB.");
+        var bytes = File.ReadAllBytes(path);
+        using var doc = JsonDocument.Parse(bytes);
+        SetupFiles.CheckKeys(doc.RootElement);
+        if (doc.RootElement.ValueKind != JsonValueKind.Array || doc.RootElement.GetArrayLength() > 100 ||
+            doc.RootElement.EnumerateArray().Any(item => item.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(item.GetString())))
+            throw new ConfigurationException("Evidence roots file must be a JSON string array of absolute custom roots.");
+        return doc.RootElement.EnumerateArray().Select(item => SetupFiles.Safe(item.GetString()!)).ToArray();
+    }
     private static async Task<object> Acquire(string version, string sha256, string output, CancellationToken cancellation)
     {
         PackageReader.Version(version);

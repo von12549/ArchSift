@@ -4,7 +4,8 @@
   "title": "ArchSift 0.5 setup contracts",
   "oneOf": [
     {"$ref":"#/$defs/SetupPlan"}, {"$ref":"#/$defs/Installation"},
-    {"$ref":"#/$defs/Receipt"}, {"$ref":"#/$defs/Journal"}
+    {"$ref":"#/$defs/Receipt"}, {"$ref":"#/$defs/Journal"},
+    {"$ref":"#/$defs/RetirementPlan"}, {"$ref":"#/$defs/RetirementJournal"}, {"$ref":"#/$defs/RetirementReceipt"}
   ],
   "$defs": {
     "sha": {"type":"string","pattern":"^[a-f0-9]{64}$"},
@@ -56,6 +57,18 @@
     "Journal": {
       "type":"object","additionalProperties":false,"required":["schemaVersion","id","phase","plan","before","after","beforeState","afterState","hostSha256"],
       "properties":{"schemaVersion":{"const":1},"id":{"$ref":"#/$defs/id"},"phase":{"enum":["prepared","backed-up","staged","configured","committed","completed","aborted"]},"plan":{"$ref":"#/$defs/SetupPlan"},"before":{"anyOf":[{"$ref":"#/$defs/Installation"},{"type":"null"}]},"after":{"$ref":"#/$defs/Installation"},"beforeState":{"$ref":"#/$defs/StateIdentity"},"afterState":{"anyOf":[{"$ref":"#/$defs/StateIdentity"},{"type":"null"}]},"hostSha256":{"$ref":"#/$defs/sha"}}
+    },
+    "RetirementPlan": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","planId","operation","expiresUtc","root","version","archiveRoot","selectionSha256","stateSha256","evidenceRoots","evidenceSha256","versions"],
+      "properties":{"schemaVersion":{"const":1},"planId":{"$ref":"#/$defs/sha"},"operation":{"enum":["remove-version","uninstall"]},"expiresUtc":{"type":"string","format":"date-time"},"root":{"$ref":"#/$defs/text"},"version":{"anyOf":[{"$ref":"#/$defs/version"},{"type":"null"}]},"archiveRoot":{"$ref":"#/$defs/text"},"selectionSha256":{"$ref":"#/$defs/sha"},"stateSha256":{"$ref":"#/$defs/sha"},"evidenceRoots":{"type":"array","minItems":1,"maxItems":102,"items":{"$ref":"#/$defs/text"}},"evidenceSha256":{"$ref":"#/$defs/sha"},"versions":{"type":"array","minItems":1,"maxItems":100,"items":{"$ref":"#/$defs/OwnedVersion"}}}
+    },
+    "RetirementJournal": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","id","phase","plan","before","after","hostSha256"],
+      "properties":{"schemaVersion":{"const":1},"id":{"$ref":"#/$defs/id"},"phase":{"enum":["prepared","archived","selected","completed","aborted"]},"plan":{"$ref":"#/$defs/RetirementPlan"},"before":{"$ref":"#/$defs/Installation"},"after":{"anyOf":[{"$ref":"#/$defs/Installation"},{"type":"null"}]},"hostSha256":{"$ref":"#/$defs/sha"}}
+    },
+    "RetirementReceipt": {
+      "type":"object","additionalProperties":false,"required":["schemaVersion","id","operation","planId","before","after","archiveRoot","evidenceRoots","evidenceSha256","stateSha256","hostSha256","hostStateEqual","outcome"],
+      "properties":{"schemaVersion":{"const":1},"id":{"$ref":"#/$defs/id"},"operation":{"enum":["remove-version","uninstall"]},"planId":{"$ref":"#/$defs/sha"},"before":{"$ref":"#/$defs/Installation"},"after":{"anyOf":[{"$ref":"#/$defs/Installation"},{"type":"null"}]},"archiveRoot":{"$ref":"#/$defs/text"},"evidenceRoots":{"type":"array","minItems":1,"maxItems":102,"items":{"$ref":"#/$defs/text"}},"evidenceSha256":{"$ref":"#/$defs/sha"},"stateSha256":{"$ref":"#/$defs/sha"},"hostSha256":{"$ref":"#/$defs/sha"},"hostStateEqual":{"const":true},"outcome":{"const":"success"}}
     },
     "SetupCompatibility": {
       "type":"object","additionalProperties":false,"required":["schemaVersion","configSchemaVersion","librarySchemaVersion","chainSchemaVersion"],

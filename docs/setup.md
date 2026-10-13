@@ -1,6 +1,6 @@
-# ArchSift 0.7.0 portable setup — candidate
+# ArchSift 0.8.0 portable setup — candidate
 
-0.7.0 remains a candidate; do not treat source implementation as a published package. The [0.6.0 publication record](releases/0.6.0-publication.md) preserves the current stable version. Existing command syntax and config/default.json remain. Candidate Setup recognizes supported 0.5/0.6/0.7 contracts and rejects unknown versions or migrations; use the version-specific verified Setup after its release gates pass. Earlier [0.5.0 Setup instructions](setup-0.5.md) remain historical.
+0.8.0 remains a candidate; do not treat source implementation as a published package. The [0.6.0 publication record](releases/0.6.0-publication.md) preserves the recorded stable version. Existing command syntax and config/default.json remain. Candidate Setup recognizes supported 0.5/0.6/0.7/0.8 contracts and rejects unknown versions or migrations; use the version-specific verified Setup after its release gates pass. Earlier [0.5.0 Setup instructions](setup-0.5.md) remain historical.
 
 `ArchSift.Setup.exe` is a separate self-contained Windows x64 executable. It performs user-writable filesystem installation without elevation, SDK/runtime prerequisites, PATH changes, service registration or target execution. `--notices` prints embedded ArchSift/.NET license and third-party notices. Run PowerShell 7 with `-NoProfile` and use full executable paths.
 
@@ -10,7 +10,7 @@ Download the version-specific Windows ZIP, Setup executable, checksums and accep
 
 ```powershell
 $setup = 'D:\Tools\ArchSift.Setup.exe'
-$zip = 'D:\Tools\downloads\archsift-0.7.0-win-x64.zip'
+$zip = 'D:\Tools\downloads\archsift-0.8.0-win-x64.zip'
 $zipHash = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
 # Compare zipHash with the independently obtained release record before continuing.
 & $setup plan install --root 'D:\Tools\ArchSift' --package $zip --sha256 $zipHash --target 'D:\source\MyApp' --entry 'MyApp.sln' --tfm net10.0 --smoke true > 'D:\Tools\install-plan.json'
@@ -56,6 +56,21 @@ $selectionHash = (Get-FileHash -LiteralPath 'D:\Tools\ArchSift\install.json' -Al
 ```
 
 Rollback accepts only the currently active upgrade's receipt and unchanged post-upgrade state. Later config/rule edits cause rejection and are preserved. Compatible upgrades need only binary reselection, not byte restoration. An install/adopt receipt is not authority for uninstall. No automatic old-version or user-data deletion is provided.
+
+## Reviewed version removal and uninstall
+
+0.8 adds a separate plan/apply flow for retiring binaries. `remove-version` accepts only an owned, unselected version. `uninstall` retires all owned versions and the active selection. Provide a **new, absolute, same-volume** archive directory outside the installation, target and evidence roots. Supply a UTF-8 JSON array containing every custom evidence root, using `[]` when there are none. The default `<install>/evidence`, configured report directory and config file are checked automatically. The archive preserves the retired binaries; this is recoverable soft cleanup, so it does not promise disk-space reclamation.
+
+```powershell
+$roots = 'D:\Tools\custom-evidence-roots.json' # Example: ["D:\\Evidence\\MyProject"]
+& $setup plan remove-version --root 'D:\Tools\ArchSift' --version 0.7.0 --archive 'D:\Tools\archives\retired-0.7.0' --evidence-roots-file $roots > 'D:\Tools\remove-plan.json'
+$plan = Get-Content -LiteralPath 'D:\Tools\remove-plan.json' -Raw | ConvertFrom-Json
+# Review version identity, normalized evidence roots, state/evidence hashes and destination.
+& $setup apply-retirement --plan 'D:\Tools\remove-plan.json' --plan-id $plan.planId
+& $setup plan uninstall --root 'D:\Tools\ArchSift' --archive 'D:\Tools\archives\uninstalled' --evidence-roots-file $roots > 'D:\Tools\uninstall-plan.json'
+```
+
+Review the uninstall plan and apply it with the same `apply-retirement` command and its own plan ID. Keep the resulting receipt under `operations/<id>/retirement-receipt.json`; after uninstall, `uninstalled.json` points to the archive and `inspect` reports `uninstalled-retained`. Evidence, reports, configuration, rules, project registrations and History indexes remain at their original paths. Setup rejects known retained references to a retiring version, unexpected files within its payload, stale hashes, active owned processes and unreviewed destination changes. Custom roots omitted from the JSON list cannot be examined; list them all before planning. A failed retirement leaves its journal and bytes for review. Use `recover-retirement --root <root> --operation <id> --journal-sha256 <reviewed-hash>` to restore pre-selection moves or complete a committed retirement; do not manually delete a partly archived directory.
 
 ## Interrupted operations
 
