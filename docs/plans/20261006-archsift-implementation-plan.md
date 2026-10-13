@@ -1,5 +1,13 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8.0 执行授权：用户要求创建 `codex/archsift-0.8.0`，以计划为第一条提交，随后实施完整 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，每阶段完成后提交/推送，并授权 PR、合并与发布。独立人工 UI 由用户完成，机器门禁与宿主/原件保护继续生效。当前 IMPLEMENTATION AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；下文此前未授权文字为历史。原 IFX 安装升级、原 profile 政策采纳和无关 Guard 操作不在授权范围。
+
+2026-10-13 0.8.0 存储决议补充（仅计划更新）：用户指定默认 `ArchSift\evidence\<项目标识>\<运行标识>\` 保存整套证据，manifest 为运行目录下 `assembly-manifest-v3.json`；ArchSift 指源根外明确选定的安装/数据根，支持自定义证据根并预览实际绝对路径，不落在版本载荷中。项目/运行身份、create-new、材料依赖索引和路径保护纳入 1A/2；升级/回退/卸载及普通清理默认保留全部证据、失败/取消历史和登记元数据，只有用户明确选择的整套 owned 运行可在引用/lease/路径核对及具体预览后归档/清理。存储/保留验收 S1–S5 见 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)。产品仍 NOT STARTED，本次未创建目录、迁移、实施或执行清理。
+
+2026-10-13 0.8.0 计划接手 COMPLETE／产品 NOT STARTED：已在 Local Project ArchSift 核对干净 main `43a7b1e62699bc6ca64ed512763eb93a74746ace`、项目指令和当前 0.7 验收/发布记录，校验 IFX 来源计划 SHA-256 后接入 [0.8.0 证据 UI 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，来源相对证据链接已改为可访问的绝对引用。最新 2026-10-13 IFX 的 [收尾结果](D:/IFX-10-Root/validation/20261013-ifx-v3-7e9c2a1b/ui-closeout-20261013-02/final-result.json) 已包含用户 A/B 与正常 Safe shutdown 确认，仍 partial/compliant/exit 4；旧 machine humanUiStatus=not-run 保留历史。核对限制见 [接手记录](../acceptance/20261013-0.8-plan-handoff.md)。当前仅授权计划衔接，0.8.0 实施、真实构建/安装、政策采纳、提交/推送/发布尚未授权，0.7 旧委托不延伸。
+
+0.8.0 范围与依赖：第一阶段 1A 契约 → 1B 共享 Chain 汇总、1C 跨会话 History/实际时间、1D 只读证据详情与显式独立 validate → 1E 一致性/机器与独立人工入口；均 NOT STARTED，详细可执行标准 F1-01–10 见新计划。随后按阶段推进持久 evidence job、输入清点/capture、同字节源根外快照、offline restore/build/逐项目求值，实际 review v2/unknowns、create-new seal v3/validate/配置副本、失败取消/owned tree/metadata lease 回收与恢复，最终真实 IFX 和独立人工验收。每阶段依对应授权执行。Q01–Q14、W00–W10 历史依赖及未重启延期范围保持，0.7.0 继续 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。
+
 2026-10-12 0.7.0 COMPLETE／ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED：用户直接“正式授权”后，最新PR与合并后main两平台各222项CI通过，PR5合并，v0.7.0正式发布；四公开资产独立下载摘要／字节、ZIP17／Setup13／冻结预算／SARIF和最终原件／宿主／进程审计通过，见[发布回验](../releases/0.7.0-publication.md)。独立人工Workbench／Launcher符合预期，可用性5/5；原IFX安装保持0.6、B策略未采用。下文待批准／pending／失败是原形成时点。
 
 2026-10-12 0.7.0合并／发布准备完成：用户独立UI5/5、人工后终审、最终a2c9f27两平台各222项CI、四项草稿服务器digest／独立下载／ZIP17／Setup13与新安全终审全部通过，见[准备记录](../releases/0.7.0-readiness.md)。PR5 ready未合并，release为draft。自动审批拒绝合并，要求当前可信用户明确授权；等待明确批准合并及公开发布，不绕过拒绝。技术验收完成，版本尚未公开，原IFX安装／B策略保持。
