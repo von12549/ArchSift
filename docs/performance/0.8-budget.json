@@ -3,8 +3,8 @@
   "date": "2026-10-13",
   "status": "frozen-carried-thresholds-candidate-qualified",
   "toolVersion": "0.8.0",
-  "referenceSourceCommit": "9e9d8216b65b1728dead3780824ed7017856d3a4",
-  "referenceCandidateSha256": "20c2b5dec078a8b1ea1d02f7783eb0bb03840a582fd99d7cbad1d0f6b7752b4d",
+  "referenceSourceCommit": "c10ceb978d95a0d275c2c42ec8e83fb055ed6f88",
+  "referenceCandidateSha256": "4e7613f0d4ebeb85eaa47da47df9dfec69560abadd89230bb843bed131df7f30",
   "toolConfiguration": "Release",
   "analysisConfiguration": "Debug",
   "platform": "Windows x64",
@@ -22,6 +22,6 @@
   "rationale": "The first 0.8.0 native smoke stopped at the version-bound input identity from the historical 0.3.0 budget. The same 100-project fixture produced this 0.8.0 input SHA. Carry the frozen 700 ms analysis, 1000 ms wall and 64 MiB sampled peak ceilings without changing them; run all five samples on a new smoke output.",
   "acceptanceBoundary": "Only the fixed declared fixture on this Windows x64 reference host. This is not IFX, external build, worst-case memory or physical no-SDK certification. Timings overlap and peak memory is sampled.",
   "candidatePassed": true,
-  "candidateSmokeEvidence": "D:/ArchSift-lab/packages/smoke-641555b2617a4c2296e86cd793c67744/smoke-result.json",
+  "candidateSmokeEvidence": "D:/ArchSift-lab/packages/smoke-ab3a8a6c6ec744a3afb84e82f4856e67/smoke-result.json",
   "releasePassed": false
 }
