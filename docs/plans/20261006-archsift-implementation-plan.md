@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8-1A COMPLETE／1B IN PROGRESS：计划首提交 d07fba9 已推送到 codex/archsift-0.8.0；History/时间/共享汇总/证据路径与 validate DTO、请求边界及 [契约设计](../decisions/20261013-0.8-workbench-contracts.md) 已完成，SDK10.0.303/net10.0/Release 离线 build 零警告错误、226 项与八模板通过、宿主相等。见 [1A 验收](../acceptance/20261013-0.8-1a-contracts.md)。整体仍 IN PROGRESS／NOT ACCEPTED／NOT RELEASED，UI 功能与独立人工门禁未通过。
+
 2026-10-13 0.8.0 执行授权：用户要求创建 `codex/archsift-0.8.0`，以计划为第一条提交，随后实施完整 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，每阶段完成后提交/推送，并授权 PR、合并与发布。独立人工 UI 由用户完成，机器门禁与宿主/原件保护继续生效。当前 IMPLEMENTATION AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；下文此前未授权文字为历史。原 IFX 安装升级、原 profile 政策采纳和无关 Guard 操作不在授权范围。
 
 2026-10-13 0.8.0 存储决议补充（仅计划更新）：用户指定默认 `ArchSift\evidence\<项目标识>\<运行标识>\` 保存整套证据，manifest 为运行目录下 `assembly-manifest-v3.json`；ArchSift 指源根外明确选定的安装/数据根，支持自定义证据根并预览实际绝对路径，不落在版本载荷中。项目/运行身份、create-new、材料依赖索引和路径保护纳入 1A/2；升级/回退/卸载及普通清理默认保留全部证据、失败/取消历史和登记元数据，只有用户明确选择的整套 owned 运行可在引用/lease/路径核对及具体预览后归档/清理。存储/保留验收 S1–S5 见 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)。产品仍 NOT STARTED，本次未创建目录、迁移、实施或执行清理。
