@@ -19,8 +19,28 @@ public sealed class SetupTests
         var next = fixture.Package("0.7.0"); var plan = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
         var upgraded = await service.ApplyAsync(plan, plan.PlanId, default); Assert.Equal("0.7.0", upgraded.After.SelectedVersion); Assert.Equal(before, upgraded.AfterState.Sha256);
         var reverted = service.Rollback(fixture.Install, upgraded.Id, SetupFiles.FileHash(SetupService.Selection(fixture.Install))); Assert.Equal("0.6.0", reverted.After.SelectedVersion);
-        var future = fixture.Package("0.8.0"); Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, future, SetupFiles.FileHash(future), false));
+        var future = fixture.Package("0.9.0"); Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, future, SetupFiles.FileHash(future), false));
         var invalid = fixture.Package("0.7.1", "schema"); Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, invalid, SetupFiles.FileHash(invalid), false));
+    }
+    [Fact]
+    public async Task Upgrade070To080AndRollbackRetainDefaultAndCustomEvidence()
+    {
+        using var fixture = new Fixture(); var service = new SetupService();
+        var old = fixture.Package("0.7.0"); var initial = service.PlanInstall(fixture.Install, old, SetupFiles.FileHash(old), fixture.Config, false);
+        var installed = await service.ApplyAsync(initial, initial.PlanId, default);
+        var defaultEvidence = Path.Combine(fixture.Install, "evidence", "project", "run", "assembly-manifest-v3.json");
+        var customEvidence = Path.Combine(Path.GetDirectoryName(fixture.Install)!, "custom-evidence", "project", "run", "assembly-manifest-v3.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(defaultEvidence)!); Directory.CreateDirectory(Path.GetDirectoryName(customEvidence)!);
+        File.WriteAllText(defaultEvidence, "synthetic evidence retained"); File.WriteAllText(customEvidence, "custom evidence retained");
+        var defaultHash = SetupFiles.FileHash(defaultEvidence); var customHash = SetupFiles.FileHash(customEvidence);
+        var before = SetupFiles.Capture(installed.After.ConfigPath, installed.After.LibraryPath).Sha256;
+        var next = fixture.Package("0.8.0"); var plan = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        var upgraded = await service.ApplyAsync(plan, plan.PlanId, default);
+        Assert.Equal("0.8.0", upgraded.After.SelectedVersion); Assert.Equal(before, upgraded.AfterState.Sha256);
+        Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
+        var reverted = service.Rollback(fixture.Install, upgraded.Id, SetupFiles.FileHash(SetupService.Selection(fixture.Install)));
+        Assert.Equal("0.7.0", reverted.After.SelectedVersion); Assert.Equal(before, SetupFiles.Capture(reverted.After.ConfigPath, reverted.After.LibraryPath).Sha256);
+        Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
     }
     [Fact]
     public async Task Upgrade050To060KeepsLegacyConfigPathCatalogAndSelectionAndRollbackPreservesLaterSelection()
@@ -212,6 +232,100 @@ public sealed class SetupTests
     public void MissingOrDuplicateSetupFieldsAreRejected(string json)
     { Assert.Throws<ConfigurationException>(() => SetupFiles.Parse<SetupPlan>(Encoding.UTF8.GetBytes(json))); }
 
+    [Fact]
+    public async Task ReviewedRemovalAndUninstallArchiveOnlyOwnedPayloadsAndRetainEvidenceAndState()
+    {
+        using var fixture = new Fixture(); var setup = new SetupService(); var retirement = new RetirementService();
+        var old = fixture.Package("0.7.0"); var install = setup.PlanInstall(fixture.Install, old, SetupFiles.FileHash(old), fixture.Config, false);
+        await setup.ApplyAsync(install, install.PlanId, default);
+        var next = fixture.Package("0.8.0"); var upgrade = setup.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        await setup.ApplyAsync(upgrade, upgrade.PlanId, default);
+        var defaultEvidence = Path.Combine(fixture.Install, "evidence", "project", "run-success", "assembly-manifest-v3.json");
+        var customRoot = Path.Combine(fixture.Root, "custom-evidence");
+        var customEvidence = Path.Combine(customRoot, "project", "run-cancelled", "job.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(defaultEvidence)!);
+        Directory.CreateDirectory(Path.GetDirectoryName(customEvidence)!);
+        File.WriteAllText(defaultEvidence, "{\"status\":\"success\"}");
+        File.WriteAllText(customEvidence, "{\"status\":\"cancelled\"}");
+        var projectRegistration = Path.Combine(fixture.Install, "evidence", "project", "project.json");
+        File.WriteAllText(projectRegistration, JsonSerializer.Serialize(new { kind = "archsift-evidence-project", projectId = "project", targetRoot = fixture.Target, entry = "Project.csproj" }));
+        var reports = Path.Combine(fixture.Install, "reports"); Directory.CreateDirectory(reports);
+        var historyCatalog = Path.Combine(reports, ".archsift-history.json");
+        File.WriteAllText(historyCatalog, JsonSerializer.Serialize(new { schemaVersion = 1, directories = new[] { new { directory = customRoot, targetRoot = fixture.Target } } }));
+        var defaultHash = SetupFiles.FileHash(defaultEvidence); var customHash = SetupFiles.FileHash(customEvidence);
+        var registrationHash = SetupFiles.FileHash(projectRegistration); var historyHash = SetupFiles.FileHash(historyCatalog);
+        var configHash = SetupFiles.FileHash(SetupService.LoadInstallation(fixture.Install).ConfigPath);
+        var selected = SetupService.LoadInstallation(fixture.Install).SelectedVersion;
+        Assert.Throws<ConfigurationException>(() => retirement.Plan("remove-version", fixture.Install, selected,
+            Path.Combine(fixture.Root, "archive-selected"), [customRoot]));
+        var remove = retirement.Plan("remove-version", fixture.Install, "0.7.0", Path.Combine(fixture.Root, "archive-old"), [customRoot]);
+        Assert.False(Directory.Exists(remove.ArchiveRoot));
+        Assert.Throws<ConfigurationException>(() => retirement.Apply(remove, new string('0', 64)));
+        var removed = retirement.Apply(remove, remove.PlanId);
+        Assert.Equal("success", removed.Outcome);
+        Assert.Single(SetupService.LoadInstallation(fixture.Install).Versions);
+        Assert.True(File.Exists(Path.Combine(remove.ArchiveRoot, "versions", "0.7.0", "package-manifest.json")));
+        Assert.False(Directory.Exists(Path.Combine(fixture.Install, "versions", "0.7.0")));
+        Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
+        Assert.Equal(registrationHash, SetupFiles.FileHash(projectRegistration)); Assert.Equal(historyHash, SetupFiles.FileHash(historyCatalog));
+        var uninstall = retirement.Plan("uninstall", fixture.Install, null, Path.Combine(fixture.Root, "archive-final"), [customRoot]);
+        var finished = retirement.Apply(uninstall, uninstall.PlanId);
+        Assert.Null(finished.After);
+        Assert.False(File.Exists(SetupService.Selection(fixture.Install)));
+        Assert.True(File.Exists(Path.Combine(fixture.Install, "uninstalled.json")));
+        Assert.True(File.Exists(Path.Combine(uninstall.ArchiveRoot, "install.json")));
+        Assert.True(File.Exists(Path.Combine(uninstall.ArchiveRoot, "versions", "0.8.0", "package-manifest.json")));
+        Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
+        Assert.Equal(registrationHash, SetupFiles.FileHash(projectRegistration)); Assert.Equal(historyHash, SetupFiles.FileHash(historyCatalog));
+        Assert.Equal(configHash, SetupFiles.FileHash(finished.Before.ConfigPath));
+        Assert.True(Directory.Exists(Path.Combine(fixture.Install, "operations")));
+    }
+
+    [Fact]
+    public async Task RetirementRefusesKnownVersionDependencyAndStaleEvidence()
+    {
+        using var fixture = new Fixture(); var setup = new SetupService(); var retirement = new RetirementService();
+        var old = fixture.Package("0.7.0"); var install = setup.PlanInstall(fixture.Install, old, SetupFiles.FileHash(old), fixture.Config, false);
+        await setup.ApplyAsync(install, install.PlanId, default);
+        var next = fixture.Package("0.8.0"); var upgrade = setup.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        await setup.ApplyAsync(upgrade, upgrade.PlanId, default);
+        var customRoot = Path.Combine(fixture.Root, "custom-evidence"); Directory.CreateDirectory(customRoot);
+        var evidence = Path.Combine(customRoot, "run.json");
+        File.WriteAllText(evidence, JsonSerializer.Serialize(new { dependency = Path.Combine(fixture.Install, "versions", "0.7.0", "archsift.exe") }));
+        Assert.Throws<ConfigurationException>(() => retirement.Plan("remove-version", fixture.Install, "0.7.0",
+            Path.Combine(fixture.Root, "blocked-archive"), [customRoot]));
+        File.WriteAllText(evidence, "{\"status\":\"ready\"}");
+        var plan = retirement.Plan("remove-version", fixture.Install, "0.7.0", Path.Combine(fixture.Root, "stale-archive"), [customRoot]);
+        File.AppendAllText(evidence, "\n");
+        Assert.Throws<ConfigurationException>(() => retirement.Apply(plan, plan.PlanId));
+        Assert.True(Directory.Exists(Path.Combine(fixture.Install, "versions", "0.7.0")));
+        Assert.False(Directory.Exists(plan.ArchiveRoot));
+    }
+
+    [Fact]
+    public async Task InterruptedVersionMoveRestoresOriginalSelectionWithReviewedRecovery()
+    {
+        using var fixture = new Fixture(); var setup = new SetupService(); var retirement = new RetirementService();
+        var old = fixture.Package("0.7.0"); var install = setup.PlanInstall(fixture.Install, old, SetupFiles.FileHash(old), fixture.Config, false);
+        await setup.ApplyAsync(install, install.PlanId, default);
+        var next = fixture.Package("0.8.0"); var upgrade = setup.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        await setup.ApplyAsync(upgrade, upgrade.PlanId, default);
+        var plan = retirement.Plan("remove-version", fixture.Install, "0.7.0", Path.Combine(fixture.Root, "interrupted-archive"), []);
+        var before = SetupService.LoadInstallation(fixture.Install);
+        var id = Guid.NewGuid().ToString("N");
+        var journalPath = Path.Combine(fixture.Install, "operations", id, "retirement-journal.json");
+        var after = before with { Versions = before.Versions.Where(v => v.Version != "0.7.0").ToArray(), LastOperation = id };
+        SetupFiles.Atomic(journalPath, new RetirementJournal(1, id, "prepared", plan, before, after, SetupFiles.HostHash()));
+        var archived = Path.Combine(plan.ArchiveRoot, "versions", "0.7.0"); Directory.CreateDirectory(Path.GetDirectoryName(archived)!);
+        Directory.Move(before.Versions.Single(v => v.Version == "0.7.0").Directory, archived);
+        await Assert.ThrowsAsync<ConfigurationException>(() => setup.ApplyAsync(upgrade, upgrade.PlanId, default));
+        var recovered = retirement.Recover(fixture.Install, id, SetupFiles.FileHash(journalPath));
+        Assert.Contains("aborted-restored", JsonSerializer.Serialize(recovered));
+        Assert.Equal("0.8.0", SetupService.LoadInstallation(fixture.Install).SelectedVersion);
+        Assert.True(Directory.Exists(Path.Combine(fixture.Install, "versions", "0.7.0")));
+        Assert.False(Directory.Exists(archived));
+    }
+
     private static string FindRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -230,7 +344,7 @@ public sealed class SetupTests
         {
             var files = new Dictionary<string, byte[]> { ["archsift.exe"] = Encoding.UTF8.GetBytes(alternate ? "different synthetic CLI" : "synthetic CLI; never execute"),
                 ["web/ArchSift.Web.exe"] = Encoding.UTF8.GetBytes("synthetic Web; never execute"), ["LICENSE"] = Encoding.UTF8.GetBytes("synthetic license") };
-            if (version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal) || version.StartsWith("0.7.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
+            if (version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal) || version.StartsWith("0.7.", StringComparison.Ordinal) || version.StartsWith("0.8.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
             var manifest = new PackageManifest(1, version, "win-x64", true, "candidate", new string('a', 40), false, false, new string('b', 64),
                 files.Select(p => new PackageFile(p.Key, p.Value.Length, SetupFiles.Hash(p.Value))).ToArray(), true);
             files["package-manifest.json"] = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonContract.Options);

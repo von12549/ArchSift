@@ -159,6 +159,11 @@ public sealed class WebWorkbenchTests
                 Assert.Equal(2, summary.Entries.Length); Assert.Equal(1, summary.ProjectCount); Assert.Equal("noncompliant", summary.Compliance);
                 Assert.Equal(2, summary.Snapshot.ExecutionOptions!.MaxConcurrency);
                 Assert.Equal("finished", chainJob.RootElement.GetProperty("progress").GetProperty("stage").GetString());
+                Assert.Equal(ChainProjection.Aggregate(summary), chainJob.RootElement.GetProperty("aggregate").Deserialize<ChainAggregate>(JsonContract.Options));
+                var history = await client.GetFromJsonAsync<HistoryPage>("/api/history?limit=100", JsonContract.Options, timeout.Token);
+                Assert.Single(history!.Items, i => i.RunId == summary.RunMetadata.RunId);
+                Assert.Equal(summary.RunMetadata.StartedUtc, history.Items.Single(i => i.RunId == summary.RunMetadata.RunId).StartedUtc);
+                Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync("/api/history?limit=101", timeout.Token)).StatusCode);
                 foreach (var child in summary.Entries)
                     Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + chainJob.RootElement.GetProperty("id").GetString() + "/child/" + child.EntryId + "/sarif", timeout.Token)).StatusCode);
             }
@@ -173,6 +178,13 @@ public sealed class WebWorkbenchTests
             Assert.DoesNotContain(await Cards(), c => c.EntryId == firstCard.EntryId);
             Assert.Equal(firstCard.EntryId, (await client.GetFromJsonAsync<ChainDocument>("/api/chains/http-chain", JsonContract.Options, timeout.Token))!.Entries[0].EntryId);
             (await client.PostAsync("/api/config", JsonContent.Create(config with { Rulesets = [Path.Combine(rulesDirectory, "policy.json")] }, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            using (var noEvidence = await NewJob("evidence-validate", new { }))
+            {
+                Assert.Equal("failed", noEvidence.RootElement.GetProperty("state").GetString());
+                Assert.Equal(2, noEvidence.RootElement.GetProperty("exitCode").GetInt32());
+                Assert.Equal(JsonValueKind.Null, noEvidence.RootElement.GetProperty("evidenceValidation").ValueKind);
+            }
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsJsonAsync("/api/run/evidence-build", new { }, timeout.Token)).StatusCode);
             Assert.Equal(sourceBefore, InputCapture.Capture(source).Sha256);
             // Compare the same source over the authenticated HTTP surface and reject stale downloads after failure.
             async Task Git(params string[] arguments)

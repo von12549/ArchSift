@@ -61,7 +61,9 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
     public object Inspect(string root)
     {
         root = SetupFiles.Safe(root);
-        if (!File.Exists(Selection(root))) return new { status = "unowned", root, message = "Existing ZIP installations require explicit adoption." };
+        if (!File.Exists(Selection(root))) return File.Exists(SetupFiles.Under(root, "uninstalled.json"))
+            ? new { status = "uninstalled-retained", root, retention = SetupFiles.Under(root, "uninstalled.json"), pendingOperations = Pending(root) }
+            : new { status = "unowned", root, message = "Existing ZIP installations require explicit adoption." };
         var installation = LoadInstallation(root);
         RunConfiguration config;
         try
@@ -300,7 +302,7 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
         var path = SetupFiles.Under(library, ".archsift-library.lock");
         return File.Exists(path) ? new(path, FileMode.Open, FileAccess.Read, FileShare.Read) : null;
     }
-    private static void EnsureStopped(OwnedVersion[] versions)
+    internal static void EnsureStopped(OwnedVersion[] versions)
     {
         if (versions.Length == 0) return;
         foreach (var process in Process.GetProcesses())
@@ -380,9 +382,9 @@ public sealed class SetupService(Action<string>? phaseObserver = null)
         return Directory.GetDirectories(directory).Where(d =>
         {
             SetupFiles.Safe(d); var path = Path.Combine(d, "journal.json");
-            if (!File.Exists(path)) return false;
-            var journal = SetupFiles.Read<Journal>(path);
-            return journal.Phase is not ("completed" or "aborted");
+            var retirement = Path.Combine(d, "retirement-journal.json");
+            return File.Exists(path) && SetupFiles.Read<Journal>(path).Phase is not ("completed" or "aborted") ||
+                File.Exists(retirement) && SetupFiles.Read<RetirementJournal>(retirement).Phase is not ("completed" or "aborted");
         }).Select(Path.GetFileName).OfType<string>().ToArray();
     }
     private static void Id(string id) { if (!System.Text.RegularExpressions.Regex.IsMatch(id, "^[a-f0-9]{32}$")) throw new ConfigurationException("Invalid operation ID."); }

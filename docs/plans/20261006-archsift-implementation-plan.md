@@ -1,5 +1,31 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8.0 最终验收：修订固定候选 `ab3d2ea` 的 248 项、ZIP17、Setup20、两平台 CI、真实 IFX 只读重验及 Class B406/A182 机器门禁通过。用户独立 UI 反馈符合预期、4/5、L0、无未测；Safe shutdown 确认后页面冻结、CLI 返回命令行。人工后只读终审通过，人工会话退出码/监听未独立取证。详见 [最终验收](../acceptance/20261013-0.8-final-acceptance.md)；0.8-5 COMPLETE／ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED／NOT YET PUBLISHED。下文旧进度保留历史时点。
+
+2026-10-13 0.8.0 第五阶段机器资格进度：固定 c10ceb9 候选 ZIP17／Setup13、245 项/八模板、Windows/Ubuntu CI、10 组机器浏览器通过；用户委托的单次真实 IFX 外置 105 项构建已实际材料审查、seal v3、独立 sourceBound 校验，Class B 406／Class A 182 与 schema 门禁通过，最终只读预检和宿主相等，见 [第五阶段机器记录](../acceptance/20261013-0.8-5-machine-qualification.md)。S4 版本清理/卸载无 Setup 命令而未执行，用户独立人工 UI 未执行；0.8-5 仍 IN PROGRESS，整体 NOT ACCEPTED／NOT RELEASED。
+
+2026-10-13 0.8-3 MACHINE COMPLETE／4 IN PROGRESS：实际review scope/责任与理由、分页材料预览、create-new review/seal v3、独立validate/配置规则库副本接CLI/Web，244项/八模板及9组机器浏览器8截图、宿主通过，见 [第三阶段记录](../acceptance/20261013-0.8-3-review-seal.md)。空SDK库缺TFM属性拒绝保留；仅合成实际封存，不是当前IFX或独立人工验证。第四阶段开始，尚未固定包/验收/发布。
+
+2026-10-13 0.8-2 MACHINE COMPLETE／3 IN PROGRESS：CLI/Web共享持久证据任务、具体预览/执行审查、同字节快照、离线恢复/捕获/逐项目编译/ResolveReferences、Csc输入audit与Windows owned tree取消实现；244项/八模板/8组机器浏览器7截图、源码与宿主通过，见 [第二阶段记录](../acceptance/20261013-0.8-2-evidence-jobs.md)。只到未批准review-required，未生成manifest或宣称源码合规。第三阶段开始，固定包/真实IFX/独立人工和后续PR发布尚未关闭。
+
+2026-10-13 0.8第一阶段 MACHINE COMPLETE／HUMAN PENDING／第二阶段 IN PROGRESS：240项Release/八模板、7组机器浏览器/6截图、8浏览器checkpoint及最终宿主通过，A/B旧报告原字节投影182/406和105、History重启/分页/目录登记/时区/下载/失败清除通过，见 [1E记录](../acceptance/20261013-0.8-1e-workbench.md)。两轮脚本导航失败保留；这些不是独立人工或当前IFX新鲜度验证。用户已授权全计划开发，正式候选独立UI待用户，整体不验收或发布。
+
+2026-10-13 0.8-1D COMPLETE／1E IN PROGRESS：证据只读详情/目录预览/共享Core独立validate及逐块哈希取消实现，实际三context正例和陈旧负例、239项Release/八模板/宿主通过，见 [1D验收](../acceptance/20261013-0.8-1d-evidence.md)。1E机器浏览器检查开始；最终人工仍用户完成，后续任务与发布门禁未关闭。
+
+2026-10-13 0.8-1C COMPLETE／1D IN PROGRESS：0.8.0-dev 实现跨会话UI/CLI报告History、分页/目录登记/live去重/旧schema与未知时间、真实时区/耗时、失败及未知终态持久记录；233项/八模板/宿主通过，见 [1C验收](../acceptance/20261013-0.8-1c-history.md)。完整浏览器/人工与证据编排未完成，整体不验收或发布。
+
+2026-10-13 0.8-1B COMPLETE／1C IN PROGRESS：共享确定性 Chain 汇总已接 Core/CLI/Web/HTML，五状态/多 finding/条目终态分开、105 唯一上下文与旧 partial/退出保留；229 项 Release 和八模板、宿主通过，见 [1B 验收](../acceptance/20261013-0.8-1b-aggregate.md)。History 接入和后续证据编排/UI门禁仍待实施。
+
+2026-10-13 0.8-1A COMPLETE／1B IN PROGRESS：计划首提交 d07fba9 已推送到 codex/archsift-0.8.0；History/时间/共享汇总/证据路径与 validate DTO、请求边界及 [契约设计](../decisions/20261013-0.8-workbench-contracts.md) 已完成，SDK10.0.303/net10.0/Release 离线 build 零警告错误、226 项与八模板通过、宿主相等。见 [1A 验收](../acceptance/20261013-0.8-1a-contracts.md)。整体仍 IN PROGRESS／NOT ACCEPTED／NOT RELEASED，UI 功能与独立人工门禁未通过。
+
+2026-10-13 0.8.0 执行授权：用户要求创建 `codex/archsift-0.8.0`，以计划为第一条提交，随后实施完整 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，每阶段完成后提交/推送，并授权 PR、合并与发布。独立人工 UI 由用户完成，机器门禁与宿主/原件保护继续生效。当前 IMPLEMENTATION AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；下文此前未授权文字为历史。原 IFX 安装升级、原 profile 政策采纳和无关 Guard 操作不在授权范围。
+
+2026-10-13 0.8.0 存储决议补充（仅计划更新）：用户指定默认 `ArchSift\evidence\<项目标识>\<运行标识>\` 保存整套证据，manifest 为运行目录下 `assembly-manifest-v3.json`；ArchSift 指源根外明确选定的安装/数据根，支持自定义证据根并预览实际绝对路径，不落在版本载荷中。项目/运行身份、create-new、材料依赖索引和路径保护纳入 1A/2；升级/回退/卸载及普通清理默认保留全部证据、失败/取消历史和登记元数据，只有用户明确选择的整套 owned 运行可在引用/lease/路径核对及具体预览后归档/清理。存储/保留验收 S1–S5 见 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)。产品仍 NOT STARTED，本次未创建目录、迁移、实施或执行清理。
+
+2026-10-13 0.8.0 计划接手 COMPLETE／产品 NOT STARTED：已在 Local Project ArchSift 核对干净 main `43a7b1e62699bc6ca64ed512763eb93a74746ace`、项目指令和当前 0.7 验收/发布记录，校验 IFX 来源计划 SHA-256 后接入 [0.8.0 证据 UI 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，来源相对证据链接已改为可访问的绝对引用。最新 2026-10-13 IFX 的 [收尾结果](D:/IFX-10-Root/validation/20261013-ifx-v3-7e9c2a1b/ui-closeout-20261013-02/final-result.json) 已包含用户 A/B 与正常 Safe shutdown 确认，仍 partial/compliant/exit 4；旧 machine humanUiStatus=not-run 保留历史。核对限制见 [接手记录](../acceptance/20261013-0.8-plan-handoff.md)。当前仅授权计划衔接，0.8.0 实施、真实构建/安装、政策采纳、提交/推送/发布尚未授权，0.7 旧委托不延伸。
+
+0.8.0 范围与依赖：第一阶段 1A 契约 → 1B 共享 Chain 汇总、1C 跨会话 History/实际时间、1D 只读证据详情与显式独立 validate → 1E 一致性/机器与独立人工入口；均 NOT STARTED，详细可执行标准 F1-01–10 见新计划。随后按阶段推进持久 evidence job、输入清点/capture、同字节源根外快照、offline restore/build/逐项目求值，实际 review v2/unknowns、create-new seal v3/validate/配置副本、失败取消/owned tree/metadata lease 回收与恢复，最终真实 IFX 和独立人工验收。每阶段依对应授权执行。Q01–Q14、W00–W10 历史依赖及未重启延期范围保持，0.7.0 继续 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。
+
 2026-10-12 0.7.0 COMPLETE／ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED：用户直接“正式授权”后，最新PR与合并后main两平台各222项CI通过，PR5合并，v0.7.0正式发布；四公开资产独立下载摘要／字节、ZIP17／Setup13／冻结预算／SARIF和最终原件／宿主／进程审计通过，见[发布回验](../releases/0.7.0-publication.md)。独立人工Workbench／Launcher符合预期，可用性5/5；原IFX安装保持0.6、B策略未采用。下文待批准／pending／失败是原形成时点。
 
 2026-10-12 0.7.0合并／发布准备完成：用户独立UI5/5、人工后终审、最终a2c9f27两平台各222项CI、四项草稿服务器digest／独立下载／ZIP17／Setup13与新安全终审全部通过，见[准备记录](../releases/0.7.0-readiness.md)。PR5 ready未合并，release为draft。自动审批拒绝合并，要求当前可信用户明确授权；等待明确批准合并及公开发布，不绕过拒绝。技术验收完成，版本尚未公开，原IFX安装／B策略保持。

@@ -90,6 +90,13 @@ public sealed class ExternalEvidenceTests
             };
             var reviewPath = Path.Combine(evidence, "review.json"); ExternalBuildEvidence.WriteNew(reviewPath, review);
             var manifest = Path.Combine(evidence, "assembly-manifest.json");
+            using (var cancelledSeal = new CancellationTokenSource())
+            {
+                cancelledSeal.Cancel();
+                Assert.ThrowsAny<OperationCanceledException>(() => ExternalBuildEvidence.Seal(config, capturePath, reviewPath,
+                    Path.Combine(evidence, "cancelled-manifest.json"), cancelledSeal.Token));
+                Assert.False(File.Exists(Path.Combine(evidence, "cancelled-manifest.json")));
+            }
             ExternalBuildEvidence.Seal(config, capturePath, reviewPath, manifest);
             config = config with { Build = config.Build with { AssemblyManifest = manifest } };
             var snapshot = ProjectDiscovery.Discover(source, targetFramework: "net10.0");

@@ -8,28 +8,30 @@ namespace ArchSift.Core;
 /// <summary>Hashes and verifies externally reviewed facts; never invokes the target build or application.</summary>
 public static class ExternalBuildEvidence
 {
-    public static EvidenceCapture Capture(RunConfiguration config, string[] externalInputs, string[]? environmentInputs = null)
+    public static EvidenceCapture Capture(RunConfiguration config, string[] externalInputs, string[]? environmentInputs = null, CancellationToken token = default)
     {
         if (externalInputs.Any(string.IsNullOrWhiteSpace) || (environmentInputs ?? []).Any(p => string.IsNullOrWhiteSpace(p) || p.Contains('=') || p.Contains('\0')))
             throw new ConfigurationException("Evidence input paths/environment names must be nonblank and valid.");
-        var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
+        var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
         var tfm = config.Build.TargetFramework ?? throw new ConfigurationException("Evidence capture requires an explicit TFM.");
-        var properties = snapshot.InputIdentity.Files.Where(f => Path.GetExtension(f.Path) is ".csproj" or ".props" or ".targets")
-            .SelectMany(f => Regex.Matches(File.ReadAllText(PathSafety.Under(config.Target.Root, f.Path)), @"\$\(([A-Za-z_][A-Za-z0-9_]*)(?=[).])",
-                RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)).Select(m => m.Groups[1].Value))
-            .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal).ToArray();
+        var properties = PropertyNames(snapshot, config.Target.Root);
         var files = externalInputs.Select(Path.GetFullPath).Distinct(PathComparer).Order(StringComparer.Ordinal).Select(p =>
         {
             if (PathSafety.IsUnder(p, config.Target.Root)) throw new ConfigurationException("External inputs must be outside TargetRoot.");
-            return FileFact(p, "build");
+            return FileFact(p, "build", token);
         }).ToArray();
         var buildFiles = snapshot.InputIdentity.Files.Select(f => f with { Kind = "build" }).ToArray();
-        InputCapture.VerifyUnchanged(config.Target.Root, snapshot.InputIdentity);
+        InputCapture.VerifyUnchanged(config.Target.Root, snapshot.InputIdentity, token);
         return new(1, config.Target.Root, config.Target.Entry, tfm, config.Build.Configuration, snapshot.InputIdentity,
             new(AssemblyArtifacts.FileIdentity(buildFiles), buildFiles), files,
             properties.Concat(environmentInputs ?? []).Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal)
                 .ToDictionary(p => p, EnvironmentHash, StringComparer.Ordinal), properties);
     }
+
+    internal static string[] PropertyNames(ProjectSnapshot snapshot, string root) => snapshot.InputIdentity.Files.Where(f => Path.GetExtension(f.Path) is ".csproj" or ".props" or ".targets")
+            .SelectMany(f => Regex.Matches(File.ReadAllText(PathSafety.Under(root, f.Path)), @"\$\(([A-Za-z_][A-Za-z0-9_]*)(?=[).])",
+                RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)).Select(m => m.Groups[1].Value))
+            .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal).ToArray();
 
     public static ExternalBuildReview Template(EvidenceCapture capture, string captureHash) => new()
     {
@@ -48,53 +50,56 @@ public static class ExternalBuildEvidence
                 "REVIEW ACTUAL ASSEMBLY PATH", "REVIEW ACTUAL EVALUATION PATH", [])).ToArray()
     };
 
-    public static void Seal(RunConfiguration config, string capturePath, string reviewPath, string output)
+    public static void Seal(RunConfiguration config, string capturePath, string reviewPath, string output, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         capturePath = Path.GetFullPath(capturePath); reviewPath = Path.GetFullPath(reviewPath); output = Path.GetFullPath(output);
         PathSafety.EnsureDisjoint(config.Target.Root, output);
         var capture = Read<EvidenceCapture>(capturePath);
         var review = Read<ExternalBuildReview>(reviewPath);
-        if (review.SchemaVersion == 2) { ProjectContextEvidence.Seal(config, capture, review, capturePath, reviewPath, output); return; }
-        var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
+        if (review.SchemaVersion == 2) { ProjectContextEvidence.Seal(config, capture, review, capturePath, reviewPath, output, token); return; }
+        var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
         var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-        var limits = ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes);
+        var limits = ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes, token);
         if (limits.Count > 0) throw new ConfigurationException(string.Join("\n", limits));
         var directory = Path.GetDirectoryName(output)!;
         var entries = review.Assemblies.Select(a =>
         {
+            token.ThrowIfCancellationRequested();
             var path = Path.GetFullPath(a.Path);
             var relative = Path.GetRelativePath(directory, path);
             PathSafety.Under(directory, relative);
-            return new AssemblyEntry(AssemblyArtifacts.Inspect(path).Name, a.SourceProject, relative.Replace('\\', '/'), AssemblyArtifacts.FileHash(path));
+            return new AssemblyEntry(AssemblyArtifacts.Inspect(path).Name, a.SourceProject, relative.Replace('\\', '/'), AssemblyArtifacts.FileHash(path, token));
         }).ToArray();
         var manifest = new AssemblyManifest
         {
             SchemaVersion = 2, InputIdentity = capture.InputIdentity, BuildInputIdentity = capture.BuildInputIdentity,
             Sdk = review.Sdk, TargetFramework = review.TargetFramework, Configuration = review.Configuration,
             Generation = "external", Assemblies = entries,
-            ReviewedBuild = new(capturePath, AssemblyArtifacts.FileHash(capturePath), reviewPath, AssemblyArtifacts.FileHash(reviewPath))
+            ReviewedBuild = new(capturePath, AssemblyArtifacts.FileHash(capturePath, token), reviewPath, AssemblyArtifacts.FileHash(reviewPath, token))
         };
         // Validate all mapping, PE metadata and closure before publishing any successful seal.
         var temporary = output + ".check-" + Guid.NewGuid().ToString("N");
         try
         {
             WriteNew(temporary, manifest);
-            var verified = AssemblyArtifacts.Existing(config with { Build = config.Build with { AssemblyManifest = temporary } }, snapshot);
+            var verified = AssemblyArtifacts.Existing(config with { Build = config.Build with { AssemblyManifest = temporary } }, snapshot, token);
             if (!verified.SourceBound) throw new ConfigurationException(string.Join("\n", verified.Limitations));
+            token.ThrowIfCancellationRequested();
             File.Move(temporary, output, false);
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
     internal static List<string> ValidateReview(RunConfiguration config, ProjectSnapshot snapshot, EvidenceCapture capture,
-        ExternalBuildReview review, string capturePath, string reviewPath, Dictionary<string, string> hashes)
+        ExternalBuildReview review, string capturePath, string reviewPath, Dictionary<string, string> hashes, CancellationToken token = default)
     {
         var limits = new List<string>();
         void Fail(string message) => limits.Add("External evidence: " + message);
         if (capture.SchemaVersion != 1 || review.SchemaVersion is not (1 or 2) || review.Origin != "external-reviewed") Fail("Unsupported capture/review identity.");
         if (!review.Approved || !review.InputsComplete || review.Unknowns.Length != 0 || string.IsNullOrWhiteSpace(review.Reviewer)) Fail("Review is incomplete or has unresolved inputs.");
         if (review.ExitCode != 0 || review.Command.Length == 0 || review.Command.Any(string.IsNullOrWhiteSpace)) Fail("Successful build command/log proof is missing.");
-        if (AssemblyArtifacts.FileHash(capturePath) != review.CaptureSha256) Fail("Review does not bind capture bytes.");
+        if (AssemblyArtifacts.FileHash(capturePath, token) != review.CaptureSha256) Fail("Review does not bind capture bytes.");
         if (!Path.GetFullPath(capture.TargetRoot).Equals(Path.GetFullPath(config.Target.Root), PathSafety.Comparison) ||
             capture.Entry != config.Target.Entry || capture.InputIdentity.Sha256 != snapshot.InputIdentity.Sha256 ||
             !SameFiles(capture.InputIdentity.Files, snapshot.InputIdentity.Files)) Fail("Capture does not bind current source/entry.");
@@ -103,7 +108,7 @@ public static class ExternalBuildEvidence
         if (capture.TargetFramework != config.Build.TargetFramework || capture.Configuration != config.Build.Configuration ||
             review.TargetFramework != capture.TargetFramework || review.Configuration != capture.Configuration ||
             string.IsNullOrWhiteSpace(review.Sdk)) Fail("SDK/TFM/Configuration proof is inconsistent.");
-        var currentProperties = Capture(config, []).PropertyNames;
+        var currentProperties = Capture(config, [], token: token).PropertyNames;
         if (!currentProperties.SequenceEqual(capture.PropertyNames, StringComparer.Ordinal) ||
             currentProperties.Any(p => !capture.EnvironmentHashes.ContainsKey(p))) Fail("Conditional environment/property capture is incomplete.");
         foreach (var property in currentProperties)
@@ -124,8 +129,9 @@ public static class ExternalBuildEvidence
         if (limits.Count > 0) return limits;
         foreach (var file in capture.ExternalInputs)
         {
+            token.ThrowIfCancellationRequested();
             if (!Path.IsPathFullyQualified(file.Path) || PathSafety.IsUnder(file.Path, config.Target.Root)) { Fail("Invalid external input path."); continue; }
-            if (!File.Exists(file.Path) || FileFact(file.Path, "build") is var actual && (actual.Sha256 != file.Sha256 || actual.Length != file.Length))
+            if (!File.Exists(file.Path) || FileFact(file.Path, "build", token) is var actual && (actual.Sha256 != file.Sha256 || actual.Length != file.Length))
                 Fail("External build input changed/missing: " + file.Path);
             else hashes[file.Path] = file.Sha256;
         }
@@ -143,8 +149,9 @@ public static class ExternalBuildEvidence
             if (!review.Materials.Any(m => m.Role == role && m.Length > 0)) Fail("Missing review material: " + role);
         foreach (var material in review.Materials)
         {
+            token.ThrowIfCancellationRequested();
             PathSafety.EnsureDisjoint(config.Target.Root, material.Path);
-            if (!File.Exists(material.Path) || FileFact(material.Path, "evidence") is var actual &&
+            if (!File.Exists(material.Path) || FileFact(material.Path, "evidence", token) is var actual &&
                 (actual.Sha256 != material.Sha256 || actual.Length != material.Length)) Fail("Review material changed/missing: " + material.Role);
             else hashes[Path.GetFullPath(material.Path)] = material.Sha256;
         }
@@ -160,7 +167,7 @@ public static class ExternalBuildEvidence
         foreach (var path in review.FrameworkPaths)
             if (!capture.ExternalInputs.Any(f => f.Path.Equals(path, PathSafety.Comparison))) Fail("Framework input not captured: " + path);
         foreach (var assembly in review.Assemblies) PathSafety.EnsureDisjoint(config.Target.Root, assembly.Path);
-        hashes[capturePath] = AssemblyArtifacts.FileHash(capturePath); hashes[reviewPath] = AssemblyArtifacts.FileHash(reviewPath);
+        hashes[capturePath] = AssemblyArtifacts.FileHash(capturePath, token); hashes[reviewPath] = AssemblyArtifacts.FileHash(reviewPath, token);
         return limits;
     }
 
@@ -216,10 +223,10 @@ public static class ExternalBuildEvidence
         using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
         JsonSerializer.Serialize(stream, value, JsonContract.Options);
     }
-    public static InputFile FileFact(string path, string kind)
+    public static InputFile FileFact(string path, string kind, CancellationToken token = default)
     {
         path = Path.GetFullPath(path); PathSafety.EnsureNoLinks(path);
-        return new(path, AssemblyArtifacts.FileHash(path), new FileInfo(path).Length, kind);
+        return new(path, AssemblyArtifacts.FileHash(path, token), new FileInfo(path).Length, kind);
     }
     private static string EnvironmentHash(string name) => ContentHash.Text(JsonSerializer.Serialize(Environment.GetEnvironmentVariable(name)));
     private static StringComparer PathComparer => OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;

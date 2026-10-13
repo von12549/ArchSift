@@ -8,15 +8,16 @@ namespace ArchSift.Core;
 
 public static class AssemblyArtifacts
 {
-    public static AssemblyInputs Existing(RunConfiguration config, ProjectSnapshot snapshot)
+    public static AssemblyInputs Existing(RunConfiguration config, ProjectSnapshot snapshot, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         if (config.Build.AssemblyManifest is not { } manifestPath)
             return Unbound(config.Build.AssemblyPaths, config.Build, ["No source/build-bound assembly manifest."]);
         if (new FileInfo(manifestPath).Length > ProjectContextEvidence.MaximumJsonBytes) throw new ConfigurationException("Assembly manifest exceeds its bounded size limit.");
         var bytes = File.ReadAllBytes(manifestPath);
         using var document = JsonDocument.Parse(bytes);
         var version = document.RootElement.GetProperty("schemaVersion").GetInt32();
-        if (version == 3) return ProjectContextEvidence.Existing(config, snapshot, document.RootElement);
+        if (version == 3) return ProjectContextEvidence.Existing(config, snapshot, document.RootElement, token);
         if (bytes.Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Assembly manifest exceeds 4 MiB.");
         SchemaValidation.Validate(document.RootElement, version == 2 ? "assembly-manifest-v2" : "assembly-manifest");
         var manifest = document.RootElement.Deserialize<AssemblyManifest>(JsonContract.Options)!;
@@ -34,18 +35,18 @@ public static class AssemblyArtifacts
             var link = manifest.ReviewedBuild ?? throw new ConfigurationException("Missing reviewed build proof.");
             var capturePath = Path.GetFullPath(link.CapturePath); var reviewPath = Path.GetFullPath(link.ReviewPath);
             PathSafety.EnsureDisjoint(config.Target.Root, capturePath); PathSafety.EnsureDisjoint(config.Target.Root, reviewPath);
-            var reviewBytesBound = FileHash(capturePath) == link.CaptureSha256 && FileHash(reviewPath) == link.ReviewSha256;
+            var reviewBytesBound = FileHash(capturePath, token) == link.CaptureSha256 && FileHash(reviewPath, token) == link.ReviewSha256;
             if (!reviewBytesBound)
             { bound = false; limits.Add("External evidence: Capture/review bytes differ from seal."); }
             review = ExternalBuildEvidence.Read<ExternalBuildReview>(reviewPath);
             if (review.SchemaVersion != 1) { bound = false; limits.Add("External evidence: Partitioned review requires manifest v3."); }
             var capture = ExternalBuildEvidence.Read<EvidenceCapture>(capturePath);
             if (reviewBytesBound)
-                limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, evidenceHashes));
+                limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, evidenceHashes, token));
             if (review.Sdk != manifest.Sdk || review.Configuration != manifest.Configuration || review.TargetFramework != manifest.TargetFramework)
                 limits.Add("External evidence: Sealed build context differs from review.");
             if (limits.Count > 0) bound = false;
-            evidenceHashes[Path.GetFullPath(manifestPath)] = FileHash(manifestPath);
+            evidenceHashes[Path.GetFullPath(manifestPath)] = FileHash(manifestPath, token);
         }
         if (snapshot.Projects.Any(p => !p.Supported || review is null && (!p.FrameworkComplete || !p.ReferencesComplete || !p.PackagesComplete ||
             p.Limitations.Any(l => l.Contains("Explicit build input", StringComparison.Ordinal) || l.Contains("AssemblyName", StringComparison.Ordinal) ||
@@ -65,6 +66,7 @@ public static class AssemblyArtifacts
         var seenNames = new HashSet<string>(StringComparer.Ordinal);
         foreach (var assembly in manifest.Assemblies)
         {
+            token.ThrowIfCancellationRequested();
             var path = PathSafety.Under(directory, assembly.Path);
             if (!seenNames.Add(assembly.AssemblyName)) { bound = false; limits.Add("Duplicate manifest assembly identity: " + assembly.AssemblyName); }
             if (review is not null && !review.Assemblies.Any(a => a.SourceProject == assembly.SourceProject &&
@@ -72,7 +74,7 @@ public static class AssemblyArtifacts
             { bound = false; limits.Add("External evidence: Assembly path/project differs from review."); }
             if (!File.Exists(path)) { bound = false; limits.Add("Missing assembly: " + assembly.AssemblyName); continue; }
             var metadata = Inspect(path);
-            if (FileHash(path) != assembly.Sha256 || metadata.Name != assembly.AssemblyName)
+            if (FileHash(path, token) != assembly.Sha256 || metadata.Name != assembly.AssemblyName)
             { bound = false; limits.Add("Assembly hash/name mismatch: " + assembly.AssemblyName); }
             if (assembly.SourceProject != "@dependency" &&
                 (metadata.Framework != FrameworkAttribute(manifest.TargetFramework) || metadata.Configuration != manifest.Configuration))
@@ -114,10 +116,18 @@ public static class AssemblyArtifacts
         return new(existing.ToArray(), hashes, false, false, messages.ToArray(), null, build.TargetFramework, build.Configuration);
     }
 
-    public static string FileHash(string path)
+    public static string FileHash(string path, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         using var stream = File.OpenRead(path);
-        return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+        var start = System.Diagnostics.Stopwatch.GetTimestamp();
+        using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+        var buffer = new byte[65536]; int read;
+        while ((read = stream.Read(buffer, 0, buffer.Length)) != 0)
+        { token.ThrowIfCancellationRequested(); hash.AppendData(buffer, 0, read); }
+        token.ThrowIfCancellationRequested();
+        EvidenceHashTelemetry.Record(stream.Length, System.Diagnostics.Stopwatch.GetTimestamp() - start);
+        return Convert.ToHexString(hash.GetHashAndReset()).ToLowerInvariant();
     }
 
     public static string FileIdentity(InputFile[] files) => ContentHash.Text(string.Join("\n",

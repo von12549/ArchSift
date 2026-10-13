@@ -90,6 +90,8 @@ public sealed class ProjectContextEvidenceTests
             var manifest = Path.Combine(root, "manifest.json"); ExternalBuildEvidence.Seal(config, capturePath, reviewPath, manifest);
             config = config with { Build = config.Build with { AssemblyManifest = manifest } };
             var snapshot = ProjectDiscovery.Discover(source, targetFramework: "net10.0"); var inputs = AssemblyArtifacts.Existing(config, snapshot);
+            var detail = EvidenceWorkbench.Details(config); Assert.Equal("not-revalidated", detail.Freshness); Assert.Equal(3, detail.Contexts.Length);
+            var independently = EvidenceWorkbench.Validate(config); Assert.True(independently.SourceBound); Assert.Equal(3, independently.OwnerCount); Assert.Equal(3, independently.ContextCount);
             Assert.True(inputs.SourceBound, string.Join('\n', inputs.Limitations)); Assert.Equal(3, inputs.Contexts.Length);
             var template = RuleLoader.Parse(System.Text.Encoding.UTF8.GetBytes(RuleTemplates.Json("type-dependency")));
             Rule Rule(string id, string kind, string target, string sourceNamespace = "Domain") => template.Rules[0] with { Id = id, Scope = new() { Kind = "namespace", Match = "exact", Value = sourceNamespace }, Parameters = JsonSerializer.SerializeToElement(new { source = new { kind = "namespace", match = "exact", value = sourceNamespace }, forbiddenTarget = new { kind, match = "exact", value = target } }) };
@@ -153,6 +155,7 @@ public sealed class ProjectContextEvidenceTests
                 .RunSelectedAsync(config, new(policy, new(policy.Id, policy.Version, ContentHash.Text("fixture"), "fixture.json")));
             Assert.True(report.Report.Coverage.SourceBound); Assert.Equal("project-contexts", report.Report.BuildContext.AssemblyBindingMode); Assert.Equal(3, report.Report.BuildContext.AssemblyContextCount);
             File.AppendAllText(Path.Combine(build, "Directory.Build.props"), "<!--changed snapshot-->"); Assert.False(AssemblyArtifacts.Existing(config, snapshot).SourceBound);
+            Assert.Equal("stale", EvidenceWorkbench.Validate(config).Status);
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); if (Directory.Exists(root)) Directory.Delete(root, true); }
     }
