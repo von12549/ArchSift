@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "version": "0.8.0",
+  "status": "accepted-with-limitations",
+  "sourceCommit": "ab3d2eac5d7eded6c993f0aee1876f592419f845",
+  "rid": "win-x64",
+  "selfContained": true,
+  "assets": [
+    {
+      "name": "archsift-0.8.0-win-x64.zip",
+      "bytes": 89589961,
+      "sha256": "a39de3098a966d9eb0222bd2a2dabc1f4c269e56fd9b4b0c373fe5ea9f0c42d2"
+    },
+    {
+      "name": "ArchSift.Setup.exe",
+      "bytes": 74463030,
+      "sha256": "1c45497b3b6338573af6866d40874b15ab5944c891a17c70d48e1b303d4d0790"
+    }
+  ],
+  "manifestSha256": "8bdf8d67dcef20cf105eb0b5f458ae5fdfd18945dca40886bb0b6530b772f5da",
+  "productInputsSha256": "9928befb0070427c5ce675e77ad0c8772ebebabaf33dc123360ec2b5c3bdd061",
+  "payloadEntryCount": 653,
+  "gates": {
+    "localTests": 248,
+    "nativePackageSmoke": 17,
+    "setupSmoke": 20,
+    "officialSarifSchema": true,
+    "realIfxSourceBoundContexts": 105,
+    "realIfxBRulesPassed": 406,
+    "realIfxARulesPassed": 182,
+    "realIfxOutcome": "partial/compliant/exit 4",
+    "independentHumanUi": true,
+    "humanUsabilityOfFive": 4,
+    "humanAssistanceLevel": "L0",
+    "humanUntestedItems": 0,
+    "humanSafeShutdownObservation": "After confirmation, the page froze and the CLI returned to the command prompt.",
+    "postHumanMachineAudit": true,
+    "hostStateEqual": true
+  },
+  "evidence": {
+    "finalAcceptanceSha256": "4ab8fd6297bdb4c5e1a0bcd8fbe0eeb7d104f8fe71edc0ad25028eca79166379",
+    "postHumanMachineAuditSha256": "6852f037a94acca84acbcc0d26e60625ae47335bc703daa4b2b7686116e8eeb9"
+  },
+  "limits": [
+    "IFX declaration-model result remains partial; this is not complete architecture compliance or policy adoption.",
+    "Real IFX installation version retirement was not executed; synthetic evidence retention checks passed.",
+    "Human session exit code and listener closure were not independently captured.",
+    "Physical no-SDK hosts, minimum Windows version, ARM64, Linux self-contained Web, and publisher signature were not certified."
+  ],
+  "publisherSignatureVerified": false
+}
