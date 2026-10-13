@@ -159,6 +159,7 @@ public sealed class WebWorkbenchTests
                 Assert.Equal(2, summary.Entries.Length); Assert.Equal(1, summary.ProjectCount); Assert.Equal("noncompliant", summary.Compliance);
                 Assert.Equal(2, summary.Snapshot.ExecutionOptions!.MaxConcurrency);
                 Assert.Equal("finished", chainJob.RootElement.GetProperty("progress").GetProperty("stage").GetString());
+                Assert.Equal(ChainProjection.Aggregate(summary), chainJob.RootElement.GetProperty("aggregate").Deserialize<ChainAggregate>(JsonContract.Options));
                 foreach (var child in summary.Entries)
                     Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + chainJob.RootElement.GetProperty("id").GetString() + "/child/" + child.EntryId + "/sarif", timeout.Token)).StatusCode);
             }

@@ -31,6 +31,7 @@ public sealed class ChainCommandTests
             Assert.Contains("preparing", result.Error); Assert.Contains("finished", result.Error);
             var actual = JsonSerializer.Deserialize<ChainSummary>(result.Output, JsonContract.Options)!;
             var expected = await new ChainService(new AnalysisService()).RunAsync(config, chain, library, "fixture");
+            Assert.Contains(ChainProjection.Text(ChainProjection.Aggregate(actual)), result.Error);
             Assert.Equal(expected.Compliance, actual.Compliance); Assert.Equal("fixture", actual.Snapshot.TargetKind);
             Assert.Equal(expected.Entries.SelectMany(e => e.Findings).Select(f => f.Id), actual.Entries.SelectMany(e => e.Findings).Select(f => f.Id));
             foreach (var count in new[] { 1, 2, 3, 4 })

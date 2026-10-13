@@ -117,6 +117,7 @@ public static class Program
                 var summary = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunAsync(config, chain, library,
                     flags.GetValueOrDefault("--target-kind")?.Single() ?? "real", cancel.Token,
                     progress => Console.Error.WriteLine($"Chain {progress.RunId}: {progress.Stage}; ended {progress.EndedCount}/{progress.TotalCount}; executed {progress.ExecutedCount}; skipped {progress.SkippedCount}; running {progress.RunningCount}"), options);
+                Console.Error.WriteLine(ChainProjection.Text(ChainProjection.Aggregate(summary)));
                 Console.WriteLine(ChainWriter.Json(summary)); return summary.ExitCode;
             }
             var draft = args.Length >= 2 && args[0] == "rules" && args[1] == "draft";

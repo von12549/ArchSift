@@ -223,7 +223,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain) }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {

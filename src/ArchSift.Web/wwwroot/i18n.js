@@ -1,6 +1,14 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Overall results":"整体规则结果",
+  "Recorded rule executions":"已记录规则执行",
+  "Findings":"违规证据",
+  "Entries ended":"已结束条目",
+  "Reported":"已有报告",
+  "Missing":"缺失",
+  "Entry diagnostics":"条目诊断",
+  "Unknown":"未知",
   "Project build contexts: ":"项目构建上下文：",
   " · Only first-party owners are counted as analysis sources.":" · 仅统计所属的第一方程序集作为分析源。",
   "Chain progress":"规则链进度",
