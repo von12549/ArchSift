@@ -181,8 +181,8 @@ public sealed class HistoryStore(RunConfiguration config)
             var jobState = job.State == "running" ? "unavailable" : job.State;
             var item = new HistoryItem(id, job.Id, job.Operation, jobState, job.ExitCode, job.StartedUtc, job.ElapsedMilliseconds,
                 job.Context.Target.Root, job.Selection, file, hash, directory, job.ToolVersion, "not-revalidated",
-                hasResult ? "result-saved-separately" : job.State == "running" ? "Previous session has no recorded terminal state." : job.Error ?? (job.EvidenceValidation is null ? "Result JSON was not saved." : null));
-            return new(id, job.Operation, jobState, job.ExitCode, item.Diagnostic, job.Context, job.TargetKind, job.Selection, null, null, null, null, item, job.EvidenceValidation);
+                hasResult ? "result-saved-separately" : job.State == "running" ? "Previous session has no recorded terminal state." : job.Error ?? (job.EvidenceValidation is null && job.EvidenceJob is null ? "Result JSON was not saved." : null));
+            return new(id, job.Operation, jobState, job.ExitCode, item.Diagnostic, job.Context, job.TargetKind, job.Selection, null, null, null, null, item, job.EvidenceValidation, job.EvidenceJob);
         }
         var node = JsonNode.Parse(original.RootElement.GetRawText())!;
         var metadata = original.RootElement.TryGetProperty("runMetadata", out var meta) ? meta : default;

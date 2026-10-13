@@ -53,6 +53,7 @@ public static class Program
                 Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
                 Console.WriteLine("evidence capture --config <JSON> --inputs <external-input-paths JSON array> [--environment-inputs <environment-name JSON array>] --output <new capture JSON>; evidence seal --config <JSON> --capture <JSON> --review <JSON> --output <new manifest JSON>; evidence validate --config <JSON>");
+                Console.WriteLine("evidence preview --config <JSON> --request <JSON>; evidence build --config <JSON> --request <JSON> --preview-sha256 <reviewed hash> (offline, external snapshot, stops for review)");
                 Console.WriteLine("chain verify --config <JSON> --chain <JSON> [--target-kind real|fixture] [--max-concurrency 1..4]");
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
                 Console.WriteLine("rules validate --file <JSON>; rules render --file <JSON> --output <new Markdown>");
@@ -62,8 +63,25 @@ public static class Program
             }
             if (args.Length >= 2 && args[0] == "evidence")
             {
-                var flags = Flags(args[2..], ["--config", "--inputs", "--environment-inputs", "--output", "--capture", "--review", "--context-model"]);
+                var flags = Flags(args[2..], ["--config", "--inputs", "--environment-inputs", "--output", "--capture", "--review", "--context-model", "--request", "--preview-sha256"]);
                 var config = ConfigLoader.Load(Required(flags, "--config"));
+                if (args[1] is "preview" or "build")
+                {
+                    var requestPath = Path.GetFullPath(Required(flags, "--request")); PathSafety.EnsureNoLinks(requestPath);
+                    if (new FileInfo(requestPath).Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Evidence request exceeds 4 MiB.");
+                    var request = JsonSerializer.Deserialize<EvidenceJobRequest>(File.ReadAllBytes(requestPath), JsonContract.Options) ?? throw new ConfigurationException("Evidence request is empty.");
+                    var protectedRoots = new List<string> { AppContext.BaseDirectory };
+                    for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
+                    {
+                        if (directory.Name.Equals("versions", StringComparison.OrdinalIgnoreCase)) protectedRoots.Add(directory.FullName);
+                        if (File.Exists(Path.Combine(directory.FullName, "ArchSift.slnx"))) { protectedRoots.Add(directory.FullName); break; }
+                    }
+                    var service = new EvidenceJobService(protectedRoots.ToArray());
+                    if (args[1] == "preview") { Console.WriteLine(JsonSerializer.Serialize(service.Preview(config, request), JsonContract.Options)); return 0; }
+                    var job = await service.BuildAsync(config, request, Required(flags, "--preview-sha256"), view => Console.Error.WriteLine("Evidence " + view.Id + ": " + view.Stage + "; compiled=" + view.CompletedProjects + "/" + view.ProjectCount), cancel.Token);
+                    Console.WriteLine(JsonSerializer.Serialize(EvidenceJobService.View(job), JsonContract.Options));
+                    return job.Stage == "cancelled" ? 130 : job.Stage is "failed" or "host-drift" ? 3 : 4;
+                }
                 if (args[1] == "capture")
                 {
                     var output = Path.GetFullPath(Required(flags, "--output")); PathSafety.EnsureDisjoint(config.Target.Root, output);

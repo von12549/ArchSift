@@ -3,12 +3,16 @@ using System.Text;
 
 namespace ArchSift.Core;
 
-public sealed record ProcessResult(int ExitCode, string Output, string Error);
+public sealed record ProcessResult(int ExitCode, string Output, string Error)
+{
+    public bool OwnedTreeStopped { get; init; }
+}
 
 public static class SafeProcess
 {
     public static async Task<ProcessResult> RunAsync(string executable, string directory, string[] arguments,
-        string cliHome, string? input, CancellationToken token, Dictionary<string, string>? environment = null)
+        string cliHome, string? input, CancellationToken token, Dictionary<string, string>? environment = null,
+        TimeSpan? timeoutLimit = null, bool ownTree = false, Action<int>? processStarted = null, Action<ProcessResult>? failureOutput = null)
     {
         var before = EnvironmentIdentity();
         var start = new ProcessStartInfo
@@ -40,14 +44,18 @@ public static class SafeProcess
         start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
         using var process = Process.Start(start)!;
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
-        timeout.CancelAfter(TimeSpan.FromMinutes(3));
-        var output = ReadBounded(process.StandardOutput, timeout.Token);
-        var error = ReadBounded(process.StandardError, timeout.Token);
+        timeout.CancelAfter(timeoutLimit ?? TimeSpan.FromMinutes(3));
+        var output = ReadBounded(process.StandardOutput, ownTree ? CancellationToken.None : timeout.Token);
+        var error = ReadBounded(process.StandardError, ownTree ? CancellationToken.None : timeout.Token);
+        OwnedProcessGroup? group = null;
         try
         {
+            if (ownTree) group = new(process);
+            processStarted?.Invoke(process.Id);
             if (input is not null) { await process.StandardInput.WriteAsync(input.AsMemory(), timeout.Token); process.StandardInput.Close(); }
             await process.WaitForExitAsync(timeout.Token);
-            var result = new ProcessResult(process.ExitCode, await output, await error);
+            var result = new ProcessResult(process.ExitCode, await output, await error) { OwnedTreeStopped = group?.StopAndWait() ?? false };
+            if (group is not null && !result.OwnedTreeStopped) throw new IOException("Owned evidence process tree did not exit.");
             if (EnvironmentIdentity() != before) throw new InvalidOperationException("Persistent/process environment drift detected.");
             return result;
         }
@@ -55,11 +63,15 @@ public static class SafeProcess
         {
             if (!process.HasExited) process.Kill(true);
             await process.WaitForExitAsync(CancellationToken.None);
+            if (group is not null && !group.StopAndWait()) throw new IOException("Owned evidence process tree cleanup failed.", failure);
+            if (ownTree && failureOutput is not null)
+                failureOutput(new(process.ExitCode, await output, await error) { OwnedTreeStopped = group is not null });
             if (EnvironmentIdentity() != before) throw new InvalidOperationException("Environment drift on failed/cancelled process.");
             if (failure is OperationCanceledException && !token.IsCancellationRequested)
                 throw new TimeoutException("Child process timed out.", failure);
             throw;
         }
+        finally { group?.Dispose(); }
     }
 
     private static async Task<string> ReadBounded(StreamReader reader, CancellationToken token)

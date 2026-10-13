@@ -4,7 +4,8 @@ param(
     [string]$Modules = 'C:\Users\von12\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules',
     [string]$Dotnet = 'C:\Program Files\dotnet\dotnet.exe',
     [string]$LabRoot = 'D:\ArchSift-lab',
-    [string]$HistoricalReports = 'D:\IFX-10-Root\validation\20261013-ifx-v3-7e9c2a1b\ui-reports'
+    [string]$HistoricalReports = 'D:\IFX-10-Root\validation\20261013-ifx-v3-7e9c2a1b\ui-reports',
+    [switch]$BuildEvidence
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'HostState.ps1')
@@ -42,7 +43,9 @@ try {
         if ($taskBuild.ExitCode -ne 0) { throw 'Current asset build failed; preserve logs.' }
     }
     finally { $taskBuild.Dispose() }
-    & $Node (Join-Path $PSScriptRoot 'Test-0.8Workbench.mjs') $taskRepository $taskOutput $Modules $Dotnet 'C:\Program Files\PowerShell\7\pwsh.exe' $HistoricalReports
+    $taskArguments = @((Join-Path $PSScriptRoot 'Test-0.8Workbench.mjs'),$taskRepository,$taskOutput,$Modules,$Dotnet,'C:\Program Files\PowerShell\7\pwsh.exe',$HistoricalReports)
+    if ($BuildEvidence) { $taskArguments += (Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget/packages') }
+    & $Node @taskArguments
     $taskExit = $LASTEXITCODE
     if ($taskExit -ne 0) { throw '0.8 machine browser QA failed; preserve its evidence.' }
 }

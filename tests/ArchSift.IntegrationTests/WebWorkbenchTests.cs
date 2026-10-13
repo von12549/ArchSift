@@ -184,6 +184,7 @@ public sealed class WebWorkbenchTests
                 Assert.Equal(2, noEvidence.RootElement.GetProperty("exitCode").GetInt32());
                 Assert.Equal(JsonValueKind.Null, noEvidence.RootElement.GetProperty("evidenceValidation").ValueKind);
             }
+            Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsJsonAsync("/api/run/evidence-build", new { }, timeout.Token)).StatusCode);
             Assert.Equal(sourceBefore, InputCapture.Capture(source).Sha256);
             // Compare the same source over the authenticated HTTP surface and reject stale downloads after failure.
             async Task Git(params string[] arguments)

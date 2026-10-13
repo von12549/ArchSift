@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8-2 MACHINE COMPLETE／3 IN PROGRESS：CLI/Web共享持久证据任务、具体预览/执行审查、同字节快照、离线恢复/捕获/逐项目编译/ResolveReferences、Csc输入audit与Windows owned tree取消实现；244项/八模板/8组机器浏览器7截图、源码与宿主通过，见 [第二阶段记录](../acceptance/20261013-0.8-2-evidence-jobs.md)。只到未批准review-required，未生成manifest或宣称源码合规。第三阶段开始，固定包/真实IFX/独立人工和后续PR发布尚未关闭。
+
 2026-10-13 0.8第一阶段 MACHINE COMPLETE／HUMAN PENDING／第二阶段 IN PROGRESS：240项Release/八模板、7组机器浏览器/6截图、8浏览器checkpoint及最终宿主通过，A/B旧报告原字节投影182/406和105、History重启/分页/目录登记/时区/下载/失败清除通过，见 [1E记录](../acceptance/20261013-0.8-1e-workbench.md)。两轮脚本导航失败保留；这些不是独立人工或当前IFX新鲜度验证。用户已授权全计划开发，正式候选独立UI待用户，整体不验收或发布。
 
 2026-10-13 0.8-1D COMPLETE／1E IN PROGRESS：证据只读详情/目录预览/共享Core独立validate及逐块哈希取消实现，实际三context正例和陈旧负例、239项Release/八模板/宿主通过，见 [1D验收](../acceptance/20261013-0.8-1d-evidence.md)。1E机器浏览器检查开始；最终人工仍用户完成，后续任务与发布门禁未关闭。
