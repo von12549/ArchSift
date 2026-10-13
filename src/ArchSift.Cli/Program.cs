@@ -63,8 +63,18 @@ public static class Program
             }
             if (args.Length >= 2 && args[0] == "evidence")
             {
-                var flags = Flags(args[2..], ["--config", "--inputs", "--environment-inputs", "--output", "--capture", "--review", "--context-model", "--request", "--preview-sha256"]);
+                var flags = Flags(args[2..], ["--config", "--inputs", "--environment-inputs", "--output", "--capture", "--review", "--context-model", "--request", "--preview-sha256", "--job"]);
                 var config = ConfigLoader.Load(Required(flags, "--config"));
+                if (args[1] == "review-scope") { Console.WriteLine(JsonSerializer.Serialize(EvidenceReviewService.Scope(Required(flags, "--job"), config.Target.Root, cancel.Token), JsonContract.Options)); return 0; }
+                if (args[1] == "approve")
+                {
+                    var reviewRequestPath = Required(flags, "--request"); PathSafety.EnsureNoLinks(reviewRequestPath);
+                    if (new FileInfo(reviewRequestPath).Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Review request exceeds 4 MiB.");
+                    var review = JsonSerializer.Deserialize<EvidenceReviewRequest>(File.ReadAllBytes(reviewRequestPath), JsonContract.Options) ?? throw new ConfigurationException("Review request is required.");
+                    var result = EvidenceReviewService.Approve(review, config.Target.Root, cancel.Token); Console.WriteLine(JsonSerializer.Serialize(result, JsonContract.Options));
+                    return result.Stage == "validated" ? 0 : result.Stage == "cancelled" ? 130 : 3;
+                }
+                if (args[1] == "export-config") { Console.WriteLine(JsonSerializer.Serialize(EvidenceReviewService.ExportConfiguration(Required(flags, "--job"), config.Target.Root), JsonContract.Options)); return 0; }
                 if (args[1] is "preview" or "build")
                 {
                     var requestPath = Path.GetFullPath(Required(flags, "--request")); PathSafety.EnsureNoLinks(requestPath);

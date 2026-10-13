@@ -42,6 +42,20 @@ public sealed class EvidenceJobTests
             using var capture = JsonDocument.Parse(File.ReadAllBytes(record.CapturePath!)); SchemaValidation.Validate(capture.RootElement, "evidence-capture");
             SchemaValidation.Validate(template.RootElement, "external-build-review-v2");
             await Assert.ThrowsAsync<ConfigurationException>(() => service.BuildAsync(config, request, preview.PreviewSha256));
+            var scope = EvidenceReviewService.Scope(record.Preview.Storage.RunDirectory, source);
+            var approval = new EvidenceReviewRequest(scope.JobDirectory, scope.ScopeSha256, "synthetic fixture reviewer", "delegated-agent", "owned fixture test harness",
+                "Reviewed actual SDK build exits, compiler-input audit, snapshot identities and per-project resolutions.",
+                ["SDK-generated assembly/TFM inputs are read by actual Csc commands; restore assets precede build."],
+                "Plain reviewed SDK fixture; no custom tasks/generators beyond captured SDK logic.", ["Portable synthetic type evidence; no application/runtime certification."], true);
+            Assert.Throws<ConfigurationException>(() => EvidenceReviewService.Approve(approval with { Reason = "" }, source));
+            var approved = EvidenceReviewService.Approve(approval, source);
+            Assert.True(approved.Stage == "validated", JsonSerializer.Serialize(approved, JsonContract.Options));
+            Assert.True(approved.Validation!.SourceBound); Assert.Equal(2, approved.Validation.ContextCount);
+            Assert.False(File.Exists(flag));
+            Assert.Throws<ConfigurationException>(() => EvidenceReviewService.Approve(approval, source));
+            var exported = EvidenceReviewService.ExportConfiguration(scope.JobDirectory, source);
+            Assert.True(File.Exists(exported.ConfigurationCopyPath));
+            var bound = ConfigLoader.Load(exported.ConfigurationCopyPath!); Assert.Equal(approved.ManifestPath, bound.Build.AssemblyManifest);
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); if (Directory.Exists(root)) Directory.Delete(root, true); }
     }

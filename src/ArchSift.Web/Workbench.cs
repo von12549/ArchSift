@@ -80,6 +80,22 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapGet("/api/templates", () => Results.Json(RuleTemplates.Names.ToDictionary(n => n, n => JsonDocument.Parse(RuleTemplates.Json(n)).RootElement.Clone())));
         app.MapGet("/api/evidence", () => Results.Json(EvidenceWorkbench.Details(current), JsonContract.Options));
+        app.MapGet("/api/evidence/materials", (string jobDirectory, int? offset, int? limit) => Results.Json(EvidenceReviewService.Materials(jobDirectory, current.Target.Root, offset ?? 0, limit ?? 25), JsonContract.Options));
+        app.MapGet("/api/evidence/material", (string jobDirectory, string sha256) => Results.Json(EvidenceReviewService.Material(jobDirectory, current.Target.Root, sha256), JsonContract.Options));
+        app.MapPost("/api/evidence/review/scope", async (HttpContext context) =>
+        {
+            var body = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(context.Request.Body, JsonContract.Options);
+            if (body is null || body.Count != 1 || !body.TryGetValue("jobDirectory", out var directory)) throw new ConfigurationException("Review job directory is required.");
+            return Results.Json(EvidenceReviewService.Scope(directory, current.Target.Root, context.RequestAborted), JsonContract.Options);
+        });
+        app.MapPost("/api/evidence/configuration", async (HttpContext context) =>
+        {
+            var body = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(context.Request.Body, JsonContract.Options);
+            if (body is null || body.Count != 1 || !body.TryGetValue("jobDirectory", out var directory)) throw new ConfigurationException("Validated job directory is required.");
+            if (!await gate.WaitAsync(0)) return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
+            try { return Results.Json(EvidenceReviewService.ExportConfiguration(directory, current.Target.Root), JsonContract.Options); }
+            finally { gate.Release(); }
+        });
         app.MapPost("/api/evidence/jobs/preview", async (HttpContext context) =>
         {
             var request = await JsonSerializer.DeserializeAsync<EvidenceJobRequest>(context.Request.Body, JsonContract.Options)
@@ -185,14 +201,14 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapPost("/api/run/{operation}", async (string operation, HttpContext context) =>
         {
-            if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain" or "evidence-validate" or "evidence-build")) return Results.BadRequest(new { error = "Unknown operation." });
+            if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain" or "evidence-validate" or "evidence-build" or "evidence-review")) return Results.BadRequest(new { error = "Unknown operation." });
             ChangeRequest request = new();
             using var document = await JsonDocument.ParseAsync(context.Request.Body);
             SchemaValidation.ValidateDocument(document.RootElement, JsonSerializer.SerializeToElement(new { type = "object" }));
             if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Any(p =>
                     p.Name != "targetKind" && (operation != "changes" || p.Name is not ("base" or "head")) &&
                     (operation != "ruleset" || p.Name != "entryId") && (operation != "chain" || p.Name is not ("chainId" or "maxConcurrency")) &&
-                    (operation != "evidence-build" || p.Name is not ("request" or "previewSha256"))))
+                    (operation != "evidence-build" || p.Name is not ("request" or "previewSha256")) && (operation != "evidence-review" || p.Name != "request")))
                 throw new ConfigurationException("Run request contains unsupported fields.");
             var targetKind = document.RootElement.TryGetProperty("targetKind", out var kind) ? kind.GetString() : "real";
             if (targetKind is not ("real" or "fixture")) throw new ConfigurationException("Target kind must be real or fixture.");
@@ -201,6 +217,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
                 document.RootElement.TryGetProperty("head", out var head) && head.ValueKind != JsonValueKind.Null ? head.GetString() : null);
             var config = current;
             EvidenceJobRequest? evidenceRequest = null; string? evidencePreview = null;
+            EvidenceReviewRequest? reviewRequest = null;
+            if (operation == "evidence-review")
+            {
+                if (!document.RootElement.TryGetProperty("request", out var requestedReview) || requestedReview.ValueKind != JsonValueKind.Object)
+                    throw new ConfigurationException("Actual evidence review request is required.");
+                reviewRequest = requestedReview.Deserialize<EvidenceReviewRequest>(JsonContract.Options) ?? throw new ConfigurationException("Evidence review is required.");
+            }
             if (operation == "evidence-build")
             {
                 if (!document.RootElement.TryGetProperty("request", out var requested) || requested.ValueKind != JsonValueKind.Object ||
@@ -245,7 +268,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             {
                 try
                 {
-                    if (operation == "evidence-build")
+                    if (operation == "evidence-review")
+                    {
+                        job.EvidenceReview = EvidenceReviewService.Approve(reviewRequest!, config.Target.Root, job.Cancel.Token, value => job.EvidenceReview = value);
+                        job.State = job.EvidenceReview.Stage == "validated" ? "completed" : job.EvidenceReview.Stage == "cancelled" ? "cancelled" : "failed";
+                        job.ExitCode = job.State == "completed" ? 0 : job.State == "cancelled" ? 130 : 3; job.Error = job.EvidenceReview.Error;
+                    }
+                    else if (operation == "evidence-build")
                     {
                         var built = await new EvidenceJobService(HostProtectedRoots()).BuildAsync(config, evidenceRequest!, evidencePreview!, view => job.EvidenceJob = view, job.Cancel.Token);
                         job.EvidenceJob = EvidenceJobService.View(built);
@@ -309,7 +338,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, job.EvidenceValidation, job.EvidenceJob, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, job.EvidenceValidation, job.EvidenceJob, job.EvidenceReview, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -430,7 +459,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             Report is not null ? Path.Combine(Context.Output.Directory, Report.RunMetadata.RunId, "report.json") :
             Comparison is not null ? Path.Combine(Context.Output.Directory, Comparison.RunMetadata.RunId, "comparison.json") : null;
         public HistoryJobRecord Record() => new(1, "history-job", Id, Operation == "ruleset" ? "verify" : Operation, State, ExitCode, Error,
-            Context, TargetKind, Selection, Created.ToString("O"), Created.ToString("O"), FinishedUtc, Elapsed, ToolIdentity.Version, ArtifactPath, EvidenceValidation, EvidenceJob);
+            Context, TargetKind, Selection, Created.ToString("O"), Created.ToString("O"), FinishedUtc, Elapsed, ToolIdentity.Version, ArtifactPath, EvidenceValidation, EvidenceJob, EvidenceReview);
         public CancellationTokenSource Cancel { get; } = new();
         private volatile string state = "running";
         public string State { get => state; set => state = value; }
@@ -441,6 +470,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         public ComparisonReport? Comparison { get; set; }
         public ChainSummary? Chain { get; set; }
         public EvidenceValidationResult? EvidenceValidation { get; set; }
+        public EvidenceReviewResult? EvidenceReview { get; set; }
         private EvidenceJobView? evidenceJob;
         public EvidenceJobView? EvidenceJob { get => Volatile.Read(ref evidenceJob); set => Volatile.Write(ref evidenceJob, value); }
         private ChainProgress? progress;

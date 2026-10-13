@@ -19,11 +19,11 @@ public sealed record HistoryJobRecord(int SchemaVersion, string Kind, string Id,
     string State, int? ExitCode, string? Error, RunConfiguration Context, string TargetKind,
     string? Selection, string CreatedUtc, string StartedUtc, string? FinishedUtc,
     long ElapsedMilliseconds, string ToolVersion, string? ArtifactPath, EvidenceValidationResult? EvidenceValidation = null,
-    EvidenceJobView? EvidenceJob = null);
+    EvidenceJobView? EvidenceJob = null, EvidenceReviewResult? EvidenceReview = null);
 public sealed record HistoryView(string Id, string Operation, string State, int? ExitCode, string? Error,
     RunConfiguration? Context, string TargetKind, string? Selection, AnalysisReport? Report,
     ComparisonReport? Comparison, ChainSummary? Chain, ChainAggregate? Aggregate, HistoryItem History, EvidenceValidationResult? EvidenceValidation = null,
-    EvidenceJobView? EvidenceJob = null);
+    EvidenceJobView? EvidenceJob = null, EvidenceReviewResult? EvidenceReview = null);
 public sealed record EvidenceStorageRequest(string? DataRoot, string? EvidenceRoot,
     string ProjectId, string RunId, string[] ProtectedRoots);
 public sealed record EvidenceStoragePlan(string EvidenceRoot, string ProjectId, string RunId,
