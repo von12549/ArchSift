@@ -15,6 +15,13 @@ public sealed record HistoryItem(string Id, string? RunId, string Operation, str
 public sealed record HistoryPage(HistoryItem[] Items, int Offset, int Limit, int Total);
 public sealed record HistoryDirectoryRegistration(string Directory, string TargetRoot);
 public sealed record HistoryCatalog(int SchemaVersion, HistoryDirectoryRegistration[] Directories);
+public sealed record HistoryJobRecord(int SchemaVersion, string Kind, string Id, string Operation,
+    string State, int? ExitCode, string? Error, RunConfiguration Context, string TargetKind,
+    string? Selection, string CreatedUtc, string StartedUtc, string? FinishedUtc,
+    long ElapsedMilliseconds, string ToolVersion, string? ArtifactPath);
+public sealed record HistoryView(string Id, string Operation, string State, int? ExitCode, string? Error,
+    RunConfiguration? Context, string TargetKind, string? Selection, AnalysisReport? Report,
+    ComparisonReport? Comparison, ChainSummary? Chain, ChainAggregate? Aggregate, HistoryItem History);
 public sealed record EvidenceStorageRequest(string? DataRoot, string? EvidenceRoot,
     string ProjectId, string RunId, string[] ProtectedRoots);
 public sealed record EvidenceStoragePlan(string EvidenceRoot, string ProjectId, string RunId,

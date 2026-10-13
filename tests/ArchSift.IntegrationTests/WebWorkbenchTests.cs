@@ -160,6 +160,10 @@ public sealed class WebWorkbenchTests
                 Assert.Equal(2, summary.Snapshot.ExecutionOptions!.MaxConcurrency);
                 Assert.Equal("finished", chainJob.RootElement.GetProperty("progress").GetProperty("stage").GetString());
                 Assert.Equal(ChainProjection.Aggregate(summary), chainJob.RootElement.GetProperty("aggregate").Deserialize<ChainAggregate>(JsonContract.Options));
+                var history = await client.GetFromJsonAsync<HistoryPage>("/api/history?limit=100", JsonContract.Options, timeout.Token);
+                Assert.Single(history!.Items, i => i.RunId == summary.RunMetadata.RunId);
+                Assert.Equal(summary.RunMetadata.StartedUtc, history.Items.Single(i => i.RunId == summary.RunMetadata.RunId).StartedUtc);
+                Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync("/api/history?limit=101", timeout.Token)).StatusCode);
                 foreach (var child in summary.Entries)
                     Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/jobs/" + chainJob.RootElement.GetProperty("id").GetString() + "/child/" + child.EntryId + "/sarif", timeout.Token)).StatusCode);
             }

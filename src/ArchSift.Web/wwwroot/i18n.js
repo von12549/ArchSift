@@ -1,6 +1,18 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Refresh saved history":"刷新已保存历史",
+  "Operation":"操作",
+  "All":"全部",
+  "Display time zone":"显示时区",
+  "Local time":"本地时间",
+  "Additional report directory":"其他历史报告目录",
+  "Register history directory":"登记历史目录",
+  "Previous page":"上一页",
+  "Next page":"下一页",
+  "Execution time unknown":"执行时间未知",
+  "Elapsed":"耗时",
+  "Historical source is not revalidated":"历史来源未按当前源码重新验证",
   "Overall results":"整体规则结果",
   "Recorded rule executions":"已记录规则执行",
   "Findings":"违规证据",

@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8-1C COMPLETE／1D IN PROGRESS：0.8.0-dev 实现跨会话UI/CLI报告History、分页/目录登记/live去重/旧schema与未知时间、真实时区/耗时、失败及未知终态持久记录；233项/八模板/宿主通过，见 [1C验收](../acceptance/20261013-0.8-1c-history.md)。完整浏览器/人工与证据编排未完成，整体不验收或发布。
+
 2026-10-13 0.8-1B COMPLETE／1C IN PROGRESS：共享确定性 Chain 汇总已接 Core/CLI/Web/HTML，五状态/多 finding/条目终态分开、105 唯一上下文与旧 partial/退出保留；229 项 Release 和八模板、宿主通过，见 [1B 验收](../acceptance/20261013-0.8-1b-aggregate.md)。History 接入和后续证据编排/UI门禁仍待实施。
 
 2026-10-13 0.8-1A COMPLETE／1B IN PROGRESS：计划首提交 d07fba9 已推送到 codex/archsift-0.8.0；History/时间/共享汇总/证据路径与 validate DTO、请求边界及 [契约设计](../decisions/20261013-0.8-workbench-contracts.md) 已完成，SDK10.0.303/net10.0/Release 离线 build 零警告错误、226 项与八模板通过、宿主相等。见 [1A 验收](../acceptance/20261013-0.8-1a-contracts.md)。整体仍 IN PROGRESS／NOT ACCEPTED／NOT RELEASED，UI 功能与独立人工门禁未通过。

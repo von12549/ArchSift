@@ -14,6 +14,8 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
     private readonly ConcurrentDictionary<string, Job> jobs = new();
     private readonly SemaphoreSlim gate = new(1, 1);
     private volatile bool dirty;
+    private HistoryStore? historyStore;
+    private HistoryStore StoredHistory => historyStore ??= new(current);
     public string Token { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
 
     public void Map(WebApplication app)
@@ -73,9 +75,35 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             if (config.Target.Entry is { } entry && !File.Exists(PathSafety.Under(config.Target.Root, entry)))
                 throw new ConfigurationException("UI target entry does not exist under the target root.");
             current = config;
+            historyStore = null;
             return Results.Json(current, JsonContract.Options);
         });
         app.MapGet("/api/templates", () => Results.Json(RuleTemplates.Names.ToDictionary(n => n, n => JsonDocument.Parse(RuleTemplates.Json(n)).RootElement.Clone())));
+        app.MapGet("/api/history", (HttpContext context) =>
+        {
+            int Number(string key, int fallback) => context.Request.Query.TryGetValue(key, out var value)
+                ? int.TryParse(value, out var parsed) ? parsed : throw new ConfigurationException("History page must be an integer.") : fallback;
+            if (context.Request.Query.Keys.Any(k => k is not ("offset" or "limit" or "operation" or "state"))) throw new ConfigurationException("Unsupported history query.");
+            string? Value(string key) => context.Request.Query.TryGetValue(key, out var value) ? value.ToString() : null;
+            return Results.Json(StoredHistory.List(new(Number("offset", 0), Number("limit", 25), Value("operation"), Value("state")), jobs.Values.Where(j => j.Operation != "draft").Select(LiveHistory)), JsonContract.Options);
+        });
+        app.MapPost("/api/history/refresh", () => { StoredHistory.Invalidate(); return Results.Ok(); });
+        app.MapGet("/api/history/directories", () => Results.Json(StoredHistory.Directories(), JsonContract.Options));
+        app.MapPost("/api/history/directories", async (HttpContext context) =>
+        {
+            var registration = await JsonSerializer.DeserializeAsync<HistoryDirectoryRegistration>(context.Request.Body, JsonContract.Options)
+                ?? throw new ConfigurationException("History directory registration is required.");
+            StoredHistory.Register(registration); return Results.Ok();
+        });
+        app.MapGet("/api/history/{id}", (string id) => Results.Json(StoredHistory.Open(id), JsonContract.Options));
+        app.MapGet("/api/history/{id}/report/{format}", (string id, string format) =>
+        {
+            var file = StoredHistory.Download(id, format); return Results.File(file.Bytes, MediaType(format), file.Name);
+        });
+        app.MapGet("/api/history/{id}/child/{entryId}/{format}", (string id, string entryId, string format) =>
+        {
+            var file = StoredHistory.Download(id, format, entryId); return Results.File(file.Bytes, MediaType(format), file.Name);
+        });
         RulesetLibrary Library() => new(rulesDirectory, current.Target.Root);
         app.MapGet("/api/library", () => Results.Json(new
         {
@@ -180,6 +208,8 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             }
             catch { gate.Release(); throw; }
             var job = new Job(Guid.NewGuid().ToString("N"), operation, config, targetKind, selected?.Ruleset.Id ?? chain?.Chain.Id); jobs[job.Id] = job;
+            try { if (operation != "draft") HistoryStore.SaveJob(job.Record()); }
+            catch { jobs.TryRemove(job.Id, out _); job.Cancel.Dispose(); gate.Release(); throw; }
             _ = Task.Run(async () =>
             {
                 try
@@ -215,7 +245,18 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
                 }
                 catch (OperationCanceledException) { job.State = "cancelled"; job.ExitCode = 130; }
                 catch (Exception error) { job.Report = null; job.Comparison = null; job.Chain = null; job.Error = error.Message; job.ExitCode = error is ConfigurationException ? 2 : 3; job.State = "failed"; }
-                finally { gate.Release(); }
+                finally
+                {
+                    try
+                    {
+                        job.Finish();
+                        if (operation != "draft") HistoryStore.SaveJob(job.Record());
+                        historyStore?.Invalidate();
+                    }
+                    catch (Exception error) when (error is IOException or ConfigurationException or UnauthorizedAccessException)
+                    { job.Error = "History persistence failed: " + error.Message; job.State = "failed"; job.ExitCode = 3; job.Report = null; job.Comparison = null; job.Chain = null; }
+                    finally { gate.Release(); }
+                }
             });
             foreach (var old in jobs.Values.Where(j => j.State != "running").OrderBy(j => j.Created).Take(Math.Max(0, jobs.Count - 20)))
                 if (jobs.TryRemove(old.Id, out var removed)) removed.Cancel.Dispose();
@@ -223,7 +264,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain) }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -312,6 +353,12 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             throw new ConfigurationException("Rule file must be a JSON filename in the explicit rules directory.");
         return PathSafety.Under(rulesDirectory, name);
     }
+    private static string MediaType(string format) => format == "html" ? "text/html" : format == "sarif" ? "application/sarif+json" : "application/json";
+    private static HistoryItem LiveHistory(Job job) => new(job.Id, job.Report?.RunMetadata.RunId ?? job.Comparison?.RunMetadata.RunId ?? job.Chain?.RunMetadata.RunId ?? job.Id,
+        job.Operation == "ruleset" ? "verify" : job.Operation, job.State, job.ExitCode,
+        job.Report?.RunMetadata.StartedUtc ?? job.Comparison?.RunMetadata.StartedUtc ?? job.Chain?.RunMetadata.StartedUtc ?? job.Created.ToString("O"),
+        job.Report?.RunMetadata.ElapsedMilliseconds ?? job.Comparison?.RunMetadata.ElapsedMilliseconds ?? job.Chain?.RunMetadata.ElapsedMilliseconds ?? job.Elapsed,
+        job.Context.Target.Root, job.Selection, job.ArtifactPath, null, job.Context.Output.Directory, ToolIdentity.Version, "not-revalidated", job.Error);
     private sealed class Job(string id, string operation, RunConfiguration context, string targetKind, string? selection)
     {
         public string Id { get; } = id;
@@ -320,6 +367,15 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         public string TargetKind { get; } = targetKind;
         public string? Selection { get; } = selection;
         public DateTimeOffset Created { get; } = DateTimeOffset.UtcNow;
+        private readonly System.Diagnostics.Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
+        public long Elapsed => timer.ElapsedMilliseconds;
+        public string? FinishedUtc { get; private set; }
+        public void Finish() { timer.Stop(); FinishedUtc = DateTimeOffset.UtcNow.ToString("O"); }
+        public string? ArtifactPath => Chain is not null ? Path.Combine(Chain.Snapshot.OutputDirectory, "chain-summary.json") :
+            Report is not null ? Path.Combine(Context.Output.Directory, Report.RunMetadata.RunId, "report.json") :
+            Comparison is not null ? Path.Combine(Context.Output.Directory, Comparison.RunMetadata.RunId, "comparison.json") : null;
+        public HistoryJobRecord Record() => new(1, "history-job", Id, Operation == "ruleset" ? "verify" : Operation, State, ExitCode, Error,
+            Context, TargetKind, Selection, Created.ToString("O"), Created.ToString("O"), FinishedUtc, Elapsed, ToolIdentity.Version, ArtifactPath);
         public CancellationTokenSource Cancel { get; } = new();
         private volatile string state = "running";
         public string State { get => state; set => state = value; }
