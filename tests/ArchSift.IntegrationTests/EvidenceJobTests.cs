@@ -13,7 +13,7 @@ public sealed class EvidenceJobTests
         var root = Path.Combine(Path.GetTempPath(), "archsift-evidence-job-" + Guid.NewGuid().ToString("N"));
         var source = Path.Combine(root, "source"); Directory.CreateDirectory(Path.Combine(source, "Lib")); Directory.CreateDirectory(Path.Combine(source, "App"));
         var flag = Path.Combine(root, "target-must-not-execute.txt");
-        File.WriteAllText(Path.Combine(source, "Lib", "Lib.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        File.WriteAllText(Path.Combine(source, "Lib", "Lib.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework><ArchSiftPreviewProbe>known</ArchSiftPreviewProbe><Description>$(ArchSiftPreviewProbe)</Description></PropertyGroup></Project>");
         File.WriteAllText(Path.Combine(source, "Lib", "Types.cs"), "namespace Lib; public class Value {} public static class Marker { [System.Runtime.CompilerServices.ModuleInitializer] public static void Start() => System.IO.File.WriteAllText(@\"" + flag + "\", \"BAD\"); }");
         File.WriteAllText(Path.Combine(source, "App", "App.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup><ItemGroup><ProjectReference Include=\"../Lib/Lib.csproj\" /></ItemGroup></Project>");
         File.WriteAllText(Path.Combine(source, "App", "Types.cs"), "namespace App; public class Value { public Lib.Value Item = new(); }");
@@ -28,6 +28,16 @@ public sealed class EvidenceJobTests
             Assert.Equal("Lib/Lib.csproj", preview.Projects[0]);
             var initial = InputCapture.Capture(source); var updates = new List<EvidenceJobView>();
             var record = await service.BuildAsync(config, request, preview.PreviewSha256, updates.Add);
+            Assert.Equal(preview.Commands.Length, record.Executions.Length);
+            for (var index = 0; index < preview.Commands.Length; index++)
+            {
+                Assert.Equal(preview.Commands[index].Stage, record.Executions[index].Stage switch
+                {
+                    "inspecting-sdk" => "sdk", "restoring" => "restore", "building" => "build", "evaluating" => "evaluate", var stage => stage
+                });
+                Assert.Equal(preview.Commands[index].Arguments, record.Executions[index].Arguments);
+            }
+            Assert.Contains(preview.Commands, command => command.Stage == "evaluate" && command.Arguments.Any(argument => argument.Contains("ArchSiftPreviewProbe", StringComparison.Ordinal)));
             Assert.True(record.Stage == "review-required", JsonSerializer.Serialize(record, JsonContract.Options));
             Assert.Equal(2, record.CompletedProjects); Assert.Empty(record.Unknowns);
             Assert.Equal(2, record.EvaluatedProjects);

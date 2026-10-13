@@ -14,10 +14,7 @@ public static class ExternalBuildEvidence
             throw new ConfigurationException("Evidence input paths/environment names must be nonblank and valid.");
         var snapshot = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
         var tfm = config.Build.TargetFramework ?? throw new ConfigurationException("Evidence capture requires an explicit TFM.");
-        var properties = snapshot.InputIdentity.Files.Where(f => Path.GetExtension(f.Path) is ".csproj" or ".props" or ".targets")
-            .SelectMany(f => Regex.Matches(File.ReadAllText(PathSafety.Under(config.Target.Root, f.Path)), @"\$\(([A-Za-z_][A-Za-z0-9_]*)(?=[).])",
-                RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)).Select(m => m.Groups[1].Value))
-            .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal).ToArray();
+        var properties = PropertyNames(snapshot, config.Target.Root);
         var files = externalInputs.Select(Path.GetFullPath).Distinct(PathComparer).Order(StringComparer.Ordinal).Select(p =>
         {
             if (PathSafety.IsUnder(p, config.Target.Root)) throw new ConfigurationException("External inputs must be outside TargetRoot.");
@@ -30,6 +27,11 @@ public static class ExternalBuildEvidence
             properties.Concat(environmentInputs ?? []).Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal)
                 .ToDictionary(p => p, EnvironmentHash, StringComparer.Ordinal), properties);
     }
+
+    internal static string[] PropertyNames(ProjectSnapshot snapshot, string root) => snapshot.InputIdentity.Files.Where(f => Path.GetExtension(f.Path) is ".csproj" or ".props" or ".targets")
+            .SelectMany(f => Regex.Matches(File.ReadAllText(PathSafety.Under(root, f.Path)), @"\$\(([A-Za-z_][A-Za-z0-9_]*)(?=[).])",
+                RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)).Select(m => m.Groups[1].Value))
+            .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal).ToArray();
 
     public static ExternalBuildReview Template(EvidenceCapture capture, string captureHash) => new()
     {

@@ -21,13 +21,22 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
         var source = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework);
         if (source.Projects.Length == 0 || source.Projects.Any(p => !p.Supported)) throw new ConfigurationException("Every evidence project must be supported SDK-style C#.");
         var projects = Order(source.Projects); var snapshot = Path.Combine(storage.RunDirectory, "snapshot");
+        var propertyNames = ExternalBuildEvidence.PropertyNames(source, config.Target.Root);
         var commands = new List<EvidenceCommand> { new("sdk", request.DotnetPath, ["--version"], snapshot) };
         foreach (var project in projects)
         {
             var path = PathSafety.Under(snapshot, project.Id);
             commands.Add(new("restore", request.DotnetPath, RestoreArguments(path, storage.RunDirectory, request, config), Path.GetDirectoryName(path)!));
+        }
+        foreach (var project in projects)
+        {
+            var path = PathSafety.Under(snapshot, project.Id);
             commands.Add(new("build", request.DotnetPath, BuildArguments(path, config), Path.GetDirectoryName(path)!));
-            commands.Add(new("evaluate", request.DotnetPath, ["msbuild", path, "-t:ResolveReferences", "-getProperty:MSBuildProjectFullPath,TargetPath,AssemblyName,TargetFramework,Configuration,MSBuildAllProjects", "-getItem:Compile,Analyzer,AdditionalFiles,EditorConfigFiles,ReferencePath,ReferenceCopyLocalPaths", "-m:1", "-p:Configuration=" + config.Build.Configuration, "-p:TargetFramework=" + config.Build.TargetFramework], Path.GetDirectoryName(path)!));
+        }
+        foreach (var project in projects)
+        {
+            var path = PathSafety.Under(snapshot, project.Id);
+            commands.Add(new("evaluate", request.DotnetPath, EvaluationArguments(path, config, propertyNames), Path.GetDirectoryName(path)!));
         }
         var risks = source.Projects.SelectMany(p => p.Limitations).Distinct().Concat(new[] {
             "MSBuild snapshot is not an OS sandbox. Review imports, generators and custom tasks; application/Test/VSTest entry points are not authorized.",
@@ -48,6 +57,7 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
             throw new ConfigurationException("Start requires the unchanged execution preview and an actual execution reviewer/reason.");
         var source = ProjectDiscovery.Discover(config.Target.Root, config.Target.Entry, config.Build.TargetFramework, token);
         if (source.InputIdentity.Sha256 != preview.SourceIdentity) throw new SourceChangedException();
+        var propertyNames = ExternalBuildEvidence.PropertyNames(source, config.Target.Root);
         var root = preview.Storage.RunDirectory; var snapshotRoot = Path.Combine(root, "snapshot");
         Directory.CreateDirectory(root);
         EvidenceArtifactStore.WriteNew(Path.Combine(root, "owner.json"), new { kind = "archsift-evidence-run", projectId = request.Storage.ProjectId, runId = request.Storage.RunId, targetRoot = config.Target.Root, entry = config.Target.Entry });
@@ -148,6 +158,8 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
             foreach (var project in projects) if (Directory.Exists(Path.Combine(Path.GetDirectoryName(PathSafety.Under(snapshotRoot, project.Id))!, "obj"))) roots.Add(Path.Combine(Path.GetDirectoryName(PathSafety.Under(snapshotRoot, project.Id))!, "obj"));
             var external = Files(roots).Distinct(PathComparer).ToArray();
             var capture = ExternalBuildEvidence.Capture(config, external, request.EnvironmentInputNames, token);
+            if (capture.PropertyNames.Length != propertyNames.Length || !capture.PropertyNames.SequenceEqual(propertyNames, StringComparer.Ordinal))
+                throw new SourceChangedException();
             var capturePath = Path.Combine(root, "capture.json"); EvidenceArtifactStore.WriteNew(capturePath, capture, true);
             if (new FileInfo(capturePath).Length > RuleLoader.MaximumJsonBytes) throw new ConfigurationException("Complete capture exceeds 4 MiB; retain it and review the explicit input scope without deleting required inputs.");
             job = job with { CapturePath = capturePath }; Update("captured");
@@ -164,8 +176,8 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
             foreach (var project in projects)
             {
                 var path = PathSafety.Under(snapshotRoot, project.Id);
-                var properties = new[] { "MSBuildProjectFullPath", "TargetPath", "AssemblyName", "TargetFramework", "Configuration", "MSBuildAllProjects" }.Concat(capture.PropertyNames).Distinct(StringComparer.Ordinal).ToArray();
-                var arguments = new[] { "msbuild", path, "-t:ResolveReferences", "-getProperty:" + string.Join(",", properties), "-getItem:Compile,Analyzer,AdditionalFiles,EditorConfigFiles,ReferencePath,ReferenceCopyLocalPaths", "-m:1", "-p:Configuration=" + config.Build.Configuration, "-p:TargetFramework=" + config.Build.TargetFramework, "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false" };
+                var properties = EvaluationProperties(capture.PropertyNames);
+                var arguments = EvaluationArguments(path, config, capture.PropertyNames);
                 var evaluated = await Execute("evaluating", Path.GetDirectoryName(path)!, arguments);
                 var node = Evaluation(evaluated.Output, properties); var prop = node["Properties"]!.AsObject();
                 var target = prop["TargetPath"]!.GetValue<string>();
@@ -226,6 +238,13 @@ public sealed class EvidenceJobService(string[] hostProtectedRoots)
         ["restore", project, "--configfile", Path.Combine(root, "NuGet.Config"), "--source", request.LocalFeed, "--packages", Path.Combine(root, "packages"), "--disable-parallel", "--disable-build-servers", "-p:NuGetAudit=false", "-p:RestoreIgnoreFailedSources=false", "-p:RestoreAdditionalProjectSources=", "-p:TargetFramework=" + config.Build.TargetFramework];
     private static string[] BuildArguments(string project, RunConfiguration config) =>
         ["build", project, "--no-restore", "--no-incremental", "--disable-build-servers", "-m:1", "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false", "-p:NuGetAudit=false", "-p:TargetFramework=" + config.Build.TargetFramework, "-c", config.Build.Configuration, "--verbosity", "normal"];
+    private static string[] EvaluationProperties(string[] propertyNames) =>
+        [.. new[] { "MSBuildProjectFullPath", "TargetPath", "AssemblyName", "TargetFramework", "Configuration", "MSBuildAllProjects" }.Concat(propertyNames).Distinct(StringComparer.Ordinal)];
+    private static string[] EvaluationArguments(string project, RunConfiguration config, string[] propertyNames) =>
+        ["msbuild", project, "-t:ResolveReferences", "-getProperty:" + string.Join(",", EvaluationProperties(propertyNames)),
+            "-getItem:Compile,Analyzer,AdditionalFiles,EditorConfigFiles,ReferencePath,ReferenceCopyLocalPaths", "-m:1",
+            "-p:Configuration=" + config.Build.Configuration, "-p:TargetFramework=" + config.Build.TargetFramework,
+            "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false"];
 
     private static ProjectModel[] Order(ProjectModel[] projects)
     {
