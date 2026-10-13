@@ -38,7 +38,7 @@ public static class ProjectContextEvidence
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
-    public static AssemblyInputs Existing(RunConfiguration config, ProjectSnapshot snapshot, JsonElement document)
+    public static AssemblyInputs Existing(RunConfiguration config, ProjectSnapshot snapshot, JsonElement document, CancellationToken token = default)
     {
         SchemaValidation.Validate(document, "assembly-manifest-v3");
         var manifest = document.Deserialize<AssemblyManifest>(JsonContract.Options)!;
@@ -53,8 +53,8 @@ public static class ProjectContextEvidence
         var limits = new List<string>(); var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
         void Fail(string reason) => limits.Add("Project context evidence: " + reason);
         if (review.SchemaVersion != 2 || review.BuildSnapshotRoot is null || review.ProjectContexts is null) Fail("Partitioned review v2 is required.");
-        if (AssemblyArtifacts.FileHash(capturePath) != link.CaptureSha256 || AssemblyArtifacts.FileHash(reviewPath) != link.ReviewSha256) Fail("Capture/review bytes differ from seal.");
-        if (limits.Count == 0) limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes));
+        if (AssemblyArtifacts.FileHash(capturePath, token) != link.CaptureSha256 || AssemblyArtifacts.FileHash(reviewPath, token) != link.ReviewSha256) Fail("Capture/review bytes differ from seal.");
+        if (limits.Count == 0) limits.AddRange(ExternalBuildEvidence.ValidateReview(config, snapshot, capture, review, capturePath, reviewPath, hashes, token));
         if (manifest.Sdk != review.Sdk || manifest.TargetFramework != review.TargetFramework || manifest.Configuration != review.Configuration ||
             JsonSerializer.Serialize(manifest.InputIdentity, JsonContract.Options) != JsonSerializer.Serialize(capture.InputIdentity, JsonContract.Options) ||
             JsonSerializer.Serialize(manifest.BuildInputIdentity, JsonContract.Options) != JsonSerializer.Serialize(capture.BuildInputIdentity, JsonContract.Options) ||
@@ -65,6 +65,7 @@ public static class ProjectContextEvidence
         var contexts = new List<AssemblyAnalysisContext>();
         foreach (var entry in manifest.Assemblies)
         {
+            token.ThrowIfCancellationRequested();
             var file = PathSafety.Under(directory, entry.Path);
             if (!File.Exists(file)) { Fail("Primary assembly is missing: " + entry.SourceProject); continue; }
             var facts = AssemblyArtifacts.Inspect(file);
@@ -72,7 +73,7 @@ public static class ProjectContextEvidence
             if (entry.SourceProject == "@dependency" || project is null || project.AssemblyName != facts.Name || entry.AssemblyName != facts.Name ||
                 facts.Framework != ".NETCoreApp,Version=v" + manifest.TargetFramework[3..] || facts.Configuration != manifest.Configuration ||
                 !review.Assemblies.Any(a => a.SourceProject == entry.SourceProject && SamePath(a.Path, file))) Fail("Primary project/PE mapping differs: " + entry.SourceProject);
-            var hash = AssemblyArtifacts.FileHash(file);
+            var hash = AssemblyArtifacts.FileHash(file, token);
             if (hash != entry.Sha256 || !primary.TryAdd(entry.SourceProject, file)) Fail("Primary hash/ownership is invalid: " + entry.SourceProject);
             if (!primaryHashes.TryGetValue(facts.Name, out var variants)) primaryHashes[facts.Name] = variants = new(StringComparer.Ordinal);
             variants.Add(hash);
@@ -83,7 +84,7 @@ public static class ProjectContextEvidence
         if (limits.Count == 0)
         {
             var buildRoot = Path.GetFullPath(review.BuildSnapshotRoot!); PathSafety.EnsureDisjoint(config.Target.Root, buildRoot);
-            var builtSource = InputCapture.Capture(buildRoot);
+            var builtSource = InputCapture.Capture(buildRoot, token);
             if (builtSource.Sha256 != capture.InputIdentity.Sha256) Fail("Build snapshot differs from captured current source.");
             foreach (var file in builtSource.Files) hashes[PathSafety.Under(buildRoot, file.Path)] = file.Sha256;
             var owned = new HashSet<string>(StringComparer.Ordinal); var ids = new HashSet<string>(StringComparer.Ordinal);
@@ -93,6 +94,7 @@ public static class ProjectContextEvidence
             var snapshotPrimaryHashes = primaryHashes.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
             foreach (var context in review.ProjectContexts!)
             {
+                token.ThrowIfCancellationRequested();
                 if (!ids.Add(context.Id) || !owned.Add(context.SourceProject) || !primary.TryGetValue(context.SourceProject, out var root) ||
                     !SamePath(root, context.AssemblyPath) || context.ResolutionPolicy != "dotnet-reference-path") { Fail("Duplicate/invalid context ownership: " + context.Id); continue; }
                 var previousLimitCount = limits.Count;
@@ -119,7 +121,7 @@ public static class ProjectContextEvidence
                 foreach (var file in runtime)
                 {
                     PathSafety.EnsureDisjoint(config.Target.Root, file); PathSafety.EnsureNoLinks(file);
-                    var hash = AssemblyArtifacts.FileHash(file); hashes[file] = hash;
+                    var hash = AssemblyArtifacts.FileHash(file, token); hashes[file] = hash;
                     if (!(external.TryGetValue(file, out var before) && before == hash) &&
                         !(generated.TryGetValue(file, out var generatedHash) && generatedHash == hash) && !snapshotPrimaryHashes.Contains(hash))
                         Fail("Copy-local artifact was not captured/generated by this build: " + file);
@@ -144,7 +146,7 @@ public static class ProjectContextEvidence
                     PathSafety.EnsureDisjoint(config.Target.Root, file); PathSafety.EnsureNoLinks(file);
                     if (!identities.TryGetValue(file, out var identity)) identities[file] = identity = AssemblyName.GetAssemblyName(file);
                     if (!selected.TryAdd(identity.Name!, identity)) Fail("Conflicting/duplicate selection within " + context.Id + ": " + identity.Name);
-                    if (!fileHashes.TryGetValue(file, out var hash)) fileHashes[file] = hash = AssemblyArtifacts.FileHash(file);
+                    if (!fileHashes.TryGetValue(file, out var hash)) fileHashes[file] = hash = AssemblyArtifacts.FileHash(file, token);
                     if (primaryHashes.TryGetValue(identity.Name!, out var current))
                     { if (!current.Contains(hash)) Fail("Old/wrong first-party dependency in " + context.Id + ": " + identity.Name); }
                     else if (!external.TryGetValue(file, out var before) || before != hash) Fail("Reference not captured before build: " + file);
@@ -155,7 +157,7 @@ public static class ProjectContextEvidence
             }
             if (!primary.Keys.Order(StringComparer.Ordinal).SequenceEqual(owned.Order(StringComparer.Ordinal))) Fail("Context owner coverage is incomplete.");
         }
-        hashes[path] = AssemblyArtifacts.FileHash(path); hashes[capturePath] = AssemblyArtifacts.FileHash(capturePath); hashes[reviewPath] = AssemblyArtifacts.FileHash(reviewPath);
+        hashes[path] = AssemblyArtifacts.FileHash(path, token); hashes[capturePath] = AssemblyArtifacts.FileHash(capturePath, token); hashes[reviewPath] = AssemblyArtifacts.FileHash(reviewPath, token);
         var bound = limits.Count == 0;
         if (manifest.Configuration == "Release") limits.Add("Release optimization may remove type dependencies.");
         return new(fileHashes.Keys.ToArray(), fileHashes, bound, bound && limits.Count == 0, limits.Distinct().ToArray(), manifest.Sdk, manifest.TargetFramework, manifest.Configuration)

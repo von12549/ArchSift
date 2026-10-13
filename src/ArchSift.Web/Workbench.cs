@@ -79,6 +79,19 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             return Results.Json(current, JsonContract.Options);
         });
         app.MapGet("/api/templates", () => Results.Json(RuleTemplates.Names.ToDictionary(n => n, n => JsonDocument.Parse(RuleTemplates.Json(n)).RootElement.Clone())));
+        app.MapGet("/api/evidence", () => Results.Json(EvidenceWorkbench.Details(current), JsonContract.Options));
+        app.MapPost("/api/evidence/plan", async (HttpContext context) =>
+        {
+            var request = await JsonSerializer.DeserializeAsync<EvidenceStorageRequest>(context.Request.Body, JsonContract.Options)
+                ?? throw new ConfigurationException("Evidence storage request is required.");
+            var protectedRoots = new List<string> { AppContext.BaseDirectory };
+            for (var cursor = new DirectoryInfo(AppContext.BaseDirectory); cursor is not null; cursor = cursor.Parent)
+            {
+                if (cursor.Name.Equals("versions", StringComparison.OrdinalIgnoreCase)) protectedRoots.Add(cursor.FullName);
+                if (File.Exists(Path.Combine(cursor.FullName, "ArchSift.slnx"))) { protectedRoots.Add(cursor.FullName); break; }
+            }
+            return Results.Json(EvidenceWorkbench.Plan(current, request, protectedRoots.ToArray()), JsonContract.Options);
+        });
         app.MapGet("/api/history", (HttpContext context) =>
         {
             int Number(string key, int fallback) => context.Request.Query.TryGetValue(key, out var value)
@@ -166,7 +179,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapPost("/api/run/{operation}", async (string operation, HttpContext context) =>
         {
-            if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain")) return Results.BadRequest(new { error = "Unknown operation." });
+            if (operation is not ("analyze" or "verify" or "draft" or "changes" or "ruleset" or "chain" or "evidence-validate")) return Results.BadRequest(new { error = "Unknown operation." });
             ChangeRequest request = new();
             using var document = await JsonDocument.ParseAsync(context.Request.Body);
             SchemaValidation.ValidateDocument(document.RootElement, JsonSerializer.SerializeToElement(new { type = "object" }));
@@ -214,7 +227,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             {
                 try
                 {
-                    if (operation == "chain")
+                    if (operation == "evidence-validate")
+                    {
+                        job.EvidenceValidation = EvidenceWorkbench.Validate(config, job.Cancel.Token);
+                        job.State = job.EvidenceValidation.SourceBound ? "completed" : "partial";
+                        job.ExitCode = job.EvidenceValidation.SourceBound ? 0 : 4;
+                    }
+                    else if (operation == "chain")
                     {
                         var worker = new AssemblyWorkerClient(typeof(Program).Assembly.Location);
                         job.Chain = await new ChainService(new AnalysisService(worker.EvaluateAsync)).RunCapturedAsync(config, chain!, job.Cancel.Token,
@@ -264,7 +283,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, job.EvidenceValidation, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -375,7 +394,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             Report is not null ? Path.Combine(Context.Output.Directory, Report.RunMetadata.RunId, "report.json") :
             Comparison is not null ? Path.Combine(Context.Output.Directory, Comparison.RunMetadata.RunId, "comparison.json") : null;
         public HistoryJobRecord Record() => new(1, "history-job", Id, Operation == "ruleset" ? "verify" : Operation, State, ExitCode, Error,
-            Context, TargetKind, Selection, Created.ToString("O"), Created.ToString("O"), FinishedUtc, Elapsed, ToolIdentity.Version, ArtifactPath);
+            Context, TargetKind, Selection, Created.ToString("O"), Created.ToString("O"), FinishedUtc, Elapsed, ToolIdentity.Version, ArtifactPath, EvidenceValidation);
         public CancellationTokenSource Cancel { get; } = new();
         private volatile string state = "running";
         public string State { get => state; set => state = value; }
@@ -385,6 +404,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         public RuleDraft? Draft { get; set; }
         public ComparisonReport? Comparison { get; set; }
         public ChainSummary? Chain { get; set; }
+        public EvidenceValidationResult? EvidenceValidation { get; set; }
         private ChainProgress? progress;
         public ChainProgress? Progress { get => Volatile.Read(ref progress); set => Volatile.Write(ref progress, value); }
     }

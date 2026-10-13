@@ -178,6 +178,12 @@ public sealed class WebWorkbenchTests
             Assert.DoesNotContain(await Cards(), c => c.EntryId == firstCard.EntryId);
             Assert.Equal(firstCard.EntryId, (await client.GetFromJsonAsync<ChainDocument>("/api/chains/http-chain", JsonContract.Options, timeout.Token))!.Entries[0].EntryId);
             (await client.PostAsync("/api/config", JsonContent.Create(config with { Rulesets = [Path.Combine(rulesDirectory, "policy.json")] }, options: JsonContract.Options), timeout.Token)).EnsureSuccessStatusCode();
+            using (var noEvidence = await NewJob("evidence-validate", new { }))
+            {
+                Assert.Equal("failed", noEvidence.RootElement.GetProperty("state").GetString());
+                Assert.Equal(2, noEvidence.RootElement.GetProperty("exitCode").GetInt32());
+                Assert.Equal(JsonValueKind.Null, noEvidence.RootElement.GetProperty("evidenceValidation").ValueKind);
+            }
             Assert.Equal(sourceBefore, InputCapture.Capture(source).Sha256);
             // Compare the same source over the authenticated HTTP surface and reject stale downloads after failure.
             async Task Git(params string[] arguments)

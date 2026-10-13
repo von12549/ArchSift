@@ -1,6 +1,22 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Build evidence":"构建证据",
+  "Historical approval is not current verification.":"历史批准不代表当前已验证。",
+  "Inspect saved evidence, then explicitly validate current source. Historical approval is not current verification.":"查看已保存证据，并明确发起当前源码验证。历史批准不代表当前已验证。",
+  "Inspect evidence":"查看证据详情",
+  "Validate current evidence":"验证当前证据",
+  "Evidence storage preview":"证据存储路径预览",
+  "ArchSift data root":"ArchSift 数据根",
+  "Custom evidence root (optional)":"自定义证据根（可选）",
+  "Project identity":"项目标识",
+  "Preview new evidence paths":"预览新证据路径",
+  "Review unknowns":"审查未决项",
+  "Manifest":"程序集证明清单",
+  "Reviewer":"审查者",
+  "Source bound":"源码绑定",
+  "Closure complete":"证据闭包完整",
+  "Independent evidence validation":"独立证据验证",
   "Refresh saved history":"刷新已保存历史",
   "Operation":"操作",
   "All":"全部",

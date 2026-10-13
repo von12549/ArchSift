@@ -18,14 +18,19 @@ public sealed record HistoryCatalog(int SchemaVersion, HistoryDirectoryRegistrat
 public sealed record HistoryJobRecord(int SchemaVersion, string Kind, string Id, string Operation,
     string State, int? ExitCode, string? Error, RunConfiguration Context, string TargetKind,
     string? Selection, string CreatedUtc, string StartedUtc, string? FinishedUtc,
-    long ElapsedMilliseconds, string ToolVersion, string? ArtifactPath);
+    long ElapsedMilliseconds, string ToolVersion, string? ArtifactPath, EvidenceValidationResult? EvidenceValidation = null);
 public sealed record HistoryView(string Id, string Operation, string State, int? ExitCode, string? Error,
     RunConfiguration? Context, string TargetKind, string? Selection, AnalysisReport? Report,
-    ComparisonReport? Comparison, ChainSummary? Chain, ChainAggregate? Aggregate, HistoryItem History);
+    ComparisonReport? Comparison, ChainSummary? Chain, ChainAggregate? Aggregate, HistoryItem History, EvidenceValidationResult? EvidenceValidation = null);
 public sealed record EvidenceStorageRequest(string? DataRoot, string? EvidenceRoot,
     string ProjectId, string RunId, string[] ProtectedRoots);
 public sealed record EvidenceStoragePlan(string EvidenceRoot, string ProjectId, string RunId,
     string RunDirectory, string ManifestPath);
 public sealed record EvidenceValidationResult(string Status, string StartedUtc, long ElapsedMilliseconds,
     bool SourceBound, int OwnerCount, int ContextCount, bool CoverageComplete,
-    string? EvidenceOrigin, string? EvidenceSha256, string[] Limitations);
+    string? EvidenceOrigin, string? ValidationInputsSha256, string[] Limitations);
+public sealed record EvidenceDetails(string ManifestPath, string ManifestSha256, int SchemaVersion,
+    string Freshness, string Sdk, string TargetFramework, string Configuration, string Generation,
+    string SourceInputSha256, string BuildInputSha256, AssemblyEntry[] Owners,
+    ReviewedAssemblyContext[] Contexts, string? CapturePath, string? ReviewPath, string? Reviewer,
+    bool? ReviewApproved, string[] Unknowns, Dictionary<string, int> MaterialCounts, int ExternalInputCount);
