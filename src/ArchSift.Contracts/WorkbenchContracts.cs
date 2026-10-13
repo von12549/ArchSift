@@ -7,7 +7,7 @@ public sealed record ChainAggregate(int PlannedEntries, int ReportedEntries, int
     int MissingEntries, int DiagnosticCount, int RecordedRules, RuleStatusCounts StatusCounts,
     int FindingCount, int ProjectCount, bool SourceBound, int BoundEntries, int? AssemblyContextCount,
     string Execution, string Compliance, int ExitCode);
-public sealed record HistoryQuery(int Offset = 0, int Limit = 25, string? Operation = null, string? State = null);
+public sealed record HistoryQuery(int Offset = 0, int Limit = 25, string? Operation = null, string? State = null, string? Selection = null);
 public sealed record HistoryItem(string Id, string? RunId, string Operation, string State, int? ExitCode,
     string? StartedUtc, long? ElapsedMilliseconds, string TargetRoot, string? Selection,
     string? ArtifactPath, string? ArtifactSha256, string SourceDirectory, string ToolVersion,

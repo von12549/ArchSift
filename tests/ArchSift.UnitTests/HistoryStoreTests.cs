@@ -73,6 +73,18 @@ public sealed class HistoryStoreTests : IDisposable
     }
 
     [Fact]
+    public async Task CorruptDirectoryCatalogPreservesDefaultHistoryAndRejectsUnreviewedOverwrite()
+    {
+        await Report("valid"); var catalog = Path.Combine(Config.Output.Directory, ".archsift-history.json");
+        File.WriteAllText(catalog, "{broken");
+        var store = new HistoryStore(Config); var page = store.List(new());
+        Assert.Equal(2, page.Total); Assert.Single(page.Items, item => item.RunId == "valid");
+        Assert.Single(page.Items, item => item.State == "unavailable");
+        Assert.Throws<ConfigurationException>(() => store.Register(new(Config.Output.Directory, Config.Target.Root)));
+        Assert.Equal("{broken", File.ReadAllText(catalog));
+    }
+
+    [Fact]
     public void PersistedFailureAndInterruptedJobRemainUnavailableWithoutOldSuccess()
     {
         var job = new HistoryJobRecord(1, "history-job", Guid.NewGuid().ToString("N"), "verify", "failed", 3, "Actual failure",

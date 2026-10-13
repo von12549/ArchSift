@@ -96,9 +96,9 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         {
             int Number(string key, int fallback) => context.Request.Query.TryGetValue(key, out var value)
                 ? int.TryParse(value, out var parsed) ? parsed : throw new ConfigurationException("History page must be an integer.") : fallback;
-            if (context.Request.Query.Keys.Any(k => k is not ("offset" or "limit" or "operation" or "state"))) throw new ConfigurationException("Unsupported history query.");
+            if (context.Request.Query.Keys.Any(k => k is not ("offset" or "limit" or "operation" or "state" or "selection"))) throw new ConfigurationException("Unsupported history query.");
             string? Value(string key) => context.Request.Query.TryGetValue(key, out var value) ? value.ToString() : null;
-            return Results.Json(StoredHistory.List(new(Number("offset", 0), Number("limit", 25), Value("operation"), Value("state")), jobs.Values.Where(j => j.Operation != "draft").Select(LiveHistory)), JsonContract.Options);
+            return Results.Json(StoredHistory.List(new(Number("offset", 0), Number("limit", 25), Value("operation"), Value("state"), Value("selection")), jobs.Values.Where(j => j.Operation != "draft").Select(LiveHistory)), JsonContract.Options);
         });
         app.MapPost("/api/history/refresh", () => { StoredHistory.Invalidate(); return Results.Ok(); });
         app.MapGet("/api/history/directories", () => Results.Json(StoredHistory.Directories(), JsonContract.Options));

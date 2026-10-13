@@ -1,6 +1,21 @@
 "use strict";
 let locale=localStorage.getItem("archsift-locale")==="zh"?"zh":"en";
 const zhTranslations={
+  "Unavailable":"不可用",
+  "Skipped":"已跳过",
+  "Result state":"结果状态",
+  "Ruleset / Chain identity":"规则集／规则链标识",
+  "Historical run context":"历史运行上下文",
+  "pass":"通过",
+  "violation":"违规",
+  "inconclusive":"无法判定",
+  "error":"错误",
+  "not-applicable":"不适用",
+  "completed":"完整完成",
+  "partial":"部分完成",
+  "failed":"失败",
+  "cancelled":"已取消",
+  "skipped":"已跳过",
   "Build evidence":"构建证据",
   "Historical approval is not current verification.":"历史批准不代表当前已验证。",
   "Inspect saved evidence, then explicitly validate current source. Historical approval is not current verification.":"查看已保存证据，并明确发起当前源码验证。历史批准不代表当前已验证。",

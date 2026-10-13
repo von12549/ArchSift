@@ -11,6 +11,7 @@ public sealed class HistoryStore(RunConfiguration config)
     public const int MaximumArtifactBytes = 16 * 1024 * 1024;
     private readonly object sync = new();
     private HistoryItem[]? index;
+    private string? catalogError;
     private string Root => Path.GetFullPath(config.Output.Directory);
     private string CatalogPath => PathSafety.Under(Root, ".archsift-history.json");
 
@@ -19,8 +20,13 @@ public sealed class HistoryStore(RunConfiguration config)
         lock (sync)
         {
             var result = new List<HistoryDirectoryRegistration> { new(Root, config.Target.Root) };
+            catalogError = null;
+            try
+            {
             if (!File.Exists(CatalogPath)) return result.ToArray();
-            var catalog = JsonSerializer.Deserialize<HistoryCatalog>(Read(CatalogPath), JsonContract.Options)
+            using var document = JsonDocument.Parse(Read(CatalogPath));
+            SchemaValidation.ValidateDocument(document.RootElement, JsonSerializer.SerializeToElement(new { type = "object" }));
+            var catalog = document.RootElement.Deserialize<HistoryCatalog>(JsonContract.Options)
                 ?? throw new ConfigurationException("History catalog is empty.");
             if (catalog.SchemaVersion != 1 || catalog.Directories.Length > 100)
                 throw new ConfigurationException("Unsupported or oversized history catalog.");
@@ -29,6 +35,9 @@ public sealed class HistoryStore(RunConfiguration config)
                 ValidateRegistration(registration);
                 if (!result.Any(r => string.Equals(r.Directory, registration.Directory, PathSafety.Comparison))) result.Add(registration);
             }
+            }
+            catch (Exception error) when (error is ConfigurationException or JsonException or IOException or UnauthorizedAccessException)
+            { catalogError = "History directory catalog is unavailable: " + error.Message; }
             return result.ToArray();
         }
     }
@@ -41,6 +50,7 @@ public sealed class HistoryStore(RunConfiguration config)
             ValidateRegistration(registration);
             if (!Directory.Exists(registration.Directory)) throw new ConfigurationException("History directory does not exist.");
             var entries = Directories().Where(r => !string.Equals(r.Directory, Root, PathSafety.Comparison)).ToList();
+            if (catalogError is not null) throw new ConfigurationException(catalogError + " Preserve and repair the catalog before changing registrations.");
             if (!entries.Any(r => string.Equals(r.Directory, registration.Directory, PathSafety.Comparison))) entries.Add(registration);
             if (entries.Count > 100) throw new ConfigurationException("At most 100 additional history directories are allowed.");
             Atomic(CatalogPath, new HistoryCatalog(1, entries.ToArray())); index = null;
@@ -70,6 +80,7 @@ public sealed class HistoryStore(RunConfiguration config)
                 job.Id == item.RunId && item.ArtifactPath?.EndsWith("history-job.json", StringComparison.Ordinal) == true)).Concat(running);
             if (query.Operation is not null) items = items.Where(i => i.Operation == query.Operation);
             if (query.State is not null) items = items.Where(i => i.State == query.State);
+            if (query.Selection is not null) items = items.Where(i => i.Selection == query.Selection);
             var ordered = items.OrderByDescending(i => Instant(i.StartedUtc)).ThenBy(i => i.Id, StringComparer.Ordinal).ToArray();
             return new(ordered.Skip(query.Offset).Take(query.Limit).ToArray(), query.Offset, query.Limit, ordered.Length);
         }
@@ -102,6 +113,7 @@ public sealed class HistoryStore(RunConfiguration config)
                 { records.Add(Unavailable(file, registration.Directory, error.Message)); }
             }
         }
+        if (catalogError is not null) records.Add(Unavailable(Path.Combine(Root, ".archsift-history.json"), Root, catalogError));
         index = records.DistinctBy(r => r.Id).ToArray();
         Atomic(PathSafety.Under(Root, ".archsift-history-index.json"), new { schemaVersion = 1, items = index });
     }
@@ -201,6 +213,7 @@ public sealed class HistoryStore(RunConfiguration config)
                 if (version != 1) throw new ConfigurationException("Unsupported history report schema.");
                 SchemaValidation.Validate(normalized.RootElement, "report"); report = normalized.RootElement.Deserialize<AnalysisReport>(JsonContract.Options)!;
                 operation = report.Operation; state = report.Execution; target = report.RunMetadata.TargetRoot; tool = report.ToolVersion;
+                selection = report.RulesetIdentities.Length == 0 ? null : string.Join(", ", report.RulesetIdentities.Select(r => r.Id));
                 exit = state == "cancelled" ? 130 : state == "failed" || report.ExecutionErrors.Length > 0 ? 3 : state == "partial" || report.Compliance == "inconclusive" ? 4 : 0;
                 break;
         }
