@@ -19,8 +19,28 @@ public sealed class SetupTests
         var next = fixture.Package("0.7.0"); var plan = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
         var upgraded = await service.ApplyAsync(plan, plan.PlanId, default); Assert.Equal("0.7.0", upgraded.After.SelectedVersion); Assert.Equal(before, upgraded.AfterState.Sha256);
         var reverted = service.Rollback(fixture.Install, upgraded.Id, SetupFiles.FileHash(SetupService.Selection(fixture.Install))); Assert.Equal("0.6.0", reverted.After.SelectedVersion);
-        var future = fixture.Package("0.8.0"); Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, future, SetupFiles.FileHash(future), false));
+        var future = fixture.Package("0.9.0"); Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, future, SetupFiles.FileHash(future), false));
         var invalid = fixture.Package("0.7.1", "schema"); Assert.Throws<ConfigurationException>(() => service.PlanUpgrade(fixture.Install, invalid, SetupFiles.FileHash(invalid), false));
+    }
+    [Fact]
+    public async Task Upgrade070To080AndRollbackRetainDefaultAndCustomEvidence()
+    {
+        using var fixture = new Fixture(); var service = new SetupService();
+        var old = fixture.Package("0.7.0"); var initial = service.PlanInstall(fixture.Install, old, SetupFiles.FileHash(old), fixture.Config, false);
+        var installed = await service.ApplyAsync(initial, initial.PlanId, default);
+        var defaultEvidence = Path.Combine(fixture.Install, "evidence", "project", "run", "assembly-manifest-v3.json");
+        var customEvidence = Path.Combine(Path.GetDirectoryName(fixture.Install)!, "custom-evidence", "project", "run", "assembly-manifest-v3.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(defaultEvidence)!); Directory.CreateDirectory(Path.GetDirectoryName(customEvidence)!);
+        File.WriteAllText(defaultEvidence, "synthetic evidence retained"); File.WriteAllText(customEvidence, "custom evidence retained");
+        var defaultHash = SetupFiles.FileHash(defaultEvidence); var customHash = SetupFiles.FileHash(customEvidence);
+        var before = SetupFiles.Capture(installed.After.ConfigPath, installed.After.LibraryPath).Sha256;
+        var next = fixture.Package("0.8.0"); var plan = service.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        var upgraded = await service.ApplyAsync(plan, plan.PlanId, default);
+        Assert.Equal("0.8.0", upgraded.After.SelectedVersion); Assert.Equal(before, upgraded.AfterState.Sha256);
+        Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
+        var reverted = service.Rollback(fixture.Install, upgraded.Id, SetupFiles.FileHash(SetupService.Selection(fixture.Install)));
+        Assert.Equal("0.7.0", reverted.After.SelectedVersion); Assert.Equal(before, SetupFiles.Capture(reverted.After.ConfigPath, reverted.After.LibraryPath).Sha256);
+        Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
     }
     [Fact]
     public async Task Upgrade050To060KeepsLegacyConfigPathCatalogAndSelectionAndRollbackPreservesLaterSelection()
@@ -230,7 +250,7 @@ public sealed class SetupTests
         {
             var files = new Dictionary<string, byte[]> { ["archsift.exe"] = Encoding.UTF8.GetBytes(alternate ? "different synthetic CLI" : "synthetic CLI; never execute"),
                 ["web/ArchSift.Web.exe"] = Encoding.UTF8.GetBytes("synthetic Web; never execute"), ["LICENSE"] = Encoding.UTF8.GetBytes("synthetic license") };
-            if (version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal) || version.StartsWith("0.7.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
+            if (version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal) || version.StartsWith("0.7.", StringComparison.Ordinal) || version.StartsWith("0.8.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
             var manifest = new PackageManifest(1, version, "win-x64", true, "candidate", new string('a', 40), false, false, new string('b', 64),
                 files.Select(p => new PackageFile(p.Key, p.Value.Length, SetupFiles.Hash(p.Value))).ToArray(), true);
             files["package-manifest.json"] = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonContract.Options);

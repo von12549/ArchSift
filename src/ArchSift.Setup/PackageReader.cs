@@ -26,7 +26,7 @@ public static class PackageReader
         if (manifest.Version != "0.4.0")
         {
             if (!manifest.Version.StartsWith("0.5.", StringComparison.Ordinal) && !manifest.Version.StartsWith("0.6.", StringComparison.Ordinal) &&
-                !manifest.Version.StartsWith("0.7.", StringComparison.Ordinal))
+                !manifest.Version.StartsWith("0.7.", StringComparison.Ordinal) && !manifest.Version.StartsWith("0.8.", StringComparison.Ordinal))
                 throw new ConfigurationException("Unknown package compatibility; migration is unsupported.");
             var compatibility = SetupFiles.Parse<SetupCompatibility>(read("setup-compatibility.json"));
             if (compatibility != new SetupCompatibility(1, 1, 1, 1)) throw new ConfigurationException("Unsupported config/library/chain schema migration.");

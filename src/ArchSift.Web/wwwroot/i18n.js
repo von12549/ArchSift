@@ -506,7 +506,7 @@ Object.assign(zhTranslations,{
   "What naming patterns apply to projects, assemblies, types or source files?": "项目、程序集、类型或源码文件需要什么命名模式？",
   "Are any exceptions needed, with explicit rule ID, scope and reason?": "是否需要带明确规则 ID、范围和理由的例外？"
 });
-Object.assign(zhTranslations,{"Cancellation requested; waiting for the owned process and evidence cleanup.":"已请求取消，正在等待所属进程退出及证据清理完成。"});
+Object.assign(zhTranslations,{"Cancellation requested; waiting for the owned process and evidence cleanup.":"已请求取消，正在等待所属进程退出及证据清理完成。","Files":"文件"});
 function localizedMessage(message){if(locale!=="zh")return message;if(zhTranslations[message])return zhTranslations[message];const prefix=Object.keys(zhTranslations).find(k=>k.endsWith(": ")&&message.startsWith(k));if(prefix)return zhTranslations[prefix]+message.slice(prefix.length);const separator=message.indexOf(": ");if(separator>=0){const tail=message.slice(separator+2),translated=localizedMessage(tail);if(tail!==translated)return message.slice(0,separator+2)+translated;}return message;}
 Object.assign(zhTranslations,{"Workbench sections":"工作台分区","Library ruleset":"规则库规则集"});
 function applyLocale(){document.documentElement.lang=locale==="zh"?"zh-CN":"en";for(const element of document.querySelectorAll("[data-i18n-aria-label]"))element.setAttribute("aria-label",t(element.dataset.i18nAriaLabel));for(const element of document.querySelectorAll("[data-i18n]"))if(!["status","context-title","result-title"].includes(element.id))element.textContent=t(element.dataset.i18n);for(const element of document.querySelectorAll("[data-i18n-placeholder]"))element.placeholder=t(element.dataset.i18nPlaceholder);}
