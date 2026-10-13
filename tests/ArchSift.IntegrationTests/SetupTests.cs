@@ -247,7 +247,13 @@ public sealed class SetupTests
         Directory.CreateDirectory(Path.GetDirectoryName(customEvidence)!);
         File.WriteAllText(defaultEvidence, "{\"status\":\"success\"}");
         File.WriteAllText(customEvidence, "{\"status\":\"cancelled\"}");
+        var projectRegistration = Path.Combine(fixture.Install, "evidence", "project", "project.json");
+        File.WriteAllText(projectRegistration, JsonSerializer.Serialize(new { kind = "archsift-evidence-project", projectId = "project", targetRoot = fixture.Target, entry = "Project.csproj" }));
+        var reports = Path.Combine(fixture.Install, "reports"); Directory.CreateDirectory(reports);
+        var historyCatalog = Path.Combine(reports, ".archsift-history.json");
+        File.WriteAllText(historyCatalog, JsonSerializer.Serialize(new { schemaVersion = 1, directories = new[] { new { directory = customRoot, targetRoot = fixture.Target } } }));
         var defaultHash = SetupFiles.FileHash(defaultEvidence); var customHash = SetupFiles.FileHash(customEvidence);
+        var registrationHash = SetupFiles.FileHash(projectRegistration); var historyHash = SetupFiles.FileHash(historyCatalog);
         var configHash = SetupFiles.FileHash(SetupService.LoadInstallation(fixture.Install).ConfigPath);
         var selected = SetupService.LoadInstallation(fixture.Install).SelectedVersion;
         Assert.Throws<ConfigurationException>(() => retirement.Plan("remove-version", fixture.Install, selected,
@@ -261,6 +267,7 @@ public sealed class SetupTests
         Assert.True(File.Exists(Path.Combine(remove.ArchiveRoot, "versions", "0.7.0", "package-manifest.json")));
         Assert.False(Directory.Exists(Path.Combine(fixture.Install, "versions", "0.7.0")));
         Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
+        Assert.Equal(registrationHash, SetupFiles.FileHash(projectRegistration)); Assert.Equal(historyHash, SetupFiles.FileHash(historyCatalog));
         var uninstall = retirement.Plan("uninstall", fixture.Install, null, Path.Combine(fixture.Root, "archive-final"), [customRoot]);
         var finished = retirement.Apply(uninstall, uninstall.PlanId);
         Assert.Null(finished.After);
@@ -269,6 +276,7 @@ public sealed class SetupTests
         Assert.True(File.Exists(Path.Combine(uninstall.ArchiveRoot, "install.json")));
         Assert.True(File.Exists(Path.Combine(uninstall.ArchiveRoot, "versions", "0.8.0", "package-manifest.json")));
         Assert.Equal(defaultHash, SetupFiles.FileHash(defaultEvidence)); Assert.Equal(customHash, SetupFiles.FileHash(customEvidence));
+        Assert.Equal(registrationHash, SetupFiles.FileHash(projectRegistration)); Assert.Equal(historyHash, SetupFiles.FileHash(historyCatalog));
         Assert.Equal(configHash, SetupFiles.FileHash(finished.Before.ConfigPath));
         Assert.True(Directory.Exists(Path.Combine(fixture.Install, "operations")));
     }

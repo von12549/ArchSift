@@ -4,7 +4,8 @@ param(
     [Parameter(Mandatory)][string]$ConfigCopy,
     [Parameter(Mandatory)][string]$JobDirectory,
     [Parameter(Mandatory)][string]$PreflightResult,
-    [Parameter(Mandatory)][string]$OutputDirectory
+    [Parameter(Mandatory)][string]$OutputDirectory,
+    [string]$RetestRecord
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -30,18 +31,34 @@ try {
     $entry = @($manifest.entries | Where-Object path -CEQ 'archsift.exe')
     if ($manifest.version -cne '0.8.0' -or $manifest.sourceDirty -or $entry.Count -ne 1 -or (Hash $cli) -cne $entry[0].sha256) { throw 'Candidate CLI changed.' }
     $configPath = [IO.Path]::GetFullPath($ConfigCopy)
-    if (-not $configPath.StartsWith($jobRoot+'\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Use only the validated run configuration copy.' }
+    $retest = $null
+    if ($RetestRecord) {
+        $recordPath = [IO.Path]::GetFullPath($RetestRecord)
+        if (-not $recordPath.StartsWith('D:\ArchSift-lab\evidence\ifx-0.8-retest-', [StringComparison]::OrdinalIgnoreCase)) { throw 'Retest record must be external.' }
+        $retest = Get-Content -LiteralPath $recordPath -Raw | ConvertFrom-Json
+        if ($retest.kind -cne 'ifx-0.8-retest-config-copy' -or -not $retest.hostStateEqual -or
+            $retest.jobDirectory -cne $jobRoot -or $retest.newConfig -cne $configPath -or
+            $retest.originalConfig -cne (Join-Path $jobRoot 'config-bound.json') -or
+            (Hash $retest.originalConfig) -cne $retest.originalSha256 -or
+            (Hash $configPath) -cne $retest.newSha256 -or
+            $retest.preflightResult -cne ([IO.Path]::GetFullPath($PreflightResult)) -or
+            (Hash $PreflightResult) -cne $retest.preflightSha256 -or
+            -not $configPath.StartsWith((Split-Path $recordPath -Parent)+'\', [StringComparison]::OrdinalIgnoreCase)) { throw 'External retest copy identity differs.' }
+    }
+    elseif (-not $configPath.StartsWith($jobRoot+'\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Use only the validated run configuration copy.' }
     $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
     if ($config.build.mode -cne 'existing' -or $config.build.assemblyManifest -cne (Join-Path $jobRoot 'assembly-manifest-v3.json') -or
         -not $config.rulesDirectory.StartsWith($jobRoot+'\', [StringComparison]::OrdinalIgnoreCase) -or
-        -not $config.output.directory.StartsWith($jobRoot+'\', [StringComparison]::OrdinalIgnoreCase) -or
+        ($retest -and ($config.output.directory -cne $retest.newReports -or
+            -not $config.output.directory.StartsWith($output+'\', [StringComparison]::OrdinalIgnoreCase))) -or
+        (-not $retest -and -not $config.output.directory.StartsWith($jobRoot+'\', [StringComparison]::OrdinalIgnoreCase)) -or
         (Test-Path -LiteralPath $config.output.directory)) { throw 'Expected unused, run-owned report output.' }
     $configSha = Hash $configPath
     $checks = [Collections.Generic.List[object]]::new()
     [void][IO.Directory]::CreateDirectory($output)
     function RunCli([string]$name, [string[]]$arguments, [int]$expectedExit) {
         CheckOriginal
-        if ((Hash $configPath) -cne $configSha) { throw 'Configuration copy changed.' }
+        if ((Hash $configPath) -cne $configSha -or $retest -and (Hash $retest.originalConfig) -cne $retest.originalSha256) { throw 'Configuration copy changed.' }
         $start = [Diagnostics.ProcessStartInfo]::new($cli)
         $start.UseShellExecute = $false; $start.CreateNoWindow = $true; $start.WorkingDirectory = $output
         $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true
@@ -105,7 +122,7 @@ try {
     foreach ($file in $sarif) {
         if (-not (Test-Json -Json (Get-Content -LiteralPath $file.FullName -Raw) -SchemaFile 'D:\ArchSift-lab\evidence\sarif-2.1.0\sarif-schema-2.1.0.json')) { throw 'Official SARIF schema failed.' }
     }
-    $record = [ordered]@{kind='ifx-0.8-bound-reports';status='pass';candidateCommit=$manifest.sourceCommit;configSha256=$configSha;sourceBound=$true;contexts=105;classBPass=406;classAPass=182;execution='partial';compliance='compliant';exitCode=4;reports=$reports.Count;chainSummaries=$summaries.Count;sarif=$sarif.Count;checks=$checks.ToArray();originalsUnchanged=$true;hostStateEqual=((Get-ArchSiftHostHash) -ceq $baseline)}
+    $record = [ordered]@{kind='ifx-0.8-bound-reports';status='pass';candidateCommit=$manifest.sourceCommit;configSha256=$configSha;originalConfigSha256=$(if($retest){$retest.originalSha256}else{$configSha});retestRecord=$(if($retest){[IO.Path]::GetFullPath($RetestRecord)}else{$null});sourceBound=$true;contexts=105;classBPass=406;classAPass=182;execution='partial';compliance='compliant';exitCode=4;reports=$reports.Count;chainSummaries=$summaries.Count;sarif=$sarif.Count;checks=$checks.ToArray();originalsUnchanged=$true;hostStateEqual=((Get-ArchSiftHostHash) -ceq $baseline)}
     [IO.File]::WriteAllText((Join-Path $output 'result.json'),($record | ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
     if (-not $record.hostStateEqual) { throw 'Host drift; preserve reports.' }
     $record | ConvertTo-Json -Depth 8

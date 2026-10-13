@@ -106,6 +106,15 @@ try{
     $rollback=(Invoke-Setup 'receipt-rollback' @('rollback','--root',$legacy,'--receipt',$upgrade.id,'--selection-sha256',$selectionHash))|ConvertFrom-Json
     if($rollback.after.selectedVersion-cne$OldVersion-or(User-StateHash $configPath $library)-cne$stateBefore){throw 'Rollback failed version/state preservation.'}
     if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore){throw 'Rollback changed default or custom evidence bytes.'}
+    foreach($evidenceRoot in $evidenceRoots){
+        $registration=Join-Path $evidenceRoot 'project-identity/project.json'
+        [IO.File]::WriteAllText($registration,(@{kind='archsift-evidence-project';projectId='project-identity';targetRoot=$target;entry='Synthetic.csproj'}|ConvertTo-Json -Compress))
+    }
+    $evidenceBefore=Evidence-Hash $evidenceRoots
+    $reportDirectory=Join-Path $legacy 'reports';[void][IO.Directory]::CreateDirectory($reportDirectory)
+    $historyCatalog=Join-Path $reportDirectory '.archsift-history.json'
+    [IO.File]::WriteAllText($historyCatalog,(@{schemaVersion=1;directories=@(@{directory=$evidenceRoots[1];targetRoot=$target})}|ConvertTo-Json -Depth 5 -Compress))
+    $historyBefore=(Get-FileHash -LiteralPath $historyCatalog -Algorithm SHA256).Hash.ToLowerInvariant()
     $customRootsFile=Join-Path $run 'custom-evidence-roots.json'
     [IO.File]::WriteAllText($customRootsFile,(ConvertTo-Json -InputObject @($evidenceRoots[1]) -Compress),[Text.UTF8Encoding]::new($false))
     [void](Invoke-Setup 'selected-version-removal-rejected' @('plan','remove-version','--root',$legacy,'--version',$OldVersion,'--archive',(Join-Path $run 'archive-rejected'),'--evidence-roots-file',$customRootsFile) 2)
@@ -119,7 +128,8 @@ try{
     $removed=(Invoke-Setup 'apply-remove-version' @('apply-retirement','--plan',$removePath,'--plan-id',$removePlan.planId))|ConvertFrom-Json
     if($removed.outcome-cne'success'-or(Test-Path -LiteralPath (Join-Path $legacy ('versions/'+$Version)))){throw 'Version removal selection/payload mismatch.'}
     if(-not(Test-Path -LiteralPath (Join-Path $removed.archiveRoot ('versions/'+$Version+'/package-manifest.json')))){throw 'Retired payload was not archived.'}
-    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore-or(User-StateHash $configPath $library)-cne$stateBefore){throw 'Version removal changed retained evidence or user state.'}
+    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore-or(User-StateHash $configPath $library)-cne$stateBefore-or
+        (Get-FileHash -LiteralPath $historyCatalog -Algorithm SHA256).Hash.ToLowerInvariant()-cne$historyBefore){throw 'Version removal changed retained evidence, history registration or user state.'}
     $text=Invoke-Setup 'plan-uninstall' @('plan','uninstall','--root',$legacy,'--archive',(Join-Path $run 'archive-uninstalled'),'--evidence-roots-file',$customRootsFile)
     $uninstallPlan=$text|ConvertFrom-Json;$uninstallPath=Save-Plan 'uninstall-plan' $text
     $uninstalled=(Invoke-Setup 'apply-uninstall' @('apply-retirement','--plan',$uninstallPath,'--plan-id',$uninstallPlan.planId))|ConvertFrom-Json
@@ -127,11 +137,12 @@ try{
     if(-not(Test-Path -LiteralPath (Join-Path $uninstalled.archiveRoot ('versions/'+$OldVersion+'/package-manifest.json')))-or
        -not(Test-Path -LiteralPath (Join-Path $uninstalled.archiveRoot 'install.json'))){throw 'Uninstall archive is incomplete.'}
     if(((Invoke-Setup 'inspect-uninstalled' @('inspect','--root',$legacy))|ConvertFrom-Json).status-cne'uninstalled-retained'){throw 'Retained uninstall status is missing.'}
-    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore-or(User-StateHash $configPath $library)-cne$stateBefore){throw 'Uninstall changed retained evidence or user state.'}
+    if((Evidence-Hash $evidenceRoots)-cne$evidenceBefore-or(User-StateHash $configPath $library)-cne$stateBefore-or
+        (Get-FileHash -LiteralPath $historyCatalog -Algorithm SHA256).Hash.ToLowerInvariant()-cne$historyBefore){throw 'Uninstall changed retained evidence, history registration or user state.'}
     if((Get-FileHash -LiteralPath (Join-Path $target 'Synthetic.csproj') -Algorithm SHA256).Hash-cne$targetHash){throw 'Synthetic target changed.'}
-    if(Test-Path -LiteralPath (Join-Path $legacy 'reports')){throw 'Setup performed analysis.'}
+    if(@(Get-ChildItem -LiteralPath $reportDirectory -Recurse -File|Where-Object {$_.Name -in @('report.json','chain-summary.json','comparison.json')}).Count){throw 'Setup performed analysis.'}
     $residual=@(Get-Process -Name 'archsift','ArchSift.Web' -ErrorAction SilentlyContinue|Where-Object {$_.Path-and$_.Path.StartsWith($run+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)})
     if($residual.Count){throw 'Setup owned process remains.'}
-    $result=@{status='pass';version=$Version;oldVersion=$OldVersion;checks=$checks.ToArray();zipSha256=$zipHash;setupSha256=(Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant();stateSha256=$stateBefore;evidenceSha256=$evidenceBefore;evidenceRoots=$evidenceRoots;evidenceStatuses=@('success','failed','cancelled');removedVersionArchive=$removed.archiveRoot;uninstallArchive=$uninstalled.archiveRoot;targetUnchanged=$true;noOwnedProcess=$true;hostStateEqual=((Get-ArchSiftHostHash)-ceq$before);invalidDotnetRootsUsed=$true;processPathPreserved=$true;limits=@('Synthetic targets only; no real IFX installation.', 'Host has SDKs; unavailable explicit dotnet paths test self-contained fallback, not a physically SDK-free host.')}
+    $result=@{status='pass';version=$Version;oldVersion=$OldVersion;checks=$checks.ToArray();zipSha256=$zipHash;setupSha256=(Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant();stateSha256=$stateBefore;evidenceSha256=$evidenceBefore;historyCatalogSha256=$historyBefore;evidenceRoots=$evidenceRoots;evidenceStatuses=@('success','failed','cancelled');removedVersionArchive=$removed.archiveRoot;uninstallArchive=$uninstalled.archiveRoot;targetUnchanged=$true;noOwnedProcess=$true;hostStateEqual=((Get-ArchSiftHostHash)-ceq$before);invalidDotnetRootsUsed=$true;processPathPreserved=$true;limits=@('Synthetic targets only; no real IFX installation.', 'Host has SDKs; unavailable explicit dotnet paths test self-contained fallback, not a physically SDK-free host.')}
     [IO.File]::WriteAllText((Join-Path $run 'setup-smoke-result.json'),($result|ConvertTo-Json -Depth 8));$result|ConvertTo-Json -Depth 8
 }finally{$equal=(Get-ArchSiftHostHash)-ceq$before;Write-Output ('setup-smoke-run='+$run+' final-host-state-equal='+$equal);if(-not$equal){throw 'Host drift; preserve evidence.'}}
