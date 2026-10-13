@@ -97,7 +97,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         app.MapPost("/api/evidence/archive/preview", async (HttpContext context) =>
         {
             var request = await JsonSerializer.DeserializeAsync<EvidenceArchiveRequest>(context.Request.Body, JsonContract.Options) ?? throw new ConfigurationException("Archive request is required.");
-            return Results.Json(EvidenceLifecycle.PlanArchive(request, current, HostProtectedRoots(), jobs.Values.Any(j => j.State == "running")), JsonContract.Options);
+            return Results.Json(EvidenceLifecycle.PlanArchive(request, current, HostProtectedRoots(), jobs.Values.Any(j => !j.Finalized)), JsonContract.Options);
         });
         app.MapPost("/api/evidence/archive", async (HttpContext context) =>
         {
@@ -109,7 +109,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         app.MapPost("/api/evidence/cleanup/preview", async (HttpContext context) =>
         {
             var request = await JsonSerializer.DeserializeAsync<EvidenceArchiveRequest>(context.Request.Body, JsonContract.Options) ?? throw new ConfigurationException("Cleanup request is required.");
-            return Results.Json(EvidenceLifecycle.PlanCleanup(request, current, HostProtectedRoots(), jobs.Values.Any(j => j.State == "running")), JsonContract.Options);
+            return Results.Json(EvidenceLifecycle.PlanCleanup(request, current, HostProtectedRoots(), jobs.Values.Any(j => !j.Finalized)), JsonContract.Options);
         });
         app.MapPost("/api/evidence/cleanup", async (HttpContext context) =>
         {
@@ -367,16 +367,16 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
                     }
                     catch (Exception error) when (error is IOException or ConfigurationException or UnauthorizedAccessException)
                     { job.Error = "History persistence failed: " + error.Message; job.State = "failed"; job.ExitCode = 3; job.Report = null; job.Comparison = null; job.Chain = null; }
-                    finally { gate.Release(); }
+                    finally { gate.Release(); job.PublishCompletion(); }
                 }
             });
-            foreach (var old in jobs.Values.Where(j => j.State != "running").OrderBy(j => j.Created).Take(Math.Max(0, jobs.Count - 20)))
+            foreach (var old in jobs.Values.Where(j => j.Finalized).OrderBy(j => j.Created).Take(Math.Max(0, jobs.Count - 20)))
                 if (jobs.TryRemove(old.Id, out var removed)) removed.Cancel.Dispose();
             return Results.Json(new { jobId = job.Id, context = job.Context, targetKind = job.TargetKind, selection = job.Selection }, JsonContract.Options);
         });
-        app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, j.State, j.ExitCode, j.Error })));
+        app.MapGet("/api/jobs", () => Results.Json(jobs.Values.OrderByDescending(j => j.Created).Select(j => new { j.Id, j.Operation, State = j.PublicState, ExitCode = j.Finalized ? j.ExitCode : null, Error = j.Finalized ? j.Error : null })));
         app.MapGet("/api/jobs/{id}", (string id) => jobs.TryGetValue(id, out var job)
-            ? Results.Json(new { job.Id, job.Operation, job.State, job.ExitCode, job.Error, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, job.EvidenceValidation, job.EvidenceJob, job.EvidenceReview, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
+            ? Results.Json(new { job.Id, job.Operation, State = job.PublicState, ExitCode = job.Finalized ? job.ExitCode : null, Error = job.Finalized ? job.Error : null, job.Context, job.TargetKind, job.Selection, job.Report, job.Draft, job.Comparison, job.Chain, job.Progress, job.EvidenceValidation, job.EvidenceJob, job.EvidenceReview, Aggregate = job.Chain is null ? null : ChainProjection.Aggregate(job.Chain), History = LiveHistory(job) }, JsonContract.Options)
             : Results.NotFound());
         app.MapPost("/api/jobs/{id}/cancel", (string id) =>
         {
@@ -430,7 +430,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapPost("/api/shutdown", async (HttpContext context) =>
         {
-            if (jobs.Values.Any(job => job.State == "running"))
+            if (jobs.Values.Any(job => !job.Finalized))
                 return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
             if (dirty)
             {
@@ -477,10 +477,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         return roots.ToArray();
     }
     private static HistoryItem LiveHistory(Job job) => new(job.Id, job.Report?.RunMetadata.RunId ?? job.Comparison?.RunMetadata.RunId ?? job.Chain?.RunMetadata.RunId ?? job.Id,
-        job.Operation == "ruleset" ? "verify" : job.Operation, job.State, job.ExitCode,
+        job.Operation == "ruleset" ? "verify" : job.Operation, job.PublicState, job.Finalized ? job.ExitCode : null,
         job.Report?.RunMetadata.StartedUtc ?? job.Comparison?.RunMetadata.StartedUtc ?? job.Chain?.RunMetadata.StartedUtc ?? job.Created.ToString("O"),
         job.Report?.RunMetadata.ElapsedMilliseconds ?? job.Comparison?.RunMetadata.ElapsedMilliseconds ?? job.Chain?.RunMetadata.ElapsedMilliseconds ?? job.Elapsed,
-        job.Context.Target.Root, job.Selection, job.ArtifactPath, null, job.Context.Output.Directory, ToolIdentity.Version, "not-revalidated", job.Error);
+        job.Context.Target.Root, job.Selection, job.ArtifactPath, null, job.Context.Output.Directory, ToolIdentity.Version, "not-revalidated", job.Finalized ? job.Error : null);
     private sealed class Job(string id, string operation, RunConfiguration context, string targetKind, string? selection)
     {
         public string Id { get; } = id;
@@ -501,6 +501,10 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         public CancellationTokenSource Cancel { get; } = new();
         private volatile string state = "running";
         public string State { get => state; set => state = value; }
+        private int finalized;
+        public bool Finalized => Volatile.Read(ref finalized) != 0;
+        public string PublicState => Finalized ? State : "running";
+        public void PublishCompletion() => Volatile.Write(ref finalized, 1);
         public int? ExitCode { get; set; }
         public string? Error { get; set; }
         public AnalysisReport? Report { get; set; }
