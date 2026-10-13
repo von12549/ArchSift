@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-13 0.8.0 已由 [PR #6](https://github.com/von12549/ArchSift/pull/6) 合并，并以固定产品提交 `ab3d2ea` 发布 [v0.8.0](https://github.com/von12549/ArchSift/releases/tag/v0.8.0)。最终 PR 与合并后 main 的 Windows/Ubuntu CI 均通过；四项公开资产独立匿名下载的摘要/大小、ZIP 内 manifest、最终只读原件/宿主/进程审计通过。见 [发布回验](../releases/0.8.0-publication.md)；状态 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。下文未发布状态保留形成时点。
+
 2026-10-13 0.8.0 最终验收：修订固定候选 `ab3d2ea` 的 248 项、ZIP17、Setup20、两平台 CI、真实 IFX 只读重验及 Class B406/A182 机器门禁通过。用户独立 UI 反馈符合预期、4/5、L0、无未测；Safe shutdown 确认后页面冻结、CLI 返回命令行。人工后只读终审通过，人工会话退出码/监听未独立取证。详见 [最终验收](../acceptance/20261013-0.8-final-acceptance.md)；0.8-5 COMPLETE／ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED／NOT YET PUBLISHED。下文旧进度保留历史时点。
 
 2026-10-13 0.8.0 第五阶段机器资格进度：固定 c10ceb9 候选 ZIP17／Setup13、245 项/八模板、Windows/Ubuntu CI、10 组机器浏览器通过；用户委托的单次真实 IFX 外置 105 项构建已实际材料审查、seal v3、独立 sourceBound 校验，Class B 406／Class A 182 与 schema 门禁通过，最终只读预检和宿主相等，见 [第五阶段机器记录](../acceptance/20261013-0.8-5-machine-qualification.md)。S4 版本清理/卸载无 Setup 命令而未执行，用户独立人工 UI 未执行；0.8-5 仍 IN PROGRESS，整体 NOT ACCEPTED／NOT RELEASED。
