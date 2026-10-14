@@ -1,14 +1,14 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / WORK PACKAGE PLAN DETAILED / IMPLEMENTATION NOT AUTHORIZED / NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A COMPLETE / IP00-B NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
 
-产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。本计划已细化工作包的依赖、交付物和验收场景，实施仍需对应工作包请求；产品决议采纳和分支创建不自动授权实施、提交、推送、PR、合并、发布或新的真实目标操作。
+产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
 ## 现有基线与实施边界
 
 ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptance.md)和[发布回验](../releases/0.8.0-publication.md)保持历史身份与限制。总计划还包含 2026-10-14 IFX 升级收尾记录；工作区已有总计划和 `EvidenceJobTests.cs` 的未提交修改，本计划不归属或改写它们，不把既有检查数作为 InProject 证据。
 
-已在当前 checkout 创建并切换到 `codex/archsift-inproject-0.1.0`；创建分支时保留全部既有未提交修改。分支仅为计划与后续授权实施提供工作位置，不表示 IP00 已启动。
+已在当前 checkout 创建并切换到 `codex/archsift-inproject-0.1.0`；创建分支时保留全部既有未提交修改。本次实施按阶段只暂存本产品变更，先前 IFX 升级记录和 `EvidenceJobTests.cs` 的未提交修改保持原状。
 
 同仓分产品，共享 Core／Contracts／Worker，不让 Core 依赖宿主或 xUnit。InProject 的 owned 可写目录、严格门禁、轻量证据及自动轮转通过显式新契约实现；现有 ArchSift 的路径、证据保留、CLI 退出码和报告语义不因新产品默认值被整体改写。
 
@@ -16,24 +16,24 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 
 ## 工作包与进入条件
 
-每阶段开始前检查实际工作区、总计划、产品规格及最新验收记录；完成后登记交付物、真实检查、材料位置、SDK／TFM／Configuration、输入身份、覆盖和限制。依赖满足只是进入资格，开始下一阶段仍需对应工作包请求。表中 Axx 指产品规格的 IP-Axx。
+每阶段开始前检查实际工作区、总计划、产品规格及最新验收记录；完成后登记交付物、真实检查、材料位置、SDK／TFM／Configuration、输入身份、覆盖和限制。用户对完整计划的本次授权覆盖各阶段的实施与阶段后提交／推送；依赖通过才进入下一阶段，真实目标和独立人工仍有单独门槛。表中 Axx 指产品规格的 IP-Axx。
 
 | 阶段 | 进入条件 | 完成门槛 | 对应验收 | 状态 |
 | --- | --- | --- | --- | --- |
-| IP00-A 组件与兼容 | IP00 实施授权 | 冻结产品身份、依赖方向、xUnit／Worker 兼容和分发前提 | A03、A04、A13 | NOT STARTED |
+| IP00-A 组件与兼容 | IP00 实施授权 | 冻结产品身份、依赖方向、xUnit／Worker 兼容和分发前提 | A03、A04、A13 | COMPLETE；[契约与检查](../decisions/20261014-inproject-ip00a-components.md) |
 | IP00-B 配置与路径 | IP00-A | 冻结配置／锁 schema、输入身份、owned 根和路径安全契约 | A01、A09、A11–A13 | NOT STARTED |
 | IP00-C 构建与关联 | IP00-B | 冻结支持矩阵、实际编译取证与日常关联验证协议 | A05、A06、A09、A12 | NOT STARTED |
 | IP00-D 门禁与任务 | IP00-C | 冻结逐规则覆盖、判定表、CLI 退出码和共享任务状态 | A03、A04、A07、A08 | NOT STARTED |
 | IP00-E 证据与契约验收 | IP00-D | 冻结保留／清理模型并完成五阶段契约验收矩阵 | A09–A13 | NOT STARTED |
-| IP01 安装与 worktree 宿主 | IP00-A–E 关闭、IP01 请求；写入真实目标另需具体授权 | 固定本地包初始化与 worktree 隔离通过合成检查 | A01、A02、A11、A12 | NOT STARTED |
-| IP02 日常构建与输入关联 | IP01 关闭、IP02 请求 | 每次新快照构建与实际输入关联正反证据成立 | A05、A06、A09、A12、A13 | NOT STARTED |
-| IP03 xUnit 架构测试与严格门禁 | IP02 关闭、IP03 请求 | 专用真实测试与全部必检覆盖、判定正反例成立 | A03、A04、A07、A12、A13 | NOT STARTED |
-| IP04 CLI 与轻量证据闭环 | IP03 关闭、IP04 请求 | CLI 任务与日常轻量证据、报告和 CI 示例验收 | A02、A07、A08、A09 | NOT STARTED |
-| IP05 完整证据与保留生命周期 | IP02、IP04 关闭、IP05 请求 | 完整证据校验、轮转保护、归档恢复通过 | A09、A10、A11–A13 | NOT STARTED |
-| IP06 Web 工作台与双入口一致性 | IP04、IP05 关闭、IP06 请求 | Web 与 CLI 共用任务和结果，机器 UI 场景通过 | A01、A03、A07–A10 | NOT STARTED |
-| IP07 包与候选机器资格 | IP01–IP06 关闭、IP07 请求 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | NOT STARTED |
-| IP08 真实 worktree 与独立人工验收 | IP07 关闭、IP08 请求、具体真实目标授权 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | NOT STARTED |
-| IP09 正式发布与回验 | IP08 关闭、明确发布授权 | 固定提交／标签／资产、公开下载和安装回验完成 | A11、A13–A15 | NOT STARTED |
+| IP01 安装与 worktree 宿主 | IP00-A–E 关闭；写入真实目标另需具体授权 | 固定本地包初始化与 worktree 隔离通过合成检查 | A01、A02、A11、A12 | NOT STARTED |
+| IP02 日常构建与输入关联 | IP01 关闭 | 每次新快照构建与实际输入关联正反证据成立 | A05、A06、A09、A12、A13 | NOT STARTED |
+| IP03 xUnit 架构测试与严格门禁 | IP02 关闭 | 专用真实测试与全部必检覆盖、判定正反例成立 | A03、A04、A07、A12、A13 | NOT STARTED |
+| IP04 CLI 与轻量证据闭环 | IP03 关闭 | CLI 任务与日常轻量证据、报告和 CI 示例验收 | A02、A07、A08、A09 | NOT STARTED |
+| IP05 完整证据与保留生命周期 | IP02、IP04 关闭 | 完整证据校验、轮转保护、归档恢复通过 | A09、A10、A11–A13 | NOT STARTED |
+| IP06 Web 工作台与双入口一致性 | IP04、IP05 关闭 | Web 与 CLI 共用任务和结果，机器 UI 场景通过 | A01、A03、A07–A10 | NOT STARTED |
+| IP07 包与候选机器资格 | IP01–IP06 关闭 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | NOT STARTED |
+| IP08 真实 worktree 与独立人工验收 | IP07 关闭、具体真实目标授权；独立人工由用户执行 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | NOT STARTED |
+| IP09 正式发布与回验 | IP08 关闭；发布授权已给出 | 固定提交／标签／资产、公开下载和安装回验完成 | A11、A13–A15 | NOT STARTED |
 
 IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才可关闭。工作包完成不等于产品验收或发布；独立人工门槛未通过时 IP08 保持未关闭。
 
@@ -155,8 +155,9 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | 用户逐项产品决议和验收基线 | CONFIRMED |
 | 产品规格与工作包文档 | WRITTEN；工作包进入条件、交付物及验收场景已细化 |
 | 工作分支 | `codex/archsift-inproject-0.1.0` 已创建并切换；既有未提交修改保留 |
-| IP00-A–E、IP01–IP09 | NOT STARTED |
+| IP00-A | COMPLETE：组件／测试兼容契约已冻结；现有 architecture test 离线恢复后 2/2 通过，宿主哈希相等；新增桥接与业务 net8／net9／net10 运行验证归 IP02／IP03 |
+| IP00-B–E、IP01–IP09 | NOT STARTED |
 | 构建、机器验收、真实目标、独立人工 | NOT RUN FOR INPROJECT |
-| 产品实施、PR、合并／发布 | 尚无执行授权；本次计划文档的提交／推送已获单独授权 |
+| 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
 
-2026-10-14 本轮仅细化本计划及登记总计划，没有新增产品目录、目标安装、构建运行或发布资产；下一实施入口为 IP00-A，须依据后续对应工作包请求。
+2026-10-14 IP00-A 交付见[组件契约](../decisions/20261014-inproject-ip00a-components.md)。本阶段运行的是现有共享 architecture test 基线，未创建目标安装或新增 InProject 运行结论；下一入口 IP00-B，先核对 IP00-A 阶段提交／推送结果，再开始配置和路径契约。
