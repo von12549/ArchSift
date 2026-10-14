@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:inproject:local-settings:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "evidenceRoot": { "type": "string", "minLength": 1 },
+    "localFeed": { "type": "string", "minLength": 1 }
+  }
+}

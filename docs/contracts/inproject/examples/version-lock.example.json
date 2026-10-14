@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "product": "ArchSift.InProject",
+  "version": "0.1.0",
+  "rid": "win-x64",
+  "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "contractVersion": 1,
+  "packageSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "payloadManifestSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "components": [
+    { "id": "ArchSift.InProject", "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" },
+    { "id": "ArchSift.InProject.Runtime", "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" },
+    { "id": "ArchSift.InProject.TestBridge", "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" },
+    { "id": "ArchSift.Contracts", "sha256": "1111111111111111111111111111111111111111111111111111111111111111" },
+    { "id": "ArchSift.Core", "sha256": "2222222222222222222222222222222222222222222222222222222222222222" },
+    { "id": "ArchSift.ArchUnit", "sha256": "3333333333333333333333333333333333333333333333333333333333333333" },
+    { "id": "ArchSift.Cli.Worker", "sha256": "4444444444444444444444444444444444444444444444444444444444444444" }
+  ]
+}

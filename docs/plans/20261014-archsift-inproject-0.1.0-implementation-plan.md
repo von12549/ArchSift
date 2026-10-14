@@ -1,6 +1,6 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A COMPLETE / IP00-B NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A/B COMPLETE / IP00-C NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
 
 产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
@@ -21,7 +21,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | 阶段 | 进入条件 | 完成门槛 | 对应验收 | 状态 |
 | --- | --- | --- | --- | --- |
 | IP00-A 组件与兼容 | IP00 实施授权 | 冻结产品身份、依赖方向、xUnit／Worker 兼容和分发前提 | A03、A04、A13 | COMPLETE；[契约与检查](../decisions/20261014-inproject-ip00a-components.md) |
-| IP00-B 配置与路径 | IP00-A | 冻结配置／锁 schema、输入身份、owned 根和路径安全契约 | A01、A09、A11–A13 | NOT STARTED |
+| IP00-B 配置与路径 | IP00-A | 冻结配置／锁 schema、输入身份、owned 根和路径安全契约 | A01、A09、A11–A13 | COMPLETE；[契约与 schema](../decisions/20261014-inproject-ip00b-config-paths.md) |
 | IP00-C 构建与关联 | IP00-B | 冻结支持矩阵、实际编译取证与日常关联验证协议 | A05、A06、A09、A12 | NOT STARTED |
 | IP00-D 门禁与任务 | IP00-C | 冻结逐规则覆盖、判定表、CLI 退出码和共享任务状态 | A03、A04、A07、A08 | NOT STARTED |
 | IP00-E 证据与契约验收 | IP00-D | 冻结保留／清理模型并完成五阶段契约验收矩阵 | A09–A13 | NOT STARTED |
@@ -156,8 +156,9 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | 产品规格与工作包文档 | WRITTEN；工作包进入条件、交付物及验收场景已细化 |
 | 工作分支 | `codex/archsift-inproject-0.1.0` 已创建并切换；既有未提交修改保留 |
 | IP00-A | COMPLETE：组件／测试兼容契约已冻结；现有 architecture test 离线恢复后 2/2 通过，宿主哈希相等；新增桥接与业务 net8／net9／net10 运行验证归 IP02／IP03 |
-| IP00-B–E、IP01–IP09 | NOT STARTED |
+| IP00-B | COMPLETE：四份 schema 和结构样例有效 4/4、无效 5/5；路径与输入身份契约已冻结，运行时语义校验归 IP01／IP02 |
+| IP00-C–E、IP01–IP09 | NOT STARTED |
 | 构建、机器验收、真实目标、独立人工 | NOT RUN FOR INPROJECT |
 | 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
 
-2026-10-14 IP00-A 交付见[组件契约](../decisions/20261014-inproject-ip00a-components.md)。本阶段运行的是现有共享 architecture test 基线，未创建目标安装或新增 InProject 运行结论；下一入口 IP00-B，先核对 IP00-A 阶段提交／推送结果，再开始配置和路径契约。
+2026-10-14 IP00-B 交付见[配置与路径契约](../decisions/20261014-inproject-ip00b-config-paths.md)。只执行 schema 正反校验，没有目标初始化、构建或清理；下一入口 IP00-C，先核对 IP00-B 阶段提交／推送结果，再冻结构建支持矩阵和日常关联协议。IP00-A 的历史检查见[组件契约](../decisions/20261014-inproject-ip00a-components.md)。
