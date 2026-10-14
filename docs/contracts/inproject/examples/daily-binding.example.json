@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "product": "ArchSift.InProject",
+  "runId": "example-run-001",
+  "worktreeId": "example-worktree",
+  "solution": "Product.slnx",
+  "configuration": "Release",
+  "inputSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "rulesSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "toolSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "sdkVersion": "10.0.303",
+  "restore": {
+    "status": "succeeded",
+    "sources": ["D:/example/offline-feed"],
+    "assetsSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "contexts": [
+    {
+      "project": "src/Product/Product.csproj",
+      "targetFramework": "net8.0",
+      "configuration": "Release",
+      "globalPropertiesSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "compilerCommandSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "compilerPath": "D:/example/sdk/Roslyn/bincore/csc.dll",
+      "materials": [
+        { "path": "src/Product/Entry.cs", "kind": "source", "sha256": "1111111111111111111111111111111111111111111111111111111111111111" },
+        { "path": "Directory.Build.props", "kind": "import", "sha256": "2222222222222222222222222222222222222222222222222222222222222222" },
+        { "path": "obj/Product.csproj.csc.rsp", "kind": "response-file", "sha256": "3333333333333333333333333333333333333333333333333333333333333333" }
+      ],
+      "references": [
+        { "path": "D:/example/packages/Dependency/1.0.0/lib/net8.0/Dependency.dll", "assemblyIdentity": "Dependency, Version=1.0.0.0", "sha256": "4444444444444444444444444444444444444444444444444444444444444444", "role": "compile" }
+      ],
+      "outputPath": "D:/example/run-001/bin/Product.dll",
+      "outputSha256": "5555555555555555555555555555555555555555555555555555555555555555"
+    }
+  ],
+  "startInputSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "endInputSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

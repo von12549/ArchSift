@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP00-C：已冻结[构建支持矩阵与日常关联契约](../decisions/20261014-inproject-ip00c-build-binding.md)，逐项目 TFM／Configuration、实际编译输入、imports／SDK／任务／生成器、响应文件、实际引用选择、输出字节与运行前后一致性均需独立验证器核实。新增 draft-07 日常绑定 schema 与结构样例；结构检查不代表真实 `SourceBound=true`。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B/C COMPLETE / IP00-D NOT STARTED / NOT ACCEPTED / NOT RELEASED`。旧 IFX 升级记录与测试修改仍留在工作区。
+
 2026-10-14 ArchSift.InProject IP00-B：已冻结[配置、输入身份与 owned 路径契约](../decisions/20261014-inproject-ip00b-config-paths.md)，包括 project／version-lock／本机设置／payload manifest 四份 draft-07 schema、配置文件相对路径、七组件身份、业务与工具输入分离、项目内精确写入及既有 ArchSift `EnsureDisjoint` 原模式保持。四份结构样例通过，五种无效结构被拒；实际路径归属、跨字段语义与运行行为由 IP01／IP02 合成 fixture 关闭。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B COMPLETE / IP00-C NOT STARTED / NOT ACCEPTED / NOT RELEASED`；本阶段没有目标安装、构建或清理，旧 IFX 升级记录和测试修改继续留在工作区。
 
 2026-10-14 ArchSift.InProject 0.1.0 实施授权与 IP00-A：用户授权完整[实施计划](20261014-archsift-inproject-0.1.0-implementation-plan.md)、每阶段后提交／推送及后续 PR、合并、发布，仍须按依赖和验收顺序推进；真实目标操作须具体目标授权，独立人工验收由用户完成。IP00-A 已冻结[组件、身份与测试兼容契约](../decisions/20261014-inproject-ip00a-components.md)：net10 专用 xUnit 与薄桥接、共享 Core／Contracts／ArchUnitNET Worker、独立产品包和协议边界。现有 SDK 10.0.303／net10.0／Release architecture test 经明确本地源 locked restore 后 2/2 通过，宿主环境／Profile 哈希相等；隔离层首次无诊断 restore 失败保留，审批环境中同参数通过。新增桥接及 net8／net9／net10 业务目标的实际运行验证由 IP02／IP03 关闭，不把旧测试当作 InProject 产品验收。状态 `IMPLEMENTATION AUTHORIZED / IP00-A COMPLETE / IP00-B NOT STARTED / NOT ACCEPTED / NOT RELEASED`；旧 IFX 升级记录与 `EvidenceJobTests.cs` 修改保持未提交，不并入本阶段。
