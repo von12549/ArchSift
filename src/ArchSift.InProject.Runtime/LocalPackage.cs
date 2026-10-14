@@ -100,13 +100,45 @@ public static class LocalPackage
             !listed.ContainsKey("bootstrap/archsift-inproject.ps1") ||
             !listed.Keys.Any(path => path.StartsWith("rules/", StringComparison.Ordinal)))
             throw new ConfigurationException("Required runtime, test, bootstrap or rule payload is absent.");
-        if (version == "0.1.0" &&
-            (!listed.ContainsKey("maintenance/archsift-inproject-maintenance.exe") ||
-             !listed.ContainsKey("maintenance/archsift-inproject-maintenance.ps1") ||
-             !listed.ContainsKey("licenses/third-party-inventory.json") ||
-             !listed.Keys.Any(path => path.StartsWith("offline/", StringComparison.Ordinal) &&
-                 path.EndsWith(".nupkg", StringComparison.Ordinal))))
-            throw new ConfigurationException("Release candidate lacks maintenance, licenses or offline dependencies.");
+        if (version == "0.1.0")
+        {
+            if (!listed.ContainsKey("maintenance/archsift-inproject-maintenance.exe") ||
+                !listed.ContainsKey("maintenance/archsift-inproject-maintenance.ps1") ||
+                !listed.ContainsKey("licenses/third-party-inventory.json") ||
+                !entries.TryGetValue("tests/packages.lock.json", out var testsLock) ||
+                !entries.TryGetValue("licenses/third-party-inventory.json", out var inventoryEntry))
+                throw new ConfigurationException("Release candidate lacks maintenance, licenses or offline dependencies.");
+            using var lockedTests = JsonDocument.Parse(ReadBounded(testsLock));
+            var requiredOffline = lockedTests.RootElement.GetProperty("dependencies")
+                .GetProperty("net10.0").EnumerateObject()
+                .Select(dependency => "offline/" + dependency.Name.ToLowerInvariant() + "." +
+                    dependency.Value.GetProperty("resolved").GetString()!.ToLowerInvariant() + ".nupkg")
+                .Concat(new[] { "microsoft.netcore.app.ref", "microsoft.aspnetcore.app.ref",
+                    "microsoft.windowsdesktop.app.ref" }.SelectMany(id => new[] { "8.0.30", "9.0.19" }
+                    .Select(referenceVersion => "offline/" + id + "." + referenceVersion + ".nupkg")))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var actualOffline = listed.Keys.Where(name => name.StartsWith("offline/", StringComparison.Ordinal))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (!requiredOffline.SetEquals(actualOffline))
+                throw new ConfigurationException("Release candidate offline dependency closure is incomplete.");
+            using var inventory = JsonDocument.Parse(ReadBounded(inventoryEntry));
+            var inventoryRoot = inventory.RootElement;
+            if (inventoryRoot.GetProperty("product").GetString() != "ArchSift.InProject" ||
+                inventoryRoot.GetProperty("version").GetString() != version ||
+                inventoryRoot.GetProperty("packageCount").GetInt32() != actualOffline.Count)
+                throw new ConfigurationException("Release candidate license inventory identity is invalid.");
+            var inventoried = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in inventoryRoot.GetProperty("packages").EnumerateArray())
+            {
+                var name = item.GetProperty("packagePath").GetString() ?? "";
+                if (!actualOffline.Contains(name) || !inventoried.Add(name) ||
+                    item.GetProperty("sha256").GetString() != listed[name].Sha256 ||
+                    string.IsNullOrWhiteSpace(item.GetProperty("license").GetString()))
+                    throw new ConfigurationException("Release candidate license inventory differs from its packages.");
+            }
+            if (!inventoried.SetEquals(actualOffline))
+                throw new ConfigurationException("Release candidate license inventory coverage is incomplete.");
+        }
         return new(path, expectedSha256, HashBytes(manifestBytes), version, commit,
             listed.Values.OrderBy(file => file.Path, StringComparer.Ordinal).ToArray());
     }

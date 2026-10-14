@@ -83,7 +83,8 @@ public static class InProjectTaskService
             }
             catch (Exception error) when (error is ConfigurationException or InvalidDataException or
                 JsonException or SourceChangedException or OperationCanceledException or IOException or
-                TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+                TimeoutException or UnauthorizedAccessException or InvalidOperationException or
+                System.ComponentModel.Win32Exception)
             {
                 var code = ExitCode(error);
                 state = state with { Phase = code == 130 ? "cancelled" : "failed",
