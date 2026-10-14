@@ -11,13 +11,14 @@ public sealed record InProjectBuildResult(string RunId, string CapturePath, stri
 
 public static class InProjectDailyBuild
 {
-    public static async Task<InProjectBuildResult> RunAsync(string targetRoot, CancellationToken token = default)
+    public static async Task<InProjectBuildResult> RunAsync(string targetRoot, CancellationToken token = default,
+        string? reservedRunId = null, Action<string>? phase = null)
     {
         var config = InProjectConfiguration.Load(targetRoot);
         var plan = InProjectBuildPlanner.Create(config, token);
         var baseline = InProjectHostIdentity.Capture();
         InProjectSnapshot snapshot;
-        try { snapshot = InProjectSnapshots.Create(config, plan, token); }
+        try { snapshot = InProjectSnapshots.Create(config, plan, token, reservedRunId); phase?.Invoke("snapshot"); }
         catch
         {
             if (InProjectHostIdentity.Capture().Sha256 != baseline.Sha256)
@@ -32,6 +33,7 @@ public static class InProjectDailyBuild
         var verdictPath = Path.Combine(snapshot.ReportDirectory, "binding-verdict.json");
         try
         {
+            phase?.Invoke("restore");
             var sdk = (await process.DotnetAsync("sdk", snapshot.SourceDirectory, ["--version"])).Trim();
             if (string.IsNullOrWhiteSpace(sdk)) throw new ConfigurationException("Selected SDK version is unavailable.");
             var nuget = Path.Combine(snapshot.RunDirectory, "NuGet.Config");
@@ -42,6 +44,7 @@ public static class InProjectDailyBuild
                 ["restore", solution, "--configfile", nuget, "--source", config.LocalFeed,
                  "--packages", packageCache, "--disable-parallel", "--disable-build-servers",
                  "-p:NuGetAudit=false", "-p:RestoreIgnoreFailedSources=false", "--verbosity", "minimal"]);
+            phase?.Invoke("build");
             RejectPackageBuildAssets(plan, snapshot);
             var originalHashes = snapshot.InputIdentity.Files.ToDictionary(file => file.Path, file => file.Sha256,
                 StringComparer.OrdinalIgnoreCase);
@@ -118,6 +121,7 @@ public static class InProjectDailyBuild
                 sdk, new("succeeded", [config.LocalFeed], ContentHash.Text(string.Join("\n", assets))),
                 contexts.ToArray(), snapshot.InputIdentity.Sha256, InputCapture.Capture(config.Root, token).Sha256);
             File.WriteAllText(capturePath, JsonSerializer.Serialize(binding, JsonContract.Options) + "\n", new UTF8Encoding(false));
+            phase?.Invoke("bind");
             var verdict = InProjectBindingVerifier.Verify(config, plan, snapshot, binding, observed);
             if (InProjectHostIdentity.Capture().Sha256 != baseline.Sha256)
                 throw new InvalidOperationException("Host environment/Profile drift detected after build; evidence preserved.");

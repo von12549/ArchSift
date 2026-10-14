@@ -1,6 +1,6 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP03 COMPLETE / IP04 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP04 COMPLETE / IP05 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
 
 产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
@@ -28,7 +28,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | IP01 安装与 worktree 宿主 | IP00-A–E 关闭；写入真实目标另需具体授权 | 固定本地包初始化与 worktree 隔离通过合成检查 | A01、A02、A11、A12 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip01.md) |
 | IP02 日常构建与输入关联 | IP01 关闭 | 每次新快照构建与实际输入关联正反证据成立 | A05、A06、A09、A12、A13 | COMPLETE |
 | IP03 xUnit 架构测试与严格门禁 | IP02 关闭 | 专用真实测试与全部必检覆盖、判定正反例成立 | A03、A04、A07、A12、A13 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip03.md) |
-| IP04 CLI 与轻量证据闭环 | IP03 关闭 | CLI 任务与日常轻量证据、报告和 CI 示例验收 | A02、A07、A08、A09 | NOT STARTED |
+| IP04 CLI 与轻量证据闭环 | IP03 关闭 | CLI 任务与日常轻量证据、报告和 CI 示例验收 | A02、A07、A08、A09 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip04.md) |
 | IP05 完整证据与保留生命周期 | IP02、IP04 关闭 | 完整证据校验、轮转保护、归档恢复通过 | A09、A10、A11–A13 | NOT STARTED |
 | IP06 Web 工作台与双入口一致性 | IP04、IP05 关闭 | Web 与 CLI 共用任务和结果，机器 UI 场景通过 | A01、A03、A07–A10 | NOT STARTED |
 | IP07 包与候选机器资格 | IP01–IP06 关闭 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | NOT STARTED |
@@ -163,7 +163,8 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | IP01 | COMPLETE：本地开发包初始化、普通／linked worktree、摘要与 owned 写入正反例通过；4/4 合成测试与 2/2 架构测试，实际开发包合成安装及核验通过 |
 | IP02 | COMPLETE：实际四项目 net8／net9／net10、同名异版本引用与普通 `.sln` 映射、简单 `.slnx` 正例，失败／取消／漂移／不支持输入反例，6/6 针对性集成测试和宿主哈希相等；见 [IP02 验收](../acceptance/20261014-inproject-ip02.md) |
 | IP03 | COMPLETE：六种规则类型、七条启用规则全部执行；两条 B 类真实 xUnit 发现和 ArchUnitNET 违规分别得到 2/2 与 1/2 TRX，门禁退出 0／2，版本化 schema、篡改拒绝、宿主哈希相等；见 [IP03 验收](../acceptance/20261014-inproject-ip03.md) |
-| IP04–IP09 | NOT STARTED |
+| IP04 | COMPLETE：持久任务／当前与历史、规则变化失效、重复触发、显式取消、失联恢复、失败报告、JSON／HTML／SARIF 与逐文件轻量索引通过；16/16 定向集成测试和外置合成矩阵，见 [IP04 验收](../acceptance/20261014-inproject-ip04.md) |
+| IP05–IP09 | NOT STARTED |
 | 构建、机器验收、真实目标、独立人工 | NOT RUN FOR INPROJECT |
 | 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
 

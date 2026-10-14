@@ -22,6 +22,8 @@ internal static class Program
                 Console.WriteLine("archsift-inproject verify --target <worktree-root>");
                 Console.WriteLine("archsift-inproject build --target <worktree-root>");
                 Console.WriteLine("archsift-inproject gate --project <worktree-root>/.archsift/project.json [--evidence daily]");
+                Console.WriteLine("archsift-inproject status --project <worktree-root>/.archsift/project.json [--run <run-id>]");
+                Console.WriteLine("archsift-inproject cancel --project <worktree-root>/.archsift/project.json --run <run-id>");
                 return 0;
             }
             if (args.Length > 0 && args[0] == "verify")
@@ -77,15 +79,50 @@ internal static class Program
                 Console.CancelKeyPress += onCancel;
                 try
                 {
-                    var gateResult = InProjectRuleService.RunAsync(Path.GetDirectoryName(install)!,
+                    var outcome = InProjectTaskService.GateAsync(Path.GetDirectoryName(install)!,
                         cancellation.Token).GetAwaiter().GetResult();
-                    Console.WriteLine(JsonSerializer.Serialize(gateResult, JsonContract.Options));
-                    return gateResult.Gate.ExitCode;
+                    Console.WriteLine(JsonSerializer.Serialize((object?)outcome.Result ?? outcome.Task,
+                        JsonContract.Options));
+                    return outcome.Conflict ? 4 : outcome.Task.ExitCode ?? 4;
                 }
                 finally { Console.CancelKeyPress -= onCancel; }
             }
+            if (args.Length > 0 && args[0] == "status")
+            {
+                var statusOptions = Parse(args[1..]);
+                if (!statusOptions.ContainsKey("--project") || statusOptions.Count > 2 ||
+                    statusOptions.Keys.Any(key => key is not ("--project" or "--run")))
+                    throw new ConfigurationException("status requires --project and optional --run.");
+                var project = Path.GetFullPath(Required(statusOptions, "--project"));
+                var install = Path.GetDirectoryName(project)!;
+                if (Path.GetFileName(project) != "project.json" ||
+                    Path.GetFileName(install) != ".archsift" || !File.Exists(project))
+                    throw new ConfigurationException("status --project must identify this worktree's .archsift/project.json.");
+                PathSafety.EnsureNoLinks(project);
+                var status = InProjectTaskService.Status(Path.GetDirectoryName(install)!,
+                    statusOptions.GetValueOrDefault("--run"));
+                Console.WriteLine(JsonSerializer.Serialize(status, JsonContract.Options));
+                return 0;
+            }
+            if (args.Length > 0 && args[0] == "cancel")
+            {
+                var cancelOptions = Parse(args[1..]);
+                if (cancelOptions.Count != 2 || !cancelOptions.ContainsKey("--project") ||
+                    !cancelOptions.ContainsKey("--run"))
+                    throw new ConfigurationException("cancel requires --project and --run.");
+                var project = Path.GetFullPath(Required(cancelOptions, "--project"));
+                var install = Path.GetDirectoryName(project)!;
+                if (Path.GetFileName(project) != "project.json" ||
+                    Path.GetFileName(install) != ".archsift" || !File.Exists(project))
+                    throw new ConfigurationException("cancel --project must identify this worktree's .archsift/project.json.");
+                PathSafety.EnsureNoLinks(project);
+                var state = InProjectTaskService.Cancel(Path.GetDirectoryName(install)!,
+                    Required(cancelOptions, "--run"));
+                Console.WriteLine(JsonSerializer.Serialize(state, JsonContract.Options));
+                return 0;
+            }
             if (args.Length == 0 || args[0] != "init")
-                throw new ConfigurationException("Expected init, verify, build or gate.");
+                throw new ConfigurationException("Expected init, verify, build, gate, status or cancel.");
             var options = Parse(args[1..]);
             if (options.Keys.Any(key => key is not ("--target" or "--package" or "--sha256" or "--solution")))
                 throw new ConfigurationException("init received an unsupported option.");
@@ -153,7 +190,7 @@ internal static class Program
         for (var i = 0; i < args.Length; i += 2)
         {
             if (args[i] is not ("--target" or "--package" or "--sha256" or "--solution" or
-                "--project" or "--evidence") ||
+                "--project" or "--evidence" or "--run") ||
                 string.IsNullOrWhiteSpace(args[i + 1]) || !values.TryAdd(args[i], args[i + 1]))
                 throw new ConfigurationException("Invalid or repeated init option: " + args[i]);
         }

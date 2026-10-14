@@ -52,6 +52,21 @@ public sealed class InProjectGatePolicyTests
             complete.Rules, new HashSet<string>(), true, limitationsOutsideRequired: true).ExitCode);
     }
 
+    [Fact]
+    public void HtmlProjection_EscapesRuleAndFindingText()
+    {
+        var key = "rules@1/<script>alert(1)</script>";
+        var complete = Complete(key, "violation");
+        var report = new InProjectGateResult(1, "ArchSift.InProject", "run", "worktree",
+            "completed", Bound, "daily", complete.Coverage, complete.Rules,
+            [new Finding("finding", "check", "type", "<img src=x>", "<script>bad()</script>", "error")],
+            [], new("block", "violation", 2), new("available", "daily-index.json"), "current");
+        var html = InProjectReportWriter.Html(report);
+        Assert.DoesNotContain("<script>", html, StringComparison.Ordinal);
+        Assert.DoesNotContain("<img src=x>", html, StringComparison.Ordinal);
+        Assert.Contains("&lt;script&gt;", html, StringComparison.Ordinal);
+    }
+
     private static (InProjectGateCoverage Coverage, InProjectRuleCoverage[] Rules) Complete(string key,
         string status) => (new(true, [key], [key]),
         [new(key, "B", ["ArchitectureRules.Evaluate(" + key + ")"], 1, 1, 1,

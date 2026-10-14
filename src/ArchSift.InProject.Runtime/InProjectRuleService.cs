@@ -10,10 +10,11 @@ namespace ArchSift.InProject.Runtime;
 
 public static class InProjectRuleService
 {
-    public static async Task<InProjectGateResult> RunAsync(string targetRoot, CancellationToken token = default)
+    public static async Task<InProjectGateResult> RunAsync(string targetRoot, CancellationToken token = default,
+        string? reservedRunId = null, Action<string>? phase = null)
     {
         VerifyTestPayload(InProjectConfiguration.Load(targetRoot));
-        var built = await InProjectDailyBuild.RunAsync(targetRoot, token);
+        var built = await InProjectDailyBuild.RunAsync(targetRoot, token, reservedRunId, phase);
         var config = InProjectConfiguration.Load(targetRoot);
         var plan = InProjectBuildPlanner.Create(config, token);
         var report = Path.GetDirectoryName(built.CapturePath)!;
@@ -46,6 +47,7 @@ public static class InProjectRuleService
         }
         if (bRules.Length > 0)
         {
+            phase?.Invoke("test");
             var workerPath = Path.Combine(config.InstallationRoot, "runtime", "archsift.dll");
             PathSafety.EnsureNoLinks(workerPath);
             if (!File.Exists(workerPath)) throw new ConfigurationException("Pinned assembly Worker is missing.");
@@ -83,6 +85,7 @@ public static class InProjectRuleService
             limitations.AddRange(tested.Limitations);
         }
         var current = InProjectConfiguration.Load(config.Root);
+        phase?.Invoke("evaluate");
         VerifyTestPayload(config);
         var fresh = binding.EndInputSha256 == InputCapture.Capture(config.Root, token).Sha256 &&
             current.RulesSha256 == config.RulesSha256 && current.ToolSha256 == config.ToolSha256 &&
@@ -106,8 +109,9 @@ public static class InProjectRuleService
             binding.WorktreeId, "completed", verdict, "daily", gateCoverage, ordered,
             findings.DistinctBy(item => item.Id).OrderBy(item => item.Id, StringComparer.Ordinal).ToArray(),
             limitations.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray(),
-            decision, new("available", "daily-binding.json"), fresh ? "current" : "stale");
-        WriteJson(Path.Combine(report, "gate-result.json"), resultReport);
+            decision, new("available", "daily-index.json"), fresh ? "current" : "stale");
+        phase?.Invoke("persist");
+        InProjectReportWriter.Save(report, resultReport);
         return resultReport;
     }
 

@@ -10,10 +10,12 @@ public sealed record InProjectSnapshot(string RunId, string RunDirectory, string
 public static class InProjectSnapshots
 {
     public static InProjectSnapshot Create(InProjectLoadedConfiguration config, InProjectBuildPlan plan,
-        CancellationToken token = default)
+        CancellationToken token = default, string? reservedRunId = null)
     {
         InputCapture.VerifyUnchanged(config.Root, plan.Snapshot.InputIdentity, token);
-        var runId = Guid.NewGuid().ToString("N");
+        var runId = reservedRunId ?? Guid.NewGuid().ToString("N");
+        if (!Guid.TryParseExact(runId, "N", out _))
+            throw new ConfigurationException("Invalid reserved InProject run ID.");
         var buildRoot = Path.Combine(config.InstallationRoot, "state", "build");
         var reportRoot = Path.Combine(config.InstallationRoot, "reports");
         var runDirectory = Path.Combine(buildRoot, runId);
