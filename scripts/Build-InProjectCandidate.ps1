@@ -31,8 +31,11 @@ if($LASTEXITCODE -ne 0){throw 'Candidate source differs from the fixed source co
 $untracked=@(& git -C $repo ls-files --others --exclude-standard -- $sources)
 if($LASTEXITCODE -ne 0 -or $untracked.Count -ne 0){throw 'Candidate source has untracked files.'}
 $assemblyInfo=Join-Path $repo 'src/ArchSift.InProject/obj/Release/net10.0/ArchSift.InProject.AssemblyInfo.cs'
+$commit=(& git -C $repo rev-parse HEAD).Trim()
+if($LASTEXITCODE -ne 0 -or $commit -notmatch '^[0-9a-f]{40}$'){throw 'Candidate source commit is unavailable.'}
 if(-not [IO.File]::Exists($assemblyInfo) -or
-   [IO.File]::ReadAllText($assemblyInfo) -notmatch 'AssemblyInformationalVersionAttribute\("0\.1\.0"\)'){
+   -not [IO.File]::ReadAllText($assemblyInfo).Contains(
+     'AssemblyInformationalVersionAttribute("0.1.0+'+$commit+'")',[StringComparison]::Ordinal)){
   throw 'Candidate CLI must be built as Release/net10.0 with VersionSuffix empty.'
 }
 $package=& (Join-Path $PSScriptRoot 'Build-InProjectDevPackage.ps1') -OutputDirectory $OutputDirectory -Version '0.1.0' -IncludeMaintenance -OfflineTestPackageCache $TestPackageCache -OfflineTargetPackageCache $TargetPackageCache
