@@ -39,7 +39,7 @@ Add-Payload 'runtime/ArchSift.InProject.TestBridge.dll' (Join-Path $bridgeBin 'A
 Add-Payload 'runtime/LICENSE' (Join-Path $root 'LICENSE')
 Add-Payload 'runtime/THIRD-PARTY-NOTICES.md' (Join-Path $root 'docs/migration/third-party-notices.md')
 foreach ($file in Get-ChildItem -LiteralPath (Join-Path $assets 'tests') -File) {
-    if ($file.Name -notin @('Directory.Build.props','Directory.Build.targets','Directory.Packages.props','ArchSift.InProject.ArchitectureTests.csproj','packages.lock.json')) { continue }
+    if ($file.Name -notin @('Directory.Build.props','Directory.Build.targets','Directory.Packages.props','ArchSift.InProject.ArchitectureTests.csproj','ArchitectureRules.cs','packages.lock.json')) { continue }
     Add-Payload "tests/$($file.Name)" $file.FullName
 }
 Add-Payload 'bootstrap/archsift-inproject.ps1' (Join-Path $assets 'bootstrap/archsift-inproject.ps1')

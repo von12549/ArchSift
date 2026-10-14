@@ -10,6 +10,11 @@ public sealed class InProjectBuildProcess(InProjectSnapshot snapshot, InProjectH
     private int step;
 
     public async Task<string> DotnetAsync(string name, string workingDirectory, string[] arguments)
+        => (await DotnetResultAsync(name, workingDirectory, arguments)).Output;
+
+    public async Task<ProcessResult> DotnetResultAsync(string name, string workingDirectory,
+        string[] arguments, IReadOnlyDictionary<string, string>? childEnvironment = null,
+        bool allowNonzero = false)
     {
         cancellation.ThrowIfCancellationRequested();
         var prefix = (++step).ToString("D3") + "-" + name;
@@ -17,8 +22,11 @@ public sealed class InProjectBuildProcess(InProjectSnapshot snapshot, InProjectH
         ProcessResult result;
         try
         {
+            var environment = new Dictionary<string, string> { ["NUGET_PACKAGES"] = packageCache };
+            if (childEnvironment is not null)
+                foreach (var item in childEnvironment) environment[item.Key] = item.Value;
             result = await SafeProcess.RunAsync(SafeProcess.Dotnet, workingDirectory, arguments,
-                cliHome, null, cancellation, new Dictionary<string, string> { ["NUGET_PACKAGES"] = packageCache },
+                cliHome, null, cancellation, environment,
                 timeoutLimit: TimeSpan.FromMinutes(5), ownTree: true,
                 failureOutput: captured => failure = captured);
         }
@@ -36,9 +44,9 @@ public sealed class InProjectBuildProcess(InProjectSnapshot snapshot, InProjectH
         if (actual.Output.Contains("[output truncated]", StringComparison.Ordinal) ||
             actual.Error.Contains("[output truncated]", StringComparison.Ordinal))
             throw new ConfigurationException("Build diagnostic stream was truncated; compiler inputs cannot be verified.");
-        if (actual.ExitCode != 0)
+        if (actual.ExitCode != 0 && !allowNonzero)
             throw new IOException(name + " exited " + actual.ExitCode + "; inspect preserved run logs.");
-        return actual.Output;
+        return actual;
     }
 
     private void Save(string prefix, ProcessResult result)

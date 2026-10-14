@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://archsift.local/schemas/inproject/gate-result.schema.json",
+  "title": "ArchSift.InProject gate result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "product", "runId", "worktreeId", "execution", "binding", "evidenceGrade", "coverage", "rules", "findings", "limitations", "gate", "materials", "freshness"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "product": { "const": "ArchSift.InProject" },
+    "runId": { "$ref": "#/definitions/nonEmpty" },
+    "worktreeId": { "$ref": "#/definitions/nonEmpty" },
+    "execution": { "enum": ["queued", "preflight", "snapshot", "restore", "build", "bind", "test", "evaluate", "persist", "completed", "partial", "failed", "cancelled", "invalid-input"] },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "product", "runId", "captureSha256", "verifierVersion", "sourceBound", "limitations"],
+      "properties": {
+        "schemaVersion": { "const": 1 }, "product": { "const": "ArchSift.InProject" },
+        "runId": { "$ref": "#/definitions/nonEmpty" }, "captureSha256": { "$ref": "#/definitions/sha256" },
+        "verifierVersion": { "$ref": "#/definitions/nonEmpty" }, "sourceBound": { "type": "boolean" },
+        "limitations": { "$ref": "#/definitions/strings" }
+      }
+    },
+    "evidenceGrade": { "enum": ["daily", "full"] },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["complete", "requiredRules", "executedRules"],
+      "properties": {
+        "complete": { "type": "boolean" }, "requiredRules": { "$ref": "#/definitions/strings" },
+        "executedRules": { "$ref": "#/definitions/strings" }
+      }
+    },
+    "rules": { "type": "array", "items": { "$ref": "#/definitions/rule" } },
+    "findings": { "type": "array", "items": { "type": "object", "required": ["id", "ruleId", "subjectKind", "subject", "message", "severity"], "properties": { "id": { "$ref": "#/definitions/nonEmpty" }, "ruleId": { "$ref": "#/definitions/nonEmpty" }, "subjectKind": { "$ref": "#/definitions/nonEmpty" }, "subject": { "$ref": "#/definitions/nonEmpty" }, "message": { "$ref": "#/definitions/nonEmpty" }, "severity": { "$ref": "#/definitions/nonEmpty" } } } },
+    "limitations": { "$ref": "#/definitions/strings" },
+    "gate": {
+      "type": "object", "additionalProperties": false, "required": ["decision", "reason", "exitCode"],
+      "properties": { "decision": { "enum": ["allow", "block"] }, "reason": { "$ref": "#/definitions/nonEmpty" }, "exitCode": { "enum": [0, 2, 3, 4, 5, 130] } }
+    },
+    "materials": {
+      "type": "object", "additionalProperties": false, "required": ["state", "indexPath"],
+      "properties": { "state": { "enum": ["available", "compacted", "archived", "missing"] }, "indexPath": { "$ref": "#/definitions/nonEmpty" } }
+    },
+    "freshness": { "enum": ["current", "stale"] }
+  },
+  "definitions": {
+    "nonEmpty": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "strings": { "type": "array", "items": { "type": "string" } },
+    "rule": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ruleKey", "classification", "testIds", "discovered", "started", "finished", "status", "matched", "findingIds", "limitations"],
+      "properties": {
+        "ruleKey": { "$ref": "#/definitions/nonEmpty" }, "classification": { "enum": ["A", "B"] },
+        "testIds": { "$ref": "#/definitions/strings" },
+        "discovered": { "type": "integer", "minimum": 0 }, "started": { "type": "integer", "minimum": 0 },
+        "finished": { "type": "integer", "minimum": 0 },
+        "status": { "enum": ["pass", "violation", "inconclusive", "error", "not-applicable"] },
+        "matched": { "type": "integer", "minimum": 0 }, "findingIds": { "$ref": "#/definitions/strings" },
+        "limitations": { "$ref": "#/definitions/strings" }
+      }
+    }
+  }
+}

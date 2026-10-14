@@ -106,10 +106,12 @@ Run 'restore-runtime' @('restore',(Join-Path $repo 'src/ArchSift.InProject.Runti
 Run 'build-runtime' @('build',(Join-Path $repo 'src/ArchSift.InProject.Runtime/ArchSift.InProject.Runtime.csproj'),'--no-restore','--disable-build-servers','-p:UseSharedCompilation=false','-c','Release','--verbosity','minimal')
 Run 'restore-cli' @('restore',(Join-Path $repo 'src/ArchSift.InProject/ArchSift.InProject.csproj'),'--configfile',(Join-Path $repo 'NuGet.Config'),'--source',$feed,'--packages',(Join-Path $run 'packages'),'--disable-parallel','--disable-build-servers','--locked-mode','-p:NuGetAudit=false','--verbosity','minimal')
 Run 'build-cli' @('build',(Join-Path $repo 'src/ArchSift.InProject/ArchSift.InProject.csproj'),'--no-restore','--disable-build-servers','-p:UseSharedCompilation=false','-c','Release','--verbosity','minimal')
+Run 'restore-bridge' @('restore',(Join-Path $repo 'src/ArchSift.InProject.TestBridge/ArchSift.InProject.TestBridge.csproj'),'--configfile',(Join-Path $repo 'NuGet.Config'),'--source',$feed,'--packages',(Join-Path $run 'packages'),'--disable-parallel','--disable-build-servers','--locked-mode','-p:NuGetAudit=false','--verbosity','minimal')
+Run 'build-bridge' @('build',(Join-Path $repo 'src/ArchSift.InProject.TestBridge/ArchSift.InProject.TestBridge.csproj'),'--no-restore','--disable-build-servers','-p:UseSharedCompilation=false','-c','Release','--verbosity','minimal')
 Run 'restore-cancel-probe' @('restore',(Join-Path $repo 'scripts/InProjectCancelProbe/ArchSift.InProject.CancelProbe.csproj'),'--configfile',(Join-Path $repo 'NuGet.Config'),'--source',$feed,'--packages',(Join-Path $run 'packages'),'--disable-parallel','--disable-build-servers','--locked-mode','-p:NuGetAudit=false','--verbosity','minimal')
 Run 'build-cancel-probe' @('build',(Join-Path $repo 'scripts/InProjectCancelProbe/ArchSift.InProject.CancelProbe.csproj'),'--no-restore','--disable-build-servers','-p:UseSharedCompilation=false','-c','Release','--verbosity','minimal')
 Run 'restore-integration-tests' @('restore',(Join-Path $repo 'tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj'),'--configfile',(Join-Path $repo 'NuGet.Config'),'--source',$feed,'--packages',(Join-Path $run 'packages'),'--disable-parallel','--disable-build-servers','--locked-mode','-p:NuGetAudit=false','--verbosity','minimal')
-Run 'test-inproject' @('test',(Join-Path $repo 'tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj'),'--no-restore','--disable-build-servers','-p:UseSharedCompilation=false','-c','Release','--filter','FullyQualifiedName~InProjectBuildCaptureTests|FullyQualifiedName~InProjectInstallTests','--verbosity','minimal')
+Run 'test-inproject' @('test',(Join-Path $repo 'tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj'),'--no-restore','--disable-build-servers','-p:UseSharedCompilation=false','-c','Release','--filter','FullyQualifiedName~InProjectBuildCaptureTests|FullyQualifiedName~InProjectInstallTests|FullyQualifiedName~InProjectGatePolicyTests','--verbosity','minimal')
 git -C $fixture init -q
 if($LASTEXITCODE -ne 0){throw 'git init failed'}
 $package = & (Join-Path $repo 'scripts/Build-InProjectDevPackage.ps1') -OutputDirectory (Join-Path $run 'package')
@@ -117,7 +119,22 @@ if ((HostHash) -cne $baseline) { throw 'Host drift after package creation; evide
 $zip=$package.path
 $cli=Join-Path $repo 'src/ArchSift.InProject/bin/Release/net10.0/archsift-inproject.dll'
 Run 'init' @($cli,'init','--target',$fixture,'--package',$zip,'--sha256',$package.sha256,'--solution','Product.sln')
-[IO.File]::WriteAllText((Join-Path $fixture '.archsift/state/local-settings.json'),(ConvertTo-Json -InputObject @{schemaVersion=1;localFeed=(Join-Path $run 'packages')} -Compress))
+$combinedFeed=Join-Path $run 'local-feed'
+[void][IO.Directory]::CreateDirectory($combinedFeed)
+function AddLocalPackage([string]$source){
+  if(-not [IO.File]::Exists($source)){throw "Locked local package is missing: $source"}
+  $destination=Join-Path $combinedFeed ([IO.Path]::GetFileName($source))
+  if([IO.File]::Exists($destination)){
+    if((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash -cne (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash){throw "Conflicting local package: $destination"}
+  }else{[IO.File]::Copy($source,$destination)}
+}
+foreach($packageFile in Get-ChildItem (Join-Path $run 'packages') -Recurse -Filter '*.nupkg' -File){AddLocalPackage $packageFile.FullName}
+$testLock=Get-Content (Join-Path $repo 'assets/inproject/tests/packages.lock.json') -Raw | ConvertFrom-Json
+foreach($entry in $testLock.dependencies.'net10.0'.PSObject.Properties){
+  $id=$entry.Name.ToLowerInvariant();$version=([string]$entry.Value.resolved).ToLowerInvariant()
+  AddLocalPackage (Join-Path $feed "$id/$version/$id.$version.nupkg")
+}
+[IO.File]::WriteAllText((Join-Path $fixture '.archsift/state/local-settings.json'),(ConvertTo-Json -InputObject @{schemaVersion=1;localFeed=$combinedFeed} -Compress))
 $installed=Join-Path $fixture '.archsift/runtime/archsift-inproject.dll'
 Run 'inproject-build' @($installed,'build','--target',$fixture)
 if([IO.File]::Exists($entryMarker)){throw 'Target module initializer executed during analysis.'}
