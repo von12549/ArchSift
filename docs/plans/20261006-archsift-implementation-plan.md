@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP00-E／IP00：已冻结[两级证据、轮转保护、归档恢复及契约验收矩阵](../decisions/20261014-inproject-ip00e-evidence-acceptance.md)。IP00-A–E 的身份、构建关联、逐规则门禁与材料保留字段已交叉核对，A01–A13 的实际关闭包均有归属；结构样例和静态检查不代表产品运行或接受。状态 `IMPLEMENTATION AUTHORIZED / IP00 COMPLETE / IP01 NOT STARTED / NOT ACCEPTED / NOT RELEASED`。真实目标仍需具体授权，旧 IFX 工作区修改保持未暂存。
+
 2026-10-14 ArchSift.InProject IP00-D：已冻结[逐规则覆盖、严格门禁与任务契约](../decisions/20261014-inproject-ip00d-gate-jobs.md)。必检集合、A/B 类执行清单、五种规则状态、关联与证据等级、CLI 退出码、同 worktree 持久任务及取消／重启语义分离记录；结构样例仅说明字段，真实服务正反验证由 IP03／IP04 完成。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B/C/D COMPLETE / IP00-E NOT STARTED / NOT ACCEPTED / NOT RELEASED`；IFX 旧修改保持未暂存。
 
 2026-10-14 ArchSift.InProject IP00-C：已冻结[构建支持矩阵与日常关联契约](../decisions/20261014-inproject-ip00c-build-binding.md)，逐项目 TFM／Configuration、实际编译输入、imports／SDK／任务／生成器、响应文件、实际引用选择、输出字节与运行前后一致性均需独立验证器核实。新增 draft-07 日常绑定 schema 与结构样例；结构检查不代表真实 `SourceBound=true`。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B/C COMPLETE / IP00-D NOT STARTED / NOT ACCEPTED / NOT RELEASED`。旧 IFX 升级记录与测试修改仍留在工作区。
