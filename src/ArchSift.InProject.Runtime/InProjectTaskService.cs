@@ -10,8 +10,11 @@ public static class InProjectTaskService
     private static readonly HashSet<string> Terminal = new(StringComparer.Ordinal)
         { "completed", "failed", "cancelled" };
 
-    public static async Task<InProjectTaskOutcome> GateAsync(string targetRoot, CancellationToken token = default)
+    public static async Task<InProjectTaskOutcome> GateAsync(string targetRoot,
+        string evidenceGrade = "daily", CancellationToken token = default)
     {
+        if (evidenceGrade is not ("daily" or "full"))
+            throw new ConfigurationException("Unsupported InProject evidence grade.");
         var root = WorktreeLocator.Locate(targetRoot).Root;
         var paths = Paths(root);
         Directory.CreateDirectory(paths.Tasks);
@@ -23,7 +26,8 @@ public static class InProjectTaskService
             if (Terminal.Contains(active.Phase))
                 throw new IOException("InProject task lease is unavailable after the previous task finished.");
             string? requested = null;
-            try { requested = RequestIdentity(InProjectConfiguration.Load(root), InputCapture.Capture(root).Sha256); }
+            try { requested = RequestIdentity(InProjectConfiguration.Load(root), InputCapture.Capture(root).Sha256,
+                evidenceGrade); }
             catch (Exception error) when (error is ConfigurationException or IOException or InvalidDataException) { }
             var joined = active.RequestSha256 is null || requested == active.RequestSha256;
             return new(active, null, joined, !joined);
@@ -48,7 +52,7 @@ public static class InProjectTaskService
             });
             var state = new InProjectTaskState(1, "ArchSift.InProject", runId, ContentHash.Text(root),
                 "queued", 1, DateTimeOffset.UtcNow.ToString("O"), null, null, null, null, null,
-                null, null, null, "current");
+                null, null, null, evidenceGrade, "current");
             Save(paths, state);
             void Phase(string phase)
             {
@@ -61,16 +65,18 @@ public static class InProjectTaskService
                 Phase("preflight");
                 config = InProjectConfiguration.Load(root);
                 var input = InputCapture.Capture(root, linked.Token);
-                state = state with { RequestSha256 = RequestIdentity(config, input.Sha256),
+                state = state with { RequestSha256 = RequestIdentity(config, input.Sha256, evidenceGrade),
                     InputSha256 = input.Sha256, RulesSha256 = config.RulesSha256,
                     ToolSha256 = config.ToolSha256, Revision = state.Revision + 1 };
                 Save(paths, state);
-                var result = await InProjectRuleService.RunAsync(root, linked.Token, runId, Phase);
+                var result = await InProjectRuleService.RunAsync(root, linked.Token, runId, Phase,
+                    evidenceGrade);
                 state = state with { Phase = "completed", Revision = state.Revision + 1,
                     FinishedUtc = DateTimeOffset.UtcNow.ToString("O"),
                     ResultPath = "reports/" + runId + "/gate-result.json",
                     ExitCode = result.Gate.ExitCode, Freshness = result.Freshness };
                 Save(paths, state);
+                state = TryRetention(config, state, paths);
                 linked.Cancel();
                 await cancellationWatch;
                 return new(state, result, false, false);
@@ -101,6 +107,7 @@ public static class InProjectTaskService
                         Save(paths, state);
                     }
                 }
+                if (config is not null) state = TryRetention(config, state, paths);
                 linked.Cancel();
                 await cancellationWatch;
                 return new(state, null, false, false);
@@ -160,7 +167,8 @@ public static class InProjectTaskService
                 var config = InProjectConfiguration.Load(targetRoot);
                 var input = InputCapture.Capture(config.Root);
                 if (state.InputSha256 != input.Sha256 || state.RulesSha256 != config.RulesSha256 ||
-                    state.ToolSha256 != config.ToolSha256 || state.RequestSha256 != RequestIdentity(config, input.Sha256))
+                    state.ToolSha256 != config.ToolSha256 || state.RequestSha256 !=
+                    RequestIdentity(config, input.Sha256, state.EvidenceGrade))
                     state = state with { Freshness = "stale" };
             }
             catch (Exception error) when (error is ConfigurationException or IOException or InvalidDataException)
@@ -176,6 +184,21 @@ public static class InProjectTaskService
         ConfigurationException or InvalidDataException or JsonException => 5,
         _ => 3
     };
+
+    private static InProjectTaskState TryRetention(InProjectLoadedConfiguration config, InProjectTaskState state,
+        (string Current, string Tasks, string Lease) paths)
+    {
+        try { InProjectRetentionService.ApplyLocked(config); }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or
+            ConfigurationException or InvalidDataException or JsonException)
+        {
+            state = state with { Diagnostic = string.Join("; ", new[] { state.Diagnostic,
+                    "Retention unavailable: " + error.Message }.Where(value => !string.IsNullOrWhiteSpace(value))),
+                Revision = state.Revision + 1 };
+            Save(paths, state);
+        }
+        return state;
+    }
 
     private static void SaveFailureReport(string root, string runId, InProjectTaskState state,
         InProjectLoadedConfiguration? config, Exception error)
@@ -212,9 +235,10 @@ public static class InProjectTaskService
         InProjectReportWriter.Save(directory, report, replace: true);
     }
 
-    private static string RequestIdentity(InProjectLoadedConfiguration config, string inputSha) =>
+    private static string RequestIdentity(InProjectLoadedConfiguration config, string inputSha,
+        string evidenceGrade) =>
         ContentHash.Text(config.ProjectSha256 + "\n" + config.RulesSha256 + "\n" +
-            config.ToolSha256 + "\n" + inputSha + "\n" + config.Configuration + "\ndaily");
+            config.ToolSha256 + "\n" + inputSha + "\n" + config.Configuration + "\n" + evidenceGrade);
 
     private static (string Current, string Tasks, string Lease) Paths(string root)
     {

@@ -1,7 +1,8 @@
 param(
   [string]$LabRoot = 'D:\ArchSift-lab',
   [Parameter(Mandatory)][string]$TargetPackageSource,
-  [string]$OfficialSarifSchema
+  [string]$OfficialSarifSchema,
+  [bool]$ExpectFullUnavailable = $false
 )
 $ErrorActionPreference='Stop'
 $sarifSchema = if($OfficialSarifSchema){[IO.Path]::GetFullPath($OfficialSarifSchema)}else{Join-Path $LabRoot 'evidence/sarif-2.1.0/sarif-schema-2.1.0.json'}
@@ -69,7 +70,7 @@ try{
   if($task.runId -ne $violated.runId -or $task.phase -ne 'completed' -or $task.exitCode -ne 2){throw 'Current task does not show the violation.'}
   if([IO.File]::Exists($entryMarker)){throw 'Target module initializer executed by Worker or xUnit.'}
   Write-Output 'target-module-initializer-after-gates=False'
-  RunExpectedFailure 'gate-full-unavailable' @($installed,'gate','--project',$projectConfig,'--evidence','full') 5
+  if($ExpectFullUnavailable){RunExpectedFailure 'gate-full-unavailable' @($installed,'gate','--project',$projectConfig,'--evidence','full') 5}
   $testSource=Join-Path $fixture '.archsift/tests/ArchitectureRules.cs'
   $originalTestSource=[IO.File]::ReadAllBytes($testSource)
   try{

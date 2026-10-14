@@ -11,7 +11,7 @@ namespace ArchSift.InProject.Runtime;
 public static class InProjectRuleService
 {
     public static async Task<InProjectGateResult> RunAsync(string targetRoot, CancellationToken token = default,
-        string? reservedRunId = null, Action<string>? phase = null)
+        string? reservedRunId = null, Action<string>? phase = null, string evidenceGrade = "daily")
     {
         VerifyTestPayload(InProjectConfiguration.Load(targetRoot));
         var built = await InProjectDailyBuild.RunAsync(targetRoot, token, reservedRunId, phase);
@@ -106,12 +106,16 @@ public static class InProjectRuleService
             .Select(item => item.Key).ToHashSet(StringComparer.Ordinal);
         var decision = InProjectGatePolicy.Decide("completed", verdict, gateCoverage, ordered, allowEmpty, fresh);
         var resultReport = new InProjectGateResult(1, "ArchSift.InProject", built.RunId,
-            binding.WorktreeId, "completed", verdict, "daily", gateCoverage, ordered,
+            binding.WorktreeId, "completed", verdict, evidenceGrade, gateCoverage, ordered,
             findings.DistinctBy(item => item.Id).OrderBy(item => item.Id, StringComparer.Ordinal).ToArray(),
             limitations.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray(),
-            decision, new("available", "daily-index.json"), fresh ? "current" : "stale");
+            decision, new("available", evidenceGrade == "full" ?
+                Path.Combine(config.EvidenceRoot, built.RunId, "manifest.json") : "daily-index.json"),
+            fresh ? "current" : "stale");
         phase?.Invoke("persist");
         InProjectReportWriter.Save(report, resultReport);
+        if (evidenceGrade == "full")
+            InProjectFullEvidence.Seal(config, built.RunId, binding.InputSha256);
         return resultReport;
     }
 

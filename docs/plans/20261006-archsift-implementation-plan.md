@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP05：full 门禁现封存本次快照、实际编译闭包、工具与规则版本、测试原始记录，并以逐文件 manifest 和独立验证器复核；默认及外置 owned 根、ZIP 归档／恢复、篡改／越界拒绝均经外置合成验收。合成 full 包 2531 文件／554 条捕获输入映射，约 328.33 MiB，容量预算仍待 IP07；当前／固定 full、两个固定 daily 与未知目录受保护，另 3 个 daily 精简且历史结论保留，超预算明确显示。移除 worktree 前的预览／外置导出／复验通过，16/16 定向测试与宿主哈希相等。详见[IP05 验收](../acceptance/20261014-inproject-ip05.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP05 COMPLETE / IP06 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 修改仍未暂存。
+
 2026-10-14 ArchSift.InProject IP04：已实现同 worktree 持久任务与共享门禁服务、当前／历史及新鲜度查询、重复请求复用、显式取消与失联恢复；JSON 权威报告、中文转义 HTML、官方 schema 有效的 SARIF 及逐文件哈希轻量索引均经外置合成验收。通过／违规／篡改失败／取消／失联分别保留独立运行，16/16 定向集成测试、宿主哈希相等；Windows CI 示例仅显式触发，full 入口仍拒绝。详见[IP04 验收](../acceptance/20261014-inproject-ip04.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP04 COMPLETE / IP05 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 工作区修改仍未暂存。
 
 2026-10-14 ArchSift.InProject IP03：专用 net10.0 xUnit 工程按 JSON 必检集合实际发现并执行 B 类规则，五条 A 类与两条 B 类覆盖六种规则类型；外置合成四项目 net8／net9／net10 在通过／真实 ArchUnitNET 违规下分别取得门禁 0／2，TRX 为 2/2／1/2。逐规则回执、schema、固定测试源篡改拒绝及宿主哈希相等均已核对；IP01／IP02 定向回归 15/15。详见[IP03 验收](../acceptance/20261014-inproject-ip03.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP03 COMPLETE / IP04 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 工作区修改仍保持未暂存。

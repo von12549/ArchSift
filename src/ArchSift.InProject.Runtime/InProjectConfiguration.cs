@@ -44,7 +44,8 @@ public sealed record InProjectLocalSettings
 
 public sealed record InProjectLoadedConfiguration(string Root, string InstallationRoot, string SolutionPath,
     string Configuration, InProjectContextSelection[] Contexts, string LocalFeed,
-    string ProjectSha256, string RulesSha256, string ToolSha256, LoadedRuleset[] Rules);
+    string ProjectSha256, string RulesSha256, string ToolSha256, LoadedRuleset[] Rules,
+    string EvidenceRoot, InProjectRetention Retention);
 
 public static class InProjectConfiguration
 {
@@ -93,6 +94,7 @@ public static class InProjectConfiguration
             throw new ConfigurationException("Duplicate InProject build context.");
         var localSettingsPath = Path.Combine(install, "state", "local-settings.json");
         string? configuredFeed = null;
+        string? configuredEvidence = null;
         if (File.Exists(localSettingsPath))
         {
             PathSafety.EnsureNoLinks(localSettingsPath);
@@ -102,6 +104,7 @@ public static class InProjectConfiguration
             if (settings is null || settings.SchemaVersion != 1)
                 throw new ConfigurationException("Unsupported local settings version.");
             configuredFeed = settings.LocalFeed;
+            configuredEvidence = settings.EvidenceRoot;
         }
         if (configuredFeed is not null && !Path.IsPathFullyQualified(configuredFeed))
             throw new ConfigurationException("Local package feed must be an absolute path.");
@@ -110,12 +113,20 @@ public static class InProjectConfiguration
         if (!Path.IsPathFullyQualified(feed) || PathSafety.IsUnder(feed, root) ||
             !Directory.Exists(feed)) throw new ConfigurationException("Explicit local package feed is missing or overlaps the worktree.");
         PathSafety.EnsureNoLinks(feed);
+        if (configuredEvidence is not null && !Path.IsPathFullyQualified(configuredEvidence))
+            throw new ConfigurationException("External evidence root must be an absolute path.");
+        var evidence = Path.GetFullPath(configuredEvidence ?? Path.Combine(install, "evidence"));
+        if (configuredEvidence is not null &&
+            (PathSafety.IsUnder(evidence, root) || Path.GetPathRoot(evidence) == evidence))
+            throw new ConfigurationException("External evidence root overlaps a checkout or volume root.");
+        PathSafety.EnsureNoLinks(evidence);
         var rulesHash = ContentHash.Text(string.Join("\n", loadedRules.Select(rule =>
             rule.Identity.Path + "\0" + rule.Identity.Sha256).Order(StringComparer.Ordinal)));
         var lockHash = LocalPackage.HashFile(Path.Combine(install, "version.lock.json"));
         var manifestHash = LocalPackage.HashFile(Path.Combine(install, "runtime", "payload-manifest.json"));
         return new(root, install, solution, project.Build.Configuration, contexts, feed,
-            LocalPackage.HashFile(path), rulesHash, ContentHash.Text(lockHash + "\n" + manifestHash), loadedRules);
+            LocalPackage.HashFile(path), rulesHash, ContentHash.Text(lockHash + "\n" + manifestHash),
+            loadedRules, evidence, project.Retention);
     }
 
     private static void VerifyExecutingPayload(string install)
