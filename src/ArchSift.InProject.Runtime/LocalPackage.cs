@@ -100,6 +100,13 @@ public static class LocalPackage
             !listed.ContainsKey("bootstrap/archsift-inproject.ps1") ||
             !listed.Keys.Any(path => path.StartsWith("rules/", StringComparison.Ordinal)))
             throw new ConfigurationException("Required runtime, test, bootstrap or rule payload is absent.");
+        if (version == "0.1.0" &&
+            (!listed.ContainsKey("maintenance/archsift-inproject-maintenance.exe") ||
+             !listed.ContainsKey("maintenance/archsift-inproject-maintenance.ps1") ||
+             !listed.ContainsKey("licenses/third-party-inventory.json") ||
+             !listed.Keys.Any(path => path.StartsWith("offline/", StringComparison.Ordinal) &&
+                 path.EndsWith(".nupkg", StringComparison.Ordinal))))
+            throw new ConfigurationException("Release candidate lacks maintenance, licenses or offline dependencies.");
         return new(path, expectedSha256, HashBytes(manifestBytes), version, commit,
             listed.Values.OrderBy(file => file.Path, StringComparer.Ordinal).ToArray());
     }
@@ -196,6 +203,19 @@ public static class LocalPackage
             .Select(path => Path.GetRelativePath(installation, path).Replace('\\', '/')).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var expected = runtimeFiles.Keys.Append("runtime/payload-manifest.json").ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (!actual.SetEquals(expected)) throw new ConfigurationException("Unlisted file in installed runtime.");
+        foreach (var item in manifestRoot.GetProperty("files").EnumerateArray())
+        {
+            var name = item.GetProperty("path").GetString() ?? "";
+            if (name.StartsWith("rules/", StringComparison.Ordinal) ||
+                name.StartsWith("runtime/", StringComparison.Ordinal)) continue;
+            var path = Path.GetFullPath(name.Replace('/', Path.DirectorySeparatorChar), installation);
+            if (!PathSafety.IsUnder(path, installation))
+                throw new ConfigurationException("Installed payload path escapes ownership.");
+            PathSafety.EnsureNoLinks(path);
+            if (!File.Exists(path) || new FileInfo(path).Length != item.GetProperty("bytes").GetInt64() ||
+                HashFile(path) != item.GetProperty("sha256").GetString())
+                throw new ConfigurationException("Installed payload changed: " + name);
+        }
         var components = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var item in lockRoot.GetProperty("components").EnumerateArray())
         {
@@ -213,7 +233,10 @@ public static class LocalPackage
 
     private static bool AllowedPayload(string name) => name.StartsWith("runtime/", StringComparison.Ordinal) ||
         name.StartsWith("rules/", StringComparison.Ordinal) || name.StartsWith("tests/", StringComparison.Ordinal) ||
-        name.StartsWith("bootstrap/", StringComparison.Ordinal);
+        name.StartsWith("bootstrap/", StringComparison.Ordinal) ||
+        name.StartsWith("offline/", StringComparison.Ordinal) ||
+        name.StartsWith("licenses/", StringComparison.Ordinal) ||
+        name.StartsWith("maintenance/", StringComparison.Ordinal);
 
     private static IEnumerable<string> SafeFiles(string directory)
     {

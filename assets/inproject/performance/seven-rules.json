@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "ip07-performance",
+  "version": "1.0.0",
+  "description": "Four-project mixed-TFM performance fixture with all six rule types.",
+  "rules": [
+    {"id":"project-ref","type":"project-reference","enabled":true,"scope":{"kind":"project","match":"glob","value":"**"},"parameters":{"source":{"kind":"project","match":"exact","value":"B/B.csproj"},"target":{"kind":"project","match":"exact","value":"D/D.csproj"}},"severity":"warning","reason":"Synthetic gate"},
+    {"id":"graph","type":"graph-integrity","enabled":true,"scope":{"kind":"project","match":"glob","value":"**"},"parameters":{"check":"resolved-references"},"severity":"warning","reason":"Synthetic gate"},
+    {"id":"tfm","type":"target-framework","enabled":true,"scope":{"kind":"project","match":"glob","value":"**"},"parameters":{"allowedFrameworks":["net8.0","net9.0","net10.0"]},"severity":"warning","reason":"Synthetic gate"},
+    {"id":"nuget","type":"nuget-denylist","enabled":true,"scope":{"kind":"project","match":"glob","value":"**"},"parameters":{"forbiddenPackageIds":["Forbidden.Package"]},"severity":"warning","reason":"Synthetic gate"},
+    {"id":"naming","type":"naming","enabled":true,"scope":{"kind":"project","match":"glob","value":"**"},"parameters":{"subjectKind":"project","requiredName":{"match":"glob","value":"*"}},"severity":"warning","reason":"Synthetic gate"},
+    {"id":"type-naming","type":"naming","enabled":true,"scope":{"kind":"type","match":"glob","value":"*"},"parameters":{"subjectKind":"type","requiredName":{"match":"glob","value":"*"}},"severity":"warning","reason":"Synthetic gate"},
+    {"id":"type-dep","type":"type-dependency","enabled":true,"scope":{"kind":"namespace","match":"glob","value":"*"},"parameters":{"source":{"kind":"namespace","match":"exact","value":"B"},"forbiddenTarget":{"kind":"namespace","match":"exact","value":"C"}},"severity":"error","reason":"Synthetic gate"}
+  ],
+  "exceptions": []
+}

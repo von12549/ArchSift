@@ -13,7 +13,11 @@ internal static class Program
         {
             if (args.Length == 1 && args[0] == "--version")
             {
-                Console.WriteLine("ArchSift.InProject 0.1.0-dev");
+                var version = typeof(Program).Assembly.GetCustomAttributes(
+                    typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+                    .Cast<System.Reflection.AssemblyInformationalVersionAttribute>()
+                    .Single().InformationalVersion.Split('+')[0];
+                Console.WriteLine("ArchSift.InProject " + version);
                 return 0;
             }
             if (args.Length == 1 && args[0] == "--help")

@@ -108,9 +108,14 @@ public static class InProjectConfiguration
         }
         if (configuredFeed is not null && !Path.IsPathFullyQualified(configuredFeed))
             throw new ConfigurationException("Local package feed must be an absolute path.");
-        var feed = Path.GetFullPath(configuredFeed ?? Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages"));
-        if (!Path.IsPathFullyQualified(feed) || PathSafety.IsUnder(feed, root) ||
+        var bundledFeed = Path.Combine(install, "offline");
+        var useBundledFeed = configuredFeed is null && Directory.Exists(bundledFeed) &&
+            Directory.EnumerateFiles(bundledFeed, "*.nupkg", SearchOption.TopDirectoryOnly).Any();
+        var feed = Path.GetFullPath(configuredFeed ?? (useBundledFeed ? bundledFeed : Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages")));
+        if (!Path.IsPathFullyQualified(feed) ||
+            (PathSafety.IsUnder(feed, root) && !(useBundledFeed &&
+                feed.Equals(bundledFeed, StringComparison.OrdinalIgnoreCase))) ||
             !Directory.Exists(feed)) throw new ConfigurationException("Explicit local package feed is missing or overlaps the worktree.");
         PathSafety.EnsureNoLinks(feed);
         if (configuredEvidence is not null && !Path.IsPathFullyQualified(configuredEvidence))

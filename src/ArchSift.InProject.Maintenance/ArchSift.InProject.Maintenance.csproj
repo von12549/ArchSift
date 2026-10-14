@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>archsift-inproject-maintenance</AssemblyName>
+    <VersionPrefix>0.1.0</VersionPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.InProject.Runtime/ArchSift.InProject.Runtime.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "product": "ArchSift.InProject",
+  "version": "0.1.0",
+  "frozenAt": "2026-10-14",
+  "reference": {
+    "platform": "Windows x64",
+    "sdk": "10.0.303",
+    "configuration": "Debug",
+    "targetFrameworks": ["net8.0", "net9.0", "net10.0"],
+    "input": "Fresh external synthetic checkout: four SDK-style C# projects, 12 source/project/solution/configuration files, six rule types and seven required rules, real xUnit type-dependency check; no target entry point execution.",
+    "measurementScript": "scripts/Measure-InProjectIp07.ps1",
+    "measurementRecord": "D:/ArchSift-lab/runs/inproject-ip07-performance-cba564573dde4109a5de8cc37e2a0672/measurement.json",
+    "developmentPackageSha256": "26bcedf89b8ca6896f0f66f0d0a8c7e4e235901136f7e1f6a968aef3389d7a66",
+    "businessInputSha256": "ce198733b04734142066fdaa22c93411790a737d18430cede42042cb39cebd1e",
+    "diskMethod": "Poll total regular-file bytes below the owned .archsift directory every 500 ms and once after exit. Peaks are sampled lower bounds, not a filesystem block-allocation measurement.",
+    "phaseMethod": "Poll persisted task phases every 500 ms. Restore, build, binding analysis and xUnit timings are differences between first observed phase transitions and have up to 500 ms sampling error per boundary. Whole-run times use Stopwatch.",
+    "cache": "Cold is the first gate in a newly installed worktree with empty owned package cache; warm is a second gate on unchanged business input and rules in the same worktree. Both create a fresh source snapshot and run tests."
+  },
+  "observedMs": {
+    "copyBusinessInput": 19,
+    "cold": {"total": 41755, "preflightAndSnapshot": 1034, "restore": 3116, "buildAndEvaluation": 21081, "bindingAnalysis": 1056, "xunitAndGate": 15468},
+    "warm": {"total": 32572, "preflightAndSnapshot": 1084, "restore": 1610, "buildAndEvaluation": 16523, "bindingAnalysis": 1096, "xunitAndGate": 12259}
+  },
+  "observedPeakOwnedBytes": {"cold": 379619143, "warmCumulative": 438879083},
+  "limitsMs": {
+    "copyBusinessInput": 1000,
+    "preflightAndSnapshot": 5000,
+    "restore": 12000,
+    "buildAndEvaluation": 45000,
+    "bindingAnalysis": 8000,
+    "xunitAndGate": 30000,
+    "coldTotal": 90000,
+    "warmTotal": 75000
+  },
+  "limitsPeakOwnedBytes": {"cold": 600000000, "warmCumulative": 700000000},
+  "qualification": "Apply the same reference input and measurement method to the fixed package after this budget is committed. A limit failure blocks IP07 until optimized or a separately justified revised budget is committed before rebuilding a replacement candidate."
+}

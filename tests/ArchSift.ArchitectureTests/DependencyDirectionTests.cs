@@ -17,7 +17,8 @@ public sealed class DependencyDirectionTests
             ["ArchSift.Setup"] = ["ArchSift.Core"],
             ["ArchSift.InProject.Runtime"] = ["ArchSift.Contracts", "ArchSift.Core", "ArchSift.ArchUnit"],
             ["ArchSift.InProject.TestBridge"] = ["ArchSift.Contracts"],
-            ["ArchSift.InProject"] = ["ArchSift.InProject.Runtime", "ArchSift.Contracts"]
+            ["ArchSift.InProject"] = ["ArchSift.InProject.Runtime", "ArchSift.Contracts"],
+            ["ArchSift.InProject.Maintenance"] = ["ArchSift.InProject.Runtime"]
         };
 
     [Fact]

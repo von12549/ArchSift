@@ -38,7 +38,7 @@ public sealed class InProjectInstallTests
         Assert.Contains("/.archsift/evidence/", ignore, StringComparison.Ordinal);
         Assert.DoesNotContain("/.archsift/\n", ignore, StringComparison.Ordinal);
         Assert.Throws<ConfigurationException>(() => InProjectInstaller.Initialize(checkout, package.Path, package.Sha256));
-        Assert.Equal("0.1.0", LocalPackage.VerifyInstalled(checkout));
+        Assert.Equal("0.1.0-dev", LocalPackage.VerifyInstalled(checkout));
         File.AppendAllText(Path.Combine(checkout, ".archsift", "runtime", "ArchSift.Core.dll"), "tamper");
         Assert.Throws<ConfigurationException>(() => LocalPackage.VerifyInstalled(checkout));
     }
@@ -81,6 +81,20 @@ public sealed class InProjectInstallTests
     }
 
     [Fact]
+    public void Initialize_RejectsIncompleteReleaseCandidate()
+    {
+        var fixture = NewFixture();
+        var checkout = Path.Combine(fixture, "checkout");
+        Directory.CreateDirectory(checkout);
+        Git(checkout, "init", "--initial-branch=main");
+        File.WriteAllText(Path.Combine(checkout, "Product.slnx"), "<Solution />\n");
+        var package = BuildPackage(fixture, version: "0.1.0");
+        Assert.Throws<ConfigurationException>(() => InProjectInstaller.Initialize(
+            checkout, package.Path, package.Sha256));
+        Assert.False(Directory.Exists(Path.Combine(checkout, ".archsift")));
+    }
+
+    [Fact]
     public void Initialize_LinkedWorktreeHasIndependentStateAndGitFile()
     {
         var fixture = NewFixture();
@@ -115,7 +129,8 @@ public sealed class InProjectInstallTests
         return fixture;
     }
 
-    private static (string Path, string Sha256) BuildPackage(string fixture, string? rulesJson = null)
+    private static (string Path, string Sha256) BuildPackage(string fixture, string? rulesJson = null,
+        string version = "0.1.0-dev")
     {
         var files = new SortedDictionary<string, byte[]>(StringComparer.Ordinal);
         foreach (var componentPath in LocalPackage.Components.Values)
@@ -127,7 +142,7 @@ public sealed class InProjectInstallTests
             """);
         var manifest = JsonSerializer.SerializeToUtf8Bytes(new
         {
-            schemaVersion = 1, product = "ArchSift.InProject", version = "0.1.0", rid = "win-x64",
+            schemaVersion = 1, product = "ArchSift.InProject", version, rid = "win-x64",
             sourceCommit = new string('a', 40), contractVersion = 1,
             files = files.Select(pair => new { path = pair.Key, bytes = pair.Value.LongLength,
                 sha256 = Convert.ToHexString(SHA256.HashData(pair.Value)).ToLowerInvariant() }).ToArray()

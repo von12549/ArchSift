@@ -10,7 +10,7 @@ public sealed record InstallResult(string WorktreeRoot, string Solution, string 
 
 public static class InProjectInstaller
 {
-    private static readonly string[] IgnoredDirectories = ["runtime", "state", "reports", "evidence"];
+    private static readonly string[] IgnoredDirectories = ["runtime", "state", "reports", "evidence", "offline", "maintenance", "licenses"];
 
     public static InstallResult Initialize(string targetRoot, string packagePath, string packageSha256,
         string? selectedSolution = null)
@@ -165,7 +165,7 @@ public static class InProjectInstaller
         File.WriteAllText(Path.Combine(stage, "project.json"), JsonSerializer.Serialize(document, JsonContract.Options) + "\n", new UTF8Encoding(false));
     }
 
-    private static void WriteLock(string stage, LocalPackageIdentity package)
+    public static void WriteLock(string stage, LocalPackageIdentity package)
     {
         var files = package.Files.ToDictionary(file => file.Path, StringComparer.Ordinal);
         var components = LocalPackage.Components.Select(pair => new { id = pair.Key, sha256 = files[pair.Value].Sha256 })
