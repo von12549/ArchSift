@@ -9,6 +9,8 @@ public sealed class InProjectBuildCaptureTests
     [Fact]
     public void CompilerCapture_ExpandsResponseFileAndRejectsItsLoss()
     {
+        // The shipped InProject compiler capture parses Windows x64 MSBuild commands.
+        if (!OperatingSystem.IsWindows()) return;
         var lab = Environment.GetEnvironmentVariable("ARCHSIFT_TEST_LAB_ROOT") ??
             Path.Combine(Path.GetTempPath(), "ArchSift-InProject-fixtures");
         var root = Path.Combine(lab, "ip02-response-" + Guid.NewGuid().ToString("N"));
