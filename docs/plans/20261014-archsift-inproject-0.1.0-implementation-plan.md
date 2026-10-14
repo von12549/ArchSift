@@ -1,6 +1,8 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP06 COMPLETE / IP07 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP07 COMPLETE / IP08 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+
+IP07 固定源码 `5f46548`、81 文件 ZIP／19 个离线包、许可清单、显式维护生命周期、预算与固定候选机器门禁通过。外置合成新根的七规则 daily／full、2 条实际 B 类 xUnit、Web／CLI 一致、SDK／运行时缺失负例、升级／回退／移除／中断恢复、旧证据原身份、工具变化过期及 272 项双产品回归均留有材料；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md)。真实目标与用户独立人工仍在 IP08。
 
 产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
@@ -31,7 +33,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | IP04 CLI 与轻量证据闭环 | IP03 关闭 | CLI 任务与日常轻量证据、报告和 CI 示例验收 | A02、A07、A08、A09 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip04.md) |
 | IP05 完整证据与保留生命周期 | IP02、IP04 关闭 | 完整证据校验、轮转保护、归档恢复通过 | A09、A10、A11–A13 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip05.md) |
 | IP06 Web 工作台与双入口一致性 | IP04、IP05 关闭 | Web 与 CLI 共用任务和结果，机器 UI 场景通过 | A01、A03、A07–A10 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip06.md) |
-| IP07 包与候选机器资格 | IP01–IP06 关闭 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | NOT STARTED |
+| IP07 包与候选机器资格 | IP01–IP06 关闭 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | COMPLETE；[固定候选机器验收](../acceptance/20261014-inproject-ip07.md) |
 | IP08 真实 worktree 与独立人工验收 | IP07 关闭、具体真实目标授权；独立人工由用户执行 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | NOT STARTED |
 | IP09 正式发布与回验 | IP08 关闭；发布授权已给出 | 固定提交／标签／资产、公开下载和安装回验完成 | A11、A13–A15 | NOT STARTED |
 
@@ -166,8 +168,11 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | IP04 | COMPLETE：持久任务／当前与历史、规则变化失效、重复触发、显式取消、失联恢复、失败报告、JSON／HTML／SARIF 与逐文件轻量索引通过；16/16 定向集成测试和外置合成矩阵，见 [IP04 验收](../acceptance/20261014-inproject-ip04.md) |
 | IP05 | COMPLETE：两处 full 封存与 2531 文件／554 条编译输入映射独立校验、ZIP 归档恢复及篡改／越界拒绝，当前／固定 full 保护、3 个 daily 精简、超预算提示及未知目录保护、worktree 移除前外置导出均通过；见 [IP05 验收](../acceptance/20261014-inproject-ip05.md) |
 | IP06 | COMPLETE：loopback Web 工作台、规则编辑、daily／full 与 CLI 同服务一致、证据／清理预览；HTTP 安全、页面关闭任务继续、显式取消、双 worktree 并发和浏览器机器检查通过；见 [IP06 验收](../acceptance/20261014-inproject-ip06.md) |
-| IP07–IP09 | NOT STARTED |
-| 构建、机器验收、真实目标、独立人工 | NOT RUN FOR INPROJECT |
+| IP07 | COMPLETE：固定 0.1.0 ZIP／许可与离线包、维护及数据保留、冷／热预算、daily／full／Web／真实 xUnit、负例和双产品回归通过；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md) |
+| IP08–IP09 | NOT STARTED；等待具体真实目标授权及用户独立人工门槛 |
+| 构建与机器验收／真实目标与独立人工 | 合成构建及固定候选机器验收 COMPLETE；真实业务目标和用户独立人工 NOT RUN |
 | 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
 
 2026-10-14 IP02 的实际合成构建与关联检查见[日常构建验收](../acceptance/20261014-inproject-ip02.md)。IP01 的[安装与 worktree 宿主验收](../acceptance/20261014-inproject-ip01.md)保持原有时点；IP02 仍是开发包和合成目标，不构成真实业务或规则门禁验收。下一入口 IP03：专用 xUnit 真实六规则检查、逐规则覆盖和严格门禁。正式候选与真实目标分别受 IP07／IP08 门槛约束；真实目标须具体授权。IP00-A–E 的设计检查见各自契约。
+
+上段保留 IP02 当时的阶段记录。当前下一入口为 IP08；固定候选机器资格已按 [IP07 验收](../acceptance/20261014-inproject-ip07.md) 关闭，仍须具体真实目标授权和用户独立人工验收。

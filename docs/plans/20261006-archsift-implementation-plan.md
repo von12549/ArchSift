@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP07：已从固定源码 `5f46548` 构建独立 0.1.0 Windows x64 包，冻结并通过冷／热与 owned 磁盘预算，核对 19 个离线包和许可、显式升级／回退／移除及中断恢复。外置合成新根的七规则 daily／full、真实 xUnit、CLI／Web 一致、缺失 SDK／运行时负例及旧证据／宿主保护通过；既有 ArchSift 272 项适用双产品回归通过。详见 [IP07 固定候选机器验收](../acceptance/20261014-inproject-ip07.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP07 COMPLETE / IP08 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；真实目标须另有具体授权，用户独立人工仍未执行，既有 IFX 未提交修改继续保留。
+
 2026-10-14 ArchSift.InProject IP06：已实现仅绑定 loopback 的单 solution Web 工作台，CLI／Web 共用任务、门禁与材料契约；目标／worktree 身份、规则编辑、daily／full、当前与历史新鲜度、JSON 报告、full manifest 和清理预览可在浏览器查看。外置合成验收中同配置七条规则与门禁双入口一致；无凭据／跨源／错误会话头／未登记路径拒绝、页面关闭后任务继续、显式取消、双 worktree 并发隔离及浏览器桌面／窄屏检查通过，宿主哈希相等。详见[IP06 验收](../acceptance/20261014-inproject-ip06.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP06 COMPLETE / IP07 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 修改仍未暂存。
 
 2026-10-14 ArchSift.InProject IP05：full 门禁现封存本次快照、实际编译闭包、工具与规则版本、测试原始记录，并以逐文件 manifest 和独立验证器复核；默认及外置 owned 根、ZIP 归档／恢复、篡改／越界拒绝均经外置合成验收。合成 full 包 2531 文件／554 条捕获输入映射，约 328.33 MiB，容量预算仍待 IP07；当前／固定 full、两个固定 daily 与未知目录受保护，另 3 个 daily 精简且历史结论保留，超预算明确显示。移除 worktree 前的预览／外置导出／复验通过，16/16 定向测试与宿主哈希相等。详见[IP05 验收](../acceptance/20261014-inproject-ip05.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP05 COMPLETE / IP06 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 修改仍未暂存。
