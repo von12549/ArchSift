@@ -1,6 +1,6 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E COMPLETE / IP01 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01 COMPLETE / IP02 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
 
 产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
@@ -25,7 +25,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | IP00-C 构建与关联 | IP00-B | 冻结支持矩阵、实际编译取证与日常关联验证协议 | A05、A06、A09、A12 | COMPLETE；[矩阵与绑定契约](../decisions/20261014-inproject-ip00c-build-binding.md) |
 | IP00-D 门禁与任务 | IP00-C | 冻结逐规则覆盖、判定表、CLI 退出码和共享任务状态 | A03、A04、A07、A08 | COMPLETE；[门禁与任务契约](../decisions/20261014-inproject-ip00d-gate-jobs.md) |
 | IP00-E 证据与契约验收 | IP00-D | 冻结保留／清理模型并完成五阶段契约验收矩阵 | A09–A13 | COMPLETE；[证据与矩阵](../decisions/20261014-inproject-ip00e-evidence-acceptance.md) |
-| IP01 安装与 worktree 宿主 | IP00-A–E 关闭；写入真实目标另需具体授权 | 固定本地包初始化与 worktree 隔离通过合成检查 | A01、A02、A11、A12 | NOT STARTED |
+| IP01 安装与 worktree 宿主 | IP00-A–E 关闭；写入真实目标另需具体授权 | 固定本地包初始化与 worktree 隔离通过合成检查 | A01、A02、A11、A12 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip01.md) |
 | IP02 日常构建与输入关联 | IP01 关闭 | 每次新快照构建与实际输入关联正反证据成立 | A05、A06、A09、A12、A13 | NOT STARTED |
 | IP03 xUnit 架构测试与严格门禁 | IP02 关闭 | 专用真实测试与全部必检覆盖、判定正反例成立 | A03、A04、A07、A12、A13 | NOT STARTED |
 | IP04 CLI 与轻量证据闭环 | IP03 关闭 | CLI 任务与日常轻量证据、报告和 CI 示例验收 | A02、A07、A08、A09 | NOT STARTED |
@@ -160,8 +160,9 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | IP00-C | COMPLETE：逐项目上下文、混合 TFM 与同名不同版本引用、生成输入及阻断矩阵已冻结；结构样例通过，实际绑定由 IP02 验证 |
 | IP00-D | COMPLETE：逐规则覆盖、严格判定、CLI 退出码和持久任务状态机已冻结；服务行为由 IP03／IP04 验收 |
 | IP00-E / IP00 | COMPLETE：两级材料、轮转／保护／清理／归档语义及 A01–A13 契约映射已冻结；运行行为待对应实施包验证 |
-| IP01–IP09 | NOT STARTED |
+| IP01 | COMPLETE：本地开发包初始化、普通／linked worktree、摘要与 owned 写入正反例通过；4/4 合成测试与 2/2 架构测试，实际开发包合成安装及核验通过 |
+| IP02–IP09 | NOT STARTED |
 | 构建、机器验收、真实目标、独立人工 | NOT RUN FOR INPROJECT |
 | 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
 
-2026-10-14 IP00-E 交付见[证据与契约验收](../decisions/20261014-inproject-ip00e-evidence-acceptance.md)。IP00-D 已提交／推送；五阶段 IP00 设计契约已交叉核对并关闭，均未代替产品行为验收。下一入口 IP01：本地包初始化与 worktree 宿主；真实目标须另有具体授权。IP00-A–D 的检查见各自契约。
+2026-10-14 IP01 交付和真实检查见[安装与 worktree 宿主验收](../acceptance/20261014-inproject-ip01.md)。IP00-E 已提交／推送；本阶段仅对外置合成 checkout 安装开发包，实际业务编译关联、真实 xUnit 门禁和正式候选仍待 IP02／IP03／IP07，真实目标须具体授权。下一入口 IP02。IP00-A–E 的设计检查见各自契约。

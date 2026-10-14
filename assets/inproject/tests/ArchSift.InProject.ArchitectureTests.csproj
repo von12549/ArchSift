@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><AssemblyName>ArchSift.InProject.ArchitectureTests</AssemblyName></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <Reference Include="ArchSift.InProject.TestBridge">
+      <HintPath>../runtime/ArchSift.InProject.TestBridge.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="ArchSift.Contracts">
+      <HintPath>../runtime/ArchSift.Contracts.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP01：已实现本地开发包初始化、普通／linked worktree 定位、版本锁与运行时摘要核验、精确 `.gitignore` 项、项目内配置／规则／bootstrap／薄测试工程和隔离状态目录。外置合成目标上 4/4 安装正反测试、2/2 既有架构依赖测试、实际 30 文件开发包 `init`／`verify`、三份 schema 与业务原件／宿主哈希核对通过；详见[IP01 验收](../acceptance/20261014-inproject-ip01.md)。开发包不是固定发布候选，真实 xUnit／编译关联和真实目标仍待后续包。状态 `IMPLEMENTATION AUTHORIZED / IP00 AND IP01 COMPLETE / IP02 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；旧 IFX 修改继续保持未提交。
+
 2026-10-14 ArchSift.InProject IP00-E／IP00：已冻结[两级证据、轮转保护、归档恢复及契约验收矩阵](../decisions/20261014-inproject-ip00e-evidence-acceptance.md)。IP00-A–E 的身份、构建关联、逐规则门禁与材料保留字段已交叉核对，A01–A13 的实际关闭包均有归属；结构样例和静态检查不代表产品运行或接受。状态 `IMPLEMENTATION AUTHORIZED / IP00 COMPLETE / IP01 NOT STARTED / NOT ACCEPTED / NOT RELEASED`。真实目标仍需具体授权，旧 IFX 工作区修改保持未暂存。
 
 2026-10-14 ArchSift.InProject IP00-D：已冻结[逐规则覆盖、严格门禁与任务契约](../decisions/20261014-inproject-ip00d-gate-jobs.md)。必检集合、A/B 类执行清单、五种规则状态、关联与证据等级、CLI 退出码、同 worktree 持久任务及取消／重启语义分离记录；结构样例仅说明字段，真实服务正反验证由 IP03／IP04 完成。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B/C/D COMPLETE / IP00-E NOT STARTED / NOT ACCEPTED / NOT RELEASED`；IFX 旧修改保持未暂存。

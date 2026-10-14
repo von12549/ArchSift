@@ -116,7 +116,7 @@
       "archsift.archunit": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Core": "[0.6.0, )",
+          "ArchSift.Core": "[0.8.0-dev, )",
           "TngTech.ArchUnitNET": "[0.13.4, 0.13.4]"
         }
       },
@@ -126,21 +126,29 @@
       "archsift.core": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Contracts": "[0.6.0, )"
+          "ArchSift.Contracts": "[0.8.0-dev, )"
+        }
+      },
+      "archsift.inproject.runtime": {
+        "type": "Project",
+        "dependencies": {
+          "ArchSift.ArchUnit": "[0.8.0-dev, )",
+          "ArchSift.Contracts": "[0.8.0-dev, )",
+          "ArchSift.Core": "[0.8.0-dev, )"
         }
       },
       "archsift.setup": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Core": "[0.6.0, )"
+          "ArchSift.Core": "[0.8.0-dev, )"
         }
       },
       "archsift.web": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.ArchUnit": "[0.6.0, )",
-          "ArchSift.Core": "[0.6.0, )",
-          "ArchSift.Setup": "[0.6.0, )"
+          "ArchSift.ArchUnit": "[0.8.0-dev, )",
+          "ArchSift.Core": "[0.8.0-dev, )",
+          "ArchSift.Setup": "[0.8.0-dev, )"
         }
       },
       "TngTech.ArchUnitNET": {

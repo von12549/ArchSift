@@ -14,7 +14,10 @@ public sealed class DependencyDirectionTests
             ["ArchSift.ArchUnit"] = ["ArchSift.Contracts", "ArchSift.Core"],
             ["ArchSift.Cli"] = ["ArchSift.Core", "ArchSift.ArchUnit"],
             ["ArchSift.Web"] = ["ArchSift.Core", "ArchSift.ArchUnit", "ArchSift.Setup"],
-            ["ArchSift.Setup"] = ["ArchSift.Core"]
+            ["ArchSift.Setup"] = ["ArchSift.Core"],
+            ["ArchSift.InProject.Runtime"] = ["ArchSift.Contracts", "ArchSift.Core", "ArchSift.ArchUnit"],
+            ["ArchSift.InProject.TestBridge"] = ["ArchSift.Contracts"],
+            ["ArchSift.InProject"] = ["ArchSift.InProject.Runtime", "ArchSift.Contracts"]
         };
 
     [Fact]
@@ -22,7 +25,7 @@ public sealed class DependencyDirectionTests
     {
         var root = FindRoot();
         var projects = Directory.GetFiles(Path.Combine(root, "src"), "*.csproj", SearchOption.AllDirectories);
-        Assert.Equal(6, projects.Length);
+        Assert.Equal(AllowedReferences.Count, projects.Length);
         foreach (var project in projects)
         {
             var name = Path.GetFileNameWithoutExtension(project);
@@ -48,6 +51,7 @@ public sealed class DependencyDirectionTests
             var references = assembly.GetReferencedAssemblies().Select(reference => reference.Name!).ToArray();
             Assert.DoesNotContain(references, name =>
                 name.Contains("Guard", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("ArchSift.InProject", StringComparison.Ordinal) ||
                 name is "archsift" or "ArchSift.Web" or "ArchSift.ArchUnit" or "ArchUnitNET");
         }
     }
