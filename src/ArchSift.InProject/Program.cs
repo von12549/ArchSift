@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ArchSift.Contracts;
 using ArchSift.Core;
 using ArchSift.InProject.Runtime;
 
@@ -19,6 +20,7 @@ internal static class Program
             {
                 Console.WriteLine("archsift-inproject init --target <worktree-root> --package <local-zip> --sha256 <lowercase-sha256> [--solution <root-relative.sln|.slnx>]");
                 Console.WriteLine("archsift-inproject verify --target <worktree-root>");
+                Console.WriteLine("archsift-inproject build --target <worktree-root>");
                 return 0;
             }
             if (args.Length > 0 && args[0] == "verify")
@@ -30,8 +32,29 @@ internal static class Program
                     version = LocalPackage.VerifyInstalled(Required(verifyOptions, "--target")), verified = true }));
                 return 0;
             }
+            if (args.Length > 0 && args[0] == "build")
+            {
+                var buildOptions = Parse(args[1..]);
+                if (buildOptions.Count != 1 || !buildOptions.ContainsKey("--target"))
+                    throw new ConfigurationException("build requires only --target.");
+                using var cancellation = new CancellationTokenSource();
+                ConsoleCancelEventHandler onCancel = (_, eventArgs) =>
+                {
+                    eventArgs.Cancel = true;
+                    cancellation.Cancel();
+                };
+                Console.CancelKeyPress += onCancel;
+                try
+                {
+                    var buildResult = InProjectDailyBuild.RunAsync(Required(buildOptions, "--target"),
+                        cancellation.Token).GetAwaiter().GetResult();
+                    Console.WriteLine(JsonSerializer.Serialize(buildResult, JsonContract.Options));
+                    return buildResult.SourceBound ? 0 : 4;
+                }
+                finally { Console.CancelKeyPress -= onCancel; }
+            }
             if (args.Length == 0 || args[0] != "init")
-                throw new ConfigurationException("Only init and verify are available in the IP01 development host.");
+                throw new ConfigurationException("Expected init, verify or build.");
             var options = Parse(args[1..]);
             var result = InProjectInstaller.Initialize(Required(options, "--target"), Required(options, "--package"),
                 Required(options, "--sha256"), options.GetValueOrDefault("--solution"));
@@ -42,6 +65,16 @@ internal static class Program
         {
             Console.Error.WriteLine(error.Message);
             return 5;
+        }
+        catch (OperationCanceledException)
+        {
+            Console.Error.WriteLine("InProject build cancelled; inspect current run state.");
+            return 130;
+        }
+        catch (SourceChangedException)
+        {
+            Console.Error.WriteLine("InProject source changed during this build; current binding is unavailable.");
+            return 4;
         }
         catch (IOException error)
         {
