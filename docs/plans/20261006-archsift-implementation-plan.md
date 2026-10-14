@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP06：已实现仅绑定 loopback 的单 solution Web 工作台，CLI／Web 共用任务、门禁与材料契约；目标／worktree 身份、规则编辑、daily／full、当前与历史新鲜度、JSON 报告、full manifest 和清理预览可在浏览器查看。外置合成验收中同配置七条规则与门禁双入口一致；无凭据／跨源／错误会话头／未登记路径拒绝、页面关闭后任务继续、显式取消、双 worktree 并发隔离及浏览器桌面／窄屏检查通过，宿主哈希相等。详见[IP06 验收](../acceptance/20261014-inproject-ip06.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP06 COMPLETE / IP07 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 修改仍未暂存。
+
 2026-10-14 ArchSift.InProject IP05：full 门禁现封存本次快照、实际编译闭包、工具与规则版本、测试原始记录，并以逐文件 manifest 和独立验证器复核；默认及外置 owned 根、ZIP 归档／恢复、篡改／越界拒绝均经外置合成验收。合成 full 包 2531 文件／554 条捕获输入映射，约 328.33 MiB，容量预算仍待 IP07；当前／固定 full、两个固定 daily 与未知目录受保护，另 3 个 daily 精简且历史结论保留，超预算明确显示。移除 worktree 前的预览／外置导出／复验通过，16/16 定向测试与宿主哈希相等。详见[IP05 验收](../acceptance/20261014-inproject-ip05.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP05 COMPLETE / IP06 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 修改仍未暂存。
 
 2026-10-14 ArchSift.InProject IP04：已实现同 worktree 持久任务与共享门禁服务、当前／历史及新鲜度查询、重复请求复用、显式取消与失联恢复；JSON 权威报告、中文转义 HTML、官方 schema 有效的 SARIF 及逐文件哈希轻量索引均经外置合成验收。通过／违规／篡改失败／取消／失联分别保留独立运行，16/16 定向集成测试、宿主哈希相等；Windows CI 示例仅显式触发，full 入口仍拒绝。详见[IP04 验收](../acceptance/20261014-inproject-ip04.md)。状态 `IMPLEMENTATION AUTHORIZED / IP00–IP04 COMPLETE / IP05 NOT STARTED / NOT ACCEPTED / NOT RELEASED`；既有 IFX 工作区修改仍未暂存。

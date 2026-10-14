@@ -22,6 +22,7 @@ internal static class Program
                 Console.WriteLine("archsift-inproject verify --target <worktree-root>");
                 Console.WriteLine("archsift-inproject build --target <worktree-root>");
                 Console.WriteLine("archsift-inproject gate --project <worktree-root>/.archsift/project.json [--evidence daily|full]");
+                Console.WriteLine("archsift-inproject ui --project <worktree-root>/.archsift/project.json [--port <0-65535>]");
                 Console.WriteLine("archsift-inproject status --project <worktree-root>/.archsift/project.json [--run <run-id>]");
                 Console.WriteLine("archsift-inproject cancel --project <worktree-root>/.archsift/project.json --run <run-id>");
                 Console.WriteLine("archsift-inproject evidence-verify --bundle <full-evidence-directory>");
@@ -94,6 +95,19 @@ internal static class Program
                     return outcome.Conflict ? 4 : outcome.Task.ExitCode ?? 4;
                 }
                 finally { Console.CancelKeyPress -= onCancel; }
+            }
+            if (args.Length > 0 && args[0] == "ui")
+            {
+                var uiOptions = Parse(args[1..]);
+                if (!uiOptions.ContainsKey("--project") || uiOptions.Count > 2 ||
+                    uiOptions.Keys.Any(key => key is not ("--project" or "--port")))
+                    throw new ConfigurationException("ui requires --project and optional --port.");
+                if (!int.TryParse(uiOptions.GetValueOrDefault("--port", "0"), out var port) ||
+                    port < 0 || port > 65535)
+                    throw new ConfigurationException("ui --port must be 0-65535.");
+                WorkbenchHost.RunAsync(RootFromProject(uiOptions["--project"]), port)
+                    .GetAwaiter().GetResult();
+                return 0;
             }
             if (args.Length > 0 && args[0] == "status")
             {
@@ -313,7 +327,7 @@ internal static class Program
         {
             if (args[i] is not ("--target" or "--package" or "--sha256" or "--solution" or
                 "--project" or "--evidence" or "--run" or "--bundle" or "--archive" or
-                "--destination" or "--directory" or "--apply" or "--value") ||
+                "--destination" or "--directory" or "--apply" or "--value" or "--port") ||
                 string.IsNullOrWhiteSpace(args[i + 1]) || !values.TryAdd(args[i], args[i + 1]))
                 throw new ConfigurationException("Invalid or repeated init option: " + args[i]);
         }

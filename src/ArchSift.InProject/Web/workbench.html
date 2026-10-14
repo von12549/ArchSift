@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArchSift · 项目工作台</title>
+  <link rel="stylesheet" href="/workbench.css">
+  <script src="/workbench.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><span class="mark" aria-hidden="true">A<span>/</span>S</span><span>ArchSift <small>InProject</small></span></div>
+    <span id="connection" role="status">正在连接工作台…</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div>
+        <p class="section-name">项目架构检查</p>
+        <h1 id="title">看清这次检查<br>依据的源码与规则。</h1>
+      </div>
+      <div class="identity">
+        <div><span>目标 solution</span><strong id="target">—</strong></div>
+        <div><span>Worktree</span><strong id="worktree">—</strong></div>
+        <div><span>工具版本 / 配置</span><strong id="version">—</strong></div>
+        <div><span>规则摘要</span><code id="rules-hash">—</code></div>
+      </div>
+    </section>
+    <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+    <div class="workspace">
+      <section class="primary" aria-labelledby="gate-title">
+        <div class="section-head">
+          <div><p class="section-name">当前门禁</p><h2 id="gate-title">尚未运行</h2></div>
+          <span id="freshness" class="freshness">—</span>
+        </div>
+        <p id="gate-description" class="explanation">运行日常检查，生成与当前源码绑定的门禁结论。</p>
+        <dl class="gate-facts">
+          <div><dt>运行编号</dt><dd id="run-id">—</dd></div>
+          <div><dt>阶段 / 证据</dt><dd id="phase">—</dd></div>
+          <div><dt>规则覆盖</dt><dd id="coverage">—</dd></div>
+          <div><dt>判定</dt><dd id="decision">—</dd></div>
+        </dl>
+        <div class="actions">
+          <button id="run-daily" class="button-primary">运行日常门禁</button>
+          <button id="run-full" class="button-secondary">运行完整取证</button>
+          <button id="cancel" class="button-danger" disabled>取消当前运行</button>
+        </div>
+        <div id="findings" class="findings" aria-live="polite"></div>
+        <a id="report-link" class="report-link" hidden target="_blank" rel="noopener">查看 JSON 报告</a>
+      </section>
+      <aside class="sidebar">
+        <section aria-labelledby="materials-title">
+          <p class="section-name">材料</p>
+          <h2 id="materials-title">证据与清理</h2>
+          <p id="evidence">选择一次运行查看证据状态。</p>
+          <a id="manifest-link" class="report-link" hidden target="_blank" rel="noopener">查看完整证据 manifest</a>
+          <p id="retention">正在读取清理预览…</p>
+          <button id="refresh-retention" class="text-button">刷新清理预览</button>
+        </section>
+        <section aria-labelledby="history-title">
+          <p class="section-name">记录</p>
+          <h2 id="history-title">最近运行</h2>
+          <div id="history" class="history">尚无记录。</div>
+        </section>
+      </aside>
+    </div>
+    <section class="rules-panel" aria-labelledby="rules-title">
+      <div class="section-head">
+        <div><p class="section-name">配置</p><h2 id="rules-title">规则文件</h2></div>
+        <span id="rules-state">—</span>
+      </div>
+      <p>只编辑此项目登记的规则文件。保存时会验证 JSON、规则语义和规则之间的冲突；修改后，旧门禁会显示为过期。</p>
+      <label for="rules-select">选择规则文件</label>
+      <select id="rules-select"></select>
+      <label for="rules-editor">规则 JSON</label>
+      <textarea id="rules-editor" spellcheck="false" rows="18"></textarea>
+      <div class="actions"><button id="save-rules" class="button-primary">保存规则</button><button id="reload-rules" class="button-secondary">重新载入</button></div>
+    </section>
+  </main>
+  <footer>ArchSift.InProject · 本机工作台 · 结果以当前源码、规则和工具身份为准</footer>
+</body>
+</html>
