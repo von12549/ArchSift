@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-14 ArchSift.InProject IP00-D：已冻结[逐规则覆盖、严格门禁与任务契约](../decisions/20261014-inproject-ip00d-gate-jobs.md)。必检集合、A/B 类执行清单、五种规则状态、关联与证据等级、CLI 退出码、同 worktree 持久任务及取消／重启语义分离记录；结构样例仅说明字段，真实服务正反验证由 IP03／IP04 完成。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B/C/D COMPLETE / IP00-E NOT STARTED / NOT ACCEPTED / NOT RELEASED`；IFX 旧修改保持未暂存。
+
 2026-10-14 ArchSift.InProject IP00-C：已冻结[构建支持矩阵与日常关联契约](../decisions/20261014-inproject-ip00c-build-binding.md)，逐项目 TFM／Configuration、实际编译输入、imports／SDK／任务／生成器、响应文件、实际引用选择、输出字节与运行前后一致性均需独立验证器核实。新增 draft-07 日常绑定 schema 与结构样例；结构检查不代表真实 `SourceBound=true`。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B/C COMPLETE / IP00-D NOT STARTED / NOT ACCEPTED / NOT RELEASED`。旧 IFX 升级记录与测试修改仍留在工作区。
 
 2026-10-14 ArchSift.InProject IP00-B：已冻结[配置、输入身份与 owned 路径契约](../decisions/20261014-inproject-ip00b-config-paths.md)，包括 project／version-lock／本机设置／payload manifest 四份 draft-07 schema、配置文件相对路径、七组件身份、业务与工具输入分离、项目内精确写入及既有 ArchSift `EnsureDisjoint` 原模式保持。四份结构样例通过，五种无效结构被拒；实际路径归属、跨字段语义与运行行为由 IP01／IP02 合成 fixture 关闭。状态 `IMPLEMENTATION AUTHORIZED / IP00-A/B COMPLETE / IP00-C NOT STARTED / NOT ACCEPTED / NOT RELEASED`；本阶段没有目标安装、构建或清理，旧 IFX 升级记录和测试修改继续留在工作区。

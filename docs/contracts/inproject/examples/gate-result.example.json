@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "product": "ArchSift.InProject",
+  "runId": "example-run-001",
+  "worktreeId": "example-worktree",
+  "execution": "completed",
+  "binding": {
+    "sourceBound": true,
+    "captureSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "verifierVersion": "example-only"
+  },
+  "evidenceGrade": "daily",
+  "coverage": {
+    "complete": true,
+    "requiredRules": ["example@1/type-dependency-01"],
+    "executedRules": ["example@1/type-dependency-01"]
+  },
+  "rules": [
+    {
+      "ruleKey": "example@1/type-dependency-01",
+      "classification": "B",
+      "testIds": ["ArchSift.InProject.Tests.ArchitectureRules.TypeDependency01"],
+      "discovered": 1,
+      "started": 1,
+      "finished": 1,
+      "status": "pass",
+      "findingIds": [],
+      "limitations": []
+    }
+  ],
+  "limitations": [],
+  "gate": {
+    "decision": "allow",
+    "reason": "passed",
+    "exitCode": 0
+  },
+  "materials": {
+    "state": "available",
+    "indexPath": ".archsift/reports/example-run-001/index.json"
+  },
+  "freshness": "current"
+}

@@ -1,6 +1,6 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A/B/C COMPLETE / IP00-D NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A/B/C/D COMPLETE / IP00-E NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
 
 产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
@@ -23,7 +23,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | IP00-A 组件与兼容 | IP00 实施授权 | 冻结产品身份、依赖方向、xUnit／Worker 兼容和分发前提 | A03、A04、A13 | COMPLETE；[契约与检查](../decisions/20261014-inproject-ip00a-components.md) |
 | IP00-B 配置与路径 | IP00-A | 冻结配置／锁 schema、输入身份、owned 根和路径安全契约 | A01、A09、A11–A13 | COMPLETE；[契约与 schema](../decisions/20261014-inproject-ip00b-config-paths.md) |
 | IP00-C 构建与关联 | IP00-B | 冻结支持矩阵、实际编译取证与日常关联验证协议 | A05、A06、A09、A12 | COMPLETE；[矩阵与绑定契约](../decisions/20261014-inproject-ip00c-build-binding.md) |
-| IP00-D 门禁与任务 | IP00-C | 冻结逐规则覆盖、判定表、CLI 退出码和共享任务状态 | A03、A04、A07、A08 | NOT STARTED |
+| IP00-D 门禁与任务 | IP00-C | 冻结逐规则覆盖、判定表、CLI 退出码和共享任务状态 | A03、A04、A07、A08 | COMPLETE；[门禁与任务契约](../decisions/20261014-inproject-ip00d-gate-jobs.md) |
 | IP00-E 证据与契约验收 | IP00-D | 冻结保留／清理模型并完成五阶段契约验收矩阵 | A09–A13 | NOT STARTED |
 | IP01 安装与 worktree 宿主 | IP00-A–E 关闭；写入真实目标另需具体授权 | 固定本地包初始化与 worktree 隔离通过合成检查 | A01、A02、A11、A12 | NOT STARTED |
 | IP02 日常构建与输入关联 | IP01 关闭 | 每次新快照构建与实际输入关联正反证据成立 | A05、A06、A09、A12、A13 | NOT STARTED |
@@ -158,8 +158,9 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | IP00-A | COMPLETE：组件／测试兼容契约已冻结；现有 architecture test 离线恢复后 2/2 通过，宿主哈希相等；新增桥接与业务 net8／net9／net10 运行验证归 IP02／IP03 |
 | IP00-B | COMPLETE：四份 schema 和结构样例有效 4/4、无效 5/5；路径与输入身份契约已冻结，运行时语义校验归 IP01／IP02 |
 | IP00-C | COMPLETE：逐项目上下文、混合 TFM 与同名不同版本引用、生成输入及阻断矩阵已冻结；结构样例通过，实际绑定由 IP02 验证 |
-| IP00-D–E、IP01–IP09 | NOT STARTED |
+| IP00-D | COMPLETE：逐规则覆盖、严格判定、CLI 退出码和持久任务状态机已冻结；服务行为由 IP03／IP04 验收 |
+| IP00-E、IP01–IP09 | NOT STARTED |
 | 构建、机器验收、真实目标、独立人工 | NOT RUN FOR INPROJECT |
 | 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
 
-2026-10-14 IP00-C 交付见[构建与绑定契约](../decisions/20261014-inproject-ip00c-build-binding.md)，日常绑定 schema 与样例位于 `schemas/inproject/` 和 `docs/contracts/inproject/examples/`。IP00-B 已提交／推送；本阶段冻结实际编译取证、逐上下文引用和独立关联验证器要求，未运行新产品构建。下一入口 IP00-D。IP00-A／B 的历史检查见各自契约。
+2026-10-14 IP00-D 交付见[门禁与任务契约](../decisions/20261014-inproject-ip00d-gate-jobs.md)。IP00-C 已提交／推送；本阶段冻结逐规则测试覆盖、严格判定表、CLI 退出码及 worktree 任务状态，没有运行新产品服务。下一入口 IP00-E。IP00-A–C 的检查见各自契约。
