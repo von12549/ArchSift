@@ -17,6 +17,7 @@ $sources=@(
   'docs/guides/inproject-0.1-maintenance.md',
   'scripts/Build-InProjectDevPackage.ps1',
   'scripts/Build-InProjectCandidate.ps1',
+  'scripts/Build-InProjectCandidateBinary.ps1',
   'scripts/Measure-InProjectIp07.ps1',
   'scripts/Test-InProjectIp07Lifecycle.ps1',
   'scripts/Test-InProjectIp07Candidate.ps1',
