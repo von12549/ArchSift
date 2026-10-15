@@ -45,6 +45,7 @@ public static class InProjectDailyBuild
                 ["restore", solution, "--configfile", nuget, "--source", config.LocalFeed,
                  "--packages", packageCache, "--disable-parallel", "--disable-build-servers",
                  "-p:NuGetAudit=false", "-p:RestoreIgnoreFailedSources=false", "--verbosity", "minimal"]);
+            config.PackageReview?.VerifyCache(packageCache);
             phase?.Invoke("build");
             VerifyPackageBuildAssets(config.PackageReview, plan, snapshot, packageCache);
             var originalHashes = snapshot.InputIdentity.Files.ToDictionary(file => file.Path, file => file.Sha256,
@@ -72,7 +73,7 @@ public static class InProjectDailyBuild
                 var buildLog = await process.DotnetAsync("build-" + key, projectDirectory,
                     ["build", projectPath, "--no-restore", "--disable-build-servers",
                      "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false",
-                     "-f", selected.TargetFramework, "-c", selected.Configuration, "--verbosity", "diagnostic"]);
+                     "-f", selected.TargetFramework, "-c", selected.Configuration, "--verbosity", "normal"]);
                 var compiler = InProjectCompilerCaptures.Parse(buildLog, projectDirectory);
                 if (!PathSafety.IsUnder(compiler.CompilerPath, DotnetRoot()))
                     throw new ConfigurationException("Compiler executable is outside the selected .NET SDK.");
@@ -166,7 +167,8 @@ public static class InProjectDailyBuild
             foreach (var package in assets.RootElement.GetProperty("targets").EnumerateObject()
                          .SelectMany(target => target.Value.EnumerateObject()))
                 foreach (var item in package.Value.EnumerateObject().Where(item =>
-                             item.Name is "build" or "buildTransitive" or "analyzers"))
+                             item.Name.StartsWith("build", StringComparison.OrdinalIgnoreCase) ||
+                             item.Name.Equals("analyzers", StringComparison.OrdinalIgnoreCase)))
                     foreach (var asset in item.Value.EnumerateObject())
                     {
                         if (review is null)

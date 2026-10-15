@@ -60,6 +60,8 @@ public sealed class InProjectPackageReview
             VerifyFile(feed, item.Key, item.Value);
     }
 
+    public void VerifyCache(string packageCache) => VerifyFeed(packageCache);
+
     public void VerifyAsset(string packageCache, string packageName, string asset)
     {
         if (asset.EndsWith("/_._", StringComparison.Ordinal)) return;
