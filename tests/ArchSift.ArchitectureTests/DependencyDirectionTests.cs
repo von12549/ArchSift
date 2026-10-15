@@ -15,7 +15,7 @@ public sealed class DependencyDirectionTests
             ["ArchSift.Testing"] = ["ArchSift.ArchUnit"],
             ["ArchSift.TestGate"] = ["ArchSift.Testing"],
             ["ArchSift.Cli"] = ["ArchSift.Core", "ArchSift.ArchUnit", "ArchSift.TestGate"],
-            ["ArchSift.Web"] = ["ArchSift.Core", "ArchSift.ArchUnit", "ArchSift.Setup"],
+            ["ArchSift.Web"] = ["ArchSift.Core", "ArchSift.ArchUnit", "ArchSift.Setup", "ArchSift.TestGate", "ArchSift.Testing"],
             ["ArchSift.Setup"] = ["ArchSift.Core"]
         };
 

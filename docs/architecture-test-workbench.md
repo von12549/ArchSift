@@ -1,5 +1,9 @@
 # 轻量架构测试工作台：无界面门禁与报告
 
+Web 页面现在提供“架构测试”标签。先用 `archsift-web --config <Web JSON>` 打开指向独立目标副本的既有 Web 会话，再在该标签输入外置的 `test-gate` JSON 配置绝对路径；两者的 `targetRoot` 必须相同。读取配置只核对原案例 ID 基准、已启用 JSON 案例与未纳入清单，不启动构建或测试。原 IFX C# 案例的类／方法和实际结果仅在完成运行的报告中显示；基准 ID 本身不证明已发现或执行。
+
+目标副本中的 IFX 专用 C# 测试只读。页面可将 JSON 规则复制到 Web 会话的外置规则库，随后复用“Rulesets”编辑器校验、保存；同时生成隐藏的外置 `test-gate` 配置副本供 CLI 使用。保存后新运行读取同一规则文件字节；原目标 JSON 不被改写。完整模式保留全部原测试与 JSON 案例，不接受案例过滤；局部模式要求一个发现所得 UID，只作诊断且不能放行。Web 与原工作台共享任务锁，页面可取消受控子进程。测试历史仅列状态标记和已有报告，`unknown` 不触发自动取证。JSON/HTML 下载来自本次权威报告；“完整证据工作台”按钮进入既有独立证据流程。
+
 `archsift test-gate --config <JSON>` 在指定的独立目标副本中，依次执行显式离线 restore、正常增量 build、测试发现与完整测试工程。它运行目标现有的专用 C# 架构测试和经审查启用的 JSON 类型依赖测试；CLI 与后续 UI 使用同一 `ArchSift.TestGate` 服务。完整取证仍走原 ArchSift evidence 工作流，两个结果互不替代。
 
 配置使用 schemaVersion 1，并明确填写目标绝对路径、测试项目相对路径、测试可执行名、`net10.0`、Debug/Release、目标内 `NuGet.config`、本机离线 `localFeed`、源根外 `packageCache`、目标内规则路径、受信的原 IFX 执行案例 ID 文件及其 SHA-256、每次新建的源根外 `runDirectory`。IFX xUnit v3/Microsoft.Testing.Platform 使用 `runnerFormat: "mtp-ctrf"`；合成 xUnit 原生事件工程使用默认 `xunit-json`。IFX 接入源文件和机制验证规则见 [LT02A 样例](../samples/ifx-lt02a/README.md)。样例规则不是正式批准的 B 类政策。

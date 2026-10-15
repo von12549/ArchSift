@@ -15,6 +15,9 @@ public static class TestRunReportWriter
 {
     private static readonly UTF8Encoding Utf8 = new(false);
 
+    public static Dictionary<string, object?>[] PreviewNotIncluded(IEnumerable<string> includedRuleIds) =>
+        LoadNotIncluded(includedRuleIds.ToHashSet(StringComparer.Ordinal));
+
     public static (string Json, string Html) Save(TestGateConfig config, TestGateResult result,
         RuleBundle bundle, string[] originalIds, string runId,
         DateTimeOffset startedUtc, DateTimeOffset finishedUtc)

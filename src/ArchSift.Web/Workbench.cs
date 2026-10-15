@@ -15,11 +15,13 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
     private readonly SemaphoreSlim gate = new(1, 1);
     private volatile bool dirty;
     private HistoryStore? historyStore;
+    private TestWorkbench? testWorkbench;
     private HistoryStore StoredHistory => historyStore ??= new(current);
     public string Token { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
 
     public void Map(WebApplication app)
     {
+        testWorkbench = new TestWorkbench(() => current, rulesDirectory, gate);
         app.Lifetime.ApplicationStopping.Register(() =>
         {
             foreach (var job in jobs.Values.Where(j => j.State == "running"))
@@ -46,6 +48,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
             { context.Response.StatusCode = 500; await context.Response.WriteAsJsonAsync(new { error = error.Message }); }
         });
         app.UseDefaultFiles(); app.UseStaticFiles();
+        testWorkbench.Map(app);
         app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory, toolVersion = ToolIdentity.Version, profile }, JsonContract.Options));
         app.MapGet("/api/session", () => Results.Json(new { processId = Environment.ProcessId, running = jobs.Values.Any(j => j.State == "running"), dirty }));
         app.MapPost("/api/session/dirty", async (HttpContext context) =>
@@ -445,6 +448,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
 
     public async Task DrainShutdownAsync()
     {
+        if (testWorkbench is not null) await testWorkbench.DrainAsync();
         // Job completion releases the gate only after process cleanup and current audit writes.
         // An owning CLI remains alive and can terminate the whole tree if graceful cleanup stalls.
         if (!await gate.WaitAsync(TimeSpan.FromSeconds(8)))

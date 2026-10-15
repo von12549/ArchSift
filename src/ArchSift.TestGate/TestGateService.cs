@@ -63,7 +63,8 @@ public static class TestGateService
         var nugetConfig = Under(root, config.NuGetConfig);
         var baseline = Path.GetFullPath(config.OriginalBaseline);
         var runDirectory = Path.GetFullPath(config.RunDirectory);
-        var rulesetPaths = config.Rulesets.Select(path => Under(root, path)).ToArray();
+        var rulesetPaths = config.Rulesets.Select(path => Path.IsPathFullyQualified(path)
+            ? Path.GetFullPath(path) : Under(root, path)).ToArray();
         foreach (var file in new[] { project, nugetConfig, baseline, Path.GetFullPath(configPath) }.Concat(rulesetPaths))
         {
             PathSafety.EnsureNoLinks(file);

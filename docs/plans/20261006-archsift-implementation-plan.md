@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-15 轻量工作台 LT04 更新：[Web 接入与机器验收](../acceptance/20261015-lightweight-lt04-web-workbench.md)完成规则编辑复用、三来源清单、完整／subset／取消、基本历史／下载和完整证据入口。外置 IFX 副本的 Web 完整运行 80＋1 `allow/0`，JSON 实际违规 `block/2`，subset `block/4`，取消 `block/130`；保存的同输入 CLI 完整运行 `allow/0` 且案例结果一致。状态 **LT04 UI/MACHINE COMPLETE / LT05 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；同条件性能测量与最终独立人工 UI 验收仍待执行。下文先前状态保留形成时点。
+
 2026-10-15 轻量工作台 LT03 更新：[报告与基本历史验收](../acceptance/20261015-lightweight-lt03-reports-history.md)完成独立 `architecture-test-run` JSON/HTML、来源与未纳入清单、实际 JSON finding、原 IFX 断言消息、基本运行状态与只读历史；真实 IFX 正反例及合成报告保存失败／历史负例通过，旧产品 248 项回归通过。状态 **LT03 REPORT/HISTORY COMPLETE / LT04 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；后续 UI、同条件性能与独立人工验收尚待执行。下文先前状态保留形成时点。
 
 2026-10-15 轻量工作台 LT02A 更新：[真实 IFX 门禁验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md)在获授权的独立副本上建立原生 80 项执行 ID 基线，接入后原 80 项及 JSON 1 项完整通过；API 快照和 JSON 依赖真实负例均正确阻断，原测试源码、快照、原 checkout 与宿主状态未减损。状态 **LT02A REAL IFX COMPLETE / LT03 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；正式 B 政策、报告历史、UI 与最终独立人工验收仍待后续阶段。下文先前状态保留形成时点。
