@@ -24,6 +24,7 @@ public sealed record TestGateConfig
     public required string RunDirectory { get; init; }
     public string? DotnetCliHome { get; init; }
     public string? FilterCaseId { get; init; }
+    public string RunnerFormat { get; init; } = "xunit-json";
 }
 
 public sealed record GateStage(string Status, int? ExitCode, string? LogPath);
@@ -119,14 +120,38 @@ public static class TestGateService
                 config.TargetFramework, config.TestExecutableName + (OperatingSystem.IsWindows() ? ".exe" : ""));
             PathSafety.EnsureNoLinks(executable);
             if (!File.Exists(executable)) return Finish(3, "Built MTP test executable is missing.");
-            var arguments = new List<string> { "-reporter", "json", "-noLogo", "-noAutoReporters" };
-            if (config.FilterCaseId is not null) arguments.AddRange(["-id", config.FilterCaseId]);
+            GateStage? discovery = null;
+            var ctrfPath = Path.Combine(runDirectory, "test-results.ctrf.json");
+            List<string> arguments;
+            if (config.RunnerFormat == "mtp-ctrf")
+            {
+                discovery = await Execute("discovery", executable,
+                    ["--list-tests", "json", "--no-ansi", "--progress", "off"],
+                    root, runDirectory, config, configPath, token);
+                changed = sourceObserver.Changed || InputsChanged(watched);
+                if (discovery.ExitCode != 0 || changed) return Finish(discovery.ExitCode != 0 ? 3 : 4,
+                    discovery.ExitCode != 0 ? "MTP discovery failed." : "Relevant input changed during discovery.");
+                arguments = ["--no-ansi", "--progress", "off", "--report-xunit-ctrf",
+                    "--report-xunit-ctrf-filename", Path.GetFileName(ctrfPath),
+                    "--results-directory", runDirectory];
+                if (config.FilterCaseId is not null) arguments.AddRange(["--filter-uid", config.FilterCaseId]);
+            }
+            else
+            {
+                arguments = ["-reporter", "json", "-noLogo", "-noAutoReporters"];
+                if (config.FilterCaseId is not null) arguments.AddRange(["-id", config.FilterCaseId]);
+            }
             test = await Execute("test", executable, arguments, root, runDirectory, config, configPath, token);
             changed = sourceObserver.Changed || InputsChanged(watched);
-            var lines = File.ReadAllLines(test.LogPath!, Encoding.UTF8);
             MtpRun native;
-            try { native = MtpEvents.Parse(lines); }
-            catch (Exception error) when (error is JsonException or InvalidDataException or KeyNotFoundException)
+            try
+            {
+                native = config.RunnerFormat == "mtp-ctrf"
+                    ? MtpCtrf.Parse(File.ReadAllBytes(discovery!.LogPath!), File.ReadAllBytes(ctrfPath))
+                    : MtpEvents.Parse(File.ReadAllLines(test.LogPath!, Encoding.UTF8));
+            }
+            catch (Exception error) when (error is JsonException or InvalidDataException or KeyNotFoundException
+                or InvalidOperationException or FileNotFoundException)
             { return Finish(3, "MTP structured output is invalid: " + error.Message); }
             var coverage = MtpEvents.Assess(native, originalIds, expectedJson, test.ExitCode ?? 3,
                 subset: config.FilterCaseId is not null);
@@ -192,6 +217,7 @@ public static class TestGateService
             config.Rulesets.Any(string.IsNullOrWhiteSpace))
             throw new ConfigurationException("Test gate config has missing values.");
         if (config.SchemaVersion != 1 || config.TargetFramework != "net10.0" ||
+            config.RunnerFormat is not ("xunit-json" or "mtp-ctrf") ||
             config.Configuration is not ("Debug" or "Release") ||
             config.Rulesets is not { Length: > 0 } ||
             Path.GetFileName(config.TestExecutableName) != config.TestExecutableName ||

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "lt02a-mechanism-only",
+  "version": "1.0.0",
+  "description": "Mechanism acceptance only; no IFX B policy is adopted.",
+  "rules": [
+    {
+      "id": "ifx-context-mechanism",
+      "type": "type-dependency",
+      "enabled": true,
+      "scope": { "kind": "namespace", "match": "exact", "value": "IFX.Platform.Context.Contracts" },
+      "parameters": {
+        "source": { "kind": "type", "match": "exact", "value": "IFX.Platform.Context.Contracts.ExecutionScope" },
+        "forbiddenTarget": { "kind": "namespace", "match": "exact", "value": "ArchSift.Nonexistent" }
+      },
+      "severity": "error",
+      "reason": "Positive mechanism probe; the source type must be evaluated."
+    }
+  ],
+  "exceptions": []
+}
