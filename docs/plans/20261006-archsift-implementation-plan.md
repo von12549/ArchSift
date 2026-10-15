@@ -1,5 +1,11 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-15 轻量计划规则归属与 UI 补充（仅文档）：更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)的 A／B／IFX 责任清单与 UI 契约。首版日常范围为 IFX 原专用测试全工程＋经审查启用的 B 类 JSON 类型依赖测试；A 类实际重复项由 IFX 原断言承担，TFM／solution 成员／部分包闭集等未迁入增量继续由原 ArchSift 执行并明示未纳入，不能宣称三者并集合规。UI 统一显示 JSON、IFX 专用测试、原 ArchSift 检查的来源／责任方、测试清单／实际结果、未覆盖原因；发现、查看、编辑、旧工具 pass 均不算本次通过，IFX C# 逻辑不转为 UI 可编辑规则。阶段与 LA01–LA19 验收同步；保持先 LT02A 再报告／UI、轻量历史、无日常取证链。仍仅计划与索引修改，IMPLEMENTATION NOT AUTHORIZED／NOT STARTED，代码、InProject 与真实目标不变，未运行构建／测试，未提交／推送。
+
+2026-10-15 轻量计划审查修订（仅文档）：按五项审查意见更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)：完整门禁固定保留 IFX 原架构测试全工程（含 ArchitectureTests、FixtureTests、ApplicationPortAdapterTests、原 Theory 数据及断言），过滤只作 subset；受控子进程强制 `IFX_UPDATE_SNAPSHOTS=0`，快照更新为独立操作；本次 `runGate` 与 `historyFreshness` 分离，历史 unknown／后续 stale 不改原门禁或引入取证；新增 LT02A 真实 IFX 早期接入门槛，报告历史／UI 阶段必须等待其通过；首版历史仅独立报告目录、基本状态和只读列表，轮转／固定保护／归档恢复延期。阶段依赖与 LA01–LA17 验收同步修订，仍 PLAN DRAFTED／IMPLEMENTATION NOT AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED。只修改计划与本索引，代码、InProject 和真实目标保持原状，未运行构建／测试，未提交或推送。
+
+2026-10-15 新轻量化方向（仅计划）：按用户要求先将旧分支既有修改提交为 `2877974` 并推送至 `codex/archsift-inproject-0.1.0`，再返回与远端一致的 main `acbcff1`，编写独立的[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)。首版保留 IFX 专用 C# 测试、JSON 驱动 ArchUnitNET 参数化测试，UI 负责规则编辑／启动／报告，日常采用正常构建与测试，完整取证沿用既有 ArchSift 独立能力。InProject 分支、规格、实现和 IP08 暂停／未接受／未发布历史保持原状，不合并至 main。状态 PLAN DRAFTED／IMPLEMENTATION NOT AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；本轮只编写计划与索引，不修改产品代码，不运行构建或真实目标测试，新计划尚未提交或推送。
+
 2026-10-13 0.8.0 已由 [PR #6](https://github.com/von12549/ArchSift/pull/6) 合并，并以固定产品提交 `ab3d2ea` 发布 [v0.8.0](https://github.com/von12549/ArchSift/releases/tag/v0.8.0)。最终 PR 与合并后 main 的 Windows/Ubuntu CI 均通过；四项公开资产独立匿名下载的摘要/大小、ZIP 内 manifest、最终只读原件/宿主/进程审计通过。见 [发布回验](../releases/0.8.0-publication.md)；状态 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。下文未发布状态保留形成时点。
 
 2026-10-13 0.8.0 最终验收：修订固定候选 `ab3d2ea` 的 248 项、ZIP17、Setup20、两平台 CI、真实 IFX 只读重验及 Class B406/A182 机器门禁通过。用户独立 UI 反馈符合预期、4/5、L0、无未测；Safe shutdown 确认后页面冻结、CLI 返回命令行。人工后只读终审通过，人工会话退出码/监听未独立取证。详见 [最终验收](../acceptance/20261013-0.8-final-acceptance.md)；0.8-5 COMPLETE／ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED／NOT YET PUBLISHED。下文旧进度保留历史时点。
