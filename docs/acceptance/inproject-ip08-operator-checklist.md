@@ -1,19 +1,19 @@
 # ArchSift.InProject 0.1.0 IP08：真实 worktree 验收清单
 
-状态：**待具体目标授权 / 待机器执行 / 待用户独立人工填写**。本清单只规定采集格式；不预填结果，不把合成 IP07 的结论外推为真实业务通过。
+状态：**IFX 两 worktree 已获具体授权 / 机器验收完成 / 用户独立人工待填**。机器结果另见 [IP08 IFX 实测记录](20261015-inproject-ip08-ifx-machine.md)；不把合成 IP07 的结论外推为真实业务通过。
 
 ## 目标与执行边界
 
 | 字段 | 由目标所有者或机器执行记录 |
 | --- | --- |
-| 同一真实 solution 的相对路径 | 待填 |
-| Worktree A 绝对路径、Git HEAD、工作区输入摘要 | 待填 |
-| Worktree B 绝对路径、Git HEAD、工作区输入摘要 | 待填 |
-| 两 worktree owned `.archsift/`、`.gitignore` 与外置证据写入授权 | 待填 |
-| 固定候选 ZIP SHA-256 与源码提交 | `679cea968136bad996a8e87fe6812df7918ddac94bbc48d0ecdbf6bd9a0e8311` / `5f46548af9f34a7a9d4714905fcff769053e76d5`；执行前重验 |
-| 宿主安全环境／Profile 基线摘要 | 待填；只登记哈希与相等性 |
+| 同一真实 solution 的相对路径 | `IFX.sln`；105 个 net10.0 C# 项目，完整 solution |
+| Worktree A 绝对路径、Git HEAD、工作区输入摘要 | `D:\ArchSift-lab\fixtures\ifx-inproject-ip08-a`；`cc06528ab17052baafa496df2a89f6cde9207384`；当前门禁输入摘要见实测记录 |
+| Worktree B 绝对路径、Git HEAD、工作区输入摘要 | `D:\ArchSift-lab\fixtures\ifx-inproject-ip08-b`；同一 HEAD；仅 B 的 `TenantId.cs` 有获授权的不提交注释；最终输入 SHA-256 `776799b3a468569d489276659e7e958e0bece9c3e8b8c33fac734ef384cf4006`，A 为 `4f0a980837e9180382bf0efd666dde6989ff4bb2d2aff01c3f7f59b9a82eb8d9` |
+| 两 worktree owned `.archsift/`、`.gitignore` 与外置证据写入授权 | 用户已授权创建两 worktree 并用于真实测试；仅 B 的受控源码注释获额外授权，保留供核查 |
+| 固定候选 ZIP SHA-256 与源码提交 | `bed54651872b8fa7763d33957c37c68465bd3266b7d37a765617ae9df49cc6d8` / `846dabc805c1ffb58e0a28e7324212b76072f2eb`；实际机器资格已重验 |
+| 宿主安全环境／Profile 基线摘要 | 预检与最终跨进程同一算法摘要均为 `152936458922c7e5ba28ad86cf5d3ca27ea565806f2ca60ac1d63cb16320d750`；逐门禁相等 |
 
-目标仓库、Guard 和 IFX 源码只读；InProject 仅在经授权的目标 worktree owned 路径以及约定的外置实验目录写入。运行前复核 solution、项目闭包、SDK／参考包、NuGet 离线源、自定义 MSBuild tasks/targets/generators 和准确的命令参数。自定义 target 可执行任意命令，快照不等于完整沙箱；未知输入或不能安全重定位时停止，不回退原地构建。不启动业务应用、模块初始化器或功能测试。
+目标仓库、Guard 和 IFX 源码只读，唯 B 测试 worktree 的单处获授权注释除外；InProject 仅在经授权的目标 worktree owned 路径以及约定的外置实验目录写入。运行前复核 solution、项目闭包、SDK／参考包、NuGet 离线源、自定义 MSBuild tasks/targets/generators 和准确的命令参数。自定义 target 可执行任意命令，快照不等于完整沙箱；未知输入或不能安全重定位时停止，不回退原地构建。不启动业务应用、模块初始化器或功能测试。
 
 ## 逐块机器门禁
 
@@ -21,13 +21,13 @@
 
 | 块 | 机器检查与放行条件 | 结果／材料 |
 | --- | --- | --- |
-| 0 只读预检 | 两路径是同一 Git 仓库的独立 worktree；同一提交且待测未提交输入不同；solution 与项目闭包明确；候选包／SDK／离线源和命令审阅完成；检查已有 `.archsift/` 与残留任务 | 待执行 |
-| 1 Worktree A 安装 | 锁定本地包初始化，版本锁／清单／许可／ignore 精确；除授权 owned 文件外业务原件相等；宿主相等 | 待执行 |
-| 2 A daily／full | 新快照实际编译、真实 xUnit 数量与逐规则覆盖；严格门禁状态真实记录；full 独立复核，失败／违规不改写为 pass | 待执行 |
-| 3 Worktree B 安装与门禁 | 同包但独立 worktree ID、状态／缓存／报告／证据；B 的未提交输入摘要与 A 不同；A 的材料和业务原件不被改写 | 待执行 |
-| 4 并发与取消／恢复 | 两 worktree 同时活动时互不阻塞；只取消 owned 子进程；重启／失主恢复后当前状态不沿用旧成功 | 待执行 |
-| 5 保留与导出 | 清理预览、受保护引用和外置 full 导出／复验；仅精确 owned 材料，未知路径／链接拒绝；目标源码和另一 worktree 不变 | 待执行 |
-| 6 最终机器审计 | 源、solution、构建配置和既有历史原件摘要相等；无遗留候选 UI 进程／监听；宿主哈希相等；所有未通过／未测单列 | 待执行 |
+| 0 只读预检 | 两路径是同一 Git 仓库的独立 worktree；同一提交且待测未提交输入不同；solution 与项目闭包明确；候选包／SDK／离线源和命令审阅完成；检查已有 `.archsift/` 与残留任务 | 通过；完整 IFX.sln 105 项目、280 项第三方构建输入逐项审查，见[机器记录](20261015-inproject-ip08-ifx-machine.md) |
+| 1 Worktree A 安装 | 锁定本地包初始化，版本锁／清单／许可／ignore 精确；除授权 owned 文件外业务原件相等；宿主相等 | 通过；最终候选 `846dabc`，升级、核验与原件审计见机器记录 |
+| 2 A daily／full | 新快照实际编译、真实 xUnit 数量与逐规则覆盖；严格门禁状态真实记录；full 独立复核，失败／违规不改写为 pass | 通过；最终 full `c5f48205052940a99712a9b00a62e703`，105/105 构建、2/2 必检、xUnit 1/1/1、22,325 文件独立复验 |
+| 3 Worktree B 安装与门禁 | 同包但独立 worktree ID、状态／缓存／报告／证据；B 的未提交输入摘要与 A 不同；A 的材料和业务原件不被改写 | 通过；最终 daily `8cecb2fb4be846ba818c9332156c5c10`，105/105 构建、2/2 必检、xUnit 1/1/1、输入与 worktree 身份均不同 |
+| 4 并发与取消／恢复 | 两 worktree 同时活动时互不阻塞；只取消 owned 子进程；重启／失主恢复后当前状态不沿用旧成功 | 通过；A 取消为 130／stale，B 独立完成；失主 A 为 failed／3／stale，旧成功报告未改写 |
+| 5 保留与导出 | 清理预览、受保护引用和外置 full 导出／复验；仅精确 owned 材料，未知路径／链接拒绝；目标源码和另一 worktree 不变 | 通过；A full ZIP 归档／恢复均独立复验 22,325 文件、当前受保护不可清理；B worktree 外置导出独立复验 3,975 文件；未实际删除 |
+| 6 最终机器审计 | 源、solution、构建配置和既有历史原件摘要相等；无遗留候选 UI 进程／监听；宿主哈希相等；所有未通过／未测单列 | 通过；原 checkout 干净，A/B 各 782 tracked 文件只见预期 `.gitignore` 差异，B 注释保留；无遗留 CLI/Web 进程，宿主基线摘要相等；历史失败及人工未测单列于机器记录 |
 
 同一提交不同未提交输入是本阶段验收条件；若两个目标并无这种差异，先由目标所有者选择合适 worktree，不由实现者擅自修改业务源码制造差异。真实规则可能得到 `violation`、`inconclusive` 或 `error`；分别记录规则、finding、覆盖和实际输入，不把产品正确报告的违规当作可忽略噪音。
 

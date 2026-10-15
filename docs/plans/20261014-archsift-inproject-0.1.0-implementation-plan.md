@@ -1,8 +1,8 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-14（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP07 COMPLETE / IP08 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-15（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP07 COMPLETE / IP08 MACHINE COMPLETE, HUMAN PENDING / NOT ACCEPTED / NOT RELEASED**。
 
-IP07 固定源码 `5f46548`、81 文件 ZIP／19 个离线包、许可清单、显式维护生命周期、预算与固定候选机器门禁通过。外置合成新根的七规则 daily／full、2 条实际 B 类 xUnit、Web／CLI 一致、SDK／运行时缺失负例、升级／回退／移除／中断恢复、旧证据原身份、工具变化过期及 272 项双产品回归均留有材料；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md)。真实目标与用户独立人工仍在 IP08。
+IP07 原固定源码 `5f46548`、81 文件 ZIP／19 个离线包、许可清单、显式维护生命周期、预算与合成候选机器门禁通过；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md)。IP08 完整 IFX.sln 实测中发现并修复构建输入审查、Razor 关联、专用测试运行器、规则测试标识和空证据根导出问题，最终产品候选源码为 `846dabc805c1ffb58e0a28e7324212b76072f2eb`、ZIP SHA-256 `bed54651872b8fa7763d33957c37c68465bd3266b7d37a765617ae9df49cc6d8`；合成机器资格已重验，真实机器结果见 [IP08 IFX 实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)。用户独立人工仍在 IP08。
 
 产品范围和验收基线已由用户逐项确认，权威内容见[产品规格](../decisions/20261014-archsift-inproject-0.1.0-product-spec.md)。2026-10-14 用户授权本计划完整实施、每阶段后提交并推送，以及后续 PR、合并、发布；阶段依赖和验收条件仍须逐项满足。具体真实目标操作须另有目标授权，独立人工验收仍由用户完成；旧 Guard／IFX 委托不扩大。
 
@@ -34,7 +34,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | IP05 完整证据与保留生命周期 | IP02、IP04 关闭 | 完整证据校验、轮转保护、归档恢复通过 | A09、A10、A11–A13 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip05.md) |
 | IP06 Web 工作台与双入口一致性 | IP04、IP05 关闭 | Web 与 CLI 共用任务和结果，机器 UI 场景通过 | A01、A03、A07–A10 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip06.md) |
 | IP07 包与候选机器资格 | IP01–IP06 关闭 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | COMPLETE；[固定候选机器验收](../acceptance/20261014-inproject-ip07.md) |
-| IP08 真实 worktree 与独立人工验收 | IP07 关闭、具体真实目标授权；独立人工由用户执行 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | NOT STARTED |
+| IP08 真实 worktree 与独立人工验收 | IP07 关闭、具体真实目标授权；独立人工由用户执行 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | MACHINE COMPLETE / HUMAN PENDING；[IFX 机器实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)及[人工清单](../acceptance/inproject-ip08-operator-checklist.md) |
 | IP09 正式发布与回验 | IP08 关闭；发布授权已给出 | 固定提交／标签／资产、公开下载和安装回验完成 | A11、A13–A15 | NOT STARTED |
 
 IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才可关闭。工作包完成不等于产品验收或发布；独立人工门槛未通过时 IP08 保持未关闭。
@@ -121,7 +121,7 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 
 ### IP08 真实 worktree 与独立人工验收
 
-- **执行清单**：[真实 worktree 逐块机器门禁与用户独立人工验收清单](../acceptance/inproject-ip08-operator-checklist.md)；目标身份、授权和结果均待填，清单本身不构成通过。
+- **执行清单**：[真实 worktree 逐块机器门禁与用户独立人工验收清单](../acceptance/inproject-ip08-operator-checklist.md)；目标身份、授权及机器结果已填，用户独立人工尚待用户填写。
 - **交付物**：经具体授权的同一真实 solution 两 worktree 机器门禁、结果与隔离证据、目标／宿主安全审计；独立人工的初始化、门禁、结果理解、恢复、规则及证据管理清单与原始反馈。
 - **验收场景**：同提交但不同未提交输入的结果相互独立；构建、取消、恢复、清理均不改业务原件或另一 worktree；已核验的真实源关联、实际测试执行数、严格门禁与 full 独立复核；人工信心至少 4/5、辅助不高于 L2。
 - **完成条件**：机器块依次审阅后继续，用户自行完成并记录人工答案；任何修复产生替代固定候选并复验受影响门禁，未通过项保持未关闭。
@@ -170,10 +170,9 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | IP05 | COMPLETE：两处 full 封存与 2531 文件／554 条编译输入映射独立校验、ZIP 归档恢复及篡改／越界拒绝，当前／固定 full 保护、3 个 daily 精简、超预算提示及未知目录保护、worktree 移除前外置导出均通过；见 [IP05 验收](../acceptance/20261014-inproject-ip05.md) |
 | IP06 | COMPLETE：loopback Web 工作台、规则编辑、daily／full 与 CLI 同服务一致、证据／清理预览；HTTP 安全、页面关闭任务继续、显式取消、双 worktree 并发和浏览器机器检查通过；见 [IP06 验收](../acceptance/20261014-inproject-ip06.md) |
 | IP07 | COMPLETE：固定 0.1.0 ZIP／许可与离线包、维护及数据保留、冷／热预算、daily／full／Web／真实 xUnit、负例和双产品回归通过；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md) |
-| IP08–IP09 | NOT STARTED；等待具体真实目标授权及用户独立人工门槛 |
-| 构建与机器验收／真实目标与独立人工 | 合成构建及固定候选机器验收 COMPLETE；真实业务目标和用户独立人工 NOT RUN |
-| 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收、真实目标具体授权及独立人工门槛约束 |
+| IP08 | MACHINE COMPLETE / HUMAN PENDING：完整 IFX.sln 同一提交、两 worktree 不同未提交输入；105/105 实际编译上下文、2/2 必检规则、真实 xUnit 1/1/1、A full 22,325 文件独立复验／归档恢复、B daily 与 3,975 文件导出、并发取消／失主恢复、源码与宿主审计通过；见 [IP08 IFX 实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)。用户独立 UI 视觉和上手验收未执行，IP08 未关闭 |
+| IP09 | NOT STARTED；依赖 IP08 关闭，尚不可发布 |
+| 构建与机器验收／真实目标与独立人工 | 合成与 IFX 机器门禁 COMPLETE；用户独立人工 NOT RUN |
+| 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收和独立人工门槛约束，草稿 PR 保持待审，尚不合并或发布 |
 
-2026-10-14 IP02 的实际合成构建与关联检查见[日常构建验收](../acceptance/20261014-inproject-ip02.md)。IP01 的[安装与 worktree 宿主验收](../acceptance/20261014-inproject-ip01.md)保持原有时点；IP02 仍是开发包和合成目标，不构成真实业务或规则门禁验收。下一入口 IP03：专用 xUnit 真实六规则检查、逐规则覆盖和严格门禁。正式候选与真实目标分别受 IP07／IP08 门槛约束；真实目标须具体授权。IP00-A–E 的设计检查见各自契约。
-
-上段保留 IP02 当时的阶段记录。当前下一入口为 IP08；固定候选机器资格已按 [IP07 验收](../acceptance/20261014-inproject-ip07.md) 关闭，仍须具体真实目标授权和用户独立人工验收。
+IP08 的机器部分已按 [IFX 实测记录](../acceptance/20261015-inproject-ip08-ifx-machine.md)完成；当前唯一未满足的 IP08 门槛是用户亲自完成并填写[独立人工验收](../acceptance/inproject-ip08-operator-checklist.md)。此前失败门禁均保留为历史，未计作通过。用户反馈及必要修复复验完成后才能关闭 IP08，并进入 IP09 正式发布。
