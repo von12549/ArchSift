@@ -79,8 +79,8 @@ public static class InProjectRuleService
                 "test-receipts");
             var envelopePath = Path.Combine(report, "test-envelope.json");
             WriteJson(envelopePath, envelope);
-            var tested = await ExecuteTests(config, snapshot, envelopePath, envelope, observations,
-                baseline, token);
+            var tested = await ExecuteTests(config, snapshot, binding.SdkVersion, envelopePath, envelope,
+                observations, baseline, token);
             coverage.AddRange(tested.Coverage);
             limitations.AddRange(tested.Limitations);
         }
@@ -180,14 +180,21 @@ public static class InProjectRuleService
     }
 
     private static async Task<(InProjectRuleCoverage[] Coverage, string[] Limitations)> ExecuteTests(
-        InProjectLoadedConfiguration config, InProjectSnapshot snapshot, string envelopePath,
+        InProjectLoadedConfiguration config, InProjectSnapshot snapshot, string sdkVersion, string envelopePath,
         InProjectTestEnvelope envelope, InProjectRuleObservation[] observations,
         InProjectHostState baseline, CancellationToken token)
     {
         var testProject = Path.Combine(config.InstallationRoot, "tests",
             "ArchSift.InProject.ArchitectureTests.csproj");
         PathSafety.EnsureNoLinks(testProject);
-        var testDirectory = Path.GetDirectoryName(testProject)!;
+        var testDirectory = Path.Combine(snapshot.RunDirectory, "test-runner");
+        PathSafety.EnsureNoLinks(testDirectory);
+        Directory.CreateDirectory(testDirectory);
+        WriteJson(Path.Combine(testDirectory, "global.json"), new
+        {
+            sdk = new { version = sdkVersion, rollForward = "disable" },
+            test = new { runner = "VSTest" }
+        });
         var cache = Path.Combine(config.InstallationRoot, "state", "cache", "packages");
         var nuget = Path.Combine(snapshot.RunDirectory, "NuGet.Config");
         var envelopeSha = LocalPackage.HashFile(envelopePath);
