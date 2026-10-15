@@ -1,6 +1,6 @@
 # ArchSift.InProject 0.1.0 实施计划
 
-日期：2026-10-15（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IMPLEMENTATION AUTHORIZED / IP00-A–E AND IP01–IP07 COMPLETE / IP08 MACHINE COMPLETE, HUMAN PENDING / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-15（Australia/Sydney）。状态：**PRODUCT BASELINE CONFIRMED / IP00-A–E AND IP01–IP07 COMPLETE / IP08 MACHINE COMPLETE, HUMAN PARTIAL / WORK PAUSED / NOT ACCEPTED / NOT RELEASED**。
 
 IP07 原固定源码 `5f46548`、81 文件 ZIP／19 个离线包、许可清单、显式维护生命周期、预算与合成候选机器门禁通过；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md)。IP08 完整 IFX.sln 实测中发现并修复构建输入审查、Razor 关联、专用测试运行器、规则测试标识和空证据根导出问题，最终产品候选源码为 `846dabc805c1ffb58e0a28e7324212b76072f2eb`、ZIP SHA-256 `bed54651872b8fa7763d33957c37c68465bd3266b7d37a765617ae9df49cc6d8`；合成机器资格已重验，真实机器结果见 [IP08 IFX 实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)。用户独立人工仍在 IP08。
 
@@ -34,7 +34,7 @@ ArchSift 0.8.0 的既有[最终验收](../acceptance/20261013-0.8-final-acceptan
 | IP05 完整证据与保留生命周期 | IP02、IP04 关闭 | 完整证据校验、轮转保护、归档恢复通过 | A09、A10、A11–A13 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip05.md) |
 | IP06 Web 工作台与双入口一致性 | IP04、IP05 关闭 | Web 与 CLI 共用任务和结果，机器 UI 场景通过 | A01、A03、A07–A10 | COMPLETE；[合成验收](../acceptance/20261014-inproject-ip06.md) |
 | IP07 包与候选机器资格 | IP01–IP06 关闭 | 包身份、生命周期、预算及固定候选机器门禁通过 | A01–A13、A15 | COMPLETE；[固定候选机器验收](../acceptance/20261014-inproject-ip07.md) |
-| IP08 真实 worktree 与独立人工验收 | IP07 关闭、具体真实目标授权；独立人工由用户执行 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | MACHINE COMPLETE / HUMAN PENDING；[IFX 机器实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)及[人工清单](../acceptance/inproject-ip08-operator-checklist.md) |
+| IP08 真实 worktree 与独立人工验收 | IP07 关闭、具体真实目标授权；独立人工由用户执行 | 两 worktree 机器验收及用户独立人工清单通过 | A02、A04–A12、A14、A15 | MACHINE COMPLETE / HUMAN PARTIAL / PAUSED；[IFX 机器实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)及[人工反馈与未测项](../acceptance/inproject-ip08-operator-checklist.md) |
 | IP09 正式发布与回验 | IP08 关闭；发布授权已给出 | 固定提交／标签／资产、公开下载和安装回验完成 | A11、A13–A15 | NOT STARTED |
 
 IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才可关闭。工作包完成不等于产品验收或发布；独立人工门槛未通过时 IP08 保持未关闭。
@@ -170,9 +170,9 @@ IP00-A–E 构成 IP00；五阶段均有可复核交付和检查后，IP00 才�
 | IP05 | COMPLETE：两处 full 封存与 2531 文件／554 条编译输入映射独立校验、ZIP 归档恢复及篡改／越界拒绝，当前／固定 full 保护、3 个 daily 精简、超预算提示及未知目录保护、worktree 移除前外置导出均通过；见 [IP05 验收](../acceptance/20261014-inproject-ip05.md) |
 | IP06 | COMPLETE：loopback Web 工作台、规则编辑、daily／full 与 CLI 同服务一致、证据／清理预览；HTTP 安全、页面关闭任务继续、显式取消、双 worktree 并发和浏览器机器检查通过；见 [IP06 验收](../acceptance/20261014-inproject-ip06.md) |
 | IP07 | COMPLETE：固定 0.1.0 ZIP／许可与离线包、维护及数据保留、冷／热预算、daily／full／Web／真实 xUnit、负例和双产品回归通过；见 [IP07 验收](../acceptance/20261014-inproject-ip07.md) |
-| IP08 | MACHINE COMPLETE / HUMAN PENDING：完整 IFX.sln 同一提交、两 worktree 不同未提交输入；105/105 实际编译上下文、2/2 必检规则、真实 xUnit 1/1/1、A full 22,325 文件独立复验／归档恢复、B daily 与 3,975 文件导出、并发取消／失主恢复、源码与宿主审计通过；见 [IP08 IFX 实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)。用户独立 UI 视觉和上手验收未执行，IP08 未关闭 |
+| IP08 | MACHINE COMPLETE / HUMAN PARTIAL / PAUSED：先前 IFX 机器门禁通过，见 [IP08 IFX 实测](../acceptance/20261015-inproject-ip08-ifx-machine.md)。用户对目标识别、运行操作、历史／当前与失败／取消理由给出符合预期反馈，信心 4／L1；本轮未等到新编译终态，规则编辑／恢复、full 与保留体验、安全退出三项待填，编译耗时和历史列表频繁刷新待评估。见[人工反馈](../acceptance/inproject-ip08-operator-checklist.md)；IP08 未关闭 |
 | IP09 | NOT STARTED；依赖 IP08 关闭，尚不可发布 |
-| 构建与机器验收／真实目标与独立人工 | 合成与 IFX 机器门禁 COMPLETE；用户独立人工 NOT RUN |
-| 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户已授权；受阶段验收和独立人工门槛约束，草稿 PR 保持待审，尚不合并或发布 |
+| 构建与机器验收／真实目标与独立人工 | 合成与先前 IFX 机器门禁 COMPLETE；用户独立人工 PARTIAL，本轮新编译终态未确认 |
+| 产品实施、每阶段提交／推送、后续 PR／合并／发布 | 用户要求暂停修复、开发和发布；草稿 PR 保持待审，尚不合并或发布 |
 
-IP08 的机器部分已按 [IFX 实测记录](../acceptance/20261015-inproject-ip08-ifx-machine.md)完成；当前唯一未满足的 IP08 门槛是用户亲自完成并填写[独立人工验收](../acceptance/inproject-ip08-operator-checklist.md)。此前失败门禁均保留为历史，未计作通过。用户反馈及必要修复复验完成后才能关闭 IP08，并进入 IP09 正式发布。
+IP08 的先前机器部分已按 [IFX 实测记录](../acceptance/20261015-inproject-ip08-ifx-machine.md)完成；2026-10-15 用户提供[部分独立人工反馈](../acceptance/inproject-ip08-operator-checklist.md)，明确还有三项待填、新编译结果未等到，并指出编译时间和历史记录刷新体验问题。此前失败门禁均保留为历史，未计作通过。依用户指示，暂停修复和开发，暂不发布；待用户明确恢复后再处理反馈、完成独立人工验收并判断 IP08 是否可关闭，IP09 仍未开始。
