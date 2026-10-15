@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "lt01-synthetic-violation",
+  "version": "1.0.0",
+  "description": "Intentional negative MTP process test; no IFX policy is adopted.",
+  "rules": [
+    {
+      "id": "forbidden-source",
+      "type": "type-dependency",
+      "enabled": true,
+      "scope": { "kind": "namespace", "match": "exact", "value": "ArchSift.Testing.Tests.Fixtures.Domain" },
+      "parameters": {
+        "source": { "kind": "type", "match": "exact", "value": "ArchSift.Testing.Tests.Fixtures.Domain.ForbiddenSource" },
+        "forbiddenTarget": { "kind": "namespace", "match": "exact", "value": "ArchSift.Testing.Tests.Fixtures.Infrastructure" }
+      },
+      "severity": "error",
+      "reason": "Intentional violation should fail the xUnit case."
+    }
+  ],
+  "exceptions": []
+}

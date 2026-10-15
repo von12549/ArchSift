@@ -12,6 +12,7 @@ public sealed class DependencyDirectionTests
             ["ArchSift.Contracts"] = [],
             ["ArchSift.Core"] = ["ArchSift.Contracts"],
             ["ArchSift.ArchUnit"] = ["ArchSift.Contracts", "ArchSift.Core"],
+            ["ArchSift.Testing"] = ["ArchSift.ArchUnit"],
             ["ArchSift.Cli"] = ["ArchSift.Core", "ArchSift.ArchUnit"],
             ["ArchSift.Web"] = ["ArchSift.Core", "ArchSift.ArchUnit", "ArchSift.Setup"],
             ["ArchSift.Setup"] = ["ArchSift.Core"]
@@ -22,7 +23,7 @@ public sealed class DependencyDirectionTests
     {
         var root = FindRoot();
         var projects = Directory.GetFiles(Path.Combine(root, "src"), "*.csproj", SearchOption.AllDirectories);
-        Assert.Equal(6, projects.Length);
+        Assert.Equal(7, projects.Length);
         foreach (var project in projects)
         {
             var name = Path.GetFileNameWithoutExtension(project);

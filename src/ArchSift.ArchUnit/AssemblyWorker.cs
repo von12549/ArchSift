@@ -106,7 +106,7 @@ public static class AssemblyWorker
                     matched = sources.Length; allowEmpty |= source.AllowEmpty;
                     foreach (var type in sources)
                     foreach (var dependency in type.Dependencies)
-                    foreach (var dependencyTarget in new[] { dependency.Target }.Concat(dependency.TargetGenericArguments.SelectMany(GenericTypes)))
+                    foreach (var dependencyTarget in TypeDependencyTraversal.Targets(dependency.Target, dependency.TargetGenericArguments))
                         if (Match(target, dependencyTarget))
                             Add(rule.Scope.Kind, rule.Scope.Kind == "namespace" ? type.Namespace.FullName : type.FullName,
                                 "ArchUnitNET detected a forbidden type dependency.", type.FullName, dependencyTarget.FullName, type.Assembly.Name + ":" + type.FullName);
@@ -233,15 +233,4 @@ public static class AssemblyWorker
     private static bool Match(Selector selector, IType type) => SelectorMatcher.Matches(selector,
         selector.Kind == "namespace" ? type.Namespace.FullName : type.FullName);
 
-    private static IEnumerable<IType> GenericTypes(GenericArgument argument)
-    {
-        var seen = new HashSet<GenericArgument>(ReferenceEqualityComparer.Instance);
-        var pending = new Stack<GenericArgument>(); pending.Push(argument);
-        while (pending.TryPop(out var item))
-        {
-            if (!seen.Add(item)) continue;
-            yield return item.Type;
-            foreach (var child in item.GenericArguments) pending.Push(child);
-        }
-    }
 }
