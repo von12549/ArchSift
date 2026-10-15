@@ -229,10 +229,11 @@ public static class InProjectRuleService
         var coverage = new List<InProjectRuleCoverage>();
         foreach (var observation in observations)
         {
+            var caseId = InProjectTestCaseIdentity.ForRule(observation.RuleKey);
             var discovered = discovery.Output.Split('\n').Count(line =>
-                line.Contains(observation.RuleKey, StringComparison.Ordinal));
+                line.Contains(caseId, StringComparison.Ordinal));
             var matches = results.Where(element => ((string?)element.Attribute("testName"))?
-                .Contains(observation.RuleKey, StringComparison.Ordinal) == true).ToArray();
+                .Contains(caseId, StringComparison.Ordinal) == true).ToArray();
             var name = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(observation.RuleKey)))
                 .ToLowerInvariant() + ".json";
             var receiptPath = Path.Combine(receiptDirectory, name);
@@ -244,6 +245,7 @@ public static class InProjectRuleService
             var okay = discovered == 1 && matches.Length == 1 &&
                 (string?)matches[0].Attribute("outcome") == expectedOutcome &&
                 receipt is { Started: 1, Finished: 1 } && receipt.RunId == envelope.RunId &&
+                receipt.TestId == "ArchSift.InProject.ArchitectureTests.ArchitectureRules.Evaluate(" + caseId + ")" &&
                 receipt.RuleKey == observation.RuleKey && receipt.Status == observation.Status &&
                 receipt.ResultMaterialSha256 == envelope.ResultMaterialSha256;
             if (!okay) limits.Add("Dedicated xUnit coverage or outcome differs for " + observation.RuleKey);

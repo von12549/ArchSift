@@ -15,14 +15,21 @@ public static class ArchitectureRuleBridge
         if (envelope.ExpectedRuleIds.Length == 0 ||
             envelope.ExpectedRuleIds.Distinct(StringComparer.Ordinal).Count() != envelope.ExpectedRuleIds.Length)
             throw new InvalidDataException("Architecture test envelope has no unique rule cases.");
-        return envelope.ExpectedRuleIds.Order(StringComparer.Ordinal).Select(rule => new object[] { rule }).ToArray();
+        var cases = envelope.ExpectedRuleIds.Order(StringComparer.Ordinal)
+            .Select(rule => InProjectTestCaseIdentity.ForRule(rule)).ToArray();
+        if (cases.Distinct(StringComparer.Ordinal).Count() != cases.Length)
+            throw new InvalidDataException("Architecture test case identities collide.");
+        return cases.Select(id => new object[] { id }).ToArray();
     }
 
-    public static InProjectRuleObservation Execute(string ruleKey)
+    public static InProjectRuleObservation Execute(string caseId)
     {
         var (envelope, directory) = ReadEnvelope();
-        if (!envelope.ExpectedRuleIds.Contains(ruleKey, StringComparer.Ordinal))
-            throw new InvalidDataException("Unexpected architecture test rule key.");
+        var rules = envelope.ExpectedRuleIds.Where(rule =>
+            InProjectTestCaseIdentity.ForRule(rule) == caseId).ToArray();
+        if (rules.Length != 1)
+            throw new InvalidDataException("Unexpected or ambiguous architecture test case.");
+        var ruleKey = rules[0];
         var material = ChildFile(directory, envelope.ResultMaterialPath);
         var bytes = File.ReadAllBytes(material);
         var sha = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
@@ -34,7 +41,7 @@ public static class ArchitectureRuleBridge
         if (matches.Length != 1) throw new InvalidDataException("Worker rule result is missing or duplicated.");
         var receiptDirectory = ChildDirectory(directory, envelope.ReceiptDirectory);
         Directory.CreateDirectory(receiptDirectory);
-        var id = "ArchSift.InProject.ArchitectureTests.ArchitectureRules.Evaluate(" + ruleKey + ")";
+        var id = "ArchSift.InProject.ArchitectureTests.ArchitectureRules.Evaluate(" + caseId + ")";
         var name = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(ruleKey))).ToLowerInvariant() + ".json";
         var receipt = new InProjectTestReceipt(1, envelope.RunId, ruleKey, id, 1, 1,
             matches[0].Status, sha);

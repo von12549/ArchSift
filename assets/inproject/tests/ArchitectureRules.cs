@@ -11,11 +11,11 @@ public sealed class ArchitectureRules
 
     [Theory]
     [MemberData(nameof(Cases))]
-    public void Evaluate(string ruleKey)
+    public void Evaluate(string caseId)
     {
-        var result = ArchitectureRuleBridge.Execute(ruleKey);
+        var result = ArchitectureRuleBridge.Execute(caseId);
         Assert.True(result.Status is "pass" or "not-applicable",
-            $"{ruleKey}: {result.Status}; findings={string.Join(',', result.FindingIds)}; " +
+            $"{result.RuleKey}: {result.Status}; findings={string.Join(',', result.FindingIds)}; " +
             string.Join("; ", result.Limitations));
     }
 }
