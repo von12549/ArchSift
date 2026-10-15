@@ -1,5 +1,7 @@
 # 轻量架构测试工作台：无界面门禁与报告
 
+[0.9.0-dev 本地候选使用与限制](lightweight-test-workbench-candidate.md)给出固定源码、外置载荷、测试依赖与 UI 分发边界；[LT06 机器记录](acceptance/20261016-lightweight-lt06-candidate.md)和[独立人工 UI 清单](acceptance/20261016-lightweight-lt06-human-ui-review.md)分别记录已验证事项与待用户填写的视觉／操作结果。产品仍未完成独立人工验收或公开发布。
+
 Web 页面现在提供“架构测试”标签。先用 `archsift-web --config <Web JSON>` 打开指向独立目标副本的既有 Web 会话，再在该标签输入外置的 `test-gate` JSON 配置绝对路径；两者的 `targetRoot` 必须相同。读取配置只核对原案例 ID 基准、已启用 JSON 案例与未纳入清单，不启动构建或测试。原 IFX C# 案例的类／方法和实际结果仅在完成运行的报告中显示；基准 ID 本身不证明已发现或执行。
 
 MTP/CTRF 原执行 ID 在另一绝对路径的工作树中可能全部变化。迁移到新工作树时，不能直接复用旧路径的 ID 基准，也不能自动接受新 ID：先在该固定路径运行原生完整测试，核对 80 个原测试名称、Theory 行、三类分布、源文件和项目引用均未减损，再保存该工作树的实际执行 ID 文件及 SHA-256。测试门禁仍按这份显式基准逐项核对；未知或不匹配均不能放行。[LT05 验收](acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md)记录了跨工作树 ID 差异与本地基准过程。

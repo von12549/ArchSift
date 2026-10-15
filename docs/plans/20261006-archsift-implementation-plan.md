@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-16 轻量工作台 LT06 机器候选更新：[LT06 本地候选](../acceptance/20261016-lightweight-lt06-candidate.md)固定 `0.9.0-dev` 产品源码 `e0b3bdd` 与外置 CLI/Web 逐文件哈希载荷；离线锁定恢复、265 项旧／新测试、封装 CLI 真实 IFX `allow/0`、Web loopback 冒烟及宿主保护通过。使用／分发边界和独立人工 UI 清单已备好。状态 **LT06 MACHINE CANDIDATE READY / HUMAN UI REVIEW PENDING / PRODUCT NOT ACCEPTED / NOT RELEASED**；需用户独立填验收，PR／合并／发布另行授权。下文先前状态保留形成时点。
+
 2026-10-15 轻量工作台 LT05 更新：[IFX 回归与测量验收](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md)完成固定外置 IFX 工作树的原生／CLI／Web 各三次冷／热全工程运行、无 UI 本地 CI 对照、原测试与 A/B 未纳入核对、IFX 与 JSON 各自真实 `block/2` 负例、报告 schema 与旧产品回归。状态 **LT05 MACHINE COMPLETE / LT06 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；最终独立人工 UI 验收仍由用户完成。下文先前状态保留形成时点。
 
 2026-10-15 轻量工作台 LT04 更新：[Web 接入与机器验收](../acceptance/20261015-lightweight-lt04-web-workbench.md)完成规则编辑复用、三来源清单、完整／subset／取消、基本历史／下载和完整证据入口。外置 IFX 副本的 Web 完整运行 80＋1 `allow/0`，JSON 实际违规 `block/2`，subset `block/4`，取消 `block/130`；保存的同输入 CLI 完整运行 `allow/0` 且案例结果一致。状态 **LT04 UI/MACHINE COMPLETE / LT05 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；同条件性能测量与最终独立人工 UI 验收仍待执行。下文先前状态保留形成时点。

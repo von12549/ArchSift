@@ -1,0 +1,11 @@
+# LT06 本地候选机器就绪记录
+
+日期：2026-10-16（Australia/Sydney）。状态：**LT06 MACHINE CANDIDATE READY / HUMAN UI REVIEW PENDING / PRODUCT NOT ACCEPTED / NOT RELEASED**。用户已授权后续开发、机器验收和各阶段提交推送；最终独立人工 UI 视觉与动手结论由用户填写。此记录不声称人工通过、公开发布、安装、PR／合并或 IFX 正式政策采纳。
+
+产品源码固定于 `codex/archsift-lightweight-workbench` 的 `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0`，从 LT05 已通过的 `5f1d2ffb776c7c6b2ec93310b6d458316b1b27a5` 只调整开发版本为 LT00 约定的 `0.9.0-dev` 并以显式本地 NuGet 源刷新项目锁文件。旧 InProject 分支仍为 `2877974fb38a12e856a6045ba223615c200841ee`，未合并。LT05 的 18 次同条件冷热、原测试不减损、真实 IFX／JSON 负例与 CLI/Web/本地 CI 一致性见[LT05 记录](20261015-lightweight-lt05-ifx-regression-measurement.md)；本轮不把那些测量改记为新候选的重新测量。
+
+固定本地载荷位于 `D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd`：`dotnet publish` 的 Release/net10.0 framework-dependent CLI 与 Web 两目录，SDK `10.0.303`，`manifest.json` 84 个文件共 7,717,762 字节，逐文件 SHA-256 复核一致，清单自身 SHA-256 `4a19cfd8ae57464d4b6a010dec9a2b923ab1e5b5aa5bf287b3b308fc2d768212`。两个入口 `--version` 分别输出 `archsift 0.9.0-dev`、`archsift-web 0.9.0-dev`。此前 0.8.0-dev 试封装另存于外置 `lt06-candidate-5f1d2ff`，不作最终评审对象。
+
+离线 `dotnet restore --locked-mode`、整解 Release 构建 0 警告／0 错误；旧 UnitTests 151/151、IntegrationTests 95/95、ArchitectureTests 2/2 和 Testing.Tests 原生 xUnit v3 17/17 全部通过、0 skip。最终封装 CLI 在同一获授权 IFX 工作树 `D:/ArchSift-lab/fixtures/lt05-shared-cc06528`、MTP/CTRF、Release/net10.0、显式离线源与包缓存、该路径 80 ID 基准下完整运行：原 80＋JSON 1 全部通过、覆盖完整、588 未纳入、`allow/0`。权威报告 `D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/cli-gate/architecture-test-run.json` SHA-256 `cdb5678eae30b75e5f9752728a32169c296f84ec62b1444526ec00225640061c`，对冻结 schema 通过本机 `Test-Json -SchemaFile` 校验。封装 Web 的 loopback 首页、`test-workbench.js` 与经会话令牌读取测试配置均为 HTTP 200，清单读取 80 原 ID、1 JSON 规则、588 未纳入，服务正常退出；外置结果 `D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/web-smoke.json`。该 Web 冒烟检查只验证机器接口和静态资源，不替代人工视觉／可用性验收。完整 Web 门禁与负例已在同代码功能的 LT04／LT05 阶段验证，版本号调整后未另做一轮 Web 完整门禁。
+
+本轮关键恢复、构建、测试、publish 与真实门禁前后宿主安全环境／Profile 哈希均为 `364ec6a885b3387d0b93f1bc14be64d1d6c85d0a3bcd331b0240503e7666efdb`；原 IFX checkout Git 干净，外置目标只保留 LT02A 审查过的引用、NuGet 配置、适配器和规则，11 个 API 快照与原 checkout 逐文件字节相等。没有运行目标应用入口或修改原安装。[使用／限制与分发方案](../lightweight-test-workbench-candidate.md)和[独立人工清单](20261016-lightweight-lt06-human-ui-review.md)已备好。人工结论未填，产品仍未接受或发布。
