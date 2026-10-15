@@ -45,7 +45,10 @@ public sealed record InProjectLocalSettings
 public sealed record InProjectLoadedConfiguration(string Root, string InstallationRoot, string SolutionPath,
     string Configuration, InProjectContextSelection[] Contexts, string LocalFeed,
     string ProjectSha256, string RulesSha256, string ToolSha256, LoadedRuleset[] Rules,
-    string EvidenceRoot, InProjectRetention Retention);
+    string EvidenceRoot, InProjectRetention Retention)
+{
+    public InProjectPackageReview? PackageReview { get; init; }
+}
 
 public static class InProjectConfiguration
 {
@@ -129,9 +132,11 @@ public static class InProjectConfiguration
             rule.Identity.Path + "\0" + rule.Identity.Sha256).Order(StringComparer.Ordinal)));
         var lockHash = LocalPackage.HashFile(Path.Combine(install, "version.lock.json"));
         var manifestHash = LocalPackage.HashFile(Path.Combine(install, "runtime", "payload-manifest.json"));
+        var review = InProjectPackageReview.Load(Path.Combine(install, "state", "build-input-review.json"));
         return new(root, install, solution, project.Build.Configuration, contexts, feed,
-            LocalPackage.HashFile(path), rulesHash, ContentHash.Text(lockHash + "\n" + manifestHash),
-            loadedRules, evidence, project.Retention);
+            LocalPackage.HashFile(path), rulesHash, ContentHash.Text(lockHash + "\n" + manifestHash + "\n" +
+                (review?.Sha256 ?? "none")), loadedRules, evidence, project.Retention)
+        { PackageReview = review };
     }
 
     private static void VerifyExecutingPayload(string install)

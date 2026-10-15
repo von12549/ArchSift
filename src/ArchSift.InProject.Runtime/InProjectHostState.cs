@@ -13,7 +13,8 @@ public static class InProjectHostIdentity
     public static InProjectHostState Capture()
     {
         var lines = new List<string>();
-        foreach (var scope in new[] { EnvironmentVariableTarget.User, EnvironmentVariableTarget.Machine })
+        foreach (var scope in new[] { EnvironmentVariableTarget.User, EnvironmentVariableTarget.Machine,
+                     EnvironmentVariableTarget.Process })
         {
             var variables = Environment.GetEnvironmentVariables(scope);
             foreach (DictionaryEntry item in variables.Cast<DictionaryEntry>().OrderBy(item => item.Key?.ToString(), StringComparer.Ordinal))

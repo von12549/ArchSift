@@ -75,7 +75,8 @@ public static class InProjectBindingVerifier
                     throw new ConfigurationException("Daily capture differs from evaluated compiler references.");
                 InProjectCompilerCaptures.VerifyAgainstEvaluation(compiler, evaluation, snapshot.SourceDirectory,
                     snapshot.InputIdentity.Files.ToDictionary(file => file.Path, file => file.Sha256,
-                        StringComparer.OrdinalIgnoreCase));
+                        StringComparer.OrdinalIgnoreCase), config.PackageReview,
+                    Path.Combine(config.InstallationRoot, "state", "cache", "packages"));
                 var closure = new List<string>();
                 var framework = evaluation.References.Select(reference => reference.CompilerPath)
                     .Where(path => path.Replace('\\', '/').Contains("/packs/Microsoft.NETCore.App.Ref/", StringComparison.OrdinalIgnoreCase))

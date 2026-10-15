@@ -34,8 +34,12 @@ public static class InProjectBuildPlanner
             if (visited.Contains(id)) return;
             if (!visiting.Add(id)) throw new ConfigurationException("Project reference cycle in required closure.");
             if (!projects.TryGetValue(id, out var project)) throw new ConfigurationException("Missing referenced project: " + id);
+            // Conditional properties are reviewed separately and then checked against the
+            // actual MSBuild evaluation and compiler invocation for each fresh snapshot.
+            var unresolved = project.Limitations.Where(limit => limit !=
+                "Build context contains unevaluated conditions/expressions.").ToArray();
             if (!project.Supported || !project.FrameworkComplete || !project.ReferencesComplete ||
-                !project.PackagesComplete || project.Limitations.Length > 0 || project.Frameworks.Length == 0 ||
+                !project.PackagesComplete || unresolved.Length > 0 || project.Frameworks.Length == 0 ||
                 project.Frameworks.Any(tfm => tfm is not ("net8.0" or "net9.0" or "net10.0")))
                 throw new ConfigurationException("Required project has unsupported build semantics: " + id +
                     " " + string.Join("; ", project.Limitations));
@@ -104,6 +108,7 @@ public static class InProjectBuildPlanner
                     "OutDir" or "ArtifactsPath" or "RestorePackagesPath" or "NuGetPackageRoot" or
                     "CompilerGeneratedFilesOutputPath"))
                 throw new ConfigurationException("Custom build output path cannot be safely relocated: " + file.Path);
+            InProjectBuildInputReview.Validate(document, file.Path);
         }
     }
 

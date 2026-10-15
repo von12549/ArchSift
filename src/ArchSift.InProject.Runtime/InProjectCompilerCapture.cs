@@ -76,7 +76,8 @@ public static class InProjectCompilerCaptures
     }
 
     public static void VerifyAgainstEvaluation(InProjectCompilerCapture compiler, InProjectEvaluation evaluation,
-        string snapshotRoot, IReadOnlyDictionary<string, string> originalInputHashes)
+        string snapshotRoot, IReadOnlyDictionary<string, string> originalInputHashes,
+        InProjectPackageReview? packageReview = null, string? packageCache = null)
     {
         if (!Same(compiler.References, evaluation.References.Select(reference =>
                 new InProjectEvaluatedFile(reference.CompilerPath, reference.CompilerSha256))) ||
@@ -89,7 +90,11 @@ public static class InProjectCompilerCaptures
         foreach (var source in compiler.Sources)
         {
             if (!PathSafety.IsUnder(source.Path, snapshotRoot))
+            {
+                if (packageReview is not null && packageCache is not null &&
+                    packageReview.AllowsPackageFile(packageCache, source.Path, source.Sha256)) continue;
                 throw new ConfigurationException("Compiler source escapes the fresh snapshot.");
+            }
             var relative = Path.GetRelativePath(snapshotRoot, source.Path).Replace('\\', '/');
             if (originalInputHashes.TryGetValue(relative, out var expected))
             {
@@ -97,10 +102,11 @@ public static class InProjectCompilerCaptures
                 continue;
             }
             var file = Path.GetFileName(source.Path);
-            if (!relative.Contains("/obj/", StringComparison.OrdinalIgnoreCase) ||
-                !(file.EndsWith(".AssemblyAttributes.cs", StringComparison.Ordinal) ||
+            if (!(packageReview?.AllowsGeneratedSource(relative) == true ||
+                relative.Contains("/obj/", StringComparison.OrdinalIgnoreCase) &&
+                (file.EndsWith(".AssemblyAttributes.cs", StringComparison.Ordinal) ||
                   file.EndsWith(".AssemblyInfo.cs", StringComparison.Ordinal) ||
-                  file.EndsWith(".GlobalUsings.g.cs", StringComparison.Ordinal)))
+                  file.EndsWith(".GlobalUsings.g.cs", StringComparison.Ordinal))))
                 throw new ConfigurationException("Unreviewed generated compiler source: " + relative);
         }
         if (LocalPackage.HashFile(compiler.IntermediateOutputPath) != compiler.IntermediateOutputSha256)

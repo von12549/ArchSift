@@ -17,6 +17,7 @@ public static class InProjectDailyBuild
         var config = InProjectConfiguration.Load(targetRoot);
         var plan = InProjectBuildPlanner.Create(config, token);
         var baseline = InProjectHostIdentity.Capture();
+        config.PackageReview?.VerifyFeed(config.LocalFeed);
         InProjectSnapshot snapshot;
         try { snapshot = InProjectSnapshots.Create(config, plan, token, reservedRunId); phase?.Invoke("snapshot"); }
         catch
@@ -45,7 +46,7 @@ public static class InProjectDailyBuild
                  "--packages", packageCache, "--disable-parallel", "--disable-build-servers",
                  "-p:NuGetAudit=false", "-p:RestoreIgnoreFailedSources=false", "--verbosity", "minimal"]);
             phase?.Invoke("build");
-            RejectPackageBuildAssets(plan, snapshot);
+            VerifyPackageBuildAssets(config.PackageReview, plan, snapshot, packageCache);
             var originalHashes = snapshot.InputIdentity.Files.ToDictionary(file => file.Path, file => file.Sha256,
                 StringComparer.OrdinalIgnoreCase);
             var contexts = new List<InProjectBindingContext>();
@@ -67,7 +68,7 @@ public static class InProjectDailyBuild
                 var beforePreprocessHash = LocalPackage.HashFile(preprocessed);
                 var before = InProjectEvaluations.Parse(await process.DotnetAsync("evaluate-" + key, projectDirectory,
                     EvaluationArguments(projectPath, selected)), projectPath, selected.TargetFramework, selected.Configuration);
-                ValidateEvaluatedPaths(snapshot, packageCache, before);
+                ValidateEvaluatedPaths(snapshot, packageCache, before, config.PackageReview);
                 var buildLog = await process.DotnetAsync("build-" + key, projectDirectory,
                     ["build", projectPath, "--no-restore", "--disable-build-servers",
                      "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false",
@@ -75,7 +76,8 @@ public static class InProjectDailyBuild
                 var compiler = InProjectCompilerCaptures.Parse(buildLog, projectDirectory);
                 if (!PathSafety.IsUnder(compiler.CompilerPath, DotnetRoot()))
                     throw new ConfigurationException("Compiler executable is outside the selected .NET SDK.");
-                InProjectCompilerCaptures.VerifyAgainstEvaluation(compiler, before, snapshot.SourceDirectory, originalHashes);
+                InProjectCompilerCaptures.VerifyAgainstEvaluation(compiler, before, snapshot.SourceDirectory,
+                    originalHashes, config.PackageReview, packageCache);
                 var after = InProjectEvaluations.Parse(await process.DotnetAsync("evaluate-after-" + key, projectDirectory,
                     EvaluationArguments(projectPath, selected)), projectPath, selected.TargetFramework, selected.Configuration);
                 InProjectEvaluations.VerifyStable(before, after);
@@ -101,7 +103,7 @@ public static class InProjectDailyBuild
                     [before.TargetPath, .. before.References.Select(reference => reference.CompilerPath)],
                     closure, framework, before.TargetPath);
                 if (closure.Count > 0) throw new ConfigurationException("Resolved dependency closure is incomplete: " + string.Join("; ", closure));
-                contexts.Add(Context(config, snapshot, selected, before, compiler, preprocessed));
+                contexts.Add(Context(config, snapshot, selected, before, compiler, preprocessed, packageCache));
                 observed.Add((before, compiler));
             }
             InputCapture.VerifyUnchanged(config.Root, snapshot.InputIdentity, token);
@@ -152,7 +154,8 @@ public static class InProjectDailyBuild
          "-getProperty:MSBuildAllProjects,TargetFramework,Configuration,TargetPath",
          "-getItem:ReferencePath,ReferenceCopyLocalPaths,Compile,Analyzer,AdditionalFiles,EmbeddedResource"];
 
-    private static void RejectPackageBuildAssets(InProjectBuildPlan plan, InProjectSnapshot snapshot)
+    private static void VerifyPackageBuildAssets(InProjectPackageReview? review, InProjectBuildPlan plan,
+        InProjectSnapshot snapshot, string packageCache)
     {
         foreach (var project in plan.Contexts.Select(context => context.Project.Id).Distinct(StringComparer.OrdinalIgnoreCase))
         {
@@ -160,18 +163,31 @@ public static class InProjectDailyBuild
                 Path.GetDirectoryName(project.Replace('/', Path.DirectorySeparatorChar)) ?? "", "obj", "project.assets.json");
             if (!File.Exists(assetsPath)) throw new ConfigurationException("Fresh restore assets are missing: " + project);
             using var assets = JsonDocument.Parse(File.ReadAllBytes(assetsPath));
-            if (assets.RootElement.GetProperty("targets").EnumerateObject().SelectMany(target => target.Value.EnumerateObject())
-                .Any(package => package.Value.EnumerateObject().Any(item => item.Name is "build" or "buildTransitive" or "analyzers")))
-                throw new ConfigurationException("Package build tasks or analyzers require reviewed input evidence.");
-            if (assets.RootElement.GetProperty("libraries").EnumerateObject().Any(package =>
-                package.Value.TryGetProperty("files", out var files) && files.EnumerateArray().Any(file =>
-                    file.GetString()!.StartsWith("analyzers/", StringComparison.Ordinal))))
-                throw new ConfigurationException("Package generators require reviewed input evidence.");
+            foreach (var package in assets.RootElement.GetProperty("targets").EnumerateObject()
+                         .SelectMany(target => target.Value.EnumerateObject()))
+                foreach (var item in package.Value.EnumerateObject().Where(item =>
+                             item.Name is "build" or "buildTransitive" or "analyzers"))
+                    foreach (var asset in item.Value.EnumerateObject())
+                    {
+                        if (review is null)
+                            throw new ConfigurationException("Package build tasks or analyzers require reviewed input evidence.");
+                        review.VerifyAsset(packageCache, package.Name, asset.Name);
+                    }
+            foreach (var package in assets.RootElement.GetProperty("libraries").EnumerateObject())
+                if (package.Value.TryGetProperty("files", out var files))
+                    foreach (var asset in files.EnumerateArray().Select(file => file.GetString()!)
+                                 .Where(file => file.StartsWith("analyzers/", StringComparison.OrdinalIgnoreCase) &&
+                                     file.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (review is null)
+                            throw new ConfigurationException("Package generators require reviewed input evidence.");
+                        review.VerifyAsset(packageCache, package.Name, asset);
+                    }
         }
     }
 
     private static void ValidateEvaluatedPaths(InProjectSnapshot snapshot, string packageCache,
-        InProjectEvaluation evaluation)
+        InProjectEvaluation evaluation, InProjectPackageReview? review)
     {
         var sdkRoot = DotnetRoot();
         var files = evaluation.References.SelectMany(reference => new[] { reference.Path, reference.CompilerPath })
@@ -184,6 +200,12 @@ public static class InProjectDailyBuild
                 !PathSafety.IsUnder(file, packageCache) && !PathSafety.IsUnder(file, sdkRoot))
                 throw new ConfigurationException("MSBuild input escaped fresh snapshot, SDK or owned package cache: " + file);
             PathSafety.EnsureNoLinks(file);
+            if (PathSafety.IsUnder(file, packageCache) &&
+                (evaluation.Imports.Any(item => item.Path == file) ||
+                 evaluation.Analyzers.Any(item => item.Path == file) ||
+                 evaluation.Compile.Any(item => item.Path == file)) &&
+                (review is null || !review.AllowsPackageFile(packageCache, file, LocalPackage.HashFile(file))))
+                throw new ConfigurationException("Unreviewed evaluated package input: " + file);
         }
     }
 
@@ -198,7 +220,7 @@ public static class InProjectDailyBuild
 
     private static InProjectBindingContext Context(InProjectLoadedConfiguration config, InProjectSnapshot snapshot,
         InProjectBuildContext selected, InProjectEvaluation evaluation, InProjectCompilerCapture compiler,
-        string preprocessedPath)
+        string preprocessedPath, string packageCache)
     {
         var sourceHashes = snapshot.InputIdentity.Files.ToDictionary(file => file.Path, file => file.Sha256,
             StringComparer.OrdinalIgnoreCase);
@@ -206,7 +228,8 @@ public static class InProjectDailyBuild
         foreach (var file in compiler.Sources)
         {
             var relative = Path.GetRelativePath(snapshot.SourceDirectory, file.Path).Replace('\\', '/');
-            materials.Add(new(file.Path, sourceHashes.ContainsKey(relative) ? "source" : "generated-source", file.Sha256));
+            materials.Add(new(file.Path, sourceHashes.ContainsKey(relative) ? "source" :
+                PathSafety.IsUnder(file.Path, packageCache) ? "resource" : "generated-source", file.Sha256));
         }
         materials.AddRange(compiler.Analyzers.Select(file => new InProjectBindingMaterial(file.Path, "analyzer", file.Sha256)));
         materials.AddRange(compiler.AdditionalFiles.Select(file => new InProjectBindingMaterial(file.Path, "additional-file", file.Sha256)));
@@ -215,6 +238,8 @@ public static class InProjectDailyBuild
         materials.AddRange(evaluation.Imports.Select(file => new InProjectBindingMaterial(file.Path, "import", file.Sha256)));
         materials.Add(new(preprocessedPath, "import", LocalPackage.HashFile(preprocessedPath)));
         materials.Add(new(compiler.CompilerPath, "sdk", compiler.CompilerSha256));
+        if (config.PackageReview is not null)
+            materials.Add(new(config.PackageReview.Path, "task", config.PackageReview.Sha256));
         var assets = Path.Combine(Path.GetDirectoryName(evaluation.ProjectPath)!, "obj", "project.assets.json");
         materials.Add(new(assets, "assets", LocalPackage.HashFile(assets)));
         var references = evaluation.References.Select(reference =>
