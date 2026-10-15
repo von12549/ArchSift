@@ -1,5 +1,6 @@
 using System.Xml.Linq;
 using System.Text.Json;
+using System.IO.Compression;
 using ArchSift.Contracts;
 using ArchSift.Core;
 using ArchSift.InProject.Runtime;
@@ -8,6 +9,36 @@ namespace ArchSift.IntegrationTests;
 
 public sealed class InProjectBuildInputReviewTests
 {
+    [Fact]
+    public void BundledReferenceAnalyzerMustMatchTheLockedArchiveBytes()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "archsift-reference-review-" + Guid.NewGuid().ToString("N"));
+        var install = Path.Combine(root, "install");
+        var cache = Path.Combine(root, "cache");
+        const string relative = "microsoft.netcore.app.ref/8.0.30/analyzers/dotnet/cs/ReferenceGenerator.dll";
+        var analyzer = Path.Combine(cache, relative.Replace('/', Path.DirectorySeparatorChar));
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(install, "offline"));
+            Directory.CreateDirectory(Path.GetDirectoryName(analyzer)!);
+            File.WriteAllText(analyzer, "locked-analyzer");
+            var archive = Path.Combine(install, "offline", "microsoft.netcore.app.ref.8.0.30.nupkg");
+            using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
+            using (var entry = zip.CreateEntry("analyzers/dotnet/cs/ReferenceGenerator.dll").Open())
+            using (var writer = new StreamWriter(entry)) writer.Write("locked-analyzer");
+            Assert.True(InProjectBundledReferenceInputs.AllowsAnalyzer(install, cache, analyzer,
+                LocalPackage.HashFile(analyzer)));
+            File.WriteAllText(analyzer, "changed-analyzer");
+            Assert.False(InProjectBundledReferenceInputs.AllowsAnalyzer(install, cache, analyzer,
+                LocalPackage.HashFile(analyzer)));
+        }
+        finally
+        {
+            if (Directory.Exists(root) && PathSafety.IsUnder(root, Path.GetTempPath()))
+                Directory.Delete(root, recursive: true);
+        }
+    }
+
     [Fact]
     public void PackageReviewPinsExecutableInputsAndGeneratedSourceNames()
     {

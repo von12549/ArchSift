@@ -68,7 +68,7 @@ public static class InProjectDailyBuild
                 var beforePreprocessHash = LocalPackage.HashFile(preprocessed);
                 var before = InProjectEvaluations.Parse(await process.DotnetAsync("evaluate-" + key, projectDirectory,
                     EvaluationArguments(projectPath, selected)), projectPath, selected.TargetFramework, selected.Configuration);
-                ValidateEvaluatedPaths(snapshot, packageCache, before, config.PackageReview);
+                ValidateEvaluatedPaths(snapshot, packageCache, before, config);
                 var buildLog = await process.DotnetAsync("build-" + key, projectDirectory,
                     ["build", projectPath, "--no-restore", "--disable-build-servers",
                      "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false",
@@ -187,7 +187,7 @@ public static class InProjectDailyBuild
     }
 
     private static void ValidateEvaluatedPaths(InProjectSnapshot snapshot, string packageCache,
-        InProjectEvaluation evaluation, InProjectPackageReview? review)
+        InProjectEvaluation evaluation, InProjectLoadedConfiguration config)
     {
         var sdkRoot = DotnetRoot();
         var files = evaluation.References.SelectMany(reference => new[] { reference.Path, reference.CompilerPath })
@@ -203,9 +203,14 @@ public static class InProjectDailyBuild
             if (PathSafety.IsUnder(file, packageCache) &&
                 (evaluation.Imports.Any(item => item.Path == file) ||
                  evaluation.Analyzers.Any(item => item.Path == file) ||
-                 evaluation.Compile.Any(item => item.Path == file)) &&
-                (review is null || !review.AllowsPackageFile(packageCache, file, LocalPackage.HashFile(file))))
-                throw new ConfigurationException("Unreviewed evaluated package input: " + file);
+                 evaluation.Compile.Any(item => item.Path == file)))
+            {
+                var hash = LocalPackage.HashFile(file);
+                if (config.PackageReview?.AllowsPackageFile(packageCache, file, hash) != true &&
+                    !(evaluation.Analyzers.Any(item => item.Path == file) &&
+                      InProjectBundledReferenceInputs.AllowsAnalyzer(config.InstallationRoot, packageCache, file, hash)))
+                    throw new ConfigurationException("Unreviewed evaluated package input: " + file);
+            }
         }
     }
 
