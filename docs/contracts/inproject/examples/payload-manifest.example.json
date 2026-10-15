@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "product": "ArchSift.InProject",
+  "version": "0.1.0",
+  "rid": "win-x64",
+  "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "contractVersion": 1,
+  "files": [
+    { "path": "archsift-inproject.exe", "bytes": 42, "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }
+  ]
+}

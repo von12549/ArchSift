@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>ArchSift.InProject.Runtime</AssemblyName>
+    <VersionPrefix>0.1.0</VersionPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.Contracts/ArchSift.Contracts.csproj" />
+    <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
+    <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
+  </ItemGroup>
+</Project>

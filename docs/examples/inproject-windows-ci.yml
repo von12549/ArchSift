@@ -1,0 +1,54 @@
+# Copy into .github/workflows only after pinning an IP07-or-later package and
+# supplying an offline NuGet feed containing the target's locked dependencies.
+# This workflow has no push, pull_request, schedule or Git hook trigger.
+name: ArchSift.InProject manual gate
+on:
+  workflow_dispatch:
+    inputs:
+      package_url:
+        description: HTTPS URL of the fixed ArchSift.InProject Windows package
+        required: true
+        type: string
+      package_sha256:
+        description: Lowercase SHA-256 of that exact package
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Materialize pinned runtime and run explicit gate
+        shell: pwsh
+        env:
+          PACKAGE_URL: ${{ inputs.package_url }}
+          PACKAGE_SHA256: ${{ inputs.package_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:PACKAGE_URL -notmatch '^https://' -or $env:PACKAGE_SHA256 -cnotmatch '^[a-f0-9]{64}$') { throw 'A fixed HTTPS package and SHA-256 are required.' }
+          $archive = Join-Path $env:RUNNER_TEMP 'archsift-inproject.zip'
+          $stage = Join-Path $env:RUNNER_TEMP 'archsift-inproject-package'
+          Invoke-WebRequest -Uri $env:PACKAGE_URL -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -cne $env:PACKAGE_SHA256) { throw 'Package SHA-256 differs from the pinned input.' }
+          Expand-Archive -LiteralPath $archive -DestinationPath $stage
+          $runtime = Join-Path (Get-Location) '.archsift/runtime'
+          if (Test-Path -LiteralPath $runtime) { throw 'Runtime already exists; use a clean checkout.' }
+          Copy-Item -LiteralPath (Join-Path $stage 'runtime') -Destination $runtime -Recurse
+          Copy-Item -LiteralPath (Join-Path $stage 'payload-manifest.json') -Destination (Join-Path $runtime 'payload-manifest.json')
+          $cli = Join-Path $runtime 'archsift-inproject.dll'
+          dotnet $cli verify --target (Get-Location).Path
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned installation verification failed.' }
+          dotnet $cli gate --project (Join-Path (Get-Location) '.archsift/project.json') --evidence daily
+          if ($LASTEXITCODE -ne 0) { throw "InProject gate exited $LASTEXITCODE." }
+      - name: Preserve current gate material
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: archsift-inproject-daily
+          path: .archsift/reports/
+          if-no-files-found: ignore

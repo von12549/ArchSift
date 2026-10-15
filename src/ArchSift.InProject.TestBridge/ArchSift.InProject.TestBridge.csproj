@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>ArchSift.InProject.TestBridge</AssemblyName>
+    <VersionPrefix>0.1.0</VersionPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ArchSift.Contracts/ArchSift.Contracts.csproj" />
+  </ItemGroup>
+</Project>

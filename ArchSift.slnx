@@ -6,6 +6,9 @@
     <Project Path="src/ArchSift.Cli/ArchSift.Cli.csproj" />
     <Project Path="src/ArchSift.Web/ArchSift.Web.csproj" />
     <Project Path="src/ArchSift.Setup/ArchSift.Setup.csproj" />
+    <Project Path="src/ArchSift.InProject.Runtime/ArchSift.InProject.Runtime.csproj" />
+    <Project Path="src/ArchSift.InProject/ArchSift.InProject.csproj" />
+    <Project Path="src/ArchSift.InProject.TestBridge/ArchSift.InProject.TestBridge.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj" />

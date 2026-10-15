@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:inproject:project:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "product", "solution", "rulesets", "build", "retention"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "product": { "const": "ArchSift.InProject" },
+    "solution": { "type": "string", "minLength": 1 },
+    "rulesets": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configuration", "contexts", "allowNetwork", "networkSources"],
+      "properties": {
+        "configuration": { "enum": ["Debug", "Release"] },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["project", "targetFramework"],
+            "properties": {
+              "project": { "type": "string", "minLength": 1 },
+              "targetFramework": { "enum": ["net8.0", "net9.0", "net10.0"] }
+            }
+          }
+        },
+        "allowNetwork": { "type": "boolean" },
+        "networkSources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dailyDays", "dailyMaxRuns"],
+      "properties": {
+        "dailyDays": { "type": "integer", "minimum": 1 },
+        "dailyMaxRuns": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

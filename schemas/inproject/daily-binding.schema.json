@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://archsift.local/schemas/inproject/daily-binding.schema.json",
+  "title": "ArchSift.InProject daily build binding capture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "product", "runId", "worktreeId", "solution", "configuration", "inputSha256", "rulesSha256", "toolSha256", "sdkVersion", "restore", "contexts", "startInputSha256", "endInputSha256"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "product": { "const": "ArchSift.InProject" },
+    "runId": { "$ref": "#/definitions/nonEmpty" },
+    "worktreeId": { "$ref": "#/definitions/nonEmpty" },
+    "solution": { "$ref": "#/definitions/nonEmpty" },
+    "configuration": { "$ref": "#/definitions/nonEmpty" },
+    "inputSha256": { "$ref": "#/definitions/sha256" },
+    "rulesSha256": { "$ref": "#/definitions/sha256" },
+    "toolSha256": { "$ref": "#/definitions/sha256" },
+    "sdkVersion": { "$ref": "#/definitions/nonEmpty" },
+    "restore": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "sources", "assetsSha256"],
+      "properties": {
+        "status": { "const": "succeeded" },
+        "sources": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/nonEmpty" } },
+        "assetsSha256": { "$ref": "#/definitions/sha256" }
+      }
+    },
+    "contexts": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/context" } },
+    "startInputSha256": { "$ref": "#/definitions/sha256" },
+    "endInputSha256": { "$ref": "#/definitions/sha256" }
+  },
+  "definitions": {
+    "nonEmpty": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+    "material": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "kind", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/definitions/nonEmpty" },
+        "kind": { "enum": ["source", "generated-source", "resource", "additional-file", "import", "sdk", "task", "analyzer", "generator", "environment", "assets", "response-file"] },
+        "sha256": { "$ref": "#/definitions/sha256" }
+      }
+    },
+    "reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "assemblyIdentity", "sha256", "role"],
+      "properties": {
+        "path": { "$ref": "#/definitions/nonEmpty" },
+        "assemblyIdentity": { "$ref": "#/definitions/nonEmpty" },
+        "sha256": { "$ref": "#/definitions/sha256" },
+        "role": { "enum": ["compile", "copy-local", "both"] }
+      }
+    },
+    "context": {
+      "type": "object", "additionalProperties": false,
+      "required": ["project", "targetFramework", "configuration", "globalPropertiesSha256", "compilerCommandSha256", "compilerPath", "materials", "references", "outputPath", "outputSha256"],
+      "properties": {
+        "project": { "$ref": "#/definitions/nonEmpty" },
+        "targetFramework": { "enum": ["net8.0", "net9.0", "net10.0"] },
+        "configuration": { "$ref": "#/definitions/nonEmpty" },
+        "globalPropertiesSha256": { "$ref": "#/definitions/sha256" },
+        "compilerCommandSha256": { "$ref": "#/definitions/sha256" },
+        "compilerPath": { "$ref": "#/definitions/nonEmpty" },
+        "materials": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/material" } },
+        "references": { "type": "array", "items": { "$ref": "#/definitions/reference" } },
+        "outputPath": { "$ref": "#/definitions/nonEmpty" },
+        "outputSha256": { "$ref": "#/definitions/sha256" }
+      }
+    }
+  }
+}
