@@ -2,4 +2,8 @@
   <ItemGroup>
     <ProjectReference Include="../ArchSift.Testing/ArchSift.Testing.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../docs/decisions/20261015-lightweight-policy-inventory.json"
+                      LogicalName="ArchSift.TestGate.PolicyInventory.json" />
+  </ItemGroup>
 </Project>

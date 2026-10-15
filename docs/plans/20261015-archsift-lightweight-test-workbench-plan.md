@@ -1,6 +1,8 @@
 # ArchSift 轻量架构测试工作台实施计划
 
-日期：2026-10-15（Australia/Sydney）。当前状态：**LT00 DESIGN COMPLETE / LT01 SYNTHETIC COMPLETE / LT02 SYNTHETIC COMPLETE / LT02A REAL IFX COMPLETE / LT03 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**。本计划首次编写时的未授权状态和范围记录保留在下文。
+日期：2026-10-15（Australia/Sydney）。当前状态：**LT00 DESIGN COMPLETE / LT01 SYNTHETIC COMPLETE / LT02 SYNTHETIC COMPLETE / LT02A REAL IFX COMPLETE / LT03 REPORT/HISTORY COMPLETE / LT04 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**。本计划首次编写时的未授权状态和范围记录保留在下文。
+
+2026-10-15 LT03 执行更新：[报告与基本历史验收](../acceptance/20261015-lightweight-lt03-reports-history.md)记录冻结 schema 的权威 JSON、安全 HTML、真实 JSON finding／原 IFX 断言消息、A/B 未纳入清单及只读历史；真实 IFX 81/81 正例和两类 `block/2` 负例、合成报告保存失败 `block/3`、历史 stale/unavailable/interrupted 均通过。旧产品 248 项回归通过；LT04 UI、LT05 同条件测量和最终人工验收尚未开始。
 
 2026-10-15 LT02A 执行更新：[真实 IFX 门禁验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md)记录获授权的外置 IFX 副本 `cc06528`：原生 MTP 全工程 80/80，接入后原 80 ID 保留且新增 JSON 1，完整门禁 `allow/0`，API 快照不匹配和真实 JSON 类型依赖均 `block/2`，父 1／子 0 且原快照字节不变；20 个原测试文件、16 个原项目引用和五秒断言未减损。IFX 原 checkout／安装仍只读，LT03 报告历史与 LT04 UI 尚未开始，正式 B 政策和人工 UI 验收未获通过。
 
@@ -277,7 +279,7 @@ MTP 原生结构化结果为 IFX 首选来源；TRX 只在实际支持时作为�
 | LT01 测试直连最小闭环 | JSON 解释与测试适配层、薄参数化入口、合成 net10.0／v3／MTP 夹具 | LT00 完成且获得实施授权 | 无 UI／Worker 预计算／绑定文件即可运行；合法通过、真实违规失败；稳定案例与明细；零匹配／无效配置／泛型／例外负例通过 | SYNTHETIC COMPLETE；见 [LT01 验收](../acceptance/20261015-lightweight-lt01-synthetic.md) |
 | LT02 日常运行与门禁 | 无界面协调入口、正常增量构建、原生测试清单／结果及来源适配、全工程覆盖核对、子进程环境隔离、取消与日志 | LT01 闭环 | 子进程更新开关为 0；IFX 与 JSON 案例可识别；发现不算执行；漏执行／过滤／skip／异常／取消阻断；历史 unknown 不阻断；无取证链 | SYNTHETIC COMPLETE；见 [LT02 验收](../acceptance/20261015-lightweight-lt02-synthetic-gate.md)，真实 IFX 待 LT02A |
 | LT02A IFX 早期接入门槛 | 获授权的外置 IFX 副本／worktree，原生基线与接入后案例对照，MTP／RepoLayout／输出与快照开关验证，初步冷热记录 | LT02 通过；另获具体目标／操作授权；未授权则该阶段等待，不进入 LT03 | 三个原类、所有原案例／Theory 数据及断言保留；原工程全量执行；快照开关父 1 子 0、API 不匹配失败且基准不变；根目录／项目引用正确；并行负载不使原五秒断言失效且不放宽阈值 | COMPLETE；见 [LT02A 验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md) |
-| LT03 报告与基本历史 | 新 schema、JSON／HTML、来源／责任／测试清单与结果投影、未纳入项、专用测试明细适配、独立目录与基本列表；SARIF 可选 | LT02A 真实接入门槛通过 | 不伪造 SourceBound／案例数／行号；runGate 与历史分开；原 A 类报告独立；未执行不显示 pass；失败不回退旧成功；无生命周期系统 | NOT STARTED |
+| LT03 报告与基本历史 | 新 schema、JSON／HTML、来源／责任／测试清单与结果投影、未纳入项、专用测试明细适配、独立目录与基本列表；SARIF 可选 | LT02A 真实接入门槛通过 | 不伪造 SourceBound／案例数／行号；runGate 与历史分开；原 A 类报告独立；未执行不显示 pass；失败不回退旧成功；无生命周期系统 | COMPLETE；见 [LT03 验收](../acceptance/20261015-lightweight-lt03-reports-history.md) |
 | LT04 UI 接入 | 复用编辑器、三种检查来源、IFX 工程／类／案例清单与结果、未迁入 A 类展示、完整／subset 模式、保存、启动取消、基本历史／下载、full 入口 | LT03 通过 | 同输入 UI／CLI 同门禁；JSON 可编辑、IFX C# 语义不可编辑；发现不算执行；未覆盖不变绿；完整模式不可过滤原测试；历史 unknown 不触发补取证 | NOT STARTED |
 | LT05 IFX 回归与测量 | 已授权目标的 UI／CLI／CI 对照、原测试保留、三种来源与未覆盖显示负例、增量 JSON 负例、冷热与磁盘记录 | LT04 通过；核对 LT02A 授权仍覆盖本阶段具体操作，否则另行取得 | 首次接入已在 LT02A；原全工程无减损；双入口一致；A 未迁入、原工具旧 pass、IFX 失败、JSON 违规均不混淆；环境与原目标／安装不变；不自动采用政策 | NOT STARTED |
 | LT06 首版验收与交付 | 固定候选、使用／限制说明、独立人工清单、测试依赖与 UI 分发方案；可选发布门槛 | LT05 机器验收；人工操作由用户完成 | 机器标准全部满足；人工独立确认；旧 ArchSift 回归通过；InProject 未变；发布／PR／合并另获授权后才执行 | NOT STARTED |

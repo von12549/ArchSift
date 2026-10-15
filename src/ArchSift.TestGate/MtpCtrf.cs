@@ -50,11 +50,16 @@ public static class MtpCtrf
                 JsonValueKind.Null => "",
                 _ => throw new InvalidDataException("CTRF stdout has an unsupported shape.")
             } : "";
-            var marker = ParseMarker(output);
+            var marker = JsonCaseOutput.Parse(output);
             var message = row.TryGetProperty("message", out var value) && value.ValueKind == JsonValueKind.String
                 ? value.GetString() : null;
-            tests.Add(new(id, id, Required(extra, "type"), Required(extra, "method"), result,
-                marker.CaseId, marker.Sha256, message is null ? [] : [message]));
+            tests.Add(new MtpTest(id, id, Required(extra, "type"), Required(extra, "method"), result,
+                marker.CaseId, marker.Sha256, message is null ? [] : [message])
+            {
+                Evaluation = marker.Evaluation,
+                ElapsedMilliseconds = row.TryGetProperty("duration", out var duration) &&
+                    duration.ValueKind == JsonValueKind.Number ? duration.GetInt64() : null
+            });
         }
         foreach (var (field, status) in new[] { ("passed", "passed"), ("failed", "failed"),
                      ("skipped", "skipped") })
@@ -66,26 +71,9 @@ public static class MtpCtrf
 
         var sorted = tests.OrderBy(test => test.Id, StringComparer.Ordinal).ToArray();
         var ids = sorted.Select(test => test.Id).ToArray();
-        return new(true, true, discovered.Length, sorted, ids, ids, duplicates.Order(StringComparer.Ordinal).ToArray(), []);
-    }
-
-    private static (string? CaseId, string? Sha256) ParseMarker(string output)
-    {
-        const string prefix = "ARCHSIFT_JSON_CASE:";
-        (string?, string?) marker = (null, null);
-        foreach (var line in output.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
-        {
-            if (!line.StartsWith(prefix, StringComparison.Ordinal)) continue;
-            var body = line[prefix.Length..];
-            var split = body.LastIndexOf(':');
-            if (split <= 0 || split == body.Length - 1)
-                throw new InvalidDataException("Malformed JSON test marker in CTRF output.");
-            var next = (body[..split], body[(split + 1)..]);
-            if (marker.Item1 is not null && marker != next)
-                throw new InvalidDataException("Conflicting JSON test markers in CTRF output.");
-            marker = next;
-        }
-        return marker;
+        return new MtpRun(true, true, discovered.Length, sorted, ids, ids,
+            duplicates.Order(StringComparer.Ordinal).ToArray(), [])
+        { DiscoveredIds = discoveryIds.Order(StringComparer.Ordinal).ToArray() };
     }
 
     private static string Required(JsonElement item, string name)

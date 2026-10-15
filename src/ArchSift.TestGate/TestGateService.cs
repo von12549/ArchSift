@@ -32,7 +32,11 @@ public sealed record GateStage(string Status, int? ExitCode, string? LogPath);
 public sealed record TestGateResult(int ExitCode, string Gate, string[] Reasons,
     GateStage Restore, GateStage Build, GateStage Test, MtpRun? NativeRun,
     GateCoverage? Coverage, string RunDirectory, bool SnapshotUpdatesDisabled,
-    bool RelevantInputChanged);
+    bool RelevantInputChanged)
+{
+    public string? ReportPath { get; init; }
+    public string? HtmlPath { get; init; }
+}
 
 public static class TestGateService
 {
@@ -51,6 +55,8 @@ public static class TestGateService
     public static async Task<TestGateResult> RunAsync(TestGateConfig config, string configPath,
         CancellationToken token = default)
     {
+        var startedUtc = DateTimeOffset.UtcNow;
+        var runId = Guid.NewGuid().ToString("N");
         Validate(config);
         var root = Path.GetFullPath(config.TargetRoot);
         var project = Under(root, config.TestProject);
@@ -95,6 +101,7 @@ public static class TestGateService
             .Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(path => path, FileHash, StringComparer.OrdinalIgnoreCase);
         using var sourceObserver = new RelevantInputObserver(root);
         Directory.CreateDirectory(runDirectory);
+        TestRunHistory.Begin(runDirectory, runId, root, startedUtc);
         var notStarted = new GateStage("not-started", null, null);
         var restore = notStarted;
         var build = notStarted;
@@ -107,19 +114,19 @@ public static class TestGateService
                     "--packages", Path.GetFullPath(config.PackageCache), "--disable-parallel", "--disable-build-servers",
                     "-p:NuGetAudit=false", "-m:1", "-v:minimal"], root, runDirectory, config, configPath, token);
             changed = sourceObserver.Changed || InputsChanged(watched);
-            if (restore.ExitCode != 0 || changed) return Finish(restore.ExitCode != 0 ? 3 : 4,
-                restore.ExitCode != 0 ? "Offline restore failed." : "Relevant input changed during restore.");
+            if (restore.ExitCode != 0 || changed) return Complete(Finish(restore.ExitCode != 0 ? 3 : 4,
+                restore.ExitCode != 0 ? "Offline restore failed." : "Relevant input changed during restore."));
             build = await Execute("build", "dotnet",
                 ["build", project, "--no-restore", "-c", config.Configuration, "-f", config.TargetFramework,
                     "--disable-build-servers", "-p:UseSharedCompilation=false", "-m:1", "-v:minimal"],
                 root, runDirectory, config, configPath, token);
             changed = sourceObserver.Changed || InputsChanged(watched);
-            if (build.ExitCode != 0 || changed) return Finish(build.ExitCode != 0 ? 3 : 4,
-                build.ExitCode != 0 ? "Incremental build failed." : "Relevant input changed during build.");
+            if (build.ExitCode != 0 || changed) return Complete(Finish(build.ExitCode != 0 ? 3 : 4,
+                build.ExitCode != 0 ? "Incremental build failed." : "Relevant input changed during build."));
             var executable = Path.Combine(Path.GetDirectoryName(project)!, "bin", config.Configuration,
                 config.TargetFramework, config.TestExecutableName + (OperatingSystem.IsWindows() ? ".exe" : ""));
             PathSafety.EnsureNoLinks(executable);
-            if (!File.Exists(executable)) return Finish(3, "Built MTP test executable is missing.");
+            if (!File.Exists(executable)) return Complete(Finish(3, "Built MTP test executable is missing."));
             GateStage? discovery = null;
             var ctrfPath = Path.Combine(runDirectory, "test-results.ctrf.json");
             List<string> arguments;
@@ -129,8 +136,8 @@ public static class TestGateService
                     ["--list-tests", "json", "--no-ansi", "--progress", "off"],
                     root, runDirectory, config, configPath, token);
                 changed = sourceObserver.Changed || InputsChanged(watched);
-                if (discovery.ExitCode != 0 || changed) return Finish(discovery.ExitCode != 0 ? 3 : 4,
-                    discovery.ExitCode != 0 ? "MTP discovery failed." : "Relevant input changed during discovery.");
+                if (discovery.ExitCode != 0 || changed) return Complete(Finish(discovery.ExitCode != 0 ? 3 : 4,
+                    discovery.ExitCode != 0 ? "MTP discovery failed." : "Relevant input changed during discovery."));
                 arguments = ["--no-ansi", "--progress", "off", "--report-xunit-ctrf",
                     "--report-xunit-ctrf-filename", Path.GetFileName(ctrfPath),
                     "--results-directory", runDirectory];
@@ -152,21 +159,51 @@ public static class TestGateService
             }
             catch (Exception error) when (error is JsonException or InvalidDataException or KeyNotFoundException
                 or InvalidOperationException or FileNotFoundException)
-            { return Finish(3, "MTP structured output is invalid: " + error.Message); }
+            { return Complete(Finish(3, "MTP structured output is invalid: " + error.Message)); }
             var coverage = MtpEvents.Assess(native, originalIds, expectedJson, test.ExitCode ?? 3,
                 subset: config.FilterCaseId is not null);
-            if (changed) return new(4, "block", ["Relevant input changed during test execution."],
-                restore, build, test, native, coverage, runDirectory, true, true);
-            return new(coverage.ExitCode, coverage.ExitCode == 0 ? "allow" : "block", coverage.Reasons,
-                restore, build, test, native, coverage, runDirectory, true, false);
+            if (changed) return Complete(new(4, "block", ["Relevant input changed during test execution."],
+                restore, build, test, native, coverage, runDirectory, true, true));
+            return Complete(new(coverage.ExitCode, coverage.ExitCode == 0 ? "allow" : "block", coverage.Reasons,
+                restore, build, test, native, coverage, runDirectory, true, false));
         }
         catch (OperationCanceledException)
         {
-            return Finish(130, "Run was cancelled.");
+            return Complete(Finish(130, "Run was cancelled."));
         }
 
         TestGateResult Finish(int code, string reason) => new(code, "block", [reason], restore, build, test,
             null, null, runDirectory, true, changed);
+
+        TestGateResult Complete(TestGateResult result)
+        {
+            var published = false;
+            try
+            {
+                var (json, html) = TestRunReportWriter.Save(config, result, bundle, originalIds,
+                    runId, startedUtc, DateTimeOffset.UtcNow);
+                published = true;
+                var saved = result with { ReportPath = json, HtmlPath = html };
+                TestRunHistory.Finish(runDirectory, runId, saved);
+                return saved;
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException
+                or InvalidDataException or System.ComponentModel.Win32Exception)
+            {
+                var failed = result with
+                {
+                    ExitCode = 3, Gate = "block",
+                    Reasons = result.Reasons.Append("Authoritative test report could not be saved: " + error.Message).ToArray()
+                };
+                if (!published)
+                {
+                    try { TestRunHistory.Finish(runDirectory, runId, failed); }
+                    catch (Exception updateError) when (updateError is IOException or UnauthorizedAccessException
+                        or InvalidDataException) { /* The running marker is interpreted as interrupted. */ }
+                }
+                return failed;
+            }
+        }
     }
 
     internal static async Task<GateStage> Execute(string stage, string executable, IEnumerable<string> args,

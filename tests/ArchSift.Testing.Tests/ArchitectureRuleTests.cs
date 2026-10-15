@@ -44,7 +44,9 @@ public sealed class ArchitectureRuleTests(ITestOutputHelper output)
         var (bundle, cases) = ArchitectureTestAdapter.LoadCases([CasePolicy]);
         var testCase = Assert.Single(cases, item => item.CaseId == caseId);
         output.WriteLine("ARCHSIFT_JSON_CASE:" + testCase.CaseId + ":" + testCase.Ruleset.Identity.Sha256);
-        ArchitectureTestAdapter.AssertPassed(ArchitectureTestAdapter.EvaluateCase(bundle, testCase, SharedContext.Value));
+        var evaluation = ArchitectureTestAdapter.EvaluateCase(bundle, testCase, SharedContext.Value);
+        output.WriteLine("ARCHSIFT_JSON_EVALUATION:" + ArchitectureTestAdapter.SerializeEvaluation(evaluation));
+        ArchitectureTestAdapter.AssertPassed(evaluation);
     }
 
     [Fact]
@@ -52,6 +54,17 @@ public sealed class ArchitectureRuleTests(ITestOutputHelper output)
     {
         if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ARCHSIFT_TEST_GATE_CONFIG")))
             Assert.Equal("0", Environment.GetEnvironmentVariable("IFX_UPDATE_SNAPSHOTS"));
+    }
+
+    [Fact]
+    public void AuthoritativeReportCollisionFixture()
+    {
+        if (Environment.GetEnvironmentVariable("ARCHSIFT_LT03_REPORT_COLLISION") != "1") return;
+        var configPath = Environment.GetEnvironmentVariable("ARCHSIFT_TEST_GATE_CONFIG")
+            ?? throw new InvalidOperationException("The collision fixture requires a test-gate config.");
+        using var document = JsonDocument.Parse(File.ReadAllBytes(configPath));
+        var runDirectory = document.RootElement.GetProperty("runDirectory").GetString()!;
+        File.WriteAllText(Path.Combine(runDirectory, "architecture-test-run.json"), "LT03 collision fixture");
     }
 
     [Theory]

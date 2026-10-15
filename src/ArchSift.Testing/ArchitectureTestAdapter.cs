@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ArchSift.ArchUnit;
 using ArchSift.Contracts;
 using ArchSift.Core;
@@ -8,6 +9,11 @@ public sealed record ArchitectureRuleCase(string CaseId, Rule Rule, LoadedRulese
 
 public static class ArchitectureTestAdapter
 {
+    private static readonly JsonSerializerOptions CompactOutput = new(JsonContract.Options) { WriteIndented = false };
+
+    public static string SerializeEvaluation(RuleEvaluation evaluation) =>
+        JsonSerializer.Serialize(evaluation, CompactOutput);
+
     public static (RuleBundle Bundle, ArchitectureRuleCase[] Cases) LoadCases(IEnumerable<string> rulesetPaths)
     {
         var bundle = RuleLoader.Compose(rulesetPaths.Select(RuleLoader.Load));

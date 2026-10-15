@@ -1,13 +1,22 @@
 using System.Text.Json;
+using ArchSift.Contracts;
+using ArchSift.Core;
 
 namespace ArchSift.TestGate;
 
 public sealed record MtpTest(string Id, string CaseId, string ClassName, string MethodName,
-    string Result, string? JsonCaseId, string? RulesetSha256, string[] Messages);
+    string Result, string? JsonCaseId, string? RulesetSha256, string[] Messages)
+{
+    public RuleEvaluation? Evaluation { get; init; }
+    public long? ElapsedMilliseconds { get; init; }
+}
 
 public sealed record MtpRun(bool DiscoveryFinished, bool AssemblyFinished, int DiscoveredCaseCount,
     MtpTest[] Tests, string[] StartedIds, string[] CompletedIds, string[] DuplicateIds,
-    string[] MissingTerminalIds);
+    string[] MissingTerminalIds)
+{
+    public string[] DiscoveredIds { get; init; } = [];
+}
 
 public sealed record GateCoverage(int ExitCode, bool Complete, string[] MissingOriginalIds,
     string[] MissingJsonCaseIds, string[] DuplicateIds, string[] Reasons);
@@ -20,6 +29,7 @@ public static class MtpEvents
         var starts = new Dictionary<string, string>(StringComparer.Ordinal);
         var results = new Dictionary<string, (string Result, string[] Messages)>(StringComparer.Ordinal);
         var markers = new Dictionary<string, (string CaseId, string Sha)>(StringComparer.Ordinal);
+        var evaluations = new Dictionary<string, RuleEvaluation>(StringComparer.Ordinal);
         var completed = new HashSet<string>(StringComparer.Ordinal);
         var duplicates = new HashSet<string>(StringComparer.Ordinal);
         var discoveryFinished = false;
@@ -75,27 +85,27 @@ public static class MtpEvents
             var terminal = results.TryGetValue(pair.Key, out var value) ? value : ("not-run", Array.Empty<string>());
             var marker = markers.TryGetValue(pair.Key, out var named) ? named : (null, null);
             return new MtpTest(pair.Key, pair.Value, className, methodName, terminal.Item1,
-                marker.Item1, marker.Item2, terminal.Item2);
+                marker.Item1, marker.Item2, terminal.Item2)
+            { Evaluation = evaluations.GetValueOrDefault(pair.Key) };
         }).OrderBy(test => test.Id, StringComparer.Ordinal).ToArray();
-        return new(discoveryFinished, assemblyFinished, discovered, tests,
+        return new MtpRun(discoveryFinished, assemblyFinished, discovered, tests,
             starts.Keys.Order(StringComparer.Ordinal).ToArray(), completed.Order(StringComparer.Ordinal).ToArray(),
             duplicates.Order(StringComparer.Ordinal).ToArray(),
             starts.Keys.Where(id => !results.ContainsKey(id) || !completed.Contains(id))
-                .Order(StringComparer.Ordinal).ToArray());
+                .Order(StringComparer.Ordinal).ToArray())
+        { DiscoveredIds = cases.Keys.Order(StringComparer.Ordinal).ToArray() };
 
         void AddMarker(JsonElement item, string id)
         {
             if (!item.TryGetProperty("Output", out var output) || output.ValueKind != JsonValueKind.String) return;
-            foreach (var line in (output.GetString() ?? "").Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
-            {
-                const string prefix = "ARCHSIFT_JSON_CASE:";
-                if (!line.StartsWith(prefix, StringComparison.Ordinal)) continue;
-                var body = line[prefix.Length..];
-                var split = body.LastIndexOf(':');
-                if (split <= 0 || split == body.Length - 1) throw new InvalidDataException("Malformed JSON test marker.");
-                var marker = (body[..split], body[(split + 1)..]);
-                if (!markers.TryAdd(id, marker) && markers[id] != marker) duplicates.Add(id);
-            }
+            var parsed = JsonCaseOutput.Parse(output.GetString() ?? "");
+            if (parsed.CaseId is not null &&
+                !markers.TryAdd(id, (parsed.CaseId, parsed.Sha256!)) &&
+                markers[id] != (parsed.CaseId, parsed.Sha256!)) duplicates.Add(id);
+            if (parsed.Evaluation is not null &&
+                !evaluations.TryAdd(id, parsed.Evaluation) &&
+                JsonSerializer.Serialize(evaluations[id], JsonContract.Options) !=
+                JsonSerializer.Serialize(parsed.Evaluation, JsonContract.Options)) duplicates.Add(id);
         }
     }
 
@@ -127,6 +137,10 @@ public static class MtpEvents
             reasons.Add("MTP case metadata is incomplete.");
         if (json.Any(test => !jsonCases.TryGetValue(test.JsonCaseId!, out var sha) || sha != test.RulesetSha256))
             reasons.Add("JSON case identity or ruleset bytes do not match the enabled config.");
+        if (json.Any(test => !test.JsonCaseId!.StartsWith("archsift-json:", StringComparison.Ordinal) ||
+            test.Evaluation is null || test.Evaluation.Results.Length != 1 ||
+            test.Evaluation.Results[0].RuleId != test.JsonCaseId!["archsift-json:".Length..]))
+            reasons.Add("JSON case evaluation detail is missing or does not match its rule identity.");
         var coverageComplete = reasons.Count == 0;
         if (run.Tests.Any(test => test.Result == "failed")) reasons.Add("An executed test assertion failed.");
         if (processExitCode != 0 && !run.Tests.Any(test => test.Result == "failed")) reasons.Add("Test process failed without a matching assertion outcome.");

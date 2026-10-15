@@ -46,7 +46,10 @@ public sealed class MtpCtrfTests
                 tests = new object[]
                 {
                     new { status, extra = new { id = originalId, type = "OriginalTests", method = "OriginalTheory" } },
-                    new { status = "passed", stdout = new[] { "ARCHSIFT_JSON_CASE:archsift-json:allowed-source:" + Sha },
+                    new { status = "passed", stdout = new[] {
+                        "ARCHSIFT_JSON_CASE:archsift-json:allowed-source:" + Sha,
+                        "ARCHSIFT_JSON_EVALUATION:{\"results\":[{\"ruleId\":\"allowed-source\",\"status\":\"pass\",\"matched\":1,\"findingIds\":[],\"limitations\":[]}],\"findings\":[]}"
+                    },
                         extra = new { id = "json-id", type = "JsonTests", method = "JsonRule" } }
                 }
             }

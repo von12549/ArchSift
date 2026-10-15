@@ -68,6 +68,7 @@ public sealed class MtpCoverageTests
         "{\"$type\":\"test-finished\",\"TestUniqueID\":\"original-row-1\"}",
         "{\"$type\":\"test-starting\",\"TestUniqueID\":\"json-row-1\",\"TestCaseUniqueID\":\"json-case\"}",
         "{\"$type\":\"test-output\",\"TestUniqueID\":\"json-row-1\",\"Output\":\"ARCHSIFT_JSON_CASE:archsift-json:allowed-source:" + Sha + "\\n\"}",
+        "{\"$type\":\"test-output\",\"TestUniqueID\":\"json-row-1\",\"Output\":\"ARCHSIFT_JSON_EVALUATION:{\\\"results\\\":[{\\\"ruleId\\\":\\\"allowed-source\\\",\\\"status\\\":\\\"pass\\\",\\\"matched\\\":1,\\\"findingIds\\\":[],\\\"limitations\\\":[]}],\\\"findings\\\":[]}\\n\"}",
         "{\"$type\":\"test-passed\",\"TestUniqueID\":\"json-row-1\"}",
         "{\"$type\":\"test-finished\",\"TestUniqueID\":\"json-row-1\"}",
         "{\"$type\":\"test-assembly-finished\"}"

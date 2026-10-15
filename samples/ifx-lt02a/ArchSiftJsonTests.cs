@@ -34,6 +34,8 @@ public sealed class ArchSiftJsonTests(ITestOutputHelper output)
         var (bundle, cases) = ArchitectureTestAdapter.LoadCases(RulePaths);
         var testCase = Assert.Single(cases, item => item.CaseId == caseId);
         output.WriteLine("ARCHSIFT_JSON_CASE:" + testCase.CaseId + ":" + testCase.Ruleset.Identity.Sha256);
-        ArchitectureTestAdapter.AssertPassed(ArchitectureTestAdapter.EvaluateCase(bundle, testCase, SharedContext.Value));
+        var evaluation = ArchitectureTestAdapter.EvaluateCase(bundle, testCase, SharedContext.Value);
+        output.WriteLine("ARCHSIFT_JSON_EVALUATION:" + ArchitectureTestAdapter.SerializeEvaluation(evaluation));
+        ArchitectureTestAdapter.AssertPassed(evaluation);
     }
 }
