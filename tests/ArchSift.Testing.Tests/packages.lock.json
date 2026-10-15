@@ -176,6 +176,12 @@
           "ArchSift.Contracts": "[0.8.0-dev, )"
         }
       },
+      "archsift.testgate": {
+        "type": "Project",
+        "dependencies": {
+          "ArchSift.Testing": "[0.8.0-dev, )"
+        }
+      },
       "archsift.testing": {
         "type": "Project",
         "dependencies": {

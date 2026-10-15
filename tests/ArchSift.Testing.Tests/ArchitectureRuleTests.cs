@@ -1,19 +1,38 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using ArchSift.Contracts;
+using ArchSift.ArchUnit;
 using ArchSift.Core;
 using ArchSift.Testing;
 using Xunit;
 
 namespace ArchSift.Testing.Tests
 {
-public sealed class ArchitectureRuleTests
+public sealed class ArchitectureRuleTests(ITestOutputHelper output)
 {
     private static readonly string Policy = Path.Combine(AppContext.BaseDirectory, "rules.json");
     private static readonly string AssemblyPath = Assembly.GetExecutingAssembly().Location;
-    private static string CasePolicy => Environment.GetEnvironmentVariable("ARCHSIFT_LT01_NEGATIVE") == "1"
-        ? Path.Combine(AppContext.BaseDirectory, "rules-violation.json") : Policy;
+    private static readonly Lazy<TypeDependencyTestContext> SharedContext = new(
+        () => TypeDependencyTestEngine.LoadContext([AssemblyPath]));
+    private static string CasePolicy
+    {
+        get
+        {
+            var gate = Environment.GetEnvironmentVariable("ARCHSIFT_TEST_GATE_CONFIG");
+            if (!string.IsNullOrEmpty(gate))
+            {
+                using var document = JsonDocument.Parse(File.ReadAllBytes(gate));
+                var root = document.RootElement;
+                var target = root.GetProperty("targetRoot").GetString()!;
+                var rule = root.GetProperty("rulesets").EnumerateArray().Single().GetString()!;
+                return Path.GetFullPath(Path.Combine(target, rule));
+            }
+            return Environment.GetEnvironmentVariable("ARCHSIFT_LT01_NEGATIVE") == "1"
+                ? Path.Combine(AppContext.BaseDirectory, "rules-violation.json") : Policy;
+        }
+    }
 
     public static IEnumerable<object[]> JsonCases() => ArchitectureTestAdapter.LoadCases([CasePolicy]).Cases
         .Select(testCase => new object[] { testCase.CaseId });
@@ -24,7 +43,15 @@ public sealed class ArchitectureRuleTests
     {
         var (bundle, cases) = ArchitectureTestAdapter.LoadCases([CasePolicy]);
         var testCase = Assert.Single(cases, item => item.CaseId == caseId);
-        ArchitectureTestAdapter.AssertPassed(ArchitectureTestAdapter.EvaluateCase(bundle, testCase, [AssemblyPath]));
+        output.WriteLine("ARCHSIFT_JSON_CASE:" + testCase.CaseId + ":" + testCase.Ruleset.Identity.Sha256);
+        ArchitectureTestAdapter.AssertPassed(ArchitectureTestAdapter.EvaluateCase(bundle, testCase, SharedContext.Value));
+    }
+
+    [Fact]
+    public void GateChildCannotUpdateSnapshots()
+    {
+        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ARCHSIFT_TEST_GATE_CONFIG")))
+            Assert.Equal("0", Environment.GetEnvironmentVariable("IFX_UPDATE_SNAPSHOTS"));
     }
 
     [Theory]

@@ -22,6 +22,13 @@ public static class ArchitectureTestAdapter
 
     public static RuleEvaluation EvaluateCase(RuleBundle bundle, ArchitectureRuleCase testCase,
         IEnumerable<string> assemblyPaths)
+        => TypeDependencyTestEngine.Evaluate(OneRule(bundle, testCase), assemblyPaths);
+
+    public static RuleEvaluation EvaluateCase(RuleBundle bundle, ArchitectureRuleCase testCase,
+        TypeDependencyTestContext context)
+        => TypeDependencyTestEngine.Evaluate(OneRule(bundle, testCase), context);
+
+    private static RuleBundle OneRule(RuleBundle bundle, ArchitectureRuleCase testCase)
     {
         var document = bundle.Documents.SingleOrDefault(item => item.Identity == testCase.Ruleset.Identity);
         var rule = document?.Ruleset.Rules.SingleOrDefault(item => item.Id == testCase.Rule.Id && item.Enabled);
@@ -32,7 +39,7 @@ public static class ArchitectureTestAdapter
             Rules = [rule],
             Exceptions = bundle.Exceptions.Where(exception => exception.RuleId == rule.Id).ToArray()
         }, document.Identity)]);
-        return TypeDependencyTestEngine.Evaluate(one, assemblyPaths);
+        return one;
     }
 
     public static void AssertPassed(RuleEvaluation evaluation)

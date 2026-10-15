@@ -6,16 +6,17 @@ using ArchUnitNET.Loader;
 
 namespace ArchSift.ArchUnit;
 
+public sealed class TypeDependencyTestContext
+{
+    internal TypeDependencyTestContext(IType[] types) => Types = types;
+    internal IType[] Types { get; }
+}
+
 // This test-facing path deliberately does not accept or invent a SourceBound value.
 public static class TypeDependencyTestEngine
 {
-    public static RuleEvaluation Evaluate(RuleBundle bundle, IEnumerable<string> assemblyPaths)
+    public static TypeDependencyTestContext LoadContext(IEnumerable<string> assemblyPaths)
     {
-        var rules = bundle.Rules.Where(rule => rule.Enabled).ToArray();
-        if (rules.Length == 0) throw new ConfigurationException("No enabled JSON rules.");
-        if (rules.Any(rule => rule.Type != "type-dependency"))
-            throw new ConfigurationException("Only type-dependency rules are supported by the architecture test adapter.");
-
         var paths = assemblyPaths.Select(Path.GetFullPath).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
         if (paths.Length == 0 || paths.Any(path => !File.Exists(path)))
             throw new ConfigurationException("At least one existing assembly path is required.");
@@ -30,6 +31,20 @@ public static class TypeDependencyTestEngine
 
         var types = loader.Build().Types.Where(type => !type.IsStub && !type.IsGenericParameter &&
             names.Contains(type.Assembly.Name)).ToArray();
+        return new TypeDependencyTestContext(types);
+    }
+
+    public static RuleEvaluation Evaluate(RuleBundle bundle, IEnumerable<string> assemblyPaths)
+        => Evaluate(bundle, LoadContext(assemblyPaths));
+
+    public static RuleEvaluation Evaluate(RuleBundle bundle, TypeDependencyTestContext context)
+    {
+        var rules = bundle.Rules.Where(rule => rule.Enabled).ToArray();
+        if (rules.Length == 0) throw new ConfigurationException("No enabled JSON rules.");
+        if (rules.Any(rule => rule.Type != "type-dependency"))
+            throw new ConfigurationException("Only type-dependency rules are supported by the architecture test adapter.");
+
+        var types = context.Types;
         var results = new List<RuleResult>();
         var findings = new List<Finding>();
         foreach (var rule in rules.OrderBy(rule => rule.Id, StringComparer.Ordinal))
