@@ -1,8 +1,10 @@
 # ArchSift 轻量架构测试工作台实施计划
 
-日期：2026-10-15（Australia/Sydney）。状态：**PLAN DRAFTED / IMPLEMENTATION NOT AUTHORIZED / NOT STARTED / NOT ACCEPTED / NOT RELEASED**。
+日期：2026-10-15（Australia/Sydney）。当前状态：**LT00 DESIGN COMPLETE / LT01 NOT STARTED / NOT ACCEPTED / NOT RELEASED**。本计划首次编写时的未授权状态和范围记录保留在下文。
 
-本计划落实新的讨论方向：保留 IFX 专用架构测试，由 JSON 驱动 ArchUnitNET 参数化测试，ArchSift UI 负责规则编辑、启动与报告；日常门禁与完整取证独立。当前授权仅包括先保存并推送旧分支修改、返回 main、编写／修订本计划及索引，不授权产品实现、IFX 修改／构建／安装、测试执行、提交或推送新计划、合并或发布。
+2026-10-15 执行更新：用户授权创建开发分支，将本计划与总计划索引作为首个提交并推送，随后开始 LT00。分支 `codex/archsift-lightweight-workbench` 的首提交 `d1b089d` 已推送。LT00 的[范围与契约](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md)、[静态验收](../acceptance/20261015-lightweight-lt00-contracts.md)、[IFX 原测试源码基线](../decisions/20261015-lightweight-ifx-source-baseline.json)、[A/B 归属清单](../decisions/20261015-lightweight-policy-inventory.json)及[报告 schema](../../schemas/architecture-test-run.schema.json)已完成；用户随后另行授权提交并推送这些 LT00 成果。真实运行器案例数、JSON 执行与 IFX 接入仍待后续阶段；LT01、真实 IFX 操作、PR、合并与发布尚未获本次授权。
+
+本计划落实新的讨论方向：保留 IFX 专用架构测试，由 JSON 驱动 ArchUnitNET 参数化测试，ArchSift UI 负责规则编辑、启动与报告；日常门禁与完整取证独立。首次编写本计划时的授权仅包括先保存并推送旧分支修改、返回 main、编写／修订本计划及索引；随后授权变化以上述执行更新为准。
 
 2026-10-15 审查修订：明确完整门禁必须运行 IFX 整个原有架构测试工程，隔离 `IFX_UPDATE_SNAPSHOTS` 更新模式，将本次门禁与历史新鲜度分离，在报告历史与 UI 开发前加入 LT02A IFX 早期接入门槛，并将首版历史管理收敛为独立报告目录、基本运行状态和历史列表。仅修订计划与索引，实施状态不变。
 
@@ -265,7 +267,7 @@ MTP 原生结构化结果为 IFX 首选来源；TRX 只在实际支持时作为�
 
 | 阶段 | 交付物 | 进入条件 | 完成／验收标准 | 当前状态 |
 | --- | --- | --- | --- | --- |
-| LT00 范围与契约 | 组件／支持矩阵、A／B／IFX 责任与未迁入清单、IFX 原全工程基线、独立报告 schema、来源／案例身份／退出码、快照开关隔离、布局与测量方案 | 用户审阅本计划并明确实施范围 | 不依赖 InProject；不改旧 schema；完整与 subset 不可混同；A 类增量未纳入明确；runGate 与 historyFreshness 分离；无首版历史生命周期系统 | PLAN DRAFTED，待审阅；实现未开始 |
+| LT00 范围与契约 | 组件／支持矩阵、A／B／IFX 责任与未迁入清单、IFX 原全工程基线、独立报告 schema、来源／案例身份／退出码、快照开关隔离、布局与测量方案 | 用户审阅本计划并明确实施范围 | 不依赖 InProject；不改旧 schema；完整与 subset 不可混同；A 类增量未纳入明确；runGate 与 historyFreshness 分离；无首版历史生命周期系统 | DESIGN COMPLETE；静态证据见 [LT00 验收](../acceptance/20261015-lightweight-lt00-contracts.md)，产品实现未开始 |
 | LT01 测试直连最小闭环 | JSON 解释与测试适配层、薄参数化入口、合成 net10.0／v3／MTP 夹具 | LT00 完成且获得实施授权 | 无 UI／Worker 预计算／绑定文件即可运行；合法通过、真实违规失败；稳定案例与明细；零匹配／无效配置／泛型／例外负例通过 | NOT STARTED |
 | LT02 日常运行与门禁 | 无界面协调入口、正常增量构建、原生测试清单／结果及来源适配、全工程覆盖核对、子进程环境隔离、取消与日志 | LT01 闭环 | 子进程更新开关为 0；IFX 与 JSON 案例可识别；发现不算执行；漏执行／过滤／skip／异常／取消阻断；历史 unknown 不阻断；无取证链 | NOT STARTED |
 | LT02A IFX 早期接入门槛 | 获授权的外置 IFX 副本／worktree，原生基线与接入后案例对照，MTP／RepoLayout／输出与快照开关验证，初步冷热记录 | LT02 通过；另获具体目标／操作授权；未授权则该阶段等待，不进入 LT03 | 三个原类、所有原案例／Theory 数据及断言保留；原工程全量执行；快照开关父 1 子 0、API 不匹配失败且基准不变；根目录／项目引用正确；并行负载不使原五秒断言失效且不放宽阈值 | NOT STARTED |
@@ -315,4 +317,4 @@ LT00 先冻结测量口径，LT02A 在开发报告历史与 UI 前完成首次 I
 9. 新鲜度与历史管理反向膨胀：runGate 不依赖历史 unknown 的证明；首版只有报告目录、基本状态和只读列表，不恢复轮转／保护引用图或任务重放。
 10. 来源与覆盖混淆：责任清单只作说明，不成为另一套可执行政策；发现不是执行，旧 A 类 pass 不填充新日常未覆盖；UI 明示范围，不自动解析 C# 或合并多种断言结果。
 
-本轮交付为本计划和总计划入口。没有创建新产品代码、schema、配置、测试工程或新分支，没有执行 dotnet、IFX 测试、产品安装或取证。新计划保留在 main 工作区供审阅，未提交／推送；后续实施、真实接入与发布各按授权推进。
+以上为首次计划编写轮的交付记录：当时只交付本计划和总计划入口，没有创建新产品代码、schema、配置、测试工程或新分支，没有执行 dotnet、IFX 测试、产品安装或取证。此后的开发分支、首提交及 LT00 契约进度以上方执行更新和验收记录为准；后续实施、真实接入与发布各按授权推进。

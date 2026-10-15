@@ -1,0 +1,190 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:archsift:architecture-test-run:v1",
+  "title": "ArchSift architecture test run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "run", "target", "inputs", "engines", "testScope", "process", "checks", "findings", "notIncluded", "outcome"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "architecture-test-run" },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "startedUtc", "finishedUtc", "mode", "reportDirectory"],
+      "properties": {
+        "id": { "$ref": "#/definitions/nonEmpty" },
+        "startedUtc": { "type": "string", "format": "date-time" },
+        "finishedUtc": { "type": "string", "format": "date-time" },
+        "mode": { "enum": ["full", "subset"] },
+        "reportDirectory": { "$ref": "#/definitions/nonEmpty" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["worktreeRoot", "gitCommit", "dirty", "entry", "testProjects", "sdk", "targetFramework", "configuration"],
+      "properties": {
+        "worktreeRoot": { "$ref": "#/definitions/nonEmpty" },
+        "gitCommit": { "$ref": "#/definitions/nonEmpty" },
+        "dirty": { "type": "boolean" },
+        "entry": { "$ref": "#/definitions/nonEmpty" },
+        "testProjects": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/nonEmpty" } },
+        "sdk": { "$ref": "#/definitions/nonEmpty" },
+        "targetFramework": { "$ref": "#/definitions/nonEmpty" },
+        "configuration": { "$ref": "#/definitions/nonEmpty" }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ifxBaselineSha256", "rulesets"],
+      "properties": {
+        "ifxBaselineSha256": { "$ref": "#/definitions/sha256" },
+        "rulesets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "path", "sha256"],
+            "properties": {
+              "id": { "$ref": "#/definitions/nonEmpty" },
+              "path": { "$ref": "#/definitions/nonEmpty" },
+              "sha256": { "$ref": "#/definitions/sha256" }
+            }
+          }
+        }
+      }
+    },
+    "engines": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runner", "testAdapter", "archUnitNet"],
+      "properties": {
+        "runner": { "$ref": "#/definitions/nonEmpty" },
+        "testAdapter": { "$ref": "#/definitions/nonEmpty" },
+        "archUnitNet": { "$ref": "#/definitions/nonEmpty" }
+      }
+    },
+    "testScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredOriginalProject", "expectedOriginalCaseIds", "enabledJsonRuleIds", "discoveredCaseIds", "startedCaseIds", "completedCaseIds", "skippedCaseIds", "missingCaseIds", "duplicateCaseIds", "coverageComplete"],
+      "properties": {
+        "requiredOriginalProject": { "$ref": "#/definitions/nonEmpty" },
+        "expectedOriginalCaseIds": { "$ref": "#/definitions/ids" },
+        "enabledJsonRuleIds": { "$ref": "#/definitions/ids" },
+        "discoveredCaseIds": { "$ref": "#/definitions/ids" },
+        "startedCaseIds": { "$ref": "#/definitions/ids" },
+        "completedCaseIds": { "$ref": "#/definitions/ids" },
+        "skippedCaseIds": { "$ref": "#/definitions/ids" },
+        "missingCaseIds": { "$ref": "#/definitions/ids" },
+        "duplicateCaseIds": { "$ref": "#/definitions/ids" },
+        "coverageComplete": { "type": "boolean" }
+      }
+    },
+    "process": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshotUpdatesDisabled", "restore", "build", "test", "sourceChangedDuringRun", "authoritativeOutputSaved"],
+      "properties": {
+        "snapshotUpdatesDisabled": { "type": "boolean" },
+        "restore": { "$ref": "#/definitions/processStage" },
+        "build": { "$ref": "#/definitions/processStage" },
+        "test": { "$ref": "#/definitions/processStage" },
+        "sourceChangedDuringRun": { "type": "boolean" },
+        "authoritativeOutputSaved": { "type": "boolean" }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "responsibleChecker", "inDailyScope", "discovered", "executed", "result", "findingIds", "messages", "limitations"],
+        "properties": {
+          "id": { "$ref": "#/definitions/nonEmpty" },
+          "source": { "enum": ["ifx-specialized", "json-type-dependency", "legacy-archsift"] },
+          "responsibleChecker": { "$ref": "#/definitions/nonEmpty" },
+          "inDailyScope": { "type": "boolean" },
+          "runnerCaseId": { "$ref": "#/definitions/nonEmpty" },
+          "ruleId": { "$ref": "#/definitions/nonEmpty" },
+          "scope": { "$ref": "#/definitions/nonEmpty" },
+          "reason": { "$ref": "#/definitions/nonEmpty" },
+          "discovered": { "type": "boolean" },
+          "executed": { "type": "boolean" },
+          "result": { "enum": ["passed", "failed", "skipped", "not-run", "not-included", "unavailable"] },
+          "rawRuleStatus": { "enum": ["pass", "violation", "inconclusive", "not-applicable", "error"] },
+          "matched": { "type": "integer", "minimum": 0 },
+          "elapsedMilliseconds": { "type": "integer", "minimum": 0 },
+          "findingIds": { "$ref": "#/definitions/ids" },
+          "messages": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "checkId", "message"],
+        "properties": {
+          "id": { "$ref": "#/definitions/nonEmpty" },
+          "checkId": { "$ref": "#/definitions/nonEmpty" },
+          "message": { "$ref": "#/definitions/nonEmpty" },
+          "severity": { "enum": ["info", "warning", "error"] },
+          "sourceType": { "$ref": "#/definitions/nonEmpty" },
+          "targetType": { "$ref": "#/definitions/nonEmpty" },
+          "location": { "$ref": "#/definitions/nonEmpty" },
+          "exceptionId": { "$ref": "#/definitions/nonEmpty" },
+          "exceptionReason": { "$ref": "#/definitions/nonEmpty" }
+        }
+      }
+    },
+    "notIncluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "responsibleChecker", "reason"],
+        "properties": {
+          "id": { "$ref": "#/definitions/nonEmpty" },
+          "source": { "enum": ["legacy-archsift", "candidate-json-test"] },
+          "responsibleChecker": { "$ref": "#/definitions/nonEmpty" },
+          "reason": { "$ref": "#/definitions/nonEmpty" },
+          "relatedCheckId": { "$ref": "#/definitions/nonEmpty" }
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runGate", "exitCode", "reasons"],
+      "properties": {
+        "runGate": { "enum": ["allow", "block"] },
+        "exitCode": { "enum": [0, 2, 3, 4, 5, 130] },
+        "reasons": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/nonEmpty" } }
+      },
+      "allOf": [
+        { "if": { "properties": { "runGate": { "const": "allow" } } }, "then": { "properties": { "exitCode": { "const": 0 }, "reasons": { "maxItems": 0 } } } },
+        { "if": { "properties": { "runGate": { "const": "block" } } }, "then": { "properties": { "exitCode": { "enum": [2, 3, 4, 5, 130] }, "reasons": { "minItems": 1 } } } }
+      ]
+    }
+  },
+  "definitions": {
+    "nonEmpty": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "ids": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/nonEmpty" } },
+    "processStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["not-started", "passed", "failed", "cancelled"] },
+        "exitCode": { "type": "integer" },
+        "logPath": { "$ref": "#/definitions/nonEmpty" }
+      }
+    }
+  }
+}
