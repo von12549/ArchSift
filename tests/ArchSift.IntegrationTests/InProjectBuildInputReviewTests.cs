@@ -10,6 +10,20 @@ namespace ArchSift.IntegrationTests;
 public sealed class InProjectBuildInputReviewTests
 {
     [Fact]
+    public void RazorBuildTimeAnalyzersAreLimitedToTheSelectedSdkAndKnownFiles()
+    {
+        var sdk = Path.Combine(Path.GetTempPath(), "archsift-sdk-probe", "sdk", "10.0.303");
+        var compiler = Path.Combine(sdk, "Roslyn", "bincore", "csc.dll");
+        var folder = Path.Combine(sdk, "Sdks", "Microsoft.NET.Sdk.Razor", "source-generators");
+        Assert.True(InProjectCompilerCaptures.ReviewedRazorBuildAnalyzer(compiler,
+            Path.Combine(folder, "Microsoft.CodeAnalysis.Razor.Compiler.dll")));
+        Assert.False(InProjectCompilerCaptures.ReviewedRazorBuildAnalyzer(compiler,
+            Path.Combine(folder, "UnknownGenerator.dll")));
+        Assert.False(InProjectCompilerCaptures.ReviewedRazorBuildAnalyzer(compiler,
+            Path.Combine(Path.GetTempPath(), "other-sdk", "Microsoft.CodeAnalysis.Razor.Compiler.dll")));
+    }
+
+    [Fact]
     public void BundledReferenceAnalyzerMustMatchTheLockedArchiveBytes()
     {
         var root = Path.Combine(Path.GetTempPath(), "archsift-reference-review-" + Guid.NewGuid().ToString("N"));

@@ -20,11 +20,16 @@ public sealed class InProjectBuildCaptureTests
         var source = Path.Combine(root, "Input.cs");
         var output = Path.Combine(root, "Output.dll");
         var response = Path.Combine(root, "inputs.rsp");
+        var generated = Path.Combine(root, "generated");
+        var generatedSource = Path.Combine(generated, "Generator", "Emitted.cs");
         File.WriteAllText(compiler, "synthetic compiler identity");
         File.WriteAllText(reference, "synthetic selected reference");
         File.WriteAllText(source, "internal class Input { }");
         File.WriteAllText(output, "synthetic compiler output");
-        File.WriteAllText(response, "/out:Output.dll /reference:Reference.dll Input.cs");
+        Directory.CreateDirectory(Path.GetDirectoryName(generatedSource)!);
+        File.WriteAllText(generatedSource, "internal class Emitted { }");
+        File.WriteAllText(response,
+            "/out:Output.dll /reference:Reference.dll /generatedfilesout:generated Input.cs");
         var log = compiler + " /noconfig @inputs.rsp (TaskId:7)";
 
         var captured = InProjectCompilerCaptures.Parse(log, root);
@@ -32,6 +37,13 @@ public sealed class InProjectBuildCaptureTests
         Assert.Equal(LocalPackage.HashFile(source), Assert.Single(captured.Sources).Sha256);
         Assert.Equal(LocalPackage.HashFile(reference), Assert.Single(captured.References).Sha256);
         Assert.Equal(LocalPackage.HashFile(output), captured.IntermediateOutputSha256);
+        Assert.Equal(generated, captured.GeneratedFilesOutputPath);
+        Assert.Equal(LocalPackage.HashFile(generatedSource), Assert.Single(captured.GeneratedFiles).Sha256);
+
+        File.Delete(generatedSource);
+        Directory.Delete(Path.GetDirectoryName(generatedSource)!);
+        Directory.Delete(generated);
+        Assert.Throws<ConfigurationException>(() => InProjectCompilerCaptures.Parse(log, root));
 
         File.Delete(response);
         Assert.Throws<ConfigurationException>(() => InProjectCompilerCaptures.Parse(log, root));

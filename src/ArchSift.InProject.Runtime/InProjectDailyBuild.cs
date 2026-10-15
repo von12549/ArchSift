@@ -61,11 +61,13 @@ public static class InProjectDailyBuild
                 var key = ContentHash.Text(selected.Project.Id + "\0" + selected.TargetFramework)[..16];
                 var preprocessed = Path.Combine(snapshot.ReportDirectory, "preprocess-" + key + ".xml");
                 var afterPreprocessed = Path.Combine(snapshot.ReportDirectory, "preprocess-after-" + key + ".xml");
+                var generatedDirectory = GeneratedDirectory(projectPath, selected);
+                PathSafety.EnsureNoLinks(generatedDirectory);
+                if (Directory.Exists(generatedDirectory))
+                    throw new ConfigurationException("Compiler generated-file directory is not fresh.");
                 await process.DotnetAsync("preprocess-" + key, projectDirectory,
                     ["msbuild", projectPath, "-preprocess:" + preprocessed,
-                     "-property:TargetFramework=" + selected.TargetFramework,
-                     "-property:Configuration=" + selected.Configuration,
-                     "-property:BuildProjectReferences=false"]);
+                     .. ContextProperties(projectPath, selected)]);
                 var beforePreprocessHash = LocalPackage.HashFile(preprocessed);
                 var before = InProjectEvaluations.Parse(await process.DotnetAsync("evaluate-" + key, projectDirectory,
                     EvaluationArguments(projectPath, selected)), projectPath, selected.TargetFramework, selected.Configuration);
@@ -73,8 +75,12 @@ public static class InProjectDailyBuild
                 var buildLog = await process.DotnetAsync("build-" + key, projectDirectory,
                     ["build", projectPath, "--no-restore", "--disable-build-servers",
                      "-p:UseSharedCompilation=false", "-p:BuildProjectReferences=false",
+                     "-p:EmitCompilerGeneratedFiles=true",
+                     "-p:CompilerGeneratedFilesOutputPath=" + generatedDirectory,
                      "-f", selected.TargetFramework, "-c", selected.Configuration, "--verbosity", "normal"]);
                 var compiler = InProjectCompilerCaptures.Parse(buildLog, projectDirectory);
+                if (!generatedDirectory.Equals(compiler.GeneratedFilesOutputPath, PathSafety.Comparison))
+                    throw new ConfigurationException("Actual compiler call omitted the owned generated-file output.");
                 if (!PathSafety.IsUnder(compiler.CompilerPath, DotnetRoot()))
                     throw new ConfigurationException("Compiler executable is outside the selected .NET SDK.");
                 InProjectCompilerCaptures.VerifyAgainstEvaluation(compiler, before, snapshot.SourceDirectory,
@@ -84,9 +90,7 @@ public static class InProjectDailyBuild
                 InProjectEvaluations.VerifyStable(before, after);
                 await process.DotnetAsync("preprocess-after-" + key, projectDirectory,
                     ["msbuild", projectPath, "-preprocess:" + afterPreprocessed,
-                     "-property:TargetFramework=" + selected.TargetFramework,
-                     "-property:Configuration=" + selected.Configuration,
-                     "-property:BuildProjectReferences=false"]);
+                     .. ContextProperties(projectPath, selected)]);
                 if (LocalPackage.HashFile(afterPreprocessed) != beforePreprocessHash)
                     throw new ConfigurationException("Effective MSBuild imports changed during compilation.");
                 if (!File.Exists(before.TargetPath) ||
@@ -149,11 +153,26 @@ public static class InProjectDailyBuild
 
     private static string[] EvaluationArguments(string projectPath, InProjectBuildContext selected) =>
         ["msbuild", projectPath, "-target:ResolveReferences",
-         "-property:TargetFramework=" + selected.TargetFramework,
-         "-property:Configuration=" + selected.Configuration,
-         "-property:BuildProjectReferences=false",
+         .. ContextProperties(projectPath, selected),
          "-getProperty:MSBuildAllProjects,TargetFramework,Configuration,TargetPath",
          "-getItem:ReferencePath,ReferenceCopyLocalPaths,Compile,Analyzer,AdditionalFiles,EmbeddedResource"];
+
+    private static string[] ContextProperties(string projectPath, InProjectBuildContext selected) =>
+        ["-property:TargetFramework=" + selected.TargetFramework,
+         "-property:Configuration=" + selected.Configuration,
+         "-property:BuildProjectReferences=false",
+         "-property:UseSharedCompilation=false",
+         "-property:EmitCompilerGeneratedFiles=true",
+         "-property:CompilerGeneratedFilesOutputPath=" + GeneratedDirectory(projectPath, selected)];
+
+    private static string GeneratedDirectory(string projectPath, InProjectBuildContext selected) =>
+        Path.Combine(Path.GetDirectoryName(projectPath)!, "obj", selected.Configuration,
+            selected.TargetFramework, "archsift-generated");
+
+    public static string GlobalPropertiesSha256(InProjectBuildContext selected, string generatedDirectory) =>
+        ContentHash.Text(selected.Configuration + "\0" + selected.TargetFramework +
+            "\0BuildProjectReferences=false\0UseSharedCompilation=false\0EmitCompilerGeneratedFiles=true\0" +
+            generatedDirectory);
 
     private static void VerifyPackageBuildAssets(InProjectPackageReview? review, InProjectBuildPlan plan,
         InProjectSnapshot snapshot, string packageCache)
@@ -242,6 +261,8 @@ public static class InProjectDailyBuild
         materials.AddRange(compiler.AdditionalFiles.Select(file => new InProjectBindingMaterial(file.Path, "additional-file", file.Sha256)));
         materials.AddRange(compiler.OtherInputs.Select(file => new InProjectBindingMaterial(file.Path, "resource", file.Sha256)));
         materials.AddRange(compiler.ResponseFiles.Select(file => new InProjectBindingMaterial(file.Path, "response-file", file.Sha256)));
+        materials.AddRange(compiler.GeneratedFiles.Select(file =>
+            new InProjectBindingMaterial(file.Path, "generated-source", file.Sha256)));
         materials.AddRange(evaluation.Imports.Select(file => new InProjectBindingMaterial(file.Path, "import", file.Sha256)));
         materials.Add(new(preprocessedPath, "import", LocalPackage.HashFile(preprocessedPath)));
         materials.Add(new(compiler.CompilerPath, "sdk", compiler.CompilerSha256));
@@ -256,7 +277,7 @@ public static class InProjectDailyBuild
                 ManagedIdentity(file.Path), file.Sha256, "copy-local"))).ToArray();
         return new(Path.GetRelativePath(config.Root, Path.GetFullPath(selected.Project.Id, config.Root)).Replace('\\', '/'),
             selected.TargetFramework, selected.Configuration,
-            ContentHash.Text(selected.Configuration + "\0" + selected.TargetFramework + "\0BuildProjectReferences=false"),
+            GlobalPropertiesSha256(selected, compiler.GeneratedFilesOutputPath!),
             compiler.CommandSha256, compiler.CompilerPath, materials.ToArray(), references,
             evaluation.TargetPath, LocalPackage.HashFile(evaluation.TargetPath));
     }

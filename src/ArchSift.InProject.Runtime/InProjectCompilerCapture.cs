@@ -7,10 +7,20 @@ public sealed record InProjectCompilerCapture(string CompilerPath, string Compil
     string CommandSha256, InProjectEvaluatedFile[] Sources, InProjectEvaluatedFile[] References,
     InProjectEvaluatedFile[] Analyzers, InProjectEvaluatedFile[] AdditionalFiles,
     InProjectEvaluatedFile[] OtherInputs, InProjectEvaluatedFile[] ResponseFiles,
-    string IntermediateOutputPath, string IntermediateOutputSha256);
+    string IntermediateOutputPath, string IntermediateOutputSha256)
+{
+    public string? GeneratedFilesOutputPath { get; init; }
+    public InProjectEvaluatedFile[] GeneratedFiles { get; init; } = [];
+}
 
 public static class InProjectCompilerCaptures
 {
+    private static readonly HashSet<string> RazorBuildAnalyzers = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Microsoft.AspNetCore.Razor.Utilities.Shared.dll",
+        "Microsoft.CodeAnalysis.Razor.Compiler.dll",
+        "Microsoft.Extensions.ObjectPool.dll"
+    };
     private static readonly Regex CompilerLine = new(@"(?<compiler>[A-Za-z]:\\.*?csc\.(?:exe|dll))\s+(?<args>/noconfig\s.*?)(?:\s+\(TaskId:\d+\))?$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant,
         TimeSpan.FromSeconds(2));
@@ -34,6 +44,7 @@ public static class InProjectCompilerCaptures
         var additional = new List<InProjectEvaluatedFile>();
         var other = new List<InProjectEvaluatedFile>();
         string? output = null;
+        string? generatedDirectory = null;
         foreach (var argument in arguments)
         {
             if (argument.StartsWith("/out:", StringComparison.OrdinalIgnoreCase))
@@ -53,6 +64,12 @@ public static class InProjectCompilerCaptures
                 analyzers.Add(Fact(argument[10..], projectDirectory));
             else if (argument.StartsWith("/additionalfile:", StringComparison.OrdinalIgnoreCase))
                 additional.Add(Fact(argument[16..], projectDirectory));
+            else if (argument.StartsWith("/generatedfilesout:", StringComparison.OrdinalIgnoreCase))
+            {
+                if (generatedDirectory is not null)
+                    throw new ConfigurationException("Duplicate generated-files output flag.");
+                generatedDirectory = Resolve(argument[19..], projectDirectory);
+            }
             else if (argument.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) && !argument.StartsWith('/'))
                 sources.Add(Fact(argument, projectDirectory));
             else
@@ -72,16 +89,24 @@ public static class InProjectCompilerCaptures
             throw new ConfigurationException("Compiler output, sources or references were not observed.");
         return new(compiler, LocalPackage.HashFile(compiler), ContentHash.Text(match.Value),
             sources.ToArray(), references.ToArray(), analyzers.ToArray(), additional.ToArray(),
-            other.ToArray(), responses.ToArray(), output, LocalPackage.HashFile(output));
+            other.ToArray(), responses.ToArray(), output, LocalPackage.HashFile(output))
+        {
+            GeneratedFilesOutputPath = generatedDirectory,
+            GeneratedFiles = generatedDirectory is null ? [] : CaptureGenerated(generatedDirectory)
+        };
     }
 
     public static void VerifyAgainstEvaluation(InProjectCompilerCapture compiler, InProjectEvaluation evaluation,
         string snapshotRoot, IReadOnlyDictionary<string, string> originalInputHashes,
         InProjectPackageReview? packageReview = null, string? packageCache = null)
     {
+        var evaluatedAnalyzers = evaluation.Analyzers.Select(Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var selectedAnalyzers = compiler.Analyzers.Where(file => evaluatedAnalyzers.Contains(Key(file))).ToArray();
+        var buildAnalyzers = compiler.Analyzers.Where(file => !evaluatedAnalyzers.Contains(Key(file))).ToArray();
         if (!Same(compiler.References, evaluation.References.Select(reference =>
                 new InProjectEvaluatedFile(reference.CompilerPath, reference.CompilerSha256))) ||
-            !Same(compiler.Analyzers, evaluation.Analyzers) ||
+            !Same(selectedAnalyzers, evaluation.Analyzers) ||
+            buildAnalyzers.Any(file => !ReviewedRazorBuildAnalyzer(compiler.CompilerPath, file.Path)) ||
             !Same(compiler.AdditionalFiles, evaluation.AdditionalFiles))
             throw new ConfigurationException("Actual compiler references/analyzers differ from MSBuild evaluation.");
         var seenSources = compiler.Sources.Select(source => source.Path).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -106,11 +131,18 @@ public static class InProjectCompilerCaptures
                 relative.Contains("/obj/", StringComparison.OrdinalIgnoreCase) &&
                 (file.EndsWith(".AssemblyAttributes.cs", StringComparison.Ordinal) ||
                   file.EndsWith(".AssemblyInfo.cs", StringComparison.Ordinal) ||
+                  file.EndsWith(".MvcApplicationPartsAssemblyInfo.cs", StringComparison.Ordinal) ||
                   file.EndsWith(".GlobalUsings.g.cs", StringComparison.Ordinal))))
                 throw new ConfigurationException("Unreviewed generated compiler source: " + relative);
         }
         if (LocalPackage.HashFile(compiler.IntermediateOutputPath) != compiler.IntermediateOutputSha256)
             throw new ConfigurationException("Intermediate compiler output changed after capture.");
+        var expectedGeneratedDirectory = Path.Combine(Path.GetDirectoryName(evaluation.ProjectPath)!, "obj",
+            evaluation.Configuration, evaluation.TargetFramework, "archsift-generated");
+        if (!expectedGeneratedDirectory.Equals(compiler.GeneratedFilesOutputPath, PathSafety.Comparison) ||
+            !PathSafety.IsUnder(expectedGeneratedDirectory, snapshotRoot) ||
+            !Same(compiler.GeneratedFiles, CaptureGenerated(expectedGeneratedDirectory)))
+            throw new ConfigurationException("Generated compiler sources differ from the owned build output.");
     }
 
     private static string[] Expand(string[] tokens, string cwd, List<InProjectEvaluatedFile> files,
@@ -152,4 +184,30 @@ public static class InProjectCompilerCaptures
         left.Select(file => file.Path + "\0" + file.Sha256).Order(StringComparer.OrdinalIgnoreCase)
             .SequenceEqual(right.Select(file => file.Path + "\0" + file.Sha256).Order(StringComparer.OrdinalIgnoreCase),
                 StringComparer.OrdinalIgnoreCase);
+
+    private static InProjectEvaluatedFile[] CaptureGenerated(string directory)
+    {
+        PathSafety.EnsureNoLinks(directory);
+        if (!Directory.Exists(directory))
+            throw new ConfigurationException("Compiler generated-file directory is missing.");
+        return Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories)
+            .Order(StringComparer.OrdinalIgnoreCase).Select(path =>
+            {
+                if (!PathSafety.IsUnder(path, directory) || !path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                    throw new ConfigurationException("Unexpected compiler-generated file: " + path);
+                PathSafety.EnsureNoLinks(path);
+                return new InProjectEvaluatedFile(path, LocalPackage.HashFile(path));
+            }).ToArray();
+    }
+
+    private static string Key(InProjectEvaluatedFile file) => file.Path + "\0" + file.Sha256;
+
+    public static bool ReviewedRazorBuildAnalyzer(string compilerPath, string analyzerPath)
+    {
+        var sdkRoot = Directory.GetParent(compilerPath)?.Parent?.Parent?.FullName;
+        if (sdkRoot is null) return false;
+        var folder = Path.Combine(sdkRoot, "Sdks", "Microsoft.NET.Sdk.Razor", "source-generators");
+        return RazorBuildAnalyzers.Contains(Path.GetFileName(analyzerPath)) &&
+            Path.GetDirectoryName(analyzerPath)?.Equals(folder, PathSafety.Comparison) == true;
+    }
 }

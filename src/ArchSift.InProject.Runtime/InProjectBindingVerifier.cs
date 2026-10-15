@@ -45,8 +45,8 @@ public static class InProjectBindingVerifier
                     captured.CompilerCommandSha256 != compiler.CommandSha256 ||
                     captured.OutputPath != evaluation.TargetPath ||
                     captured.OutputSha256 != LocalPackage.HashFile(evaluation.TargetPath) ||
-                    captured.GlobalPropertiesSha256 != ContentHash.Text(expected.Configuration + "\0" +
-                        expected.TargetFramework + "\0BuildProjectReferences=false"))
+                    captured.GlobalPropertiesSha256 != InProjectDailyBuild.GlobalPropertiesSha256(expected,
+                        compiler.GeneratedFilesOutputPath!))
                     throw new ConfigurationException("Daily capture context differs from actual build evidence.");
                 if (captured.Materials.Length == 0 || captured.References.Length == 0)
                     throw new ConfigurationException("Daily capture omits compiler inputs or references.");
@@ -59,6 +59,10 @@ public static class InProjectBindingVerifier
                         !PathSafety.IsUnder(material.Path, snapshot.SourceDirectory))
                         throw new ConfigurationException("Captured source escapes the fresh snapshot.");
                 }
+                if (compiler.GeneratedFiles.Any(file => !captured.Materials.Any(material =>
+                        material.Kind == "generated-source" && material.Path == file.Path &&
+                        material.Sha256 == file.Sha256)))
+                    throw new ConfigurationException("Daily capture omits compiler-generated source material.");
                 foreach (var reference in captured.References)
                 {
                     PathSafety.EnsureNoLinks(reference.Path);
