@@ -6,6 +6,116 @@ namespace ArchSift.IntegrationTests;
 
 public sealed class EvidenceJobTests
 {
+    [Theory]
+    [InlineData("restoring")]
+    [InlineData("capturing")]
+    [InlineData("building")]
+    [InlineData("evaluating")]
+    [InlineData("sealing")]
+    [InlineData("validating")]
+    public async Task CancellationAtEachEvidencePhaseKeepsCurrentTerminalAndOwnedProcessesStopped(string phase)
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var root = Path.Combine(Path.GetTempPath(), "archsift-phase-cancel-" + Guid.NewGuid().ToString("N"));
+        var source = Path.Combine(root, "source"); Directory.CreateDirectory(source);
+        File.WriteAllText(Path.Combine(source, "Fixture.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        File.WriteAllText(Path.Combine(source, "Fixture.cs"), "namespace PhaseFixture; public sealed class Marker {}");
+        try
+        {
+            var config = new RunConfiguration { SchemaVersion = 1, Target = new() { Root = source }, Build = new() { TargetFramework = "net10.0", Configuration = "Debug" }, Output = new() { Directory = Path.Combine(root, "reports") } };
+            var request = new EvidenceJobRequest(new(Path.Combine(root, "data"), null, "fixture", Guid.NewGuid().ToString("N"), []),
+                SafeProcess.Dotnet, Environment.GetEnvironmentVariable("ARCHSIFT_TEST_LOCAL_FEED") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages"),
+                null, [], [], true, "synthetic phase reviewer", "Reviewed plain owned SDK library; no custom task or application/test entry.");
+            var initial = InputCapture.Capture(source); var service = new EvidenceJobService([]); var preview = service.Preview(config, request);
+            using var cancellation = new CancellationTokenSource();
+            var reviewPhase = phase is "sealing" or "validating";
+            var reached = false;
+            var record = await service.BuildAsync(config, request, preview.PreviewSha256, view =>
+            {
+                if (!reviewPhase && view.Stage == phase) { reached = true; cancellation.Cancel(); }
+            }, cancellation.Token);
+            if (reviewPhase)
+            {
+                Assert.Equal("review-required", record.Stage);
+                var scope = EvidenceReviewService.Scope(preview.Storage.RunDirectory, source);
+                var approval = new EvidenceReviewRequest(scope.JobDirectory, scope.ScopeSha256, "synthetic phase reviewer", "delegated-agent", "owned phase-cancellation regression",
+                    "Read actual successful fixture exits and immutable source/snapshot/SDK/compiler/evaluation materials before the controlled phase cancellation.",
+                    ["SDK-generated source/restore inputs precede actual fixture compile and evaluation."], "Plain SDK fixture; captured SDK only, no custom tasks.", ["Synthetic portable evidence only; no target execution or human acceptance."], true);
+                var result = EvidenceReviewService.Approve(approval, source, cancellation.Token, progress =>
+                {
+                    if (progress.Stage == phase) { reached = true; cancellation.Cancel(); }
+                });
+                Assert.Equal("cancelled", result.Stage);
+                record = EvidenceReviewService.Load(preview.Storage.RunDirectory, source);
+                Assert.False(File.Exists(Path.Combine(preview.Storage.RunDirectory, "independent-validation.json")));
+                Assert.False(File.Exists(Path.Combine(preview.Storage.RunDirectory, "config-bound.json")));
+            }
+            Assert.True(reached);
+            Assert.Equal("cancelled", record.Stage);
+            Assert.All(record.Executions, execution => { Assert.True(execution.OwnedTreeStopped); Assert.True(execution.HostStateEqual); });
+            Assert.Equal(initial.Sha256, InputCapture.Capture(source).Sha256);
+            var recovery = EvidenceLifecycle.Recover(preview.Storage.RunDirectory, source, false);
+            Assert.False(recovery.AutomaticRestart);
+            Assert.False(recovery.CurrentSourceVerified);
+        }
+        finally
+        {
+            Assert.True(PathSafety.IsUnder(root, Path.GetTempPath()));
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task SharedProjectReferenceGraphRestoresAndBuildsWithoutExecutingTarget()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var root = Path.Combine(Path.GetTempPath(), "archsift-shared-restore-" + Guid.NewGuid().ToString("N"));
+        var source = Path.Combine(root, "source");
+        var flag = Path.Combine(root, "module-must-not-run.txt");
+        foreach (var name in new[] { "Contracts", "Client", "Store" }) Directory.CreateDirectory(Path.Combine(source, name));
+        var header = "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>";
+        File.WriteAllText(Path.Combine(source, "Contracts", "Contracts.csproj"), header + "</Project>");
+        File.WriteAllText(Path.Combine(source, "Contracts", "Value.cs"),
+            "namespace Contracts; public class Value {} public static class Marker { [System.Runtime.CompilerServices.ModuleInitializer] public static void Start() => System.IO.File.WriteAllText(@\"" + flag + "\", \"BAD\"); }");
+        File.WriteAllText(Path.Combine(source, "Client", "Client.csproj"), header + "<ItemGroup><ProjectReference Include=\"../Contracts/Contracts.csproj\" /></ItemGroup></Project>");
+        File.WriteAllText(Path.Combine(source, "Client", "Value.cs"), "namespace Client; public class Value { public Contracts.Value Item = new(); }");
+        File.WriteAllText(Path.Combine(source, "Store", "Store.csproj"), header + "<ItemGroup><ProjectReference Include=\"../Client/Client.csproj\" /><ProjectReference Include=\"../Contracts/Contracts.csproj\" /></ItemGroup></Project>");
+        File.WriteAllText(Path.Combine(source, "Store", "Value.cs"), "namespace Store; public class Value { public Client.Value Client = new(); public Contracts.Value Contract = new(); }");
+        try
+        {
+            var config = new RunConfiguration { SchemaVersion = 1, Target = new() { Root = source }, Build = new() { TargetFramework = "net10.0", Configuration = "Debug" }, Output = new() { Directory = Path.Combine(root, "reports") } };
+            var request = new EvidenceJobRequest(new(Path.Combine(root, "data"), null, "shared-graph", Guid.NewGuid().ToString("N"), []),
+                SafeProcess.Dotnet, Environment.GetEnvironmentVariable("ARCHSIFT_TEST_LOCAL_FEED") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages"),
+                null, [], [], true, "synthetic regression reviewer", "Reviewed three SDK libraries with a shared transitive/direct dependency; no application or test entry point.");
+            var before = InputCapture.Capture(source);
+            var service = new EvidenceJobService([]);
+            var preview = service.Preview(config, request);
+            var record = await service.BuildAsync(config, request, preview.PreviewSha256);
+            Assert.True(record.Stage == "review-required", JsonSerializer.Serialize(record, JsonContract.Options));
+            Assert.Equal(3, record.CompletedProjects);
+            Assert.Equal(3, record.EvaluatedProjects);
+            Assert.Empty(record.Unknowns);
+            Assert.Equal(preview.Commands.Length, record.Executions.Length);
+            Assert.All(record.Executions, execution =>
+            {
+                Assert.Equal(0, execution.ExitCode);
+                Assert.True(execution.OwnedTreeStopped);
+                Assert.True(execution.HostStateEqual);
+            });
+            using var template = JsonDocument.Parse(File.ReadAllBytes(record.ReviewTemplatePath!));
+            Assert.Equal(3, template.RootElement.GetProperty("projectContexts").GetArrayLength());
+            Assert.False(template.RootElement.GetProperty("approved").GetBoolean());
+            Assert.False(File.Exists(preview.Storage.ManifestPath));
+            Assert.False(File.Exists(flag));
+            Assert.Equal(before.Sha256, InputCapture.Capture(source).Sha256);
+        }
+        finally
+        {
+            Assert.True(PathSafety.IsUnder(root, Path.GetTempPath()));
+            Directory.Delete(root, true);
+        }
+    }
+
     [Fact]
     public async Task RealOfflineBuildProducesUnapprovedPersistentMaterialsWithoutRunningTarget()
     {
