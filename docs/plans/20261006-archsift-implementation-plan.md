@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-15 轻量工作台 LT01 更新：用户授权后续开发、验收和每阶段提交推送，并具体授权 LT02A／LT05 在 `D:/ArchSift-lab` 的独立 IFX 副本执行审查过的离线操作；原目标／安装只读，最终独立人工 UI 验收仍由用户完成。[LT01 合成验收](../acceptance/20261015-lightweight-lt01-synthetic.md)记录代码提交 `082d0ec`：JSON 规则经共享校验后成为 xUnit v3／MTP 参数化案例，真实 ArchUnitNET 合成正反例、7 项 MTP 与旧产品 248 项回归通过。状态 **LT01 SYNTHETIC COMPLETE / LT02 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；真实 IFX 全工程接入仍待 LT02A。下文先前未授权状态保留形成时点。
+
 2026-10-15 轻量工作台 LT00 更新：用户授权从 `main` 的 `acbcff1` 创建 `codex/archsift-lightweight-workbench`，将此前两份计划文档作为首提交 `d1b089d` 推送，然后开始 LT00。[LT00 范围与契约](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md)、[静态验收](../acceptance/20261015-lightweight-lt00-contracts.md)、IFX 原测试源码基线、A/B 逐项归属清单和独立报告 schema 已完成；用户随后另行授权提交并推送这些 LT00 成果。状态 **LT00 DESIGN COMPLETE / LT01 NOT STARTED / NOT ACCEPTED / NOT RELEASED**；80 个原案例为源码推导数，尚非运行器实测。真实 IFX 接入、后续包、PR／合并／发布未获本次授权。以下“未创建分支／未提交计划／实施未授权”文字均保留原形成时点。
 
 2026-10-15 轻量计划规则归属与 UI 补充（仅文档）：更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)的 A／B／IFX 责任清单与 UI 契约。首版日常范围为 IFX 原专用测试全工程＋经审查启用的 B 类 JSON 类型依赖测试；A 类实际重复项由 IFX 原断言承担，TFM／solution 成员／部分包闭集等未迁入增量继续由原 ArchSift 执行并明示未纳入，不能宣称三者并集合规。UI 统一显示 JSON、IFX 专用测试、原 ArchSift 检查的来源／责任方、测试清单／实际结果、未覆盖原因；发现、查看、编辑、旧工具 pass 均不算本次通过，IFX C# 逻辑不转为 UI 可编辑规则。阶段与 LA01–LA19 验收同步；保持先 LT02A 再报告／UI、轻量历史、无日常取证链。仍仅计划与索引修改，IMPLEMENTATION NOT AUTHORIZED／NOT STARTED，代码、InProject 与真实目标不变，未运行构建／测试，未提交／推送。
