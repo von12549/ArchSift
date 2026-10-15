@@ -144,7 +144,12 @@ public static class InProjectWorktreeExport
             if (!Directory.Exists(root)) continue;
             var owner = Path.Combine(root, "owner.json");
             PathSafety.EnsureNoLinks(owner);
-            if (!File.Exists(owner)) { limits.Add("Unowned evidence root: " + root); continue; }
+            if (!File.Exists(owner))
+            {
+                if (Directory.EnumerateFileSystemEntries(root).Any())
+                    limits.Add("Unowned evidence root: " + root);
+                continue;
+            }
             using var document = JsonDocument.Parse(File.ReadAllBytes(owner));
             if (document.RootElement.GetProperty("worktreeRoot").GetString() != config.Root ||
                 document.RootElement.GetProperty("worktreeId").GetString() != ContentHash.Text(config.Root))
