@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-15 轻量工作台 LT02 更新：[合成门禁验收](../acceptance/20261015-lightweight-lt02-synthetic-gate.md)记录代码提交 `3ddd0dc`，无界面离线 restore／增量 build／MTP 全工程案例与 JSON 规则身份核对、子进程快照开关、取消／日志／运行中变化检测及合成阻断结果通过；旧产品 248 项回归通过。状态 **LT02 SYNTHETIC COMPLETE / LT02A REAL IFX NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**。真实 IFX 外置副本操作已另获用户具体授权，须按计划通过 LT02A 后再实施报告历史与 UI。下文先前状态保留形成时点。
+
 2026-10-15 轻量工作台 LT01 更新：用户授权后续开发、验收和每阶段提交推送，并具体授权 LT02A／LT05 在 `D:/ArchSift-lab` 的独立 IFX 副本执行审查过的离线操作；原目标／安装只读，最终独立人工 UI 验收仍由用户完成。[LT01 合成验收](../acceptance/20261015-lightweight-lt01-synthetic.md)记录代码提交 `082d0ec`：JSON 规则经共享校验后成为 xUnit v3／MTP 参数化案例，真实 ArchUnitNET 合成正反例、7 项 MTP 与旧产品 248 项回归通过。状态 **LT01 SYNTHETIC COMPLETE / LT02 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；真实 IFX 全工程接入仍待 LT02A。下文先前未授权状态保留形成时点。
 
 2026-10-15 轻量工作台 LT00 更新：用户授权从 `main` 的 `acbcff1` 创建 `codex/archsift-lightweight-workbench`，将此前两份计划文档作为首提交 `d1b089d` 推送，然后开始 LT00。[LT00 范围与契约](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md)、[静态验收](../acceptance/20261015-lightweight-lt00-contracts.md)、IFX 原测试源码基线、A/B 逐项归属清单和独立报告 schema 已完成；用户随后另行授权提交并推送这些 LT00 成果。状态 **LT00 DESIGN COMPLETE / LT01 NOT STARTED / NOT ACCEPTED / NOT RELEASED**；80 个原案例为源码推导数，尚非运行器实测。真实 IFX 接入、后续包、PR／合并／发布未获本次授权。以下“未创建分支／未提交计划／实施未授权”文字均保留原形成时点。
