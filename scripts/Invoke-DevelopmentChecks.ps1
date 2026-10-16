@@ -127,12 +127,10 @@ try {
     }
     $mtpAssembly = Join-Path $repositoryRoot "tests/ArchSift.Testing.Tests/bin/$Configuration/net10.0/ArchSift.Testing.Tests.dll"
     Invoke-CheckedDotnet 'test-mtp' @($mtpAssembly, '-reporter', 'json', '-noLogo')
-    $mtpEvents = @([IO.File]::ReadAllLines((Join-Path $runRoot 'test-mtp.stdout.log')) |
-        Where-Object { $_.TrimStart().StartsWith('{', [StringComparison]::Ordinal) } |
-        ForEach-Object { try { $_ | ConvertFrom-Json } catch { $null } })
-    $mtpPassed = @($mtpEvents | Where-Object { $_.'$type' -eq 'test-passed' }).Count
-    $mtpFailed = @($mtpEvents | Where-Object { $_.'$type' -eq 'test-failed' }).Count
-    $mtpSkipped = @($mtpEvents | Where-Object { $_.'$type' -eq 'test-skipped' }).Count
+    $mtpLines = [IO.File]::ReadAllLines((Join-Path $runRoot 'test-mtp.stdout.log'))
+    $mtpPassed = @($mtpLines | Where-Object { $_.Contains('"$type":"test-passed"') }).Count
+    $mtpFailed = @($mtpLines | Where-Object { $_.Contains('"$type":"test-failed"') }).Count
+    $mtpSkipped = @($mtpLines | Where-Object { $_.Contains('"$type":"test-skipped"') }).Count
     if ($mtpPassed -lt 17 -or $mtpFailed -ne 0 -or $mtpSkipped -ne 0) {
         throw "Unexpected MTP coverage: passed=$mtpPassed failed=$mtpFailed skipped=$mtpSkipped."
     }
