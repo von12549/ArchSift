@@ -285,11 +285,15 @@ public static class TestGateService
 
 internal sealed class RelevantInputObserver : IDisposable
 {
+    private readonly string root;
+    private readonly HashSet<string> initialInputs;
     private readonly FileSystemWatcher watcher;
     private int changed;
 
     internal RelevantInputObserver(string root)
     {
+        this.root = root;
+        initialInputs = EnumerateRelevantInputs(root);
         watcher = new FileSystemWatcher(root)
         {
             IncludeSubdirectories = true,
@@ -304,18 +308,66 @@ internal sealed class RelevantInputObserver : IDisposable
         watcher.EnableRaisingEvents = true;
     }
 
-    internal bool Changed => Volatile.Read(ref changed) != 0;
+    internal bool Changed
+    {
+        get
+        {
+            if (Volatile.Read(ref changed) != 0) return true;
+            try
+            {
+                // Recursive watchers can miss the first file in a newly created directory.
+                // Compare paths at every gate checkpoint so a missed event cannot certify that input.
+                if (!initialInputs.SetEquals(EnumerateRelevantInputs(root)))
+                    Interlocked.Exchange(ref changed, 1);
+            }
+            catch (IOException) { Interlocked.Exchange(ref changed, 1); }
+            catch (UnauthorizedAccessException) { Interlocked.Exchange(ref changed, 1); }
+            return Volatile.Read(ref changed) != 0;
+        }
+    }
 
     private void OnChanged(object sender, FileSystemEventArgs args) => Mark(args.FullPath);
 
     private void Mark(string path)
     {
         var segments = path.Replace('\\', '/').Split('/');
-        if (segments.Any(part => part is "bin" or "obj" or "artifacts" or ".git" or "node_modules")) return;
+        if (segments.Any(IsIgnored)) return;
+        // A new source directory may contain a file before a recursive watcher subscribes to it.
+        if (Directory.Exists(path)) { Interlocked.Exchange(ref changed, 1); return; }
         var extension = Path.GetExtension(path);
-        if (extension is ".cs" or ".csproj" or ".props" or ".targets" or ".slnx" or ".json" or ".txt")
+        if (IsRelevantExtension(extension))
             Interlocked.Exchange(ref changed, 1);
     }
+
+    private static HashSet<string> EnumerateRelevantInputs(string root)
+    {
+        var paths = new HashSet<string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        var pending = new Stack<string>();
+        pending.Push(root);
+        while (pending.TryPop(out var directory))
+        {
+            foreach (var path in Directory.EnumerateFileSystemEntries(directory))
+            {
+                if (IsIgnored(Path.GetFileName(path))) continue;
+                var attributes = File.GetAttributes(path);
+                var relativePath = Path.GetRelativePath(root, path);
+                if ((attributes & FileAttributes.Directory) != 0)
+                {
+                    paths.Add("d:" + relativePath);
+                    if ((attributes & FileAttributes.ReparsePoint) == 0) pending.Push(path);
+                }
+                else if (IsRelevantExtension(Path.GetExtension(path)))
+                {
+                    paths.Add("f:" + relativePath);
+                }
+            }
+        }
+        return paths;
+    }
+
+    private static bool IsIgnored(string part) => part is "bin" or "obj" or "artifacts" or ".git" or "node_modules";
+
+    private static bool IsRelevantExtension(string extension) => extension is ".cs" or ".csproj" or ".props" or ".targets" or ".slnx" or ".json" or ".txt";
 
     public void Dispose() => watcher.Dispose();
 }
