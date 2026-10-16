@@ -7,5 +7,6 @@
     <Compile Include="../Shared/UiProcess.cs" Link="UiProcess.cs" />
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
+    <ProjectReference Include="../ArchSift.TestGate/ArchSift.TestGate.csproj" />
   </ItemGroup>
 </Project>

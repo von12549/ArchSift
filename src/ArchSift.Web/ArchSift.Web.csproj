@@ -3,6 +3,8 @@
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
     <ProjectReference Include="../ArchSift.Setup/ArchSift.Setup.csproj" />
+    <ProjectReference Include="../ArchSift.TestGate/ArchSift.TestGate.csproj" />
+    <ProjectReference Include="../ArchSift.Testing/ArchSift.Testing.csproj" />
     <Content Update="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

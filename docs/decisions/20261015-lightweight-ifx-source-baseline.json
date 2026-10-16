@@ -1,0 +1,554 @@
+{
+  "schemaVersion": 1,
+  "kind": "lt00-ifx-source-baseline",
+  "ifxCommit": "cc06528ab17052baafa496df2a89f6cde9207384",
+  "testProject": "tests/Architecture/IFX.Architecture.Tests/IFX.Architecture.Tests.csproj",
+  "projectSha256": "ea8b35cef1b06153c01d5adb44b0d3e1a3550bd0efe9ffe40ac113182c10b684",
+  "projectReferences": [
+    "../../../src/Host/IFX.ApiHost/IFX.ApiHost.csproj",
+    "../../../src/Host/IFX.DatabaseMigrator/IFX.DatabaseMigrator.csproj",
+    "../../../src/Host/IFX.IntegrationHub.Host/IFX.IntegrationHub.Host.csproj",
+    "../../../src/Host/IFX.IntegrationHub.DatabaseMigrator/IFX.IntegrationHub.DatabaseMigrator.csproj",
+    "../../../src/BuildingBlocks/IFX.Security.Primitives/IFX.Security.Primitives.csproj",
+    "../../../src/BuildingBlocks/IFX.Persistence.Primitives/IFX.Persistence.Primitives.csproj",
+    "../../../src/Platform/Context/IFX.Platform.Context.Contracts/IFX.Platform.Context.Contracts.csproj",
+    "../../../src/Platform/Authentication/IFX.Platform.Authentication.Contracts/IFX.Platform.Authentication.Contracts.csproj",
+    "../../../src/Platform/Authorization/IFX.Platform.Authorization.Contracts/IFX.Platform.Authorization.Contracts.csproj",
+    "../../../src/Platform/Authorization/IFX.Platform.Authorization/IFX.Platform.Authorization.csproj",
+    "../../../src/Platform/Messaging/IFX.Platform.Messaging.Contracts/IFX.Platform.Messaging.Contracts.csproj",
+    "../../../src/Platform/BackgroundJobs/IFX.Platform.BackgroundJobs.Contracts/IFX.Platform.BackgroundJobs.Contracts.csproj",
+    "../../../src/Platform/Notifications/IFX.Platform.Notifications.Contracts/IFX.Platform.Notifications.Contracts.csproj",
+    "../../../src/IntegrationHub/Modules/ProviderRegistry/IFX.IntegrationHub.ProviderRegistry.Presentation/IFX.IntegrationHub.ProviderRegistry.Presentation.csproj",
+    "../../../src/Modules/Transaction/IFX.Modules.Transaction.Infrastructure/IFX.Modules.Transaction.Infrastructure.csproj",
+    "../../../src/Modules/Holdings/IFX.Modules.Holdings.Contracts/IFX.Modules.Holdings.Contracts.csproj"
+  ],
+  "sourceFiles": [
+    {
+      "path": "ApplicationPortAdapterTests.cs",
+      "sha256": "a1b4344b5bdd1b9309b12b9fd90526a56f6bdd8ca341b77a2d8d6ec901c3a21b"
+    },
+    {
+      "path": "ArchitectureTests.cs",
+      "sha256": "815c6b233acdb83e7c18976d5719857f8e8efca6d78ed11c5777ee472dccd0cc"
+    },
+    {
+      "path": "Fixtures/ApplicationPortFixtures.cs",
+      "sha256": "f31ea90252eb23d57de89cb6aa54173cb295b2957c8c465f49735fb8a2e54741"
+    },
+    {
+      "path": "Fixtures/AuthorizationFixtures.cs",
+      "sha256": "1372278d3c963726a2c7953155d4040cbe9ac885c73a1de6017717e781daa25e"
+    },
+    {
+      "path": "Fixtures/HandlerFixtures.cs",
+      "sha256": "9b91580cc3a107883ccf1d1c8122fb7f774e862cf7ebadf6a5687cd0a158f2a2"
+    },
+    {
+      "path": "FixtureTests.cs",
+      "sha256": "df011120aad9ce03a6122f1551074457054df073de20c2ae08b4797f2db7d0c9"
+    },
+    {
+      "path": "Infrastructure/IlScanner.cs",
+      "sha256": "da0698c9054af611f77b7b8335985549f118e40fd6d0cbbbccddfb1ca3ea3162"
+    },
+    {
+      "path": "Infrastructure/ProjectGraph.cs",
+      "sha256": "8e932ec09808fbcf28f9bfb7dba820a51b0cbcfdc5797d08d49824982504f1f3"
+    },
+    {
+      "path": "Infrastructure/ProtocolCatalog.cs",
+      "sha256": "5eb2fa3b51a9a9e928250ff37f10148882d5d16cdde1699cafa3eb161648e86c"
+    },
+    {
+      "path": "Infrastructure/RepoLayout.cs",
+      "sha256": "c1bd5308d48fdc2e04039c31977405e83915f6764a6decfbf041748e7d629c70"
+    },
+    {
+      "path": "Infrastructure/SourceAssemblies.cs",
+      "sha256": "c190af5e91abbb9878a1d307e00194bea9b28540557bc1d9d1fb8fbf30a652fb"
+    },
+    {
+      "path": "Infrastructure/Violation.cs",
+      "sha256": "8812954c5db69de31e6a262391548dda53a1c44cde7822b1540c4f9ad19b5bc4"
+    },
+    {
+      "path": "Rules/ApplicationBoundaryRules.cs",
+      "sha256": "64bd364387695b50f253298195e2e659342f425dfc81674cc3ffcdb0e351670b"
+    },
+    {
+      "path": "Rules/AuthorizationRules.cs",
+      "sha256": "418acdb56e44fe5790047e422e84dc0535c844c3d8bd710a5b8d2989b11860c1"
+    },
+    {
+      "path": "Rules/CatalogRules.cs",
+      "sha256": "ed174b350e9eb1a13034f6d52a0f6ce47be89323e5e1a8875125086bbce3d7f0"
+    },
+    {
+      "path": "Rules/CrossModuleEdgeRules.cs",
+      "sha256": "ecc5c73b57c344a9662b53c1caa91f270ac791e183b479fae38b5a5dba4b6a97"
+    },
+    {
+      "path": "Rules/LayeringRules.cs",
+      "sha256": "8cca8e44916b0d4f2450082835e67893ebeb39112d98d5c79714aadff705dcc5"
+    },
+    {
+      "path": "Rules/LayerPolicy.cs",
+      "sha256": "b5e9a797c1409393aea94d8a6692c1d8542bf9326ce8ee3f660eab9cb0795466"
+    },
+    {
+      "path": "Rules/PublicApiRules.cs",
+      "sha256": "350655851963e0d9804f7521d372c4cf50c62e84cffe1b0ea88dda74ebaf590f"
+    },
+    {
+      "path": "Rules/TypeRules.cs",
+      "sha256": "999bd584b63ef4752dd5c24dddadc473934604b5a78ecd7b5cabd85363d53b6e"
+    }
+  ],
+  "classes": [
+    {
+      "name": "ArchitectureTests",
+      "source": "ArchitectureTests.cs",
+      "sha256": "815c6b233acdb83e7c18976d5719857f8e8efca6d78ed11c5777ee472dccd0cc",
+      "methodCount": 16,
+      "staticCaseCount": 16,
+      "methods": [
+        {
+          "method": "Layering_ContractPurity_HostBoundary_DataOwnership_ProjectLevel",
+          "kind": "Fact",
+          "sourceLine": 14,
+          "inlineData": []
+        },
+        {
+          "method": "IntegrationHubProjects_AreClassifiedAndCoveredByArchitectureRules",
+          "kind": "Fact",
+          "sourceLine": 21,
+          "inlineData": []
+        },
+        {
+          "method": "CrossModuleEdges_AreAllRegisteredInCatalog",
+          "kind": "Fact",
+          "sourceLine": 43,
+          "inlineData": []
+        },
+        {
+          "method": "ForbiddenTypes_AbstractionsReadersServiceLocatorTransactionScope",
+          "kind": "Fact",
+          "sourceLine": 50,
+          "inlineData": []
+        },
+        {
+          "method": "TenantApplication_OwnsPorts_WithoutPlatformTypesOrAssemblyUsage",
+          "kind": "Fact",
+          "sourceLine": 57,
+          "inlineData": []
+        },
+        {
+          "method": "HandlerDiscipline_NoSaveCommitPublishOrNestedDispatchInHandlers",
+          "kind": "Fact",
+          "sourceLine": 66,
+          "inlineData": []
+        },
+        {
+          "method": "TenantDiscipline_RepositoriesOfTenantScopedModulesTakeTenantId",
+          "kind": "Fact",
+          "sourceLine": 74,
+          "inlineData": []
+        },
+        {
+          "method": "Naming_NamespacesMatchAssemblyNames",
+          "kind": "Fact",
+          "sourceLine": 81,
+          "inlineData": []
+        },
+        {
+          "method": "DataOwnership_DbContextsOnlyInModuleInfrastructure",
+          "kind": "Fact",
+          "sourceLine": 88,
+          "inlineData": []
+        },
+        {
+          "method": "PublicApi_ContractsSnapshotsMatch",
+          "kind": "Fact",
+          "sourceLine": 95,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_IsConsistent_AndActiveEntriesExistInCode",
+          "kind": "Fact",
+          "sourceLine": 103,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_ContainsTheFiveInitialEdges",
+          "kind": "Fact",
+          "sourceLine": 110,
+          "inlineData": []
+        },
+        {
+          "method": "PermissionRegistry_CodeAndDocsAgree",
+          "kind": "Fact",
+          "sourceLine": 121,
+          "inlineData": []
+        },
+        {
+          "method": "AuthorizationConclusions_StayOutOfContractsAndCatalog",
+          "kind": "Fact",
+          "sourceLine": 129,
+          "inlineData": []
+        },
+        {
+          "method": "DevelopmentPolicyEvaluator_OnlyConstructedInsidePlatformAuthorization",
+          "kind": "Fact",
+          "sourceLine": 137,
+          "inlineData": []
+        },
+        {
+          "method": "AllRules_RunUnderFiveSeconds",
+          "kind": "Fact",
+          "sourceLine": 144,
+          "inlineData": []
+        }
+      ]
+    },
+    {
+      "name": "FixtureTests",
+      "source": "FixtureTests.cs",
+      "sha256": "df011120aad9ce03a6122f1551074457054df073de20c2ae08b4797f2db7d0c9",
+      "methodCount": 41,
+      "staticCaseCount": 47,
+      "methods": [
+        {
+          "method": "TenantApplication_ReferencingAnyPlatformProject_IsViolation",
+          "kind": "Theory",
+          "sourceLine": 31,
+          "inlineData": [
+            "\"IFX.Platform.Context.Contracts\"",
+            "\"IFX.Platform.Authorization.Contracts\"",
+            "\"IFX.Platform.Authentication.Contracts\"",
+            "\"IFX.Platform.Context\""
+          ]
+        },
+        {
+          "method": "PlatformContracts_RemainAllowedForInfrastructureAndComposition",
+          "kind": "Theory",
+          "sourceLine": 42,
+          "inlineData": [
+            "\"Infrastructure\"",
+            "\"Composition\""
+          ]
+        },
+        {
+          "method": "TenantPresentation_ContextContracts_IsAllowed",
+          "kind": "Fact",
+          "sourceLine": 51,
+          "inlineData": []
+        },
+        {
+          "method": "TenantPresentation_AuthorizationContracts_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 58,
+          "inlineData": []
+        },
+        {
+          "method": "PresentationPrimitives_AuthorizationContracts_RemainsAllowed",
+          "kind": "Fact",
+          "sourceLine": 69,
+          "inlineData": []
+        },
+        {
+          "method": "ApplicationPort_NestedGenericArrayAndByRefPlatformTypes_AreViolations",
+          "kind": "Fact",
+          "sourceLine": 76,
+          "inlineData": []
+        },
+        {
+          "method": "ApplicationPort_PlatformGenericConstraint_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 83,
+          "inlineData": []
+        },
+        {
+          "method": "ApplicationPort_LocalFacts_AreAllowed",
+          "kind": "Fact",
+          "sourceLine": 90,
+          "inlineData": []
+        },
+        {
+          "method": "Layering_DomainReferencingApplication_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 94,
+          "inlineData": []
+        },
+        {
+          "method": "Layering_ApplicationReferencingOtherModule_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 104,
+          "inlineData": []
+        },
+        {
+          "method": "ContractPurity_ContractsWithEfPackage_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 114,
+          "inlineData": []
+        },
+        {
+          "method": "ContractPurity_PlatformContractsWithDiPackage_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 124,
+          "inlineData": []
+        },
+        {
+          "method": "Layering_DomainTransitivelyReachingEf_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 132,
+          "inlineData": []
+        },
+        {
+          "method": "HostBoundary_ApiHostReferencingModuleApplication_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 141,
+          "inlineData": []
+        },
+        {
+          "method": "Presentation_ReferencingInfrastructure_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 149,
+          "inlineData": []
+        },
+        {
+          "method": "DataOwnership_InfrastructureReferencingOtherModuleInfrastructure_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 157,
+          "inlineData": []
+        },
+        {
+          "method": "CrossModuleEdges_RegisteredEdge_IsAllowed",
+          "kind": "Fact",
+          "sourceLine": 165,
+          "inlineData": []
+        },
+        {
+          "method": "CrossModuleEdges_UnregisteredEdge_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 174,
+          "inlineData": []
+        },
+        {
+          "method": "CrossModuleEdges_EdgeFromApplicationInsteadOfInfrastructure_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 182,
+          "inlineData": []
+        },
+        {
+          "method": "CrossModuleEdges_UndeclaredModule_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 190,
+          "inlineData": []
+        },
+        {
+          "method": "HandlerDiscipline_GoodHandler_HasNoViolation",
+          "kind": "Fact",
+          "sourceLine": 198,
+          "inlineData": []
+        },
+        {
+          "method": "HandlerDiscipline_BadHandlers_AreViolations",
+          "kind": "Theory",
+          "sourceLine": 204,
+          "inlineData": [
+            "typeof(HandlerFixtures.SavesChangesHandler), \"SaveChangesAsync\"",
+            "typeof(HandlerFixtures.CommitsHandler), \"Commit\"",
+            "typeof(HandlerFixtures.NestedDispatchHandler), \"nested command\""
+          ]
+        },
+        {
+          "method": "ForbiddenTypes_TransactionScopeAndReader_AreViolations",
+          "kind": "Fact",
+          "sourceLine": 215,
+          "inlineData": []
+        },
+        {
+          "method": "TenantDiscipline_RepositoryMethodWithoutTenantId_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 223,
+          "inlineData": []
+        },
+        {
+          "method": "ForbiddenTypes_RuntimeMigrateOrEnsureCreated_AreViolations",
+          "kind": "Fact",
+          "sourceLine": 231,
+          "inlineData": []
+        },
+        {
+          "method": "ForbiddenTypes_ReaderInterface_IsDetectedByNamePattern",
+          "kind": "Fact",
+          "sourceLine": 240,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_DuplicateIdentity_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 248,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_C3FieldWithoutException_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 260,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_C3FieldWithApprovedException_IsAllowed",
+          "kind": "Fact",
+          "sourceLine": 272,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_ActiveWithoutTestsOrSnapshot_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 284,
+          "inlineData": []
+        },
+        {
+          "method": "Catalog_ActiveTypeMissingFromCode_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 297,
+          "inlineData": []
+        },
+        {
+          "method": "PublicApi_MissingSnapshot_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 309,
+          "inlineData": []
+        },
+        {
+          "method": "PublicApi_ChangedSnapshot_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 323,
+          "inlineData": []
+        },
+        {
+          "method": "PermissionRegistry_UnregisteredAndWrongPrefix_AreViolations",
+          "kind": "Fact",
+          "sourceLine": 341,
+          "inlineData": []
+        },
+        {
+          "method": "AuthorizationConclusions_InForeignContract_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 358,
+          "inlineData": []
+        },
+        {
+          "method": "AuthorizationConclusions_InCatalogField_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 369,
+          "inlineData": []
+        },
+        {
+          "method": "DevEvaluator_ConstructedOutsidePlatformAuthorization_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 381,
+          "inlineData": []
+        },
+        {
+          "method": "Naming_TypeOutsideAssemblyNamespace_IsViolation",
+          "kind": "Fact",
+          "sourceLine": 389,
+          "inlineData": []
+        },
+        {
+          "method": "IlScanner_FindsCallsInAsyncStateMachine",
+          "kind": "Fact",
+          "sourceLine": 397,
+          "inlineData": []
+        },
+        {
+          "method": "RealGraph_ClassifiesIamModuleLayers",
+          "kind": "Fact",
+          "sourceLine": 409,
+          "inlineData": []
+        },
+        {
+          "method": "SourceAssemblies_ExcludeTestAssemblies",
+          "kind": "Fact",
+          "sourceLine": 421,
+          "inlineData": []
+        }
+      ]
+    },
+    {
+      "name": "ApplicationPortAdapterTests",
+      "source": "ApplicationPortAdapterTests.cs",
+      "sha256": "a1b4344b5bdd1b9309b12b9fd90526a56f6bdd8ca341b77a2d8d6ec901c3a21b",
+      "methodCount": 8,
+      "staticCaseCount": 17,
+      "methods": [
+        {
+          "method": "MissingContext_AllFiveAdapters_Reject",
+          "kind": "Fact",
+          "sourceLine": 18,
+          "inlineData": []
+        },
+        {
+          "method": "NonTenantScope_IsNotPromotedToTenant",
+          "kind": "Theory",
+          "sourceLine": 30,
+          "inlineData": [
+            "ExecutionScope.Public",
+            "ExecutionScope.Platform"
+          ]
+        },
+        {
+          "method": "TenantActorAuditAndEventFacts_ArePreserved_AndContextIsReadPerCall",
+          "kind": "Fact",
+          "sourceLine": 43,
+          "inlineData": []
+        },
+        {
+          "method": "IamPlatformScopeAndAnonymousActor_ArePreserved",
+          "kind": "Fact",
+          "sourceLine": 72,
+          "inlineData": []
+        },
+        {
+          "method": "DetachedLoginAudit_GeneratesOnlyAuditIdentifiers_WithoutCreatingContext",
+          "kind": "Fact",
+          "sourceLine": 81,
+          "inlineData": []
+        },
+        {
+          "method": "ResourceAdapters_MapOnlyUseCaseFacts_AndKeepDenials",
+          "kind": "Theory",
+          "sourceLine": 94,
+          "inlineData": [
+            "\"party\", \"crm.party\", \"update\", \"party.status=Active;party.legalStructure=Individual\"",
+            "\"kyc\", \"crm.investor\", \"kyc\", \"investor.kycStatus=Pending;investor.legalStructure=Individual\"",
+            "\"compliance\", \"crm.investor\", \"compliance-read\", \"investor.kycStatus=Pending\"",
+            "\"account\", \"crm.account\", \"read\", \"account.status=Active;account.type=Individual;account.callerIsLinkedAdvisor=true\"",
+            "\"product\", \"registry.product\", \"change-status\", \"product.status=Active;product.targetStatus=Closed\"",
+            "\"fund\", \"registry.fund\", \"change-status\", \"fund.status=Active;fund.targetStatus=Closed\"",
+            "\"class\", \"registry.class\", \"change-status\", \"class.status=Active;class.targetStatus=Closed\"",
+            "\"idp\", \"iam.identity-provider\", \"update\", \"idp.kind=Oidc;idp.enabled=false\"",
+            "\"holdings-list\", \"holdings.holding\", \"list\", \"holding.investmentAccountId=*;holding.fundId=*;holding.classId=*\""
+          ]
+        },
+        {
+          "method": "ResourceAdapters_PreserveResourceIdentifiers_AndDisclosureFailure",
+          "kind": "Fact",
+          "sourceLine": 129,
+          "inlineData": []
+        },
+        {
+          "method": "CrossTenantGate_UsesDedicatedPermission_AndKeepsDenial",
+          "kind": "Fact",
+          "sourceLine": 154,
+          "inlineData": []
+        }
+      ]
+    }
+  ],
+  "staticMethodCount": 65,
+  "staticCaseCount": 80,
+  "runnerDiscoveryVerified": false
+}

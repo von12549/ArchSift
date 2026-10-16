@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "lt01-synthetic",
+  "version": "1.0.0",
+  "description": "Synthetic ArchUnitNET test cases; no IFX policy is adopted.",
+  "rules": [
+    {
+      "id": "allowed-source",
+      "type": "type-dependency",
+      "enabled": true,
+      "scope": { "kind": "namespace", "match": "exact", "value": "ArchSift.Testing.Tests.Fixtures.Domain" },
+      "parameters": {
+        "source": { "kind": "type", "match": "exact", "value": "ArchSift.Testing.Tests.Fixtures.Domain.AllowedSource" },
+        "forbiddenTarget": { "kind": "namespace", "match": "exact", "value": "ArchSift.Testing.Tests.Fixtures.Infrastructure" }
+      },
+      "severity": "error",
+      "reason": "The allowed fixture has no infrastructure dependency."
+    }
+  ],
+  "exceptions": []
+}

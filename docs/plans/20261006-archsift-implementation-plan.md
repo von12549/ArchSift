@@ -1,5 +1,33 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-16 轻量工作台预发布回归：PR [#8](https://github.com/von12549/ArchSift/pull/8) 的 `d112340` 在 Windows／Ubuntu CI 均通过；递归观察器新目录漏报修复的本机 18 项 MTP 与旧 248 项测试通过，新封装载荷对外置 IFX 的 80＋1 完整门禁为 `allow/0`，Web 30 个静态资源哈希与用户复核载荷一致。见[预发布源码回归](../acceptance/20261016-lightweight-lt06-release-regression.md)。状态 **0.9.0-dev SOURCE PR READY / NOT MERGED / NOT RELEASED**；正式 IFX 政策待发布后处理。下文先前状态保留形成时点。
+
+2026-10-16 轻量工作台后续授权：用户同意 PR、合并及发布，选择 `0.9.0-dev` 预发布；IFX 正式政策待发布完成后处理。预发布仅提供标签源码归档，本地路径绑定载荷不作为通用安装包。PR／CI／合并／发布结果须以执行后的证据更新，不预记成功。见[轻量工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)及[预发布说明](../releases/0.9.0-dev-notes.md)。
+
+2026-10-16 轻量工作台 LT06 完成：[UI 修订机器记录](../acceptance/20261016-lightweight-lt06-ui-revision.md)的固定本地载荷通过 IFX 原 80＋JSON 1 的完整 Web 门禁，用户又在[独立人工清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)确认 UID 查找、中英切换、Results／History 整合、旧分析入口及窄窗口／键盘可用。状态 **LT00–LT06 COMPLETE / 0.9.0-dev LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED**；PR、合并、公开发布、安装与 IFX 正式政策采纳另行决定。下文先前状态保留形成时点。
+
+2026-10-16 轻量工作台 LT06 机器候选更新：[LT06 本地候选](../acceptance/20261016-lightweight-lt06-candidate.md)固定 `0.9.0-dev` 产品源码 `e0b3bdd` 与外置 CLI/Web 逐文件哈希载荷；离线锁定恢复、265 项旧／新测试、封装 CLI 真实 IFX `allow/0`、Web loopback 冒烟及宿主保护通过。使用／分发边界和独立人工 UI 清单已备好。状态 **LT06 MACHINE CANDIDATE READY / HUMAN UI REVIEW PENDING / PRODUCT NOT ACCEPTED / NOT RELEASED**；需用户独立填验收，PR／合并／发布另行授权。下文先前状态保留形成时点。
+
+2026-10-15 轻量工作台 LT05 更新：[IFX 回归与测量验收](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md)完成固定外置 IFX 工作树的原生／CLI／Web 各三次冷／热全工程运行、无 UI 本地 CI 对照、原测试与 A/B 未纳入核对、IFX 与 JSON 各自真实 `block/2` 负例、报告 schema 与旧产品回归。状态 **LT05 MACHINE COMPLETE / LT06 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；最终独立人工 UI 验收仍由用户完成。下文先前状态保留形成时点。
+
+2026-10-15 轻量工作台 LT04 更新：[Web 接入与机器验收](../acceptance/20261015-lightweight-lt04-web-workbench.md)完成规则编辑复用、三来源清单、完整／subset／取消、基本历史／下载和完整证据入口。外置 IFX 副本的 Web 完整运行 80＋1 `allow/0`，JSON 实际违规 `block/2`，subset `block/4`，取消 `block/130`；保存的同输入 CLI 完整运行 `allow/0` 且案例结果一致。状态 **LT04 UI/MACHINE COMPLETE / LT05 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；同条件性能测量与最终独立人工 UI 验收仍待执行。下文先前状态保留形成时点。
+
+2026-10-15 轻量工作台 LT03 更新：[报告与基本历史验收](../acceptance/20261015-lightweight-lt03-reports-history.md)完成独立 `architecture-test-run` JSON/HTML、来源与未纳入清单、实际 JSON finding、原 IFX 断言消息、基本运行状态与只读历史；真实 IFX 正反例及合成报告保存失败／历史负例通过，旧产品 248 项回归通过。状态 **LT03 REPORT/HISTORY COMPLETE / LT04 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；后续 UI、同条件性能与独立人工验收尚待执行。下文先前状态保留形成时点。
+
+2026-10-15 轻量工作台 LT02A 更新：[真实 IFX 门禁验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md)在获授权的独立副本上建立原生 80 项执行 ID 基线，接入后原 80 项及 JSON 1 项完整通过；API 快照和 JSON 依赖真实负例均正确阻断，原测试源码、快照、原 checkout 与宿主状态未减损。状态 **LT02A REAL IFX COMPLETE / LT03 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；正式 B 政策、报告历史、UI 与最终独立人工验收仍待后续阶段。下文先前状态保留形成时点。
+
+2026-10-15 轻量工作台 LT02 更新：[合成门禁验收](../acceptance/20261015-lightweight-lt02-synthetic-gate.md)记录代码提交 `3ddd0dc`，无界面离线 restore／增量 build／MTP 全工程案例与 JSON 规则身份核对、子进程快照开关、取消／日志／运行中变化检测及合成阻断结果通过；旧产品 248 项回归通过。状态 **LT02 SYNTHETIC COMPLETE / LT02A REAL IFX NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**。真实 IFX 外置副本操作已另获用户具体授权，须按计划通过 LT02A 后再实施报告历史与 UI。下文先前状态保留形成时点。
+
+2026-10-15 轻量工作台 LT01 更新：用户授权后续开发、验收和每阶段提交推送，并具体授权 LT02A／LT05 在 `D:/ArchSift-lab` 的独立 IFX 副本执行审查过的离线操作；原目标／安装只读，最终独立人工 UI 验收仍由用户完成。[LT01 合成验收](../acceptance/20261015-lightweight-lt01-synthetic.md)记录代码提交 `082d0ec`：JSON 规则经共享校验后成为 xUnit v3／MTP 参数化案例，真实 ArchUnitNET 合成正反例、7 项 MTP 与旧产品 248 项回归通过。状态 **LT01 SYNTHETIC COMPLETE / LT02 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；真实 IFX 全工程接入仍待 LT02A。下文先前未授权状态保留形成时点。
+
+2026-10-15 轻量工作台 LT00 更新：用户授权从 `main` 的 `acbcff1` 创建 `codex/archsift-lightweight-workbench`，将此前两份计划文档作为首提交 `d1b089d` 推送，然后开始 LT00。[LT00 范围与契约](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md)、[静态验收](../acceptance/20261015-lightweight-lt00-contracts.md)、IFX 原测试源码基线、A/B 逐项归属清单和独立报告 schema 已完成；用户随后另行授权提交并推送这些 LT00 成果。状态 **LT00 DESIGN COMPLETE / LT01 NOT STARTED / NOT ACCEPTED / NOT RELEASED**；80 个原案例为源码推导数，尚非运行器实测。真实 IFX 接入、后续包、PR／合并／发布未获本次授权。以下“未创建分支／未提交计划／实施未授权”文字均保留原形成时点。
+
+2026-10-15 轻量计划规则归属与 UI 补充（仅文档）：更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)的 A／B／IFX 责任清单与 UI 契约。首版日常范围为 IFX 原专用测试全工程＋经审查启用的 B 类 JSON 类型依赖测试；A 类实际重复项由 IFX 原断言承担，TFM／solution 成员／部分包闭集等未迁入增量继续由原 ArchSift 执行并明示未纳入，不能宣称三者并集合规。UI 统一显示 JSON、IFX 专用测试、原 ArchSift 检查的来源／责任方、测试清单／实际结果、未覆盖原因；发现、查看、编辑、旧工具 pass 均不算本次通过，IFX C# 逻辑不转为 UI 可编辑规则。阶段与 LA01–LA19 验收同步；保持先 LT02A 再报告／UI、轻量历史、无日常取证链。仍仅计划与索引修改，IMPLEMENTATION NOT AUTHORIZED／NOT STARTED，代码、InProject 与真实目标不变，未运行构建／测试，未提交／推送。
+
+2026-10-15 轻量计划审查修订（仅文档）：按五项审查意见更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)：完整门禁固定保留 IFX 原架构测试全工程（含 ArchitectureTests、FixtureTests、ApplicationPortAdapterTests、原 Theory 数据及断言），过滤只作 subset；受控子进程强制 `IFX_UPDATE_SNAPSHOTS=0`，快照更新为独立操作；本次 `runGate` 与 `historyFreshness` 分离，历史 unknown／后续 stale 不改原门禁或引入取证；新增 LT02A 真实 IFX 早期接入门槛，报告历史／UI 阶段必须等待其通过；首版历史仅独立报告目录、基本状态和只读列表，轮转／固定保护／归档恢复延期。阶段依赖与 LA01–LA17 验收同步修订，仍 PLAN DRAFTED／IMPLEMENTATION NOT AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED。只修改计划与本索引，代码、InProject 和真实目标保持原状，未运行构建／测试，未提交或推送。
+
+2026-10-15 新轻量化方向（仅计划）：按用户要求先将旧分支既有修改提交为 `2877974` 并推送至 `codex/archsift-inproject-0.1.0`，再返回与远端一致的 main `acbcff1`，编写独立的[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)。首版保留 IFX 专用 C# 测试、JSON 驱动 ArchUnitNET 参数化测试，UI 负责规则编辑／启动／报告，日常采用正常构建与测试，完整取证沿用既有 ArchSift 独立能力。InProject 分支、规格、实现和 IP08 暂停／未接受／未发布历史保持原状，不合并至 main。状态 PLAN DRAFTED／IMPLEMENTATION NOT AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；本轮只编写计划与索引，不修改产品代码，不运行构建或真实目标测试，新计划尚未提交或推送。
+
 2026-10-13 0.8.0 已由 [PR #6](https://github.com/von12549/ArchSift/pull/6) 合并，并以固定产品提交 `ab3d2ea` 发布 [v0.8.0](https://github.com/von12549/ArchSift/releases/tag/v0.8.0)。最终 PR 与合并后 main 的 Windows/Ubuntu CI 均通过；四项公开资产独立匿名下载的摘要/大小、ZIP 内 manifest、最终只读原件/宿主/进程审计通过。见 [发布回验](../releases/0.8.0-publication.md)；状态 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。下文未发布状态保留形成时点。
 
 2026-10-13 0.8.0 最终验收：修订固定候选 `ab3d2ea` 的 248 项、ZIP17、Setup20、两平台 CI、真实 IFX 只读重验及 Class B406/A182 机器门禁通过。用户独立 UI 反馈符合预期、4/5、L0、无未测；Safe shutdown 确认后页面冻结、CLI 返回命令行。人工后只读终审通过，人工会话退出码/监听未独立取证。详见 [最终验收](../acceptance/20261013-0.8-final-acceptance.md)；0.8-5 COMPLETE／ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED／NOT YET PUBLISHED。下文旧进度保留历史时点。

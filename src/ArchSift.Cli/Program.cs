@@ -3,6 +3,7 @@ using System.Text.Json;
 using ArchSift.ArchUnit;
 using ArchSift.Contracts;
 using ArchSift.Core;
+using ArchSift.TestGate;
 
 namespace ArchSift.Cli;
 
@@ -25,6 +26,25 @@ public static class Program
                 Console.WriteLine(JsonSerializer.Serialize(AssemblyWorker.Evaluate(request), JsonContract.Options)); return 0;
             }
             if (args is ["--version"]) { Console.WriteLine($"archsift {RuntimeInfo.ProductVersion}"); return 0; }
+            if (args is ["test-gate", "--config", _])
+            {
+                try
+                {
+                    var gateConfig = TestGateService.Load(args[2]);
+                    var result = await TestGateService.RunAsync(gateConfig, args[2], cancel.Token);
+                    Console.WriteLine(JsonSerializer.Serialize(result, JsonContract.Options));
+                    return result.ExitCode;
+                }
+                catch (Exception error) when (error is ConfigurationException or JsonException)
+                { Console.Error.WriteLine(error.Message); return 5; }
+            }
+            if (args is ["test-history", "--directory", _] or
+                ["test-history", "--directory", _, "--target", _])
+            {
+                var history = TestRunHistory.List(args[2], args.Length == 5 ? args[4] : null);
+                Console.WriteLine(JsonSerializer.Serialize(history, JsonContract.Options));
+                return 0;
+            }
             if (args is ["ui", "--config", _] or ["launch", "--root", _])
             {
                 var launch = args[0] == "launch";
@@ -52,6 +72,8 @@ public static class Program
             {
                 Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
+                Console.WriteLine("test-gate --config <test-gate JSON> (full MTP project by default; filtered runs are subsets)");
+                Console.WriteLine("test-history --directory <owned test run root> [--target <worktree>] (read-only)");
                 Console.WriteLine("evidence capture --config <JSON> --inputs <external-input-paths JSON array> [--environment-inputs <environment-name JSON array>] --output <new capture JSON>; evidence seal --config <JSON> --capture <JSON> --review <JSON> --output <new manifest JSON>; evidence validate --config <JSON>");
                 Console.WriteLine("evidence preview --config <JSON> --request <JSON>; evidence build --config <JSON> --request <JSON> --preview-sha256 <reviewed hash> (offline, external snapshot, stops for review)");
                 Console.WriteLine("chain verify --config <JSON> --chain <JSON> [--target-kind real|fixture] [--max-concurrency 1..4]");

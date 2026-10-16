@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <ProjectReference Include="../../src/ArchSift.Testing/ArchSift.Testing.csproj" />
+    <ProjectReference Include="../../src/ArchSift.TestGate/ArchSift.TestGate.csproj" />
+    <None Include="rules.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="rules-violation.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

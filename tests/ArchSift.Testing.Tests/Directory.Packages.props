@@ -1,0 +1,6 @@
+<Project>
+  <Import Project="../../Directory.Packages.props" />
+  <ItemGroup>
+    <PackageVersion Update="xunit.runner.visualstudio" Version="[4.0.0]" />
+  </ItemGroup>
+</Project>

@@ -87,7 +87,7 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
         $peak = 0L
         # Full SDK evidence fixtures hash many files on hosted Windows runners. This is a suite cap,
         # separate from each child-process timeout and the unchanged product performance budgets.
-        $timeoutSeconds = if ($Name -eq 'test') { 600 } else { 180 }
+        $timeoutSeconds = if ($Name.StartsWith('test-', [StringComparison]::Ordinal)) { 600 } else { 180 }
         while (-not $process.WaitForExit(50) -and $timer.Elapsed.TotalSeconds -lt $timeoutSeconds) {
             try { $process.Refresh(); $peak = [Math]::Max($peak, $process.PeakWorkingSet64) } catch { }
         }
@@ -117,7 +117,24 @@ try {
     Invoke-CheckedDotnet 'restore' $restore
     if ($InitializeLocks) { Invoke-CheckedDotnet 'restore-locked' ($restore + '--locked-mode') }
     Invoke-CheckedDotnet 'build' @('build', 'ArchSift.slnx', '--no-restore', '--disable-build-servers', '-p:UseSharedCompilation=false', '-c', $Configuration, '--verbosity', 'minimal')
-    Invoke-CheckedDotnet 'test' @('test', 'ArchSift.slnx', '--no-build', '--no-restore', '--disable-build-servers', '-c', $Configuration, '--logger', 'trx', '--results-directory', (Join-Path $runRoot 'test-results'))
+    # VSTest and Microsoft.Testing.Platform cannot share a solution-level dotnet test invocation.
+    foreach ($suite in @(
+        [ordered]@{ name = 'architecture'; project = 'tests/ArchSift.ArchitectureTests/ArchSift.ArchitectureTests.csproj' },
+        [ordered]@{ name = 'unit'; project = 'tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj' },
+        [ordered]@{ name = 'integration'; project = 'tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj' }
+    )) {
+        Invoke-CheckedDotnet ('test-' + $suite.name) @('test', $suite.project, '--no-build', '--no-restore', '--disable-build-servers', '-c', $Configuration, '--logger', 'trx', '--results-directory', (Join-Path $runRoot ('test-results/' + $suite.name)))
+    }
+    $mtpAssembly = Join-Path $repositoryRoot "tests/ArchSift.Testing.Tests/bin/$Configuration/net10.0/ArchSift.Testing.Tests.dll"
+    Invoke-CheckedDotnet 'test-mtp' @($mtpAssembly, '-reporter', 'json', '-noLogo')
+    $mtpLines = [IO.File]::ReadAllLines((Join-Path $runRoot 'test-mtp.stdout.log'))
+    $mtpPassed = @($mtpLines | Where-Object { $_.Contains('"$type":"test-passed"') }).Count
+    $mtpFailed = @($mtpLines | Where-Object { $_.Contains('"$type":"test-failed"') }).Count
+    $mtpSkipped = @($mtpLines | Where-Object { $_.Contains('"$type":"test-skipped"') }).Count
+    if ($mtpPassed -lt 17 -or $mtpFailed -ne 0 -or $mtpSkipped -ne 0) {
+        throw "Unexpected MTP coverage: passed=$mtpPassed failed=$mtpFailed skipped=$mtpSkipped."
+    }
+    Write-Output "test-mtp-cases passed=$mtpPassed failed=$mtpFailed skipped=$mtpSkipped"
     if ($VerifyContracts) {
         $cli = Join-Path $repositoryRoot "src/ArchSift.Cli/bin/$Configuration/net10.0/archsift.dll"
         foreach ($file in Get-ChildItem -LiteralPath (Join-Path $repositoryRoot 'templates/rules') -Filter '*.json' -File) {
