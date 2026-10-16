@@ -34,6 +34,7 @@ public sealed record TestGateResult(int ExitCode, string Gate, string[] Reasons,
     GateCoverage? Coverage, string RunDirectory, bool SnapshotUpdatesDisabled,
     bool RelevantInputChanged)
 {
+    public string? ReportRunId { get; init; }
     public string? ReportPath { get; init; }
     public string? HtmlPath { get; init; }
 }
@@ -184,7 +185,7 @@ public static class TestGateService
                 var (json, html) = TestRunReportWriter.Save(config, result, bundle, originalIds,
                     runId, startedUtc, DateTimeOffset.UtcNow);
                 published = true;
-                var saved = result with { ReportPath = json, HtmlPath = html };
+                var saved = result with { ReportRunId = runId, ReportPath = json, HtmlPath = html };
                 TestRunHistory.Finish(runDirectory, runId, saved);
                 return saved;
             }

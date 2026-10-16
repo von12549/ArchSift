@@ -141,6 +141,7 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
         });
         app.MapGet("/api/test-workbench/job", () => Results.Json(JobView(), JsonContract.Options));
         app.MapPost("/api/test-workbench/cancel", () => { Cancel(); return Results.Ok(); });
+        app.MapGet("/api/test-workbench/discovery", () => Results.Json(DiscoveryView(), JsonContract.Options));
         app.MapGet("/api/test-workbench/history", (int? offset, int? limit) =>
         {
             var config = Selected();
@@ -234,8 +235,62 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
             State = active.Finalized ? active.State : "running", Error = active.Finalized ? active.Error : null,
             exitCode = active.Finalized ? active.Result?.ExitCode : null,
             gate = active.Finalized ? active.Result?.Gate : null,
+            reportRunId = active.Finalized ? active.Result?.ReportRunId : null,
             reasons = active.Finalized ? active.Result?.Reasons : null,
             active.RunDirectory, active.ConfigPath };
+    }
+
+    private object DiscoveryView()
+    {
+        var config = Selected();
+        var root = HistoryRoot();
+        if (!Directory.Exists(root)) return new { available = false, reason = "Run a complete daily test to discover case UIDs." };
+        for (var offset = 0; ; offset += 200)
+        {
+            var page = TestRunHistory.List(root, config.TargetRoot, offset, 200);
+            foreach (var item in page.Items.Where(value => value.ReportPath is not null &&
+                         value.State is ("finished" or "failed")))
+            {
+                try
+                {
+                    var reportPath = item.ReportPath!;
+                    PathSafety.EnsureNoLinks(reportPath);
+                    using var report = JsonDocument.Parse(File.ReadAllBytes(reportPath));
+                    var body = report.RootElement;
+                    if (body.GetProperty("run").GetProperty("mode").GetString() != "full" ||
+                        !body.GetProperty("testScope").GetProperty("coverageComplete").GetBoolean()) continue;
+                    var discoveryPath = Path.Combine(Path.GetDirectoryName(reportPath)!, "discovery.log");
+                    if (!PathSafety.IsUnder(discoveryPath, root) || !File.Exists(discoveryPath))
+                        return new { available = false, reason = "The latest complete run has no discovery material." };
+                    PathSafety.EnsureNoLinks(discoveryPath);
+                    if (new FileInfo(discoveryPath).Length > 32 * 1024 * 1024)
+                        return new { available = false, reason = "Discovery material is too large to display." };
+                    using var discovery = JsonDocument.Parse(File.ReadAllBytes(discoveryPath));
+                    var cases = discovery.RootElement.GetProperty("tests").EnumerateArray()
+                        .Select(value => new
+                        {
+                            uid = value.GetProperty("uid").GetString()!,
+                            displayName = value.GetProperty("displayName").GetString()!
+                        }).ToArray();
+                    var ids = cases.Select(value => value.uid).ToHashSet(StringComparer.Ordinal);
+                    var recorded = body.GetProperty("testScope").GetProperty("discoveredCaseIds")
+                        .EnumerateArray().Select(value => value.GetString()!).ToHashSet(StringComparer.Ordinal);
+                    if (cases.Length == 0 || ids.Count != cases.Length ||
+                        cases.Any(value => string.IsNullOrWhiteSpace(value.uid) ||
+                            string.IsNullOrWhiteSpace(value.displayName)) || !ids.SetEquals(recorded))
+                        return new { available = false, reason = "Discovery UIDs do not match the authoritative run report." };
+                    return new { available = true, runId = item.RunId, item.StartedUtc,
+                        item.HistoryFreshness, cases = cases.OrderBy(value => value.displayName,
+                            StringComparer.Ordinal).ToArray() };
+                }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException or
+                    JsonException or KeyNotFoundException or InvalidDataException or InvalidOperationException or
+                    ConfigurationException)
+                { return new { available = false, reason = "Discovery material could not be read safely." }; }
+            }
+            if (offset + page.Items.Length >= page.Total) break;
+        }
+        return new { available = false, reason = "Run a complete daily test to discover case UIDs." };
     }
 
     private TestGateConfig Selected() => selected ?? throw new ConfigurationException("Select a daily-test configuration first.");

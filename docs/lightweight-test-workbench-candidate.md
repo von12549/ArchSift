@@ -1,5 +1,15 @@
 # 轻量架构测试工作台：本地候选使用与分发边界
 
+2026-10-16 **LT06 已验收的本地 UI 修订候选**：首轮人工复核提出的 UID、语言、结果位置和全局导航问题已修订。新载荷位于 `D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a`，清单 SHA-256 为 `34147699cb67d5f24d68e48de93152208ca75519fefbea38df66dc2376443c41`，机器记录见[LT06 UI 修订](acceptance/20261016-lightweight-lt06-ui-revision.md)。它在封装时基于 `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0` 加上清单所列未提交源码文件；用户随后对同一载荷完成[独立人工复核](acceptance/20261016-lightweight-lt06-human-ui-review.md)，五项均通过。清单中的 `sourceState` 是封装时点身份，不表示当前 Git 阶段状态。下文保留首轮固定候选的来源记录。
+
+如需重新打开修订候选，在 `pwsh -NoProfile` 中运行以下命令；只在本机打开其打印的 loopback 会话 URL，勿公开令牌。若当前代理已启动新候选并在 Codex 右侧打开浏览器，可直接继续该会话，避免重复启动相同端口。新候选的运行、规则复制和历史均在独立的 `lt06-ui-revision-20261016-a` 运行根下，不改动首轮候选或 IFX 原 checkout。
+
+```powershell
+& 'D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a/web/ArchSift.Web.exe' --config 'D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a/web-config.json'
+```
+
+在“架构测试”选择 `D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a/test-gate-config.json`。当前独立运行根已保存一份 80＋1 完整通过报告：可在全局“结果 → 架构测试结果”查看，或在“历史 → 架构测试历史”打开。切换 English／中文检查文案；在“局部”模式按案例名称搜索，点击候选条目即可填入发现 UID。只读检视无需重复执行真实门禁。
+
 2026-10-16 固定的**本地评审候选**产品源码提交为 `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0`，开发版本 `0.9.0-dev`。候选载荷在 `D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd`，逐文件清单 `manifest.json` 的 SHA-256 为 `4a19cfd8ae57464d4b6a010dec9a2b923ab1e5b5aa5bf287b3b308fc2d768212`。它用于本机独立评审；尚未完成[人工 UI 验收](acceptance/20261016-lightweight-lt06-human-ui-review.md)，也未获公开发布、安装、IFX 政策采纳或 PR／合并授权。[机器候选记录](acceptance/20261016-lightweight-lt06-candidate.md)列出实际门禁与限制。
 
 ## 在已授权的外置 IFX 工作树使用
