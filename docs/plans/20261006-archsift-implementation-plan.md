@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-16 轻量工作台后续授权：用户同意 PR、合并及发布，选择 `0.9.0-dev` 预发布；IFX 正式政策待发布完成后处理。预发布仅提供标签源码归档，本地路径绑定载荷不作为通用安装包。PR／CI／合并／发布结果须以执行后的证据更新，不预记成功。见[轻量工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)及[预发布说明](../releases/0.9.0-dev-notes.md)。
+
 2026-10-16 轻量工作台 LT06 完成：[UI 修订机器记录](../acceptance/20261016-lightweight-lt06-ui-revision.md)的固定本地载荷通过 IFX 原 80＋JSON 1 的完整 Web 门禁，用户又在[独立人工清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)确认 UID 查找、中英切换、Results／History 整合、旧分析入口及窄窗口／键盘可用。状态 **LT00–LT06 COMPLETE / 0.9.0-dev LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED**；PR、合并、公开发布、安装与 IFX 正式政策采纳另行决定。下文先前状态保留形成时点。
 
 2026-10-16 轻量工作台 LT06 机器候选更新：[LT06 本地候选](../acceptance/20261016-lightweight-lt06-candidate.md)固定 `0.9.0-dev` 产品源码 `e0b3bdd` 与外置 CLI/Web 逐文件哈希载荷；离线锁定恢复、265 项旧／新测试、封装 CLI 真实 IFX `allow/0`、Web loopback 冒烟及宿主保护通过。使用／分发边界和独立人工 UI 清单已备好。状态 **LT06 MACHINE CANDIDATE READY / HUMAN UI REVIEW PENDING / PRODUCT NOT ACCEPTED / NOT RELEASED**；需用户独立填验收，PR／合并／发布另行授权。下文先前状态保留形成时点。

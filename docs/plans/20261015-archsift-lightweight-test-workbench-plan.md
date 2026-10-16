@@ -2,6 +2,8 @@
 
 日期：2026-10-15（Australia/Sydney）。当前状态：**LT00–LT06 COMPLETE / 0.9.0-dev LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED**。本计划首次编写时的未授权状态和范围记录保留在下文。
 
+2026-10-16 发布授权更新：用户授权本工作流后续 PR、合并与发布，并选择 `0.9.0-dev` 预发布身份；IFX 正式政策安排在发布完成后处理。预发布范围为当前已验收的本地候选所对应源码，公开资产限标签源码归档；路径绑定的本地评审载荷不作为通用安装包。[预发布说明](../releases/0.9.0-dev-notes.md)记录功能与限制。执行 PR、CI、合并及发布时逐项保留实际证据，未完成前不把授权记为发布成功。
+
 2026-10-16 LT06 最终人工复核更新：用户对修订候选逐项确认 UID 查找／填入、中英文信息、Results／History 分离、旧分析入口、窄窗口和键盘操作均符合预期，见[独立人工清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)。结合[修订候选机器记录](../acceptance/20261016-lightweight-lt06-ui-revision.md)，LT06 本地候选验收完成。验收对象是清单哈希固定的 `0.9.0-dev` 本地载荷；完整源码绑定、未迁入规则和跨机器分发仍按[候选指南](../lightweight-test-workbench-candidate.md)所列限制处理。PR、合并、公开发布、安装和 IFX 正式政策采纳未获本次授权。
 
 2026-10-16 LT06 界面修订更新：用户首轮人工复核确认总体可用，并指出局部测试 UID 难找、架构测试页仅中文、结果在长历史列表之后，以及架构测试结果／历史与全局页面割裂。[首轮观察与空白复核清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)保留用户原话和待确认项。已完成[修订候选机器复核](../acceptance/20261016-lightweight-lt06-ui-revision.md)：增加按名称／UID 搜索并填入发现 UID、架构测试中英切换、结果置于全局 Results、历史置于全局 History；新独立 Web 载荷真实 IFX 完整门禁 80＋1 `allow/0`，覆盖和报告身份一致。用户对新布局的独立视觉／可用性复核仍待完成，LT06 尚未阶段提交或推送。
