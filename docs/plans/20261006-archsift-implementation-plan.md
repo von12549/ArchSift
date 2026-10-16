@@ -1,5 +1,7 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-16 轻量工作台发布完成：[PR #8](https://github.com/von12549/ArchSift/pull/8) 合并提交 `0c2d9f1` 的 main Windows／Ubuntu CI 均通过，标签 [v0.9.0-dev](https://github.com/von12549/ArchSift/releases/tag/v0.9.0-dev) 直接指向该提交，公开源码 ZIP 无凭据下载并通过内容核对。见[预发布回验](../releases/0.9.0-dev-publication.md)。状态 **LT00–LT06 ACCEPTED WITH LIMITATIONS / 0.9.0-dev SOURCE PRERELEASE PUBLISHED / IFX FORMAL POLICY PENDING**。下文先前状态保留形成时点。
+
 2026-10-16 轻量工作台预发布回归：PR [#8](https://github.com/von12549/ArchSift/pull/8) 的 `d112340` 在 Windows／Ubuntu CI 均通过；递归观察器新目录漏报修复的本机 18 项 MTP 与旧 248 项测试通过，新封装载荷对外置 IFX 的 80＋1 完整门禁为 `allow/0`，Web 30 个静态资源哈希与用户复核载荷一致。见[预发布源码回归](../acceptance/20261016-lightweight-lt06-release-regression.md)。状态 **0.9.0-dev SOURCE PR READY / NOT MERGED / NOT RELEASED**；正式 IFX 政策待发布后处理。下文先前状态保留形成时点。
 
 2026-10-16 轻量工作台后续授权：用户同意 PR、合并及发布，选择 `0.9.0-dev` 预发布；IFX 正式政策待发布完成后处理。预发布仅提供标签源码归档，本地路径绑定载荷不作为通用安装包。PR／CI／合并／发布结果须以执行后的证据更新，不预记成功。见[轻量工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)及[预发布说明](../releases/0.9.0-dev-notes.md)。
