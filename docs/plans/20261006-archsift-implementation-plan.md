@@ -1,5 +1,8 @@
 # ArchSift .NET 架构与依赖分析工具正式实施计划
 
+2026-10-22 原 ArchSift.InProject 0.1.0 路线正式被现有包化项目内接入替代，停止未来开发、人工验收与发布推进；旧 IP08 机器完成、人工部分完成、暂停／未正式验收／未发布历史保持。固定2877974完整历史已独立归档并恢复核验（191提交／2929对象／12关键blob），80份Git外关键原件保存；本地与远端旧分支、A/B worktree、现役和前一完整组合及全部政策／共享能力保留。详见[废止决定](../decisions/20261022-inproject-retirement.md)及[机器JSON](../decisions/20261022-inproject-retirement.json)。物理处置按精确外置清单记录，不以清空目录或删除分支作为废止条件；不补记旧人工验收通过。以下原有段落保留历史时点。
+
+
 2026-10-16 轻量工作台发布完成：[PR #8](https://github.com/von12549/ArchSift/pull/8) 合并提交 `0c2d9f1` 的 main Windows／Ubuntu CI 均通过，标签 [v0.9.0-dev](https://github.com/von12549/ArchSift/releases/tag/v0.9.0-dev) 直接指向该提交，公开源码 ZIP 无凭据下载并通过内容核对。见[预发布回验](../releases/0.9.0-dev-publication.md)。状态 **LT00–LT06 ACCEPTED WITH LIMITATIONS / 0.9.0-dev SOURCE PRERELEASE PUBLISHED / IFX FORMAL POLICY PENDING**。下文先前状态保留形成时点。
 
 2026-10-16 轻量工作台预发布回归：PR [#8](https://github.com/von12549/ArchSift/pull/8) 的 `d112340` 在 Windows／Ubuntu CI 均通过；递归观察器新目录漏报修复的本机 18 项 MTP 与旧 248 项测试通过，新封装载荷对外置 IFX 的 80＋1 完整门禁为 `allow/0`，Web 30 个静态资源哈希与用户复核载荷一致。见[预发布源码回归](../acceptance/20261016-lightweight-lt06-release-regression.md)。状态 **0.9.0-dev SOURCE PR READY / NOT MERGED / NOT RELEASED**；正式 IFX 政策待发布后处理。下文先前状态保留形成时点。
