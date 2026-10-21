@@ -26,6 +26,23 @@ public static class Program
                 Console.WriteLine(JsonSerializer.Serialize(AssemblyWorker.Evaluate(request), JsonContract.Options)); return 0;
             }
             if (args is ["--version"]) { Console.WriteLine($"archsift {RuntimeInfo.ProductVersion}"); return 0; }
+            if (args is ["test-launch", "--local", _, "--run", _])
+            {
+                var launch = TestLaunch.Prepare(args[2], args[4]);
+                Console.WriteLine(JsonSerializer.Serialize(launch, JsonContract.Options));
+                return 0;
+            }
+            if (args is ["test-map", "--request", _, "--output", _])
+            {
+                Console.WriteLine(JsonSerializer.Serialize(CaseMapping.WriteProposal(args[2], args[4]), JsonContract.Options));
+                return 0;
+            }
+            if (args is ["test-map-check", "--mapping", _, "--discovery", _, "--report", _])
+            {
+                CaseMapping.CheckExecution(args[2], args[4], args[6]);
+                Console.WriteLine("{\"identityMatch\":true,\"approvalChanged\":false}");
+                return 0;
+            }
             if (args is ["test-gate", "--config", _])
             {
                 try
@@ -73,6 +90,7 @@ public static class Program
                 Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
                 Console.WriteLine("test-gate --config <test-gate JSON> (full MTP project by default; filtered runs are subsets)");
+                Console.WriteLine("test-launch --local <machine JSON> --run <new name>; test-map --request <review request JSON> --output <new mapping JSON> (proposal only)");
                 Console.WriteLine("test-history --directory <owned test run root> [--target <worktree>] (read-only)");
                 Console.WriteLine("evidence capture --config <JSON> --inputs <external-input-paths JSON array> [--environment-inputs <environment-name JSON array>] --output <new capture JSON>; evidence seal --config <JSON> --capture <JSON> --review <JSON> --output <new manifest JSON>; evidence validate --config <JSON>");
                 Console.WriteLine("evidence preview --config <JSON> --request <JSON>; evidence build --config <JSON> --request <JSON> --preview-sha256 <reviewed hash> (offline, external snapshot, stops for review)");

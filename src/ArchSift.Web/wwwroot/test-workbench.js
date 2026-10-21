@@ -34,10 +34,53 @@
     return t(({finished: "Finished", failed: "Failed", cancelled: "Cancelled",
       unavailable: "Unavailable", interrupted: "Interrupted", running: "Running"})[state] || state);
   }
+  function caseResultsTable(checks, source) {
+    const wrapper = make("div"), controls = make("div", undefined, "actions rule-sort-controls");
+    const region = make("div", undefined, "test-result-table"), announcement = make("p", undefined, "hint");
+    announcement.setAttribute("role", "status");
+    announcement.setAttribute("aria-live", "polite");
+    const caseLabel = source === "json-type-dependency" ? "Rule" : "Case / class";
+    const original = checks.map((value, index) => ({value, index}));
+    const ranks = ["failed", "error", "cancelled", "skipped", "not-run", "passed"];
+    let field = null, direction = 1;
+    const buttons = {};
+    const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+    const name = value => value.ruleId || value.scope || value.id;
+    function paint() {
+      const rows = [...original];
+      const rank = value => ranks.includes(value.result) ? ranks.indexOf(value.result) : ranks.length;
+      if (field) rows.sort((a, b) => direction * (field === "case" ?
+        compare(name(a.value), name(b.value)) : rank(a.value) - rank(b.value)) || a.index - b.index);
+      const view = table([t(caseLabel), t("Result"), t("Execution"), t("Message")], rows.map(({value}) => [
+        name(value) + (value.ruleId && value.scope ? "\n" + value.scope : "") + "\n" + (value.runnerCaseId || ""),
+        t(value.result), value.executed ? t("Executed") : t("Not executed"), (value.messages || []).join("\n")
+      ]));
+      for (const [index, key] of [[0, "case"], [1, "result"]]) {
+        view.firstChild.children[index].setAttribute("aria-sort", field === key ?
+          (direction === 1 ? "ascending" : "descending") : "none");
+        buttons[key].textContent = t(key === "case" ? caseLabel : "Result") +
+          (field === key ? (direction === 1 ? " ↑" : " ↓") : "");
+      }
+      announcement.textContent = field ? t(field === "case" ? caseLabel : "Result") + " · " +
+        t(direction === 1 ? "Ascending" : "Descending") : t("Default order");
+      region.replaceChildren(view);
+    }
+    for (const key of ["case", "result"]) {
+      const button = make("button"); button.type = "button";
+      button.onclick = () => { if (field !== key) { field = key; direction = 1; }
+        else if (direction === 1) direction = -1;
+        else { field = null; direction = 1; } paint(); };
+      buttons[key] = button; controls.append(button);
+    }
+    const reset = make("button", t("Default order")); reset.type = "button";
+    reset.onclick = () => { field = null; direction = 1; paint(); };
+    controls.append(reset);
+    wrapper.append(controls, announcement, region); paint(); return wrapper;
+  }
   function renderInventory(data) {
     const area = el("test-inventory");
     area.replaceChildren();
-    if (!data.configured) {
+    if (!data?.configured) {
       inventory = null;
       el("test-start").disabled = true;
       area.append(make("p", t("Select a daily-test configuration for this Web target."), "empty"));
@@ -48,14 +91,24 @@
     el("test-start").disabled = false;
     area.append(make("h3", t("Test project and sources")), make("p", data.targetRoot, "path"),
       make("p", t("Test project") + ": " + data.testProject, "path"));
+    area.append(make("p", "Audit: " + data.auditMode + " · " +
+      (data.auditMode === "offline-architecture" ? "not-run" : "not-verified")));
+    if (data.toolIdentity) area.append(make("p", data.toolIdentity + (data.toolRoot ? " · " + data.toolRoot : ""), "path"));
+    const policy = make("details");
+    policy.append(make("summary", t("Policy sources") + " · " + (data.policy?.status || "unknown")),
+      make("pre", JSON.stringify(data.policy, null, 2), "path"));
+    area.append(policy);
     const cards = make("div", undefined, "test-source-grid");
     const original = make("article", undefined, "test-source-card");
+    const logical = data.identityMode === "logical-v1";
+    const caseKeys = logical ? data.logicalCaseKeys : data.originalCaseIds;
     original.append(make("h4", t("IFX specialized C# tests · read-only")),
-      make("p", t("Baseline IDs") + ": " + data.originalCaseIds.length + ". " +
-        t("This inventory is read from the baseline; tests have not run yet.")));
+      make("p", t(logical ? "Required logical cases" : "Baseline IDs") + ": " + caseKeys.length + ". " +
+        t(logical ? "This inventory is read from the verified case manifest; tests have not run yet." :
+          "This inventory is read from the baseline; tests have not run yet.")));
     const originalList = make("details"), originalIds = make("div", undefined, "test-id-list");
-    originalList.append(make("summary", t("View original case IDs")));
-    for (const id of data.originalCaseIds) originalIds.append(make("code", id));
+    originalList.append(make("summary", t(logical ? "View required logical cases" : "View original case IDs")));
+    for (const id of caseKeys) originalIds.append(make("code", id));
     originalList.append(originalIds);
     original.append(originalList);
     cards.append(original);
@@ -64,8 +117,12 @@
       make("p", t("Copy rules to the external library to edit them. The next run uses saved bytes.")));
     for (const rule of data.rules) {
       const card = make("div", undefined, "test-rule-row");
-      card.append(make("p", rule.path, "path"),
-        make("p", rule.cases.join(" · ") || t("No enabled cases")));
+      card.append(make("p", rule.path, "path"));
+      if (rule.cases.length) {
+        const cases = make("ol", undefined, "test-rule-cases");
+        for (const id of rule.cases) cases.append(make("li", id));
+        card.append(cases);
+      } else card.append(make("p", t("No enabled cases")));
       const button = make("button", t(rule.editable ?
         "Open in rule editor" : "Copy to external library and edit"));
       button.type = "button";
@@ -85,13 +142,14 @@
     }
     cards.append(json);
     const deferred = make("article", undefined, "test-source-card");
-    deferred.append(make("h4", t("Earlier A and inactive B candidates · not included")),
+    deferred.append(make("h4", t("Not executed as JSON")),
       make("p", data.notIncluded.length + " " +
-        t("items are not run by this gate; historical passes do not count here.")));
+        t("items are outside JSON execution; C# responsibility and current results are shown separately.")));
+    renderResponsibilities(deferred, data.responsibilityProjection);
     const deferredList = make("details"), list = make("div", undefined, "test-deferred-list");
     deferredList.append(make("summary", t("View not-included items")));
     for (const item of data.notIncluded)
-      list.append(make("p", item.id + " · " + item.source + " · " + item.reason));
+      list.append(make("p", item.id + " · " + t("Historical LT00 metadata") + " · " + item.reason));
     deferredList.append(list);
     deferred.append(deferredList);
     cards.append(deferred);
@@ -184,6 +242,11 @@
   function renderReport(report) {
     const area = el("test-report");
     area.replaceChildren();
+    if (report.schemaVersion !== 1 || report.kind !== "architecture-test-run" ||
+        (report.responsibilityProjection && !supportedResponsibilities(report.responsibilityProjection))) {
+      area.append(make("p", t("Unsupported report or responsibility projection."), "limitation"));
+      return;
+    }
     const heading = make("h3", t("Run") + " " + report.run.id);
     heading.tabIndex = -1;
     area.append(heading, make("p", report.outcome.runGate + " / " + report.outcome.exitCode +
@@ -193,6 +256,20 @@
     for (const reason of report.outcome.reasons || [])
       area.append(make("p", localizedMessage(reason), "limitation"));
     const checks = report.checks || [];
+    const summary = make("div", undefined, "result-region outcome-region test-summary");
+    summary.setAttribute("role", "region");
+    summary.setAttribute("aria-label", t("Architecture test summary"));
+    summary.append(make("h3", t("Architecture test summary")));
+    const metrics = make("div", undefined, "metrics");
+    const count = result => checks.filter(check => check.executed && check.result === result).length;
+    const notRun = checks.filter(check => !check.executed || check.result === "not-run").length;
+    const other = checks.filter(check => check.executed && !["passed", "failed", "skipped", "not-run"].includes(check.result)).length;
+    for (const [label, value] of [["Total cases", checks.length], ["Executed", checks.filter(check => check.executed).length],
+      ["passed", count("passed")], ["failed", count("failed")], ["skipped", count("skipped")],
+      ["Not run", notRun], ["Other results", other]]) {
+      const metric = make("span"); metric.append(make("b", value), make("span", t(label))); metrics.append(metric);
+    }
+    summary.append(metrics); area.append(summary);
     for (const [source, title] of [["json-type-dependency", "ArchSift JSON type dependencies"],
       ["ifx-specialized", "IFX specialized C# tests"]]) {
       const group = checks.filter(check => check.source === source);
@@ -200,24 +277,52 @@
       details.open = source === "json-type-dependency";
       const passed = group.filter(check => check.executed && check.result === "passed").length;
       details.append(make("summary", t(title) + " · " + passed + " / " + group.length + " " + t("passed")));
-      details.append(table([t("Case / class"), t("Result"), t("Execution"), t("Message")],
-        group.map(check => [
-          (check.scope || check.id) + "\n" + (check.runnerCaseId || ""),
-          t(check.result), check.executed ? t("Executed") : t("Not executed"),
-          (check.messages || []).join("\n")
-        ])));
+      details.append(caseResultsTable(group, source));
       area.append(details);
     }
     const deferred = make("details");
-    deferred.append(make("summary", t("Not included in this gate") + " · " +
+    deferred.append(make("summary", t("Not executed as JSON") + " · " +
       (report.notIncluded || []).length + " " + t("items")));
+    renderResponsibilities(deferred, report.responsibilityProjection);
+    deferred.append(make("p", t("Historical LT00 metadata")));
     deferred.append(table([t("ID"), t("Source"), t("Description")],
       (report.notIncluded || []).map(item => [item.id, item.source, item.reason])));
     area.append(deferred);
     for (const finding of report.findings || [])
       area.append(make("pre", JSON.stringify(finding, null, 2), "test-finding"));
   }
+  function supportedResponsibilities(projection) {
+    return projection.schemaVersion === 1 && projection.kind === "rule-responsibility-projection" &&
+      projection.semantics === "not-executed-as-json" && Array.isArray(projection.items) &&
+      projection.items.every(item => item && typeof item.id === "string" && ["A", "B"].includes(item.category) &&
+        ["adopted-active", "adopted-pending-activation", "unknown"].includes(item.policyState) &&
+        ["ifx-csharp", "not-assigned", "unknown"].includes(item.responsibility) &&
+        ["passed", "failed", "skipped", "not-run", "unavailable"].includes(item.executionResult) &&
+        Array.isArray(item.caseKeys) && Array.isArray(item.decisionReferences));
+  }
+  function renderResponsibilities(area, projection) {
+    if (!projection || !supportedResponsibilities(projection)) {
+      area.append(make("p", t("Current responsibility projection unavailable; historical results remain unchanged."), "limitation"));
+      return;
+    }
+    const items = projection.items;
+    const assigned = items.filter(item => item.responsibility === "ifx-csharp");
+    const remaining = items.filter(item => item.responsibility !== "ifx-csharp");
+    const pending = items.filter(item => item.policyState === "adopted-pending-activation");
+    area.append(make("p", t("Assigned to approved C# cases") + ": " + assigned.length + " · " +
+      t("Remaining inventory") + ": " + remaining.length + " (A " + remaining.filter(item => item.category === "A").length +
+      " / B " + remaining.filter(item => item.category === "B").length + ") · " +
+      t("adopted-pending-activation") + ": " + pending.length));
+    area.append(make("p", t("Inventory counts do not prove detection gaps or current passes.")));
+    const details = make("details");
+    details.append(make("summary", t("Current policy and execution responsibility")));
+    const wrapper = make("div", undefined, "test-result-table test-responsibilities");
+    wrapper.append(table([t("ID"), t("Policy state"), t("Execution responsibility"), t("This execution")],
+      items.map(item => [item.id, t(item.policyState), t(item.responsibility), t(item.executionResult)])));
+    details.append(wrapper); area.append(details);
+  }
   async function showReport(runId, navigate) {
+    clearReport();
     const report = await api("test-workbench/report/" + encodeURIComponent(runId) + "/json");
     reportData = report;
     shownRunId = runId;
@@ -282,7 +387,15 @@
       await refreshDiscovery();
       await updateJob();
       message(t("Inventory loaded; reading it did not run tests."));
-    } catch (error) { message(localizedMessage(error.message), true); }
+    } catch (error) {
+      renderInventory(null);
+      clearReport();
+      discovery = null;
+      historyItems = [];
+      renderDiscovery();
+      renderHistory();
+      message(localizedMessage(error.message), true);
+    }
   };
   el("test-mode").onchange = setMode;
   el("test-case-search").oninput = renderDiscovery;

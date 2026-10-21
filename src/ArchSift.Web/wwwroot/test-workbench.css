@@ -1,4 +1,5 @@
 .test-workbench{grid-column:1/-1}
+.test-responsibilities{max-height:360px;overflow:auto}.test-responsibilities td{overflow-wrap:anywhere}
 .test-workbench h4{margin:0 0 8px;font-size:14px}
 .test-source-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:14px}
 .test-source-card{min-width:0;border:1px solid #cadde7;background:#f8fbfc;padding:16px}
@@ -7,6 +8,8 @@
 .test-id-list code{display:block;padding:2px 0}
 .test-deferred-list p{font-size:12px;border-bottom:1px solid #dbe6ec;overflow-wrap:anywhere}
 .test-rule-row{padding:9px 0;border-top:1px solid #dbe6ec}
+.test-rule-cases{margin:8px 0;padding-left:24px;list-style:decimal}
+.test-rule-cases li{padding:3px 0;white-space:normal;overflow-wrap:anywhere}
 .test-controls{margin:22px 0;padding:16px;border:1px solid #b8cdd8;background:#f4f9fb}
 .test-controls>.hint{margin-bottom:0}
 .test-next{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid #cadde7;padding-top:16px}
@@ -30,6 +33,7 @@
 .test-history-card p{margin:4px 0}
 #test-report{margin-top:16px}
 #test-report h3{margin:0 0 8px}
+.test-summary{padding:14px 16px}.test-summary .metrics{margin-bottom:0}.test-result-table{max-width:100%;overflow-x:auto}.test-result-table table{min-width:520px}
 #test-report>details{margin:14px 0;border:1px solid #cadde7;background:#fff;padding:10px}
 #test-report>details>summary{font-weight:700;cursor:pointer}
 #test-report>details>table{display:block;max-width:100%;overflow-x:auto;margin-top:10px}

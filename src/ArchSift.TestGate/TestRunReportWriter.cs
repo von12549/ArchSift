@@ -57,21 +57,24 @@ public static class TestRunReportWriter
         var native = result.NativeRun;
         var tests = native?.Tests ?? [];
         var originals = originalIds.ToHashSet(StringComparer.Ordinal);
+        string OriginalKey(MtpTest test) => config.SchemaVersion == 2 && test.Identity is not null
+            ? CaseIdentities.Key(test.Identity.Identity) : test.Id;
         var cases = bundle.Documents.SelectMany(document => document.Ruleset.Rules
             .Where(rule => rule.Enabled).Select(rule => (Rule: rule, Document: document))).ToArray();
         var expectedJson = cases.Select(item => "archsift-json:" + item.Rule.Id).Order(StringComparer.Ordinal).ToArray();
         var checks = new List<Dictionary<string, object?>>();
         foreach (var test in tests.Where(test => test.JsonCaseId is null))
         {
-            checks.Add(Obj(("id", "ifx-specialized:" + test.Id), ("source", "ifx-specialized"),
+            checks.Add(Obj(("id", "ifx-specialized:" + (config.SchemaVersion == 2 ? ContentHash.Text(OriginalKey(test)) : test.Id)), ("source", "ifx-specialized"),
                 ("responsibleChecker", "IFX.Architecture.Tests"), ("inDailyScope", true),
-                ("runnerCaseId", test.Id), ("scope", test.ClassName + "." + test.MethodName),
+                ("runnerCaseId", test.Id), ("xunitCaseId", test.Identity?.XunitCaseId),
+                ("mtpDiscoveryUid", test.DiscoveryUid), ("scope", test.ClassName + "." + test.MethodName),
                 ("discovered", true), ("executed", true), ("result", TestStatus(test.Result)),
                 ("elapsedMilliseconds", test.ElapsedMilliseconds), ("findingIds", Array.Empty<string>()),
                 ("messages", test.Messages), ("limitations", Array.Empty<string>())));
         }
         var executedOriginal = tests.Where(test => test.JsonCaseId is null)
-            .Select(test => test.Id).ToHashSet(StringComparer.Ordinal);
+            .Select(OriginalKey).ToHashSet(StringComparer.Ordinal);
         foreach (var id in originals.Except(executedOriginal).Order(StringComparer.Ordinal))
             checks.Add(Obj(("id", "ifx-specialized:" + id), ("source", "ifx-specialized"),
                 ("responsibleChecker", "IFX.Architecture.Tests"), ("inDailyScope", true),
@@ -87,7 +90,8 @@ public static class TestRunReportWriter
             var evaluated = test?.Evaluation?.Results.SingleOrDefault();
             checks.Add(Obj(("id", caseId), ("source", "json-type-dependency"),
                 ("responsibleChecker", "ArchSift.Testing/ArchUnitNET"), ("inDailyScope", true),
-                ("runnerCaseId", test?.Id), ("ruleId", rule.Id),
+                ("runnerCaseId", test?.Id), ("xunitCaseId", test?.Identity?.XunitCaseId),
+                ("mtpDiscoveryUid", test?.DiscoveryUid), ("ruleId", rule.Id),
                 ("scope", rule.Scope.Kind + ":" + rule.Scope.Match + ":" + rule.Scope.Value),
                 ("reason", rule.Reason), ("discovered", test is not null),
                 ("executed", test is not null), ("result", test is null ? "not-run" : TestStatus(test.Result)),
@@ -109,6 +113,9 @@ public static class TestRunReportWriter
         var includedIds = cases.Select(item => item.Rule.Id).ToHashSet(StringComparer.Ordinal);
         var notIncluded = config.TestExecutableName == "IFX.Architecture.Tests"
             ? LoadNotIncluded(includedIds) : [];
+        var executionComplete = result.ExitCode == 0 && result.Gate == "allow" && result.Coverage?.Complete == true &&
+            native is { DiscoveryFinished: true, AssemblyFinished: true } &&
+            result.Test.Status == "passed" && !result.RelevantInputChanged;
         var (commit, dirty) = GitContext(config.TargetRoot, config);
         var report = Obj(
             ("schemaVersion", 1), ("kind", "architecture-test-run"),
@@ -120,14 +127,20 @@ public static class TestRunReportWriter
                 ("gitCommit", commit), ("dirty", dirty), ("entry", "archsift test-gate"),
                 ("testProjects", new[] { config.TestProject }), ("sdk", ReadSdk(config)),
                 ("targetFramework", config.TargetFramework), ("configuration", config.Configuration))),
-            ("inputs", Obj(("ifxBaselineSha256", config.OriginalBaselineSha256),
+            ("inputs", Obj(("ifxBaselineSha256", config.SchemaVersion == 1 ? config.OriginalBaselineSha256 : null),
+                ("caseManifest", config.SchemaVersion == 2 ? Obj(("schemaVersion", 1),
+                    ("path", config.RequiredCases), ("sha256", config.RequiredCasesSha256),
+                    ("identityMode", "logical-v1")) : null),
+                ("toolRoot", config.ToolRoot), ("toolIdentity", config.ToolIdentity),
+                ("policySha256", config.PolicySha256), ("caseMappingSha256", config.CaseMappingSha256),
                 ("rulesets", bundle.Documents.Select(document => Obj(("id", document.Identity.Id),
                     ("path", document.Identity.Path), ("sha256", document.Identity.Sha256))).ToArray()))),
             ("engines", Obj(("runner", config.RunnerFormat),
                 ("testAdapter", "ArchSift.Testing " + typeof(ArchitectureTestAdapter).Assembly.GetName().Version),
                 ("archUnitNet", ArchUnitVersion()))),
             ("testScope", Obj(("requiredOriginalProject", config.TestProject),
-                ("expectedOriginalCaseIds", originalIds.Order(StringComparer.Ordinal).ToArray()),
+                ("expectedOriginalCaseIds", config.SchemaVersion == 1 ? originalIds.Order(StringComparer.Ordinal).ToArray() : []),
+                ("expectedLogicalCaseKeys", config.SchemaVersion == 2 ? originalIds.Order(StringComparer.Ordinal).ToArray() : []),
                 ("enabledJsonRuleIds", expectedJson), ("discoveredCaseIds", native?.DiscoveredIds ?? []),
                 ("startedCaseIds", native?.StartedIds ?? []), ("completedCaseIds", native?.CompletedIds ?? []),
                 ("skippedCaseIds", tests.Where(test => test.Result == "skipped").Select(test => test.Id).ToArray()),
@@ -136,14 +149,48 @@ public static class TestRunReportWriter
                 ("duplicateCaseIds", result.Coverage?.DuplicateIds ?? []),
                 ("coverageComplete", result.Coverage?.Complete ?? false))),
             ("process", Obj(("snapshotUpdatesDisabled", result.SnapshotUpdatesDisabled),
+                ("audit", result.Audit),
                 ("restore", Stage(result.Restore)), ("build", Stage(result.Build)), ("test", Stage(result.Test)),
                 ("sourceChangedDuringRun", result.RelevantInputChanged),
                 ("authoritativeOutputSaved", true))),
             ("checks", checks.OrderBy(item => (string)item["id"]!, StringComparer.Ordinal).ToArray()),
             ("findings", findings), ("notIncluded", notIncluded),
+            ("responsibilityProjection", config.TestExecutableName == "IFX.Architecture.Tests"
+                ? RuleResponsibilityProjection.Create(config, includedIds, tests, executionComplete) : null),
+            ("policy", PolicyView(config, tests, executionComplete)),
             ("outcome", Obj(("runGate", result.Gate), ("exitCode", result.ExitCode),
                 ("reasons", result.Reasons.Distinct(StringComparer.Ordinal).ToArray()))));
         return report;
+    }
+
+    public static object PolicyView(TestGateConfig config, MtpTest[]? tests = null, bool executionComplete = false)
+    {
+        if (config.PolicyFile is null) return new { status = "unknown", coverageComplete = false };
+        (NativePolicyDocument Document, string[] Paths, string Sha256) policy;
+        try { policy = NativePolicy.Load(config.TargetRoot, config.PolicyFile); }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException
+            or ConfigurationException or InvalidDataException)
+        { return new { status = "unknown", coverageComplete = false }; }
+        if (policy.Sha256 != config.PolicySha256)
+            return new { status = "unknown", coverageComplete = false };
+        var actualKeys = (tests ?? []).Where(item => item.Identity is not null)
+            .GroupBy(item => CaseIdentities.Key(item.Identity!.Identity), StringComparer.Ordinal)
+            .Where(group => group.Count() == 1)
+            .ToDictionary(group => group.Key, group => group.Single(), StringComparer.Ordinal);
+        return new
+        {
+            status = policy.Document.Sources.Length == 0 ? "unmapped" : "mapped", version = policy.Document.Version, sha256 = policy.Sha256,
+            // Responsibility metadata never manufactures an execution result or a pass.
+            coverageComplete = executionComplete && policy.Document.Sources.Length > 0 && policy.Document.Sources.All(item =>
+                item.Responsibility != "deferred" && item.CaseKeys.Length > 0 &&
+                item.CaseKeys.All(key => actualKeys.TryGetValue(key, out var test) && test.Result == "passed")),
+            sources = policy.Document.Sources.Select(item => new
+            {
+                item.SourceId, item.SourceSha256, item.Responsibility, editable = item.Responsibility == "json",
+                caseKeys = item.CaseKeys, executionIds = item.CaseKeys.Where(actualKeys.ContainsKey)
+                    .Select(key => actualKeys[key].Id).ToArray()
+            }).ToArray()
+        };
     }
 
     private static Dictionary<string, object?>[] LoadNotIncluded(HashSet<string> includedIds)
@@ -183,9 +230,16 @@ public static class TestRunReportWriter
             status is null || !string.IsNullOrWhiteSpace(status));
     }
 
-    private static string ReadSdk(TestGateConfig config) =>
-        Command("dotnet", ["--version"], config.TargetRoot, config)?.Trim() is { Length: > 0 } version
+    private static string ReadSdk(TestGateConfig config)
+    {
+        if (config.SchemaVersion == 2)
+        {
+            var path = Path.Combine(config.RunDirectory, "sdk.log");
+            return File.Exists(path) && File.ReadAllText(path).Trim() is { Length: > 0 } recorded ? recorded : "unavailable";
+        }
+        return Command("dotnet", ["--version"], config.TargetRoot, config)?.Trim() is { Length: > 0 } version
             ? version : "unavailable";
+    }
 
     private static string ArchUnitVersion()
     {
@@ -242,6 +296,9 @@ public static class TestRunReportWriter
             .Append("<br>本次门禁：<strong>").Append(E(outcome["runGate"]))
             .Append(" / ").Append(E(outcome["exitCode"])).Append("</strong></p>");
         text.Append("<p>本次通过只覆盖实际执行的 IFX 专用测试与已启用 JSON 测试；未纳入项及旧报告不计入通过数。</p>");
+        text.Append("<details><summary>工具、政策来源与 Audit 范围</summary><pre>")
+            .Append(E(JsonSerializer.Serialize(new { inputs = report["inputs"], policy = report["policy"], process = report["process"] }, JsonContract.Options)))
+            .Append("</pre></details>");
         text.Append("<h2>本次检查</h2><table><tr><th>来源</th><th>检查</th><th>结果</th><th>原始规则状态</th><th>匹配数</th><th>消息</th></tr>");
         foreach (var check in checks)
             text.Append("<tr><td>").Append(E(check.GetValueOrDefault("source")))
@@ -258,7 +315,16 @@ public static class TestRunReportWriter
                 .Append(" → ").Append(E(finding.GetValueOrDefault("targetType")))
                 .Append("</td><td>").Append(E(finding["message"]))
                 .Append("</td></tr>");
-        text.Append("</table><details><summary>未纳入本次门禁（").Append(notIncluded.Length)
+        text.Append("</table>");
+        if (report.TryGetValue("responsibilityProjection", out var projection) && projection is RuleResponsibilityView view)
+        {
+            text.Append("<details><summary>当前政策／执行责任／本次执行（未作为JSON执行）</summary><table><tr><th>ID</th><th>政策状态</th><th>执行责任</th><th>本次执行</th></tr>");
+            foreach (var item in view.Items)
+                text.Append("<tr><td>").Append(E(item.Id)).Append("</td><td>").Append(E(item.PolicyState))
+                    .Append("</td><td>").Append(E(item.Responsibility)).Append("</td><td>").Append(E(item.ExecutionResult)).Append("</td></tr>");
+            text.Append("</table></details>");
+        }
+        text.Append("<details><summary>未作为JSON执行；原LT00历史说明（").Append(notIncluded.Length)
             .Append(" 项）</summary><table><tr><th>来源</th><th>ID</th><th>原因</th></tr>");
         foreach (var item in notIncluded)
             text.Append("<tr><td>").Append(E(item["source"]))

@@ -5,5 +5,7 @@
   <ItemGroup>
     <EmbeddedResource Include="../../docs/decisions/20261015-lightweight-policy-inventory.json"
                       LogicalName="ArchSift.TestGate.PolicyInventory.json" />
+    <EmbeddedResource Include="../../docs/decisions/20261021-rule-dispositions.json"
+                      LogicalName="ArchSift.TestGate.RuleDispositions.json" />
   </ItemGroup>
 </Project>

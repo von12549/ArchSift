@@ -76,7 +76,7 @@ public static class TestRunHistory
                 items.Add(ReadItem(directory, marker, active.Contains(marker.RunId)));
             }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException
-                or InvalidDataException or ConfigurationException)
+                or InvalidDataException or ConfigurationException or KeyNotFoundException or InvalidOperationException)
             {
                 if (marker is not null) items.Add(new(marker.RunId, marker.TargetRoot, marker.StartedUtc,
                     "unavailable", null, null, null, null, "unknown",
@@ -104,7 +104,13 @@ public static class TestRunHistory
         PathSafety.EnsureNoLinks(htmlPath);
         using var document = JsonDocument.Parse(File.ReadAllBytes(reportPath));
         var report = document.RootElement;
-        if (report.GetProperty("kind").GetString() != "architecture-test-run" ||
+        RuleResponsibilityProjection.ValidateReport(report);
+        if (report.TryGetProperty("inputs", out var inputs) && inputs.TryGetProperty("caseManifest", out var manifest) &&
+            (manifest.ValueKind != JsonValueKind.Object || manifest.GetProperty("schemaVersion").GetInt32() != 1 ||
+             manifest.GetProperty("identityMode").GetString() != "logical-v1"))
+            throw new InvalidDataException("Unsupported portable report identity contract.");
+        if (report.GetProperty("schemaVersion").GetInt32() != 1 ||
+            report.GetProperty("kind").GetString() != "architecture-test-run" ||
             report.GetProperty("run").GetProperty("id").GetString() != marker.RunId ||
             !string.Equals(report.GetProperty("target").GetProperty("worktreeRoot").GetString(),
                 marker.TargetRoot, PathSafety.Comparison))
