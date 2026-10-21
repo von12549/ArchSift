@@ -10,6 +10,10 @@ The tool runs on .NET 10 and targets SDK-style C# net8/net9/net10. Windows x64 i
 
 ## Development
 
+IFX 已通过 CL04 正式采用固定 `0.10.0-cl03.1` 可移植测试组合，[CL04实际 main 验收](https://github.com/von12549/IFX-New/actions/runs/39543191970)的基点为 `a2adb87`。后续说明已由 PR #15 正式交付，当前 IFX 本地 main 为 `f58205b`，见[说明交付验收](https://github.com/von12549/IFX-New/actions/runs/39550973000)；当前使用及边界见[可移植接入说明](https://github.com/von12549/IFX-New/blob/f58205b2c1edd4887811d4feed553d61ebddd69a/docs/architecture-portable.md)。CL02责任投影修正已随该版本在 IFX 生效；匹配 Web ZIP 仍为本地已验候选，未由 IFX 消费或公开发布。
+
+ArchSift 产品源码最小归档 **43 文件**已通过[PR #9](https://github.com/von12549/ArchSift/pull/9)正式合并至 ArchSift main `3f61be0`，实际 main 正常 CI 验收及本地固定更新已完成，见[源码归档合并说明](https://github.com/von12549/ArchSift/pull/9)。其余未提交文档、模板、历史及操作材料均保留，未包含在这43文件中；这两份说明的交付范围以对应PR变更清单为准，未纳入提交的材料继续保持本地状态。源码归档、IFX现役、既有包及Web候选分别记账，不因此新增包发布或真实IFX运行，也不声明旧包的精确编译器输入闭包或可重现构建。这与已发布的通用0.7.0产品分开记账。
+
 Requires .NET 10 SDK, PowerShell 7, Git, and a complete explicit local NuGet feed. `global.json` starts at SDK 10.0.100 with latestFeature roll-forward; Windows development checks use SDK 10.0.303. Multi-framework build fixtures also need their targeting packs and supported SDKs.
 
 ```powershell
