@@ -40,6 +40,7 @@ function Invoke-FixtureDotnet([string]$Name,[string[]]$Arguments){
     $start.Environment['DOTNET_GENERATE_ASPNET_CERTIFICATE']='false'
     $start.Environment['DOTNET_NOLOGO']='1'
     $start.Environment['NUGET_CERT_REVOCATION_MODE']='offline'
+    $start.Environment['ARCHSIFT_PROFILE_PATHS'] = ConvertTo-Json -InputObject @($PROFILE.AllUsersAllHosts, $PROFILE.AllUsersCurrentHost, $PROFILE.CurrentUserAllHosts, $PROFILE.CurrentUserCurrentHost) -Compress
     foreach($key in @('ARCHSIFT_SP02_REPORT_FIXTURE','ARCHSIFT_TEST_GATE_CONFIG','ARCHSIFT_LT01_NEGATIVE','IFX_UPDATE_SNAPSHOTS')){[void]$start.Environment.Remove($key)}
     $process=[Diagnostics.Process]::Start($start)
     try{

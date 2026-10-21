@@ -79,6 +79,7 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments, [hashtable]
     $start.Environment['NUGET_PACKAGES'] = $packageCache
     $start.Environment['ARCHSIFT_TEST_LOCAL_FEED'] = $localFeedPath
     $start.Environment['NUGET_CERT_REVOCATION_MODE'] = 'offline'
+    $start.Environment['ARCHSIFT_PROFILE_PATHS'] = ConvertTo-Json -InputObject @($PROFILE.AllUsersAllHosts, $PROFILE.AllUsersCurrentHost, $PROFILE.CurrentUserAllHosts, $PROFILE.CurrentUserCurrentHost) -Compress
     foreach ($key in $ChildEnvironment.Keys) { $start.Environment[$key] = $ChildEnvironment[$key] }
     $timer = [Diagnostics.Stopwatch]::StartNew()
     $process = [Diagnostics.Process]::Start($start)
