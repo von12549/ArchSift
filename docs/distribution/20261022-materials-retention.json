@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-22",
+  "status": "workspace-snapshot-archived-originals-retained",
+  "baselineCommit": "c018e6d10e1a67e0aeb989618c4a47c0a440bb63",
+  "scope": "Remaining local materials; no product release, cleanup or runtime adoption",
+  "archive": {
+    "schemaVersion": 1,
+    "status": "archive-verified-originals-retained",
+    "zip": {
+      "path": "D:\\ArchSift-lab\\archives\\post-retirement-materials-20261022-01\\workspace-materials.zip",
+      "bytes": 5522416,
+      "sha256": "7d8fbb01b4b6d3cb0f8a073d4b11ef4f604cd159d5460cdd3e41d82031875f8f"
+    },
+    "manifest": {
+      "path": "D:\\ArchSift-lab\\archives\\post-retirement-materials-20261022-01\\workspace-manifest.json",
+      "bytes": 1695027,
+      "sha256": "84512cb0fe89e28846c63fecdb9e1ad27456fbd3534ef3d6c0d32aa2dfce82e0"
+    },
+    "restoreGuide": {
+      "path": "D:\\ArchSift-lab\\archives\\post-retirement-materials-20261022-01\\RESTORE.md",
+      "bytes": 743,
+      "sha256": "462acf19a4d5c633b2686161916629f53cdb4e881467af598485addbb321f5e1"
+    },
+    "files": 1289,
+    "uncompressedBytes": 30496840,
+    "verification": "Independent ZIP reopen; exact entry set and every decompressed SHA-256 matches source manifest",
+    "originalsRetained": true,
+    "permanentDeletionCount": 0,
+    "movedOriginalCount": 0,
+    "storageReclaimedBytes": 0
+  },
+  "workspaceClassification": {
+    "preserved-history-attributes": 1,
+    "historical-and-planning-documents": 4,
+    "validation-drivers-and-fixtures": 792,
+    "validation-records": 411,
+    "preserved-history-044": 16,
+    "subsequent-validation-record": 10,
+    "historical-drafts-and-decisions": 5,
+    "current-plan": 1,
+    "historical-consumer-templates-and-fixtures": 48,
+    "generated-cache": 1
+  },
+  "externalObjects": {
+    "originalScopeObjects": 201,
+    "originalPendingClassification": 197,
+    "scopeManifest": "D:\\ArchSift-lab\\archives\\inproject-retirement-20261022-01\\scope.json",
+    "currentInventory": "D:\\ArchSift-lab\\runs\\post-retirement-materials-20261022-01\\external-manifest.json",
+    "disposition": "retain; no new external original move or deletion authorized by this registration",
+    "classificationLimit": "Exact current inventory and review questions are recorded separately; do not infer that all unknown consumers or duplicates have been resolved."
+  },
+  "preservation": {
+    "protectedSet548": 548,
+    "protectedSet568": 568,
+    "intersection": 536,
+    "union": 580,
+    "ifxInputs": 908,
+    "currentPortableVersion": "0.10.0-cl03.1",
+    "previousPortableVersion": "0.10.0-sp03.1",
+    "completePackageSourceCounts": [
+      251,
+      251
+    ],
+    "syntheticPackageSourceCount": 28,
+    "registry4": "adopted-pending-enablement"
+  },
+  "priorWork": "CL00-CL05, product source archive, PR10/PR11 documentation and IR01-IR05 remain closed",
+  "history": "IP08 human partial; paused, not formally accepted, not released. Preserve failure/cancellation/safety records.",
+  "owner": "Project operator / repository maintainer",
+  "expiry": null,
+  "reviewTrigger": "Explicit retention/capacity request or verified change of consumers; inspect exact objects and restore sufficiency before disposal.",
+  "executionRecords": "D:\\ArchSift-lab\\runs\\post-retirement-materials-20261022-01",
+  "limitations": [
+    "Archive contains local historical records/drivers/templates and original modifications; not a source release or reproducible build closure.",
+    "Original paths are retained; whole repository cleanliness is not implied.",
+    "Retained/isolated objects do not count as reclaimed disk bytes.",
+    "JSON in this file is the durable archive registration; run completion and actual CI results are recorded separately."
+  ]
+}
