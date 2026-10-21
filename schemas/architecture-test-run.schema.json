@@ -6,6 +6,34 @@
   "additionalProperties": false,
   "required": ["schemaVersion", "kind", "run", "target", "inputs", "engines", "testScope", "process", "checks", "findings", "notIncluded", "outcome"],
   "properties": {
+    "responsibilityProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "kind", "semantics", "items"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "kind": { "const": "rule-responsibility-projection" },
+        "semantics": { "const": "not-executed-as-json" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "category", "policyState", "responsibility", "executionResult", "caseKeys", "decisionReferences"],
+            "properties": {
+              "id": { "$ref": "#/definitions/nonEmpty" },
+              "category": { "enum": ["A", "B"] },
+              "policyState": { "enum": ["adopted-active", "adopted-pending-activation", "unknown"] },
+              "responsibility": { "enum": ["ifx-csharp", "not-assigned", "unknown"] },
+              "executionResult": { "enum": ["passed", "failed", "skipped", "not-run", "unavailable"] },
+              "caseKeys": { "$ref": "#/definitions/ids" },
+              "decisionReferences": { "$ref": "#/definitions/ids" }
+            }
+          }
+        }
+      }
+    },
+    "policy": { "type": "object" },
     "schemaVersion": { "const": 1 },
     "kind": { "const": "architecture-test-run" },
     "run": {
@@ -38,8 +66,14 @@
     "inputs": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["ifxBaselineSha256", "rulesets"],
+      "required": ["rulesets"],
+      "oneOf": [{ "required": ["ifxBaselineSha256"] }, { "required": ["caseManifest"] }],
       "properties": {
+        "caseManifest": { "type": "object", "additionalProperties": false, "required": ["schemaVersion", "path", "sha256", "identityMode"], "properties": { "schemaVersion": { "const": 1 }, "path": { "type": "string" }, "sha256": { "$ref": "#/definitions/sha256" }, "identityMode": { "const": "logical-v1" } } },
+        "toolRoot": { "type": "string" },
+        "toolIdentity": { "type": "string" },
+        "policySha256": { "$ref": "#/definitions/sha256" },
+        "caseMappingSha256": { "$ref": "#/definitions/sha256" },
         "ifxBaselineSha256": { "$ref": "#/definitions/sha256" },
         "rulesets": {
           "type": "array",
@@ -73,6 +107,7 @@
       "properties": {
         "requiredOriginalProject": { "$ref": "#/definitions/nonEmpty" },
         "expectedOriginalCaseIds": { "$ref": "#/definitions/ids" },
+        "expectedLogicalCaseKeys": { "$ref": "#/definitions/ids" },
         "enabledJsonRuleIds": { "$ref": "#/definitions/ids" },
         "discoveredCaseIds": { "$ref": "#/definitions/ids" },
         "startedCaseIds": { "$ref": "#/definitions/ids" },
@@ -89,6 +124,23 @@
       "required": ["snapshotUpdatesDisabled", "restore", "build", "test", "sourceChangedDuringRun", "authoritativeOutputSaved"],
       "properties": {
         "snapshotUpdatesDisabled": { "type": "boolean" },
+        "audit": {
+          "type": "object", "additionalProperties": false,
+          "required": ["mode", "status", "completion", "restoreArguments"],
+          "properties": {
+            "mode": { "enum": ["inherit", "offline-architecture"] },
+            "status": { "enum": ["not-run", "not-verified"] },
+            "completion": { "type": "object", "additionalProperties": false, "properties": {
+              "enabled": { "type": ["string", "null"] },
+              "mode": { "type": ["string", "null"] },
+              "level": { "type": ["string", "null"] },
+              "projectCount": { "type": ["integer", "null"], "minimum": 0 },
+              "auditedCount": { "type": ["integer", "null"], "minimum": 0 },
+              "skippedCount": { "type": ["integer", "null"], "minimum": 0 }
+            } },
+            "restoreArguments": { "type": "array", "items": { "type": "string" } }
+          }
+        },
         "restore": { "$ref": "#/definitions/processStage" },
         "build": { "$ref": "#/definitions/processStage" },
         "test": { "$ref": "#/definitions/processStage" },
@@ -108,6 +160,8 @@
           "responsibleChecker": { "$ref": "#/definitions/nonEmpty" },
           "inDailyScope": { "type": "boolean" },
           "runnerCaseId": { "$ref": "#/definitions/nonEmpty" },
+          "xunitCaseId": { "$ref": "#/definitions/nonEmpty" },
+          "mtpDiscoveryUid": { "$ref": "#/definitions/nonEmpty" },
           "ruleId": { "$ref": "#/definitions/nonEmpty" },
           "scope": { "$ref": "#/definitions/nonEmpty" },
           "reason": { "$ref": "#/definitions/nonEmpty" },

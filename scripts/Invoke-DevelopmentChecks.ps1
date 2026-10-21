@@ -61,7 +61,7 @@ $dotnet = (Get-Command dotnet -ErrorAction Stop).Source
 $checks = [Collections.Generic.List[object]]::new()
 $resultsPath = Join-Path $runRoot 'checks.json'
 
-function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
+function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments, [hashtable] $ChildEnvironment = @{}) {
     $start = [Diagnostics.ProcessStartInfo]::new()
     $start.FileName = $dotnet
     $start.WorkingDirectory = $repositoryRoot
@@ -79,6 +79,8 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments) {
     $start.Environment['NUGET_PACKAGES'] = $packageCache
     $start.Environment['ARCHSIFT_TEST_LOCAL_FEED'] = $localFeedPath
     $start.Environment['NUGET_CERT_REVOCATION_MODE'] = 'offline'
+    $start.Environment['ARCHSIFT_PROFILE_PATHS'] = ConvertTo-Json -InputObject @($PROFILE.AllUsersAllHosts, $PROFILE.AllUsersCurrentHost, $PROFILE.CurrentUserAllHosts, $PROFILE.CurrentUserCurrentHost) -Compress
+    foreach ($key in $ChildEnvironment.Keys) { $start.Environment[$key] = $ChildEnvironment[$key] }
     $timer = [Diagnostics.Stopwatch]::StartNew()
     $process = [Diagnostics.Process]::Start($start)
     try {
@@ -126,7 +128,9 @@ try {
         Invoke-CheckedDotnet ('test-' + $suite.name) @('test', $suite.project, '--no-build', '--no-restore', '--disable-build-servers', '-c', $Configuration, '--logger', 'trx', '--results-directory', (Join-Path $runRoot ('test-results/' + $suite.name)))
     }
     $mtpAssembly = Join-Path $repositoryRoot "tests/ArchSift.Testing.Tests/bin/$Configuration/net10.0/ArchSift.Testing.Tests.dll"
-    Invoke-CheckedDotnet 'test-mtp' @($mtpAssembly, '-reporter', 'json', '-noLogo')
+    $portableFixture = Join-Path $runRoot 'portable-verification-fixture'
+    & (Join-Path $PSScriptRoot 'Prepare-PortableVerificationFixture.ps1') -FixtureRoot $portableFixture -LocalFeed $localFeedPath -PackageCache $packageCache -Configuration $Configuration
+    Invoke-CheckedDotnet 'test-mtp' @($mtpAssembly, '-reporter', 'json', '-noLogo') @{ ARCHSIFT_SP02_REPORT_FIXTURE = $portableFixture }
     $mtpLines = [IO.File]::ReadAllLines((Join-Path $runRoot 'test-mtp.stdout.log'))
     $mtpPassed = @($mtpLines | Where-Object { $_.Contains('"$type":"test-passed"') }).Count
     $mtpFailed = @($mtpLines | Where-Object { $_.Contains('"$type":"test-failed"') }).Count

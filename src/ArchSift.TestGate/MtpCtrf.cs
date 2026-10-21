@@ -1,11 +1,12 @@
 using System.Text.Json;
+using ArchSift.Testing;
 
 namespace ArchSift.TestGate;
 
 /// <summary>Reads MTP discovery and xUnit v3's native CTRF result without using display names as case identities.</summary>
 public static class MtpCtrf
 {
-    public static MtpRun Parse(byte[] discoveryBytes, byte[] reportBytes)
+    public static MtpRun Parse(byte[] discoveryBytes, byte[] reportBytes, bool requireTypedAssociation = false)
     {
         using var discovery = JsonDocument.Parse(discoveryBytes);
         using var report = JsonDocument.Parse(reportBytes);
@@ -19,6 +20,11 @@ public static class MtpCtrf
         if (Required(root, "reportFormat") != "CTRF")
             throw new InvalidDataException("Test result is not CTRF.");
         var results = root.GetProperty("results");
+        if (requireTypedAssociation && (discovery.RootElement.GetProperty("schemaVersion").GetInt32() != 1 ||
+            results.GetProperty("tool").GetProperty("name").GetString() != "xUnit.net v3" ||
+            results.GetProperty("tool").GetProperty("version").GetString() is not { } runnerVersion ||
+            !(runnerVersion == "4.0.1" || runnerVersion.StartsWith("4.0.1+", StringComparison.Ordinal))))
+            throw new InvalidDataException("Unsupported typed MTP/CTRF association contract.");
         var summary = results.GetProperty("summary");
         var rows = results.GetProperty("tests").EnumerateArray().ToArray();
         if (summary.GetProperty("tests").GetInt32() != rows.Length)
@@ -28,6 +34,7 @@ public static class MtpCtrf
         var duplicates = new HashSet<string>(StringComparer.Ordinal);
         var tests = new List<MtpTest>(rows.Length);
         var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+        var associatedUids = new HashSet<string>(StringComparer.Ordinal);
         foreach (var row in rows)
         {
             var extra = row.GetProperty("extra");
@@ -51,12 +58,35 @@ public static class MtpCtrf
                 _ => throw new InvalidDataException("CTRF stdout has an unsupported shape.")
             } : "";
             var marker = JsonCaseOutput.Parse(output);
+            var identity = CaseIdentities.Read(output);
+            if (identity is not null && (identity.ExecutionId != id ||
+                identity.Identity.Type != Required(extra, "type") || identity.Identity.Method != Required(extra, "method")))
+                throw new InvalidDataException("Case projection does not match its CTRF execution row.");
+            string? discoveryUid = null;
+            if (requireTypedAssociation)
+            {
+                // Versioned xUnit 4.0.1 MTP adapter bridge: it publishes TestCase.UniqueID as its discovery UID.
+                // This relates two domains for this run; neither is an execution ID or a portable identity.
+                if (identity is null) throw new InvalidDataException("Typed association is missing.");
+                discoveryUid = identity.XunitCaseId;
+                var matches = discovered.Where(item => Required(item, "uid") == discoveryUid).ToArray();
+                if (matches.Length != 1 || !associatedUids.Add(discoveryUid))
+                    throw new InvalidDataException("Unknown or ambiguous current-run discovery association.");
+                var type = matches[0].GetProperty("type");
+                var ns = type.GetProperty("namespace").GetString();
+                var fullType = string.IsNullOrEmpty(ns) ? Required(type, "typeName") : ns + "." + Required(type, "typeName");
+                if (fullType != identity.Identity.Type || Required(type, "methodName") != identity.Identity.Method ||
+                    Required(type, "assemblyFullName").Split(',')[0] != identity.Identity.Assembly)
+                    throw new InvalidDataException("Discovery metadata differs from typed execution association.");
+            }
             var message = row.TryGetProperty("message", out var value) && value.ValueKind == JsonValueKind.String
                 ? value.GetString() : null;
-            tests.Add(new MtpTest(id, id, Required(extra, "type"), Required(extra, "method"), result,
+            tests.Add(new MtpTest(id, requireTypedAssociation ? identity!.XunitCaseId : id, Required(extra, "type"), Required(extra, "method"), result,
                 marker.CaseId, marker.Sha256, message is null ? [] : [message])
             {
                 Evaluation = marker.Evaluation,
+                Identity = identity,
+                DiscoveryUid = discoveryUid,
                 ElapsedMilliseconds = row.TryGetProperty("duration", out var duration) &&
                     duration.ValueKind == JsonValueKind.Number ? duration.GetInt64() : null
             });

@@ -32,6 +32,7 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
             var full = Path.GetFullPath(path);
             var config = TestGateService.Load(full);
             CheckTarget(config);
+            _ = ReadCaseInventory(config);
             lock (sync)
             {
                 if (active?.State == "running") return Results.Conflict(new { error = "A daily test is running." });
@@ -208,11 +209,7 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
             if (selected is null) return new { configured = false };
             var config = Selected();
             CheckTarget(config);
-            var baseline = File.ReadAllBytes(config.OriginalBaseline);
-            var sha = Convert.ToHexString(SHA256.HashData(baseline)).ToLowerInvariant();
-            if (!sha.Equals(config.OriginalBaselineSha256, StringComparison.OrdinalIgnoreCase))
-                throw new ConfigurationException("Original-case baseline hash changed.");
-            var originals = JsonSerializer.Deserialize<string[]>(baseline) ?? [];
+            var inventory = ReadCaseInventory(config);
             var rulePaths = config.Rulesets.Select(path => RulePath(config, path)).ToArray();
             var allCases = ArchitectureTestAdapter.LoadCases(rulePaths).Cases;
             var rules = config.Rulesets.Select((path, index) => new
@@ -224,9 +221,36 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
             var notIncluded = config.TestExecutableName == "IFX.Architecture.Tests"
                 ? TestRunReportWriter.PreviewNotIncluded(allCases.Select(item => item.Rule.Id)) : [];
             return new { configured = true, configPath = selectedPath, targetRoot = config.TargetRoot,
-                testProject = config.TestProject, originalCaseIds = originals, rules,
-                notIncluded, historyRoot = HistoryRoot(), job = JobView() };
+                testProject = config.TestProject, originalCaseIds = inventory.OriginalIds,
+                logicalCaseKeys = inventory.LogicalKeys, identityMode = inventory.IdentityMode,
+                caseManifestSha256 = config.RequiredCasesSha256, rules,
+                toolRoot = config.ToolRoot, toolIdentity = config.ToolIdentity, policy = TestRunReportWriter.PolicyView(config),
+                auditMode = config.AuditMode, caseMappingSha256 = config.CaseMappingSha256,
+                notIncluded, responsibilityProjection = config.TestExecutableName == "IFX.Architecture.Tests"
+                    ? RuleResponsibilityProjection.Create(config, allCases.Select(item => item.Rule.Id)) : null,
+                historyRoot = HistoryRoot(), job = JobView() };
         }
+    }
+
+    private static (string IdentityMode, string[] OriginalIds, string[] LogicalKeys) ReadCaseInventory(TestGateConfig config)
+    {
+        if (config.SchemaVersion is not (1 or 2))
+            throw new ConfigurationException("Unsupported daily-test configuration version.");
+        if (config.SchemaVersion == 2)
+        {
+            if (string.IsNullOrWhiteSpace(config.RequiredCases) || config.OriginalBaseline.Length != 0 ||
+                config.OriginalBaselineSha256.Length != 0 || config.CaseMapping is not null || config.ToolRoot is not null)
+                throw new ConfigurationException("Logical case inventory cannot mix legacy identities.");
+            var manifest = RequiredCases.Load(config);
+            return ("logical-v1", [], manifest.Cases.Select(item => CaseIdentities.Key(item.Identity)).ToArray());
+        }
+        if (config.RequiredCases is not null || !Path.IsPathFullyQualified(config.OriginalBaseline))
+            throw new ConfigurationException("Legacy case inventory requires its original baseline.");
+        var baseline = File.ReadAllBytes(config.OriginalBaseline);
+        var sha = Convert.ToHexString(SHA256.HashData(baseline)).ToLowerInvariant();
+        if (!sha.Equals(config.OriginalBaselineSha256, StringComparison.OrdinalIgnoreCase))
+            throw new ConfigurationException("Original-case baseline hash changed.");
+        return ("execution-id-v1", JsonSerializer.Deserialize<string[]>(baseline) ?? [], []);
     }
 
     private object? JobView()

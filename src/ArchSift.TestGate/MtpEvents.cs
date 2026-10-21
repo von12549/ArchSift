@@ -9,6 +9,8 @@ public sealed record MtpTest(string Id, string CaseId, string ClassName, string 
 {
     public RuleEvaluation? Evaluation { get; init; }
     public long? ElapsedMilliseconds { get; init; }
+    public ArchSift.Testing.CaseProjection? Identity { get; init; }
+    public string? DiscoveryUid { get; init; }
 }
 
 public sealed record MtpRun(bool DiscoveryFinished, bool AssemblyFinished, int DiscoveredCaseCount,

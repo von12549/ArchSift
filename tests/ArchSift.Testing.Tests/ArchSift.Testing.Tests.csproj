@@ -9,5 +9,6 @@
     <ProjectReference Include="../../src/ArchSift.TestGate/ArchSift.TestGate.csproj" />
     <None Include="rules.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="rules-violation.json" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Include="../../samples/ifx-formal/ArchSiftCaseIdentityAttribute.cs" Link="ArchSiftCaseIdentityAttribute.cs" />
   </ItemGroup>
 </Project>

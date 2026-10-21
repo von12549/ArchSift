@@ -95,6 +95,8 @@ public static class AssemblyWorker
             var primaryName = primary is null ? null : AssemblyArtifacts.Inspect(primary).Name;
             var types = architecture.Types.Where(t => !t.IsStub && !t.IsGenericParameter &&
                 (owners is not null ? owners.ContainsKey(t.Assembly.Name) : primaryName is null ? inspected.ContainsKey(t.Assembly.Name) : t.Assembly.Name == primaryName)).ToArray();
+            var asyncDependencies = AsyncStateMachineDependencies.Read(request.Inputs.Paths.Where(p =>
+                owners is not null ? owners.ContainsKey(inspected.First(x => x.Value == p).Key) : primary is null || p == primary));
             foreach (var rule in rules)
             {
                 var current = new List<Finding>(); var matched = 0; var allowEmpty = rule.Scope.AllowEmpty;
@@ -110,6 +112,12 @@ public static class AssemblyWorker
                         if (Match(target, dependencyTarget))
                             Add(rule.Scope.Kind, rule.Scope.Kind == "namespace" ? type.Namespace.FullName : type.FullName,
                                 "ArchUnitNET detected a forbidden type dependency.", type.FullName, dependencyTarget.FullName, type.Assembly.Name + ":" + type.FullName);
+                    foreach (var type in sources)
+                    foreach (var dependency in asyncDependencies.Where(d => d.SourceAssembly == type.Assembly.Name &&
+                                 d.SourceType == type.FullName && d.Matches(target)))
+                        Add(rule.Scope.Kind, rule.Scope.Kind == "namespace" ? type.Namespace.FullName : type.FullName,
+                            "Async state-machine metadata detected a forbidden type dependency.", type.FullName,
+                            dependency.TargetType, type.Assembly.Name + ":" + type.FullName);
                 }
                 else
                 {

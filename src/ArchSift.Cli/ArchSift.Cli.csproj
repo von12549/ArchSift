@@ -4,6 +4,8 @@
     <AssemblyName>archsift</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="../../docs/migration/third-party-notices.md" Pack="true" PackagePath="tools/net10.0/any/notices/" />
+    <None Include="../../docs/migration/licenses/*" Pack="true" PackagePath="tools/net10.0/any/notices/licenses/" />
     <Compile Include="../Shared/UiProcess.cs" Link="UiProcess.cs" />
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />

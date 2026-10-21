@@ -8,8 +8,10 @@ namespace ArchSift.ArchUnit;
 
 public sealed class TypeDependencyTestContext
 {
-    internal TypeDependencyTestContext(IType[] types) => Types = types;
+    internal TypeDependencyTestContext(IType[] types, AsyncStateMachineDependency[] asyncDependencies)
+    { Types = types; AsyncDependencies = asyncDependencies; }
     internal IType[] Types { get; }
+    internal AsyncStateMachineDependency[] AsyncDependencies { get; }
 }
 
 // This test-facing path deliberately does not accept or invent a SourceBound value.
@@ -31,7 +33,7 @@ public static class TypeDependencyTestEngine
 
         var types = loader.Build().Types.Where(type => !type.IsStub && !type.IsGenericParameter &&
             names.Contains(type.Assembly.Name)).ToArray();
-        return new TypeDependencyTestContext(types);
+        return new TypeDependencyTestContext(types, AsyncStateMachineDependencies.Read(paths));
     }
 
     public static RuleEvaluation Evaluate(RuleBundle bundle, IEnumerable<string> assemblyPaths)
@@ -64,6 +66,17 @@ public static class TypeDependencyTestEngine
                 current.Add(new(ContentHash.Text(identity), rule.Id, rule.Scope.Kind, subject,
                     "ArchUnitNET detected a forbidden type dependency.", rule.Severity,
                     type.FullName, dependencyTarget.FullName, type.Assembly.Name + ":" + type.FullName));
+            }
+            foreach (var type in sources)
+            foreach (var dependency in context.AsyncDependencies.Where(d => d.SourceAssembly == type.Assembly.Name &&
+                         d.SourceType == type.FullName && d.Matches(target)))
+            {
+                var subject = rule.Scope.Kind == "namespace" ? type.Namespace.FullName :
+                    rule.Scope.Kind == "assembly" ? type.Assembly.Name : type.FullName;
+                var identity = string.Join("\0", rule.Id, rule.Scope.Kind, subject, type.FullName, dependency.TargetType);
+                current.Add(new(ContentHash.Text(identity), rule.Id, rule.Scope.Kind, subject,
+                    "Async state-machine metadata detected a forbidden type dependency.", rule.Severity,
+                    type.FullName, dependency.TargetType, type.Assembly.Name + ":" + type.FullName));
             }
             var selected = ProjectRuleEvaluator.ApplyExceptions(current.DistinctBy(finding => finding.Id), bundle.Exceptions);
             findings.AddRange(selected);

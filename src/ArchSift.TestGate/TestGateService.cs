@@ -19,12 +19,23 @@ public sealed record TestGateConfig
     public required string LocalFeed { get; init; }
     public required string PackageCache { get; init; }
     public required string[] Rulesets { get; init; }
-    public required string OriginalBaseline { get; init; }
-    public required string OriginalBaselineSha256 { get; init; }
+    public string OriginalBaseline { get; init; } = "";
+    public string OriginalBaselineSha256 { get; init; } = "";
     public required string RunDirectory { get; init; }
     public string? DotnetCliHome { get; init; }
     public string? FilterCaseId { get; init; }
     public string RunnerFormat { get; init; } = "xunit-json";
+    public string AuditMode { get; init; } = "inherit";
+    public string? ToolRoot { get; init; }
+    public string? ToolIdentity { get; init; }
+    public string? ToolManifest { get; init; }
+    public string? ToolManifestSha256 { get; init; }
+    public string? PolicyFile { get; init; }
+    public string? PolicySha256 { get; init; }
+    public string? CaseMapping { get; init; }
+    public string? CaseMappingSha256 { get; init; }
+    public string? RequiredCases { get; init; }
+    public string? RequiredCasesSha256 { get; init; }
 }
 
 public sealed record GateStage(string Status, int? ExitCode, string? LogPath);
@@ -37,6 +48,7 @@ public sealed record TestGateResult(int ExitCode, string Gate, string[] Reasons,
     public string? ReportRunId { get; init; }
     public string? ReportPath { get; init; }
     public string? HtmlPath { get; init; }
+    public GateAudit? Audit { get; init; }
 }
 
 public static class TestGateService
@@ -60,10 +72,15 @@ public static class TestGateService
         var runId = Guid.NewGuid().ToString("N");
         Validate(config);
         var root = Path.GetFullPath(config.TargetRoot);
+        if (config.ToolRoot is not null) PathSafety.EnsureDisjoint(root, config.ToolRoot);
         var project = Under(root, config.TestProject);
         var nugetConfig = Under(root, config.NuGetConfig);
-        var baseline = Path.GetFullPath(config.OriginalBaseline);
+        var portable = config.SchemaVersion == 2 ? RequiredCases.Load(config) : null;
+        var baseline = portable is null ? Path.GetFullPath(config.OriginalBaseline) : Under(root, config.RequiredCases!);
         var runDirectory = Path.GetFullPath(config.RunDirectory);
+        var fixedInputs = config.ToolRoot is null ? [] : TestLaunch.VerifyTool(config.ToolRoot,
+            config.ToolManifest ?? throw new ConfigurationException("Fixed tool manifest is required."),
+            config.ToolManifestSha256 ?? "", config.ToolIdentity ?? "");
         var rulesetPaths = config.Rulesets.Select(path => Path.IsPathFullyQualified(path)
             ? Path.GetFullPath(path) : Under(root, path)).ToArray();
         foreach (var file in new[] { project, nugetConfig, baseline, Path.GetFullPath(configPath) }.Concat(rulesetPaths))
@@ -77,7 +94,8 @@ public static class TestGateService
         if (config.DotnetCliHome is not null)
         {
             if (!Path.IsPathFullyQualified(config.DotnetCliHome) ||
-                !PathSafety.IsUnder(config.DotnetCliHome, runDirectory))
+                !PathSafety.IsUnder(config.DotnetCliHome, runDirectory) ||
+                Path.GetFullPath(config.DotnetCliHome).Equals(runDirectory, PathSafety.Comparison))
                 throw new ConfigurationException("DOTNET_CLI_HOME must be an owned child of the run directory.");
             PathSafety.EnsureNoLinks(config.DotnetCliHome);
         }
@@ -88,18 +106,26 @@ public static class TestGateService
         PathSafety.EnsureNoLinks(config.LocalFeed);
         PathSafety.EnsureNoLinks(config.PackageCache);
         var baselineBytes = File.ReadAllBytes(baseline);
-        if (ContentHash.Bytes(baselineBytes) != config.OriginalBaselineSha256)
+        if (ContentHash.Bytes(baselineBytes) != (portable is null ? config.OriginalBaselineSha256 : config.RequiredCasesSha256))
             throw new ConfigurationException("Original-case baseline hash changed.");
-        var originalIds = JsonSerializer.Deserialize<string[]>(baselineBytes)
+        var originalIds = portable?.Cases.Select(item => CaseIdentities.Key(item.Identity)).ToArray() ?? JsonSerializer.Deserialize<string[]>(baselineBytes)
             ?? throw new ConfigurationException("Original-case baseline is empty.");
         if (originalIds.Length == 0 || originalIds.Distinct(StringComparer.Ordinal).Count() != originalIds.Length)
             throw new ConfigurationException("Original-case baseline is empty or has duplicates.");
+        var mapping = config.CaseMapping is null ? null : CaseMapping.Load(config);
+        if (mapping is not null && !originalIds.ToHashSet(StringComparer.Ordinal).SetEquals(mapping.Cases.Select(item => item.ExecutionId)))
+            throw new ConfigurationException("Required C# baseline and approved case mapping disagree.");
         var (bundle, cases) = ArchitectureTestAdapter.LoadCases(rulesetPaths);
+        if (config.PolicyFile is not null)
+            _ = NativePolicy.Load(root, config.PolicyFile, configPath);
         var expectedJson = cases.ToDictionary(item => item.CaseId, item => item.Ruleset.Identity.Sha256,
             StringComparer.Ordinal);
         if (bundle.Rules.Length == 0) throw new ConfigurationException("No JSON rules are enabled.");
 
         var watched = new[] { project, nugetConfig, baseline, Path.GetFullPath(configPath) }.Concat(rulesetPaths)
+            .Concat(fixedInputs)
+            .Concat(config.PolicyFile is null ? [] : new[] { PathSafety.Under(root, config.PolicyFile) })
+            .Concat(config.CaseMapping is null ? [] : new[] { config.CaseMapping })
             .Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(path => path, FileHash, StringComparer.OrdinalIgnoreCase);
         using var sourceObserver = new RelevantInputObserver(root);
         Directory.CreateDirectory(runDirectory);
@@ -108,13 +134,18 @@ public static class TestGateService
         var restore = notStarted;
         var build = notStarted;
         var test = notStarted;
+        var restoreArguments = NuGetAudit.RestoreArguments(config, project, nugetConfig);
         var changed = false;
         try
         {
+            if (mapping is not null || portable is not null)
+            {
+                var sdk = await Execute("sdk", "dotnet", ["--version"], root, runDirectory, config, configPath, token);
+                if (sdk.ExitCode != 0 || File.ReadAllText(sdk.LogPath!).Trim() != (portable?.Sdk ?? mapping!.Sdk))
+                    return Complete(Finish(4, "SDK does not match the approved case mapping."));
+            }
             restore = await Execute("restore", "dotnet",
-                ["restore", project, "--configfile", nugetConfig, "--source", Path.GetFullPath(config.LocalFeed),
-                    "--packages", Path.GetFullPath(config.PackageCache), "--disable-parallel", "--disable-build-servers",
-                    "-p:NuGetAudit=false", "-m:1", "-v:minimal"], root, runDirectory, config, configPath, token);
+                restoreArguments, root, runDirectory, config, configPath, token);
             changed = sourceObserver.Changed || InputsChanged(watched);
             if (restore.ExitCode != 0 || changed) return Complete(Finish(restore.ExitCode != 0 ? 3 : 4,
                 restore.ExitCode != 0 ? "Offline restore failed." : "Relevant input changed during restore."));
@@ -134,9 +165,14 @@ public static class TestGateService
             List<string> arguments;
             if (config.RunnerFormat == "mtp-ctrf")
             {
-                discovery = await Execute("discovery", executable,
-                    ["--list-tests", "json", "--no-ansi", "--progress", "off"],
-                    root, runDirectory, config, configPath, token);
+                try
+                {
+                    discovery = await Execute("discovery", executable,
+                        ["--list-tests", "json", "--no-ansi", "--progress", "off"],
+                        root, runDirectory, config, configPath, token);
+                }
+                catch (Exception error) when (error is JsonException or DecoderFallbackException)
+                { return Complete(Finish(3, "MTP discovery output could not be decoded: " + error.Message)); }
                 changed = sourceObserver.Changed || InputsChanged(watched);
                 if (discovery.ExitCode != 0 || changed) return Complete(Finish(discovery.ExitCode != 0 ? 3 : 4,
                     discovery.ExitCode != 0 ? "MTP discovery failed." : "Relevant input changed during discovery."));
@@ -156,14 +192,34 @@ public static class TestGateService
             try
             {
                 native = config.RunnerFormat == "mtp-ctrf"
-                    ? MtpCtrf.Parse(File.ReadAllBytes(discovery!.LogPath!), File.ReadAllBytes(ctrfPath))
+                    ? MtpCtrf.Parse(File.ReadAllBytes(discovery!.LogPath!), File.ReadAllBytes(ctrfPath), portable is not null)
                     : MtpEvents.Parse(File.ReadAllLines(test.LogPath!, Encoding.UTF8));
             }
             catch (Exception error) when (error is JsonException or InvalidDataException or KeyNotFoundException
                 or InvalidOperationException or FileNotFoundException)
             { return Complete(Finish(3, "MTP structured output is invalid: " + error.Message)); }
-            var coverage = MtpEvents.Assess(native, originalIds, expectedJson, test.ExitCode ?? 3,
-                subset: config.FilterCaseId is not null);
+            var coverage = portable is null
+                ? MtpEvents.Assess(native, originalIds, expectedJson, test.ExitCode ?? 3, subset: config.FilterCaseId is not null)
+                : RequiredCases.Assess(portable, native, expectedJson, test.ExitCode ?? 3, subset: config.FilterCaseId is not null);
+            if (mapping is not null)
+            {
+                try { CaseMapping.Assess(mapping, native); }
+                catch (InvalidDataException error)
+                { coverage = coverage with { ExitCode = 4, Complete = false, Reasons = coverage.Reasons.Append(error.Message).ToArray() }; }
+            }
+            if (portable is not null)
+            {
+                var policy = NativePolicy.Load(root, config.PolicyFile!);
+                var associations = native.Tests.Where(item => item.Identity is not null)
+                    .GroupBy(item => CaseIdentities.Key(item.Identity!.Identity), StringComparer.Ordinal)
+                    .ToDictionary(item => item.Key, item => item.ToArray(), StringComparer.Ordinal);
+                var mismatch = policy.Document.Sources.Where(item => item.Responsibility != "deferred").Any(source =>
+                    source.CaseKeys.Length == 0 || source.CaseKeys.Any(key => !associations.TryGetValue(key, out var rows) ||
+                        rows.Length != 1 || (source.Responsibility == "json"
+                            ? rows[0].JsonCaseId != "archsift-json:" + source.SourceId : rows[0].JsonCaseId is not null)));
+                if (mismatch) coverage = coverage with { ExitCode = 4, Complete = false,
+                    Reasons = coverage.Reasons.Append("Approved policy responsibility does not match current-run cases.").ToArray() };
+            }
             if (changed) return Complete(new(4, "block", ["Relevant input changed during test execution."],
                 restore, build, test, native, coverage, runDirectory, true, true));
             return Complete(new(coverage.ExitCode, coverage.ExitCode == 0 ? "allow" : "block", coverage.Reasons,
@@ -179,6 +235,10 @@ public static class TestGateService
 
         TestGateResult Complete(TestGateResult result)
         {
+            result = result with { Audit = new(config.AuditMode,
+                config.AuditMode == "offline-architecture" ? "not-run" : "not-verified",
+                restore.LogPath is not null && File.Exists(restore.LogPath)
+                    ? NuGetAudit.ReadCompletion(File.ReadAllText(restore.LogPath)) : new(null, null, null), restoreArguments) };
             var published = false;
             try
             {
@@ -211,6 +271,7 @@ public static class TestGateService
     internal static async Task<GateStage> Execute(string stage, string executable, IEnumerable<string> args,
         string workdir, string runDirectory, TestGateConfig config, string configPath, CancellationToken token)
     {
+        var hostBefore = config.SchemaVersion == 2 ? GateHostSafety.Capture() : null;
         var start = new ProcessStartInfo(executable)
         {
             WorkingDirectory = workdir,
@@ -220,7 +281,10 @@ public static class TestGateService
             CreateNoWindow = true
         };
         foreach (var arg in args) start.ArgumentList.Add(arg);
+        if (stage == "build" && config.ToolRoot is not null)
+            start.ArgumentList.Add("-p:ArchSiftToolRoot=" + Path.GetFullPath(config.ToolRoot));
         start.Environment["IFX_UPDATE_SNAPSHOTS"] = "0";
+        if (config.SchemaVersion == 2) start.Environment["DOTNET_GENERATE_ASPNET_CERTIFICATE"] = "false";
         start.Environment["ARCHSIFT_TEST_GATE_CONFIG"] = Path.GetFullPath(configPath);
         if (config.DotnetCliHome is not null)
         {
@@ -230,11 +294,28 @@ public static class TestGateService
         using var process = Process.Start(start) ?? throw new IOException("Could not start " + stage + " process.");
         try
         {
-            var stdout = process.StandardOutput.ReadToEndAsync(token);
+            using var discoveryBytes = stage == "discovery" && config.RunnerFormat == "mtp-ctrf" ? new MemoryStream() : null;
+            var stdout = discoveryBytes is null ? process.StandardOutput.ReadToEndAsync(token) : null;
+            var discoveryCopy = discoveryBytes is null ? null : process.StandardOutput.BaseStream.CopyToAsync(discoveryBytes, token);
             var stderr = process.StandardError.ReadToEndAsync(token);
             await process.WaitForExitAsync(token);
             var log = Path.Combine(runDirectory, stage + ".log");
-            await File.WriteAllTextAsync(log, await stdout, new UTF8Encoding(false), token);
+            if (discoveryBytes is not null)
+            {
+                await discoveryCopy!;
+                var bytes = discoveryBytes.ToArray();
+                await File.WriteAllBytesAsync(Path.Combine(runDirectory, "discovery.stdout.bin"), bytes, token);
+                // Decode only successful JSON discovery. Failed process diagnostics remain raw evidence.
+                if (process.ExitCode == 0)
+                {
+                    var decoded = DiscoveryOutput.Decode(bytes, DiscoveryOutput.WindowsOemCodePage);
+                    await File.WriteAllTextAsync(log, decoded.Text, new UTF8Encoding(false), token);
+                    await File.WriteAllTextAsync(Path.Combine(runDirectory, "discovery.encoding.json"),
+                        JsonSerializer.Serialize(new { sourceEncoding = decoded.Encoding, storedEncoding = "utf-8" }), token);
+                }
+                else await File.WriteAllTextAsync(log, Encoding.UTF8.GetString(bytes), new UTF8Encoding(false), token);
+            }
+            else await File.WriteAllTextAsync(log, await stdout!, new UTF8Encoding(false), token);
             var err = await stderr;
             if (err.Length > 0) await File.WriteAllTextAsync(Path.Combine(runDirectory, stage + ".stderr.log"), err, new UTF8Encoding(false), token);
             return new(process.ExitCode == 0 ? "passed" : "failed", process.ExitCode, log);
@@ -245,27 +326,42 @@ public static class TestGateService
             await process.WaitForExitAsync(CancellationToken.None);
             throw;
         }
+        finally
+        {
+            if (hostBefore is not null) GateHostSafety.Verify(hostBefore);
+        }
     }
 
-    private static void Validate(TestGateConfig config)
+    internal static void Validate(TestGateConfig config)
     {
         var paths = new[] { config.TargetRoot, config.TestProject, config.TestExecutableName,
             config.TargetFramework, config.Configuration, config.NuGetConfig, config.LocalFeed,
-            config.PackageCache, config.OriginalBaseline, config.OriginalBaselineSha256, config.RunDirectory };
+            config.PackageCache, config.RunDirectory };
         if (paths.Any(string.IsNullOrWhiteSpace) || config.Rulesets is null ||
             config.Rulesets.Any(string.IsNullOrWhiteSpace))
             throw new ConfigurationException("Test gate config has missing values.");
-        if (config.SchemaVersion != 1 || config.TargetFramework != "net10.0" ||
+        if (config.ToolRoot is not null && (!Path.IsPathFullyQualified(config.ToolRoot) ||
+            config.ToolRoot.IndexOfAny([';', ',', '%', '"']) >= 0))
+            throw new ConfigurationException("Tool root must be absolute and contain no MSBuild property syntax.");
+        if (config.SchemaVersion is not (1 or 2) || config.TargetFramework != "net10.0" ||
+            config.AuditMode is not ("inherit" or "offline-architecture") ||
             config.RunnerFormat is not ("xunit-json" or "mtp-ctrf") ||
             config.Configuration is not ("Debug" or "Release") ||
             config.Rulesets is not { Length: > 0 } ||
             Path.GetFileName(config.TestExecutableName) != config.TestExecutableName ||
             config.TestExecutableName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ||
             !Path.IsPathFullyQualified(config.TargetRoot) || !Path.IsPathFullyQualified(config.LocalFeed) ||
-            !Path.IsPathFullyQualified(config.PackageCache) || !Path.IsPathFullyQualified(config.OriginalBaseline) ||
+            !Path.IsPathFullyQualified(config.PackageCache) ||
             !Path.IsPathFullyQualified(config.RunDirectory) ||
-            config.OriginalBaselineSha256.Length != 64 ||
-            config.OriginalBaselineSha256.Any(character => !Uri.IsHexDigit(character)))
+            (config.SchemaVersion == 1 && (!Path.IsPathFullyQualified(config.OriginalBaseline) ||
+                config.OriginalBaselineSha256.Length != 64 || config.OriginalBaselineSha256.Any(character => !Uri.IsHexDigit(character)) ||
+                config.RequiredCases is not null || config.RequiredCasesSha256 is not null)) ||
+            (config.SchemaVersion == 2 && (string.IsNullOrWhiteSpace(config.RequiredCases) ||
+                config.RequiredCasesSha256 is not { Length: 64 } || config.RequiredCasesSha256.Any(character => !Uri.IsHexDigit(character)) ||
+                config.CaseMapping is not null || config.CaseMappingSha256 is not null || config.ToolRoot is not null ||
+                config.OriginalBaseline.Length != 0 || config.OriginalBaselineSha256.Length != 0 ||
+                config.RunnerFormat != "mtp-ctrf" || config.PolicyFile is null || config.PolicySha256 is null ||
+                config.ToolIdentity != RuntimeInfo.ProductVersion)))
             throw new ConfigurationException("Unsupported or incomplete test gate config.");
     }
 
@@ -297,13 +393,17 @@ internal sealed class RelevantInputObserver : IDisposable
         watcher = new FileSystemWatcher(root)
         {
             IncludeSubdirectories = true,
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size,
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite | NotifyFilters.Size,
             InternalBufferSize = 64 * 1024
         };
         watcher.Changed += OnChanged;
         watcher.Created += OnChanged;
         watcher.Deleted += OnChanged;
-        watcher.Renamed += (_, args) => Mark(args.FullPath);
+        watcher.Renamed += (_, args) =>
+        {
+            Mark(args.OldFullPath, args.ChangeType);
+            Mark(args.FullPath, args.ChangeType);
+        };
         watcher.Error += (_, _) => Interlocked.Exchange(ref changed, 1);
         watcher.EnableRaisingEvents = true;
     }
@@ -326,14 +426,28 @@ internal sealed class RelevantInputObserver : IDisposable
         }
     }
 
-    private void OnChanged(object sender, FileSystemEventArgs args) => Mark(args.FullPath);
+    private void OnChanged(object sender, FileSystemEventArgs args) => Mark(args.FullPath, args.ChangeType);
 
-    private void Mark(string path)
+    private void Mark(string path, WatcherChangeTypes changeType)
     {
         var segments = path.Replace('\\', '/').Split('/');
         if (segments.Any(IsIgnored)) return;
-        // A new source directory may contain a file before a recursive watcher subscribes to it.
-        if (Directory.Exists(path)) { Interlocked.Exchange(ref changed, 1); return; }
+        var initialDirectory = initialInputs.Contains("d:" + Path.GetRelativePath(root, path));
+        if (Directory.Exists(path) || initialDirectory)
+        {
+            // Creating ignored obj/bin changes the existing parent's LastWrite metadata.
+            // Directory topology events and new directories remain relevant, even if transient.
+            if (changeType != WatcherChangeTypes.Changed || !initialDirectory)
+                Interlocked.Exchange(ref changed, 1);
+            return;
+        }
+        // A topology event can arrive after a transient directory has disappeared.
+        // Its kind is then unknown; retain a conservative block rather than lose it.
+        if (changeType != WatcherChangeTypes.Changed && !File.Exists(path))
+        {
+            Interlocked.Exchange(ref changed, 1);
+            return;
+        }
         var extension = Path.GetExtension(path);
         if (IsRelevantExtension(extension))
             Interlocked.Exchange(ref changed, 1);

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kind": "rule-dispositions",
+  "notes": "Read-only display metadata; cannot enable a rule or manufacture execution. Other current responsibility comes from the target's approved NativePolicy.",
+  "decisions": [
+    {
+      "reference": "docs/acceptance/20261019-r3-b03-registry4-policy-decision.json",
+      "sha256": "06131090b55f691eed4a36f4ed5489218aab808b4a690287b95840ea6d946fe5",
+      "decisionId": "fa07-r3-b03-registry4-policy-adoption-20261019",
+      "inventorySourceSha256": "f66b41e2b62eecfe7d8cf40ede424017568639d89df72d805d63da5a269fe113",
+      "ruleIds": [
+        "ifx-b03-ifx-integrationhub-clientregistry-application",
+        "ifx-b03-ifx-integrationhub-clientregistry-domain",
+        "ifx-b03-ifx-integrationhub-providerregistry-application",
+        "ifx-b03-ifx-integrationhub-providerregistry-domain"
+      ],
+      "policyState": "adopted-pending-activation"
+    }
+  ]
+}
