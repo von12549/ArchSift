@@ -114,6 +114,7 @@ function Invoke-CheckedDotnet([string] $Name, [string[]] $Arguments, [hashtable]
 
 try {
     Invoke-CheckedDotnet 'sdk' @('--version')
+    Invoke-CheckedDotnet 'shared-runtimes' @('--list-runtimes')
     $restore = @('restore', 'ArchSift.slnx', '--configfile', 'NuGet.Config', '--source', $localFeedPath, '--packages', $packageCache, '--disable-parallel', '--disable-build-servers', '-p:NuGetAudit=false', '--verbosity', 'minimal')
     if (-not $InitializeLocks) { $restore += '--locked-mode' } else { $restore += '--force-evaluate' }
     Invoke-CheckedDotnet 'restore' $restore

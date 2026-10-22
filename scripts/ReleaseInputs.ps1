@@ -6,10 +6,12 @@ function Get-ArchSiftReleaseInputs([string]$RepositoryRoot) {
     $version=if($null -eq $node){''}else{$node.InnerText.Trim()}
     if($version -notmatch '^0\.10\.0(?:-rc\.[1-9][0-9]*)?$'){throw 'The reviewed central 0.10.0 release version is required.'}
     $profile=Get-Content -LiteralPath (Join-Path $root 'docs/releases/0.10.0/build-profile.json') -Raw|ConvertFrom-Json
-    if($profile.schemaVersion -ne 1 -or $profile.sdk -cne '10.0.303' -or $profile.runtime -cne '10.0.11' -or
+    if($profile.schemaVersion -ne 1 -or $profile.sdk -cne '10.0.303' -or $profile.runtime -cne '10.0.13' -or
         $profile.tfm -cne 'net10.0' -or $profile.rid -cne 'win-x64' -or $profile.configuration -cne 'Release'){
         throw 'Unknown release build profile; review it before execution.'
     }
+    $runtimeNode=$props.SelectSingleNode('/Project/PropertyGroup/ArchSiftBundledRuntimeVersion')
+    if($null -eq $runtimeNode -or $runtimeNode.InnerText.Trim() -cne $profile.runtime){throw 'Central bundled-runtime input differs from the reviewed profile.'}
     [pscustomobject]@{repositoryRoot=$root;version=$version;profile=$profile;assemblyVersion=($version.Split('-')[0]+'.0')}
 }
 

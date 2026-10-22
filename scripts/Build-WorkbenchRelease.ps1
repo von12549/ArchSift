@@ -67,6 +67,9 @@ $completed=$false
 try{
     Invoke-ReleaseDotnet 'sdk' @('--version')
     if(([IO.File]::ReadAllText((Join-Path $root 'sdk.stdout.log'))).Trim() -cne $release.profile.sdk){throw 'Actual SDK differs from release profile.'}
+    Invoke-ReleaseDotnet 'shared-runtimes' @('--list-runtimes')
+    $runtimes=[IO.File]::ReadAllText((Join-Path $root 'shared-runtimes.stdout.log'))
+    if($runtimes -notmatch '(?m)^Microsoft.NETCore.App 10\.0\.13 \[' -or $runtimes -notmatch '(?m)^Microsoft.AspNetCore.App 10\.0\.13 \['){throw 'Qualification requires the reviewed patched shared runtimes; provision isolated tools without repairing the system.'}
     $common=@(('-p:ArchSiftReleaseVersion='+$release.version),('-p:SourceRevisionId='+$commit),'-p:ContinuousIntegrationBuild=true','-p:UseSharedCompilation=false')
     Invoke-ReleaseDotnet 'restore' (@('restore','ArchSift.slnx','--locked-mode','--configfile',(Join-Path $repo 'NuGet.Config'),'--source',$feed,'--packages',$cache,'--disable-parallel','--disable-build-servers','-p:NuGetAudit=false')+$common)
     Invoke-ReleaseDotnet 'build' (@('build','ArchSift.slnx','--no-restore','-c','Release','--disable-build-servers','-m:1','-v:minimal')+$common)

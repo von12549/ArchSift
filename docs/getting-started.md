@@ -40,3 +40,5 @@ Use Full for acceptance. Subset needs an actually discovered UID and is diagnost
 Finish or cancel current jobs, save/export wanted edits and select Safe shutdown. Wait for the terminal to return. Closing a browser tab alone leaves the service running. Do not upgrade an active installation or kill processes using an old PID. See [installation](installation.md) for ownership/lifecycle behavior and [reports](reports.md) for result semantics.
 
 The self-contained package supplies the runtime needed to launch Workbench. Building an analyzed project or running its tests still requires its approved SDKs and dependencies. Linux CLI regression does not qualify Linux Web or an ARM64 binary. No Guard installation, persistent PATH repair, profile modification or background service is required.
+
+For framework-dependent library/tool/test use, provision a supported patched .NET 10 runtime (at least 10.0.13 at this release) separately from the pinned 10.0.303 SDK. The SDK version does not prove the selected shared-runtime patch. The Windows ZIP includes its reviewed 10.0.13 runtime; it does not install or repair system tools.

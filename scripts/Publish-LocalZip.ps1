@@ -57,6 +57,22 @@ try {
             continue
         }
         $destination=if($project-eq'Cli'){$payload}elseif($project-eq'Web'){Join-Path $payload 'web'}else{Join-Path $run 'setup'}
+        Run-Dotnet ('apphost-'+$project) @('msbuild',$path,'-t:ResolveFrameworkReferences','-p:Configuration=Release','-p:RuntimeIdentifier=win-x64','-p:SelfContained=true',('-p:RuntimeFrameworkVersion='+$release.profile.runtime),('-p:ArchSiftReleaseVersion='+$Version),'-getProperty:AppHostSourcePath','-getItem:ResolvedAppHostPack')
+        $resolvedHost=Get-Content -LiteralPath (Join-Path $run ('apphost-'+$project+'.stdout.log')) -Raw|ConvertFrom-Json
+        $hostPacks=@($resolvedHost.Items.ResolvedAppHostPack)
+        if($hostPacks.Count -ne 1 -or $hostPacks[0].RuntimeIdentifier -cne 'win-x64'){throw 'Resolved native apphost scope differs.'}
+        $appHostPath=[IO.Path]::GetFullPath([string]$resolvedHost.Properties.AppHostSourcePath)
+        $hostDirectory=[IO.Path]::TrimEndingDirectorySeparator([IO.Path]::GetFullPath([string]$hostPacks[0].PackageDirectory))
+        $hostPolicy=$release.profile.appHostTemplate
+        if([IO.Path]::GetFileName($hostDirectory) -cne $hostPolicy.version -or $hostPolicy.version -cne $release.profile.runtime -or
+            [IO.Path]::GetFileName([IO.Path]::GetDirectoryName($hostDirectory)) -ine $hostPolicy.packageId -or
+            ([string]$hostPacks[0].PathInPackage).Replace('\','/') -cne $hostPolicy.pathInPackage -or
+            $appHostPath -ine [IO.Path]::GetFullPath((Join-Path $hostDirectory $hostPolicy.pathInPackage)) -or
+            $appHostPath -ine [IO.Path]::GetFullPath([string]$hostPacks[0].Path)){throw 'Resolved native apphost package identity differs.'}
+        if(-not(Test-Path -LiteralPath $appHostPath -PathType Leaf)){throw 'Resolved native apphost template is unavailable.'}
+        $hostHash=(Get-FileHash -LiteralPath $appHostPath -Algorithm SHA256).Hash.ToLowerInvariant()
+        if($hostHash -cne $hostPolicy.sha256){throw 'Native apphost bytes differ from the reviewed official patched template.'}
+        [IO.File]::WriteAllText((Join-Path $run ('apphost-'+$project+'-identity.json')),(@{version=$release.profile.runtime;path=$appHostPath;sha256=$hostHash;approvedOfficialCodeHashEqual=$true;unbrandedTemplateHasNoPeVersionResource=$true}|ConvertTo-Json))
         $publishArguments=@('publish',$path,'--no-restore','-c','Release','-r','win-x64','--self-contained','true','--disable-build-servers','-p:UseSharedCompilation=false',('-p:ArchSiftReleaseVersion='+$Version),('-p:RuntimeFrameworkVersion='+$release.profile.runtime),'-p:ContinuousIntegrationBuild=true',('-p:SourceRevisionId='+$sourceCommitBefore),'-o',$destination)
         if($project-eq'Setup'){
             $runtimeNotices=Join-Path (Join-Path (Join-Path $run 'nuget-cache') 'microsoft.netcore.app.runtime.win-x64') $release.profile.runtime
@@ -88,6 +104,9 @@ try {
             foreach($file in $notices){Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $licenseRoot ($package+'-'+$framework.version+'-'+$file.Name))}
         }
     }
+    . (Join-Path $PSScriptRoot 'ReleaseRuntimeProof.ps1')
+    $runtimeProof=@(Get-ArchSiftRuntimeCodeProof $payload (Join-Path $run 'nuget-cache') $release)
+    [IO.File]::WriteAllText((Join-Path $run 'runtime-code-proof.json'),($runtimeProof|ConvertTo-Json -Depth 10))
     $entries=@(Get-ChildItem -LiteralPath $payload -Recurse -File | Sort-Object FullName | ForEach-Object {[ordered]@{path=[IO.Path]::GetRelativePath($payload,$_.FullName).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
     $commit=(& git -C $root rev-parse HEAD).Trim();$dirty=[bool](& git -C $root status --porcelain)
     if($commit-cne$sourceCommitBefore-or(Product-Hash)-cne$productHashBefore){throw 'Product/commit identity changed during package build.'}

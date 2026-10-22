@@ -5,7 +5,7 @@
   "product": "ArchSift",
   "displayName": "ArchSift Workbench",
   "stableVersion": "0.10.0",
-  "candidateVersion": "0.10.0-rc.1",
+  "candidateVersion": "0.10.0-rc.2",
   "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
   "releaseSourceCommit": null,
   "authorization": {
@@ -140,5 +140,14 @@
     "sameVersionBytesImmutable": true,
     "postDownloadVerificationRequired": true,
     "oldHistoricalReleaseBodyEnglishMigration": "Authorized metadata-only translation with original bodies preserved and asset/tag identity unchanged."
-  }
+  },
+  "candidateHistory": [
+    {
+      "version": "0.10.0-rc.1",
+      "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
+      "state": "rejected-by-runtime-advisory-gate",
+      "bundledRuntime": "10.0.11",
+      "reason": "13 current advisory matches across NETCore/ASPNetCore runtime packages, including two critical ASP.NET advisories. Preserve original bytes; rebuild RC2 with patched 10.0.13."
+    }
+  ]
 }

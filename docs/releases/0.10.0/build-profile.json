@@ -3,7 +3,7 @@
   "versionInput": "Directory.Build.props/ArchSiftReleaseVersion",
   "versionCutPolicy": "Release tooling consumes the central version unchanged. Cut stable 0.10.0 in a reviewed source/lock commit after RC gates, then build and qualify stable bytes afresh.",
   "sdk": "10.0.303",
-  "runtime": "10.0.11",
+  "runtime": "10.0.13",
   "tfm": "net10.0",
   "rid": "win-x64",
   "configuration": "Release",
@@ -19,5 +19,30 @@
     "id": "xunit.v3",
     "version": "4.0.1",
     "format": "mtp-ctrf"
-  }
+  },
+  "runtimeInput": "Directory.Build.props/ArchSiftBundledRuntimeVersion",
+  "runtimeProviderSdk": "10.0.402 (provisions patched shared runtime for CI/isolated tools; selected build/gate SDK remains 10.0.303)",
+  "frameworkDependentRuntimeRequirement": "Use a supported patched .NET 10 runtime, at least 10.0.13 at this release. SDK identity alone does not establish its selected shared runtime patch.",
+  "appHostTemplate": {
+    "packageId": "Microsoft.NETCore.App.Host.win-x64",
+    "version": "10.0.13",
+    "pathInPackage": "runtimes/win-x64/native/apphost.exe",
+    "sha256": "0db58d6c63a9323451ad65ccfc771ede03ca816125558189063ce053112effd0",
+    "origin": "Exact code bytes independently equal the official NuGet13 host archive and the official SHA512-verified SDK10.0.402 win-x64 archive. The unbranded apphost template has no PE version resource.",
+    "providerSdkArchiveSha512": "ae4fd528cb7e9f6af6aaf7de36715a69f761f183744f1bb3025d19f5a92447090ec561410e46266c1d10a63781ed6f3de771760bc76c876d87daabc367b898cd"
+  },
+  "runtimePackages": [
+    {
+      "framework": "Microsoft.NETCore.App",
+      "id": "Microsoft.NETCore.App.Runtime.win-x64",
+      "version": "10.0.13",
+      "sha256": "c66885d464697be75676b4d1fbca38b8806f3af01d65d27205b3f06add094444"
+    },
+    {
+      "framework": "Microsoft.AspNetCore.App",
+      "id": "Microsoft.AspNetCore.App.Runtime.win-x64",
+      "version": "10.0.13",
+      "sha256": "a0dba5ee37a07a173bc2739f01fee4c530c686e00bf3a3f7508972d6592511f3"
+    }
+  ]
 }
