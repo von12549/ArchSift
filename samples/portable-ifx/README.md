@@ -1,10 +1,12 @@
 # 可移植接入与当前使用说明
 
-SP00–SP05及CL04正式采纳已经完成。CL04的历史验收基点为 `a2adb87e5e54c69c62644f1ede9de5efde2381dd`，见[实际main验收](https://github.com/von12549/IFX-New/actions/runs/39543191970)；后续IFX说明由[PR #15](https://github.com/von12549/IFX-New/pull/15)正式交付至 `f58205b2c1edd4887811d4feed553d61ebddd69a`，当前本地IFX也在该基线。现役 `ArchSift.Testing` 和本地工具 `ArchSift.Cli` 固定 **0.10.0-cl03.1**，Windows x64、指定SDK **10.0.303**、PowerShell **7.6.6**、net10.0、Release。四个库按 Testing → ArchUnit → Core → Contracts 恢复，CLI独立携带运行闭包，不要求Web或ArchSift源码；前一sp03.1组合的正式采纳见[SP05交付](https://github.com/von12549/IFX-New/pull/12)。
+更新日期：2026-10-22。现役 `0.10.0-cl03.1`；完整门禁 **493项＝92项C#＋401项JSON**，政策责任来源 **404项＝3项C#＋401项JSON**。B01／B02／B03／B04／B05分别启用133／5／100／63／100条，Registry4已包含在B03中；A179按既定选择暂缓迁入，A三项继续由C#承担，B07五条暂缓并保留原IFX检查。 当前已验IFX基线为 `b591b9f2ffca5d0bbbfb1f9352a56870fadf927c`（PR #25），[实际main正常CI](https://github.com/von12549/IFX-New/actions/runs/39733781519)三项检查均已通过；493/493、零跳过及独立官方审计105/105见[最终政策启用记录](https://github.com/von12549/IFX-New/pull/25)。本次只同步文档，引用既有验收，不代表新执行。
 
-本说明仅描述已批准接入及使用边界，归档范围不包含相邻11个旧模板文件。那些代码、工具／包批准配置、入口和工作流作为本机未提交的 `0.10.0-sp03.1` 历史材料保留；本文档不交付可直接复制的整套模板。日常操作以[IFX固定正式说明](https://github.com/von12549/IFX-New/blob/f58205b2c1edd4887811d4feed553d61ebddd69a/docs/architecture-portable.md)及IFX仓库自身已批准的清单、政策、锁和入口为准。固定说明中的“本轮仅本地校正”等文字保留其编写时点，后续正式交付事实以PR #15及其main验收为准。
+历史交付：SP00–SP05及CL04正式采纳已经完成。CL04的历史验收基点为 `a2adb87e5e54c69c62644f1ede9de5efde2381dd`，见[实际main验收](https://github.com/von12549/IFX-New/actions/runs/39543191970)；后续IFX说明由[PR #15](https://github.com/von12549/IFX-New/pull/15)正式交付至 `f58205b2c1edd4887811d4feed553d61ebddd69a`，这是PR #15的历史说明交付基线；后续政策启用已推进到上述493项基线。现役 `ArchSift.Testing` 和本地工具 `ArchSift.Cli` 固定 **0.10.0-cl03.1**，Windows x64、指定SDK **10.0.303**、PowerShell **7.6.6**、net10.0、Release。四个库按 Testing → ArchUnit → Core → Contracts 恢复，CLI独立携带运行闭包，不要求Web或ArchSift源码；前一sp03.1组合的正式采纳见[SP05交付](https://github.com/von12549/IFX-New/pull/12)。
 
-本机旧模板的 `required-cases.json` 从SP00已批准映射逐项提取，原80分组为17＋16＋47，新增基础检查3及夹具9单列；其来源记录保留在本机 `docs/acceptance/20261019-sp00-boundary.json`。现役清单以IFX批准文件为准，JSON必检集合由现役政策的20条启用规则推导，Registry4四条不包含在内。本说明不重新学习案例身份、不更新包版本或清单，完整程序集类型版本、参数类型和值保持；真实执行与静态清单检查分别记账。
+本说明仅描述已批准接入及使用边界，归档范围不包含相邻11个旧模板文件。那些代码、工具／包批准配置、入口和工作流作为本机未提交的 `0.10.0-sp03.1` 历史材料保留；本文档不交付可直接复制的整套模板。日常操作以[IFX当前已验基线说明](https://github.com/von12549/IFX-New/blob/b591b9f2ffca5d0bbbfb1f9352a56870fadf927c/docs/architecture-portable.md)及IFX仓库自身已批准的清单、政策、锁和入口为准。PR #15及其main验收、旧说明中的“本轮仅本地校正”等措辞保留各自历史时点；当前规则范围以IFX现役policy、portable-gate与required-cases为准。
+
+本机旧模板的 `required-cases.json` 从SP00已批准映射逐项提取，原80分组为17＋16＋47，新增基础检查3及夹具9单列；其来源记录保留在本机 `docs/acceptance/20261019-sp00-boundary.json`。现役清单以IFX批准文件为准，JSON必检集合由现役13个规则集的401条启用规则推导，包含Registry4四条。旧模板的20条JSON／112项是SP05与CL04历史基线，不覆盖现役493项。本说明不重新学习案例身份、不更新包版本或清单，完整程序集类型版本、参数类型和值保持；真实执行与静态清单检查分别记账。
 
 现役包引用形式如下；其他目标仅在获准接入时使用，保留原测试、Theory行、五秒断言、API快照、项目范围及成员调用/Handler检查：
 
@@ -32,8 +34,12 @@ pwsh -NoProfile -File <目标根>/eng/Test-Architecture.ps1 -PackageSource <批�
 
 先备齐批准离线数据目录中的251个原始nupkg及指定SDK。现役数据目录为 `D:\ArchSift-lab\packages\cl04-ifx-offline-20261021-01`，可换绝对目录；执行前依IFX `architecture/package-source.json`核对完整文件名及SHA-256，缺包／改包／额外未批准包停止，不回退公网，不把缓存存在当完整源。离线清单分别记录原始包字节SHA-256／SHA-512和SDK计算的NuGet内容哈希，后者排除签名元数据，用于assets／lock核对，两者不能直接比较。旧误报记录保留。任意冷机器未经这些准备不保证restore。
 
-日常一次全量为92个C#＋20个JSON，共112；原80分组、Theory参数、五秒阈值和API快照保持，快照更新强制关闭。三项A由批准C#承担，Registry4政策已采纳待启用。`notIncluded`沿用“未作为JSON执行”含义；剩余清单不能等同全部无检测。CL02责任投影修正已随 `0.10.0-cl03.1` 经CL04实际main验收在IFX生效，仅对应本次完整运行通过的案例显示pass，不用历史成功补本次结果。匹配Web ZIP仅为本地已验候选，未由IFX消费或公开发布。
+日常一次全量为92个C#＋401个JSON，共493；原80分组、Theory参数、五秒阈值和API快照保持，快照更新强制关闭。三项A由批准C#承担，Registry4四条已正式启用并计入B03全部100条。`notIncluded`沿用“未作为JSON执行”含义，现为187＝3项C#已承担＋179项A暂缓＋5项B07暂缓；扣除三项C#后184项未迁入日常JSON，不能等同全部无检测。CL02责任投影修正已随 `0.10.0-cl03.1` 经CL04实际main验收在IFX生效，仅对应本次完整运行通过的案例显示pass，不用历史成功补本次结果。匹配Web ZIP仅为本地已验候选，未由IFX消费或公开发布。
 
 正常IFX CI已采用可移植入口和独立Audit，三个必需检查为 `IFX Windows architecture`、`IFX dependency audit`、`IFX architecture acceptance`，绑定同次SHA/run/attempt及Actions来源、strict与管理员限制；重型 `ci.yml` 保持。CL04实际main a2adb87的正常push run39543191970／attempt1已通过112/112、独立105/105/0及CLI审计和三项检查；PR #15的[实际main f58205b验收](https://github.com/von12549/IFX-New/actions/runs/39550973000)也已完成。以上为既有验收，本说明不代表新执行。未来说明交付仍须按单独授权走PR/main正常自动CI，无文档豁免，不需新包，不另手工重跑SP00–SP05，不skip或调整保护。
 
-普通版本回退基线是前一已验可移植完整组合（`0.10.0-sp03.1`、入口、锁、原251包、全部已采纳policy/cases及现行三项保护），保留并行政策；现役仍为 `0.10.0-cl03.1`。更早源码／props／映射／profile仅为另授权迁移级备用。包、旧组合、历史、缓存、refs、原本地备份和精确27项例外保持。维护者保留原包、摘要及许可，新版本另建源和验证；保留期限待定。ArchSift产品源码43文件已由[PR #9](https://github.com/von12549/ArchSift/pull/9)正式交付到main3f61be0，根README／报告说明已由[PR #10](https://github.com/von12549/ArchSift/pull/10)交付到main5e6c4cd，当前ArchSift本地也在5e6c4cd；这些事实不构成旧包精确编译器输入闭包、逐字节可重现构建或新包／Web发布声明。其余未提交材料及旧CL01草稿保留，本文档归档不包含这些材料、旧模板或政策扩批；后续交付、发布和实际清理分别授权。
+普通版本回退基线是前一已验可移植完整组合（`0.10.0-sp03.1`、入口、锁、原251包、全部已采纳policy/cases及现行三项保护），保留并行政策；现役仍为 `0.10.0-cl03.1`。更早源码／props／映射／profile仅为另授权迁移级备用。包、旧组合、历史、缓存、refs、原本地备份和精确27项例外保持。维护者保留原包、摘要及许可，新版本另建源和验证；保留期限待定。ArchSift产品源码43文件已由[PR #9](https://github.com/von12549/ArchSift/pull/9)正式交付到main3f61be0，根README／报告说明已由[PR #10](https://github.com/von12549/ArchSift/pull/10)交付到main5e6c4cd，该5e6c4cd为当时说明交付基线；截至本次核对，ArchSift本地main为892422e，包含后续InProject废止及材料登记；这些事实不构成旧包精确编译器输入闭包、逐字节可重现构建或新包／Web发布声明。其余未提交材料及旧CL01草稿保留，本文档归档不包含这些材料、旧模板或政策扩批；后续交付、发布和实际清理分别授权。
+
+## 独立工具与历史路线
+
+外层 `launcher.ps1`／`workbench.ps1` 仍指向既有独立0.8.0安装，保留用于原规则库／证据工作台，不是493项门禁入口。匹配0.10.0-cl03.1的Web仍为候选。原InProject路线已[正式废止](../../docs/decisions/20261022-inproject-retirement.md)，其未正式验收／未发布等历史不改写；[材料保留记录](../../docs/distribution/20261022-materials-retention.md)继续有效。
