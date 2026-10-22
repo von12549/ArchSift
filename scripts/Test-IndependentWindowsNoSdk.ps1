@@ -55,7 +55,7 @@ try{
     [IO.Compression.ZipFile]::ExtractToDirectory($zip,$payload)
     $manifest=Get-Content (Join-Path $payload 'package-manifest.json') -Raw|ConvertFrom-Json
     Need ($manifest.sourceCommit -ceq $build.sourceCommit -and $manifest.version -ceq $build.version -and $manifest.selfContained -and $manifest.rid -ceq 'win-x64') 'Guest manifest differs from source-bound build.'
-    foreach($entry in $manifest.files){$path=Join-Path $payload $entry.path;Need ((Hash $path)-ceq$entry.sha256 -and (Get-Item $path).Length -eq $entry.bytes) 'Guest extracted payload differs.'}
+    foreach($entry in $manifest.entries){$path=Join-Path $payload $entry.path;Need ((Hash $path)-ceq$entry.sha256 -and (Get-Item $path).Length -eq $entry.bytes) 'Guest extracted payload differs.'}
     $cli=Join-Path $payload 'archsift.exe';$webExe=Join-Path $payload 'web/ArchSift.Web.exe'
     Need ((Run 'cli-version' $cli @('--version')).Trim() -ceq ('archsift '+$build.version)) 'Guest CLI version differs.'
     Need ((Run 'web-version' $webExe @('--version')).Trim() -ceq ('archsift-web '+$build.version)) 'Guest Web version differs.'
@@ -99,7 +99,7 @@ try{
     Need ($receipt.outcome -ceq 'success' -and $receipt.after.selectedVersion -ceq $build.version) 'Guest installed selection differs.'
     [void](Run 'setup-inspect' $setup @('inspect','--root',$install))
     $final=NoSdk;Need ((HostHash)-ceq$before) 'Guest host drift.'
-    Save (Join-Path $WorkRoot 'verification.json') @{status='passed';sourceCommit=$build.sourceCommit;version=$build.version;zipSha256=(Hash $zip);setupSha256=(Hash $setup);operatingSystem=[Environment]::OSVersion.VersionString;architecture=$env:PROCESSOR_ARCHITECTURE;noSdkBefore=$initial;noSdkAfter=$final;manifestFilesVerified=$manifest.files.Count;checks=$checks.ToArray();loopbackWebAnalysisAndShutdown=$true;ownedListenerClosed=$true;standaloneSetupInstallAndPrivateUi=$true;hostBefore=$before;hostAfter=(HostHash);hostEqual=$true;scope='Independent GitHub-hosted Windows VM, official Server Core container with no installed .NET Core SDK/runtime. No desktop visual or user hands-on acceptance.'}
+    Save (Join-Path $WorkRoot 'verification.json') @{status='passed';sourceCommit=$build.sourceCommit;version=$build.version;zipSha256=(Hash $zip);setupSha256=(Hash $setup);operatingSystem=[Environment]::OSVersion.VersionString;architecture=$env:PROCESSOR_ARCHITECTURE;noSdkBefore=$initial;noSdkAfter=$final;manifestFilesVerified=$manifest.entries.Count;checks=$checks.ToArray();loopbackWebAnalysisAndShutdown=$true;ownedListenerClosed=$true;standaloneSetupInstallAndPrivateUi=$true;hostBefore=$before;hostAfter=(HostHash);hostEqual=$true;scope='Independent GitHub-hosted Windows VM, official Server Core container with no installed .NET Core SDK/runtime. No desktop visual or user hands-on acceptance.'}
     Write-Output 'independent-windows-servercore-no-sdk=passed'
 }catch{Save (Join-Path $WorkRoot 'failure.json') @{status='stopped';message=$_.Exception.Message;scriptStackTrace=$_.ScriptStackTrace;hostEqual=((HostHash)-ceq$before);completedChecks=$checks.Count};throw}
 finally{if($null -ne $web){if(-not $web.HasExited){$web.Kill();$web.WaitForExit()};$web.Dispose()};if((HostHash)-cne$before){throw 'Guest host drift; no repair.'}}
