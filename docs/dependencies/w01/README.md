@@ -1,42 +1,42 @@
-# W01 依赖与来源记录
+# W01 dependency and provenance records
 
-日期：2026-10-06（Australia/Sydney）
+Date: 2026-10-06 (Australia/Sydney)
 
-W01 的实际依赖以八个项目的 `packages.lock.json` 为准，[机器清单](package-inventory.json) 是它们的合并投影，记录 19 个不同的 package/version。Core 与 Contracts 无第三方包；ArchUnit 层独立引用固定的 TngTech.ArchUnitNET。当前版本 0.1.0-dev，工具 TFM net10.0。
+Eight project packages.lock.json files govern actual W01 dependencies. The [machine inventory](package-inventory.json) merges 19 distinct package/version pairs. Core/Contracts have no third-party packages; the independent ArchUnit layer pins TngTech.ArchUnitNET. Current version 0.1.0-dev, tool TFM net10.0.
 
-## 直接依赖选择
+## Direct dependency choices
 
-| 依赖 | 固定版本 | 目的 | 许可 |
+| Dependency | Pinned version | Purpose | License |
 | --- | --- | --- | --- |
-| TngTech.ArchUnitNET | 0.13.4 | 既定程序集分析引擎，W01 只组合引擎身份，真实检查在 W05 | Apache-2.0；[W00 LICENSE/NOTICE](../../migration/third-party-notices.md) |
-| Microsoft.NET.Test.Sdk | 17.14.1 | SDK testhost 与 dotnet test 入口；仅测试项目 | MIT；[固定源提交 LICENSE](licenses/vstest-17.14.1-LICENSE.txt) |
-| xunit | 2.9.3 | 单元、集成与依赖方向测试；已在本机缓存且可离线复现 | Apache-2.0；[固定 v2 源许可与 MIT 例外](licenses/xunit-2.9.3-LICENSE.txt)、[完整 Apache-2.0 条款](../../migration/licenses/ArchUnitNET-0.13.4-LICENSE.txt) |
-| xunit.runner.visualstudio | 3.1.4 | 支持 .NET 8+ 与 xUnit v2 的 VSTest runner；PrivateAssets=all | Apache-2.0；包 nuspec 和版权行在 evidence/清单中保留 |
+| TngTech.ArchUnitNET | 0.13.4 | Frozen assembly-analysis engine; W01 composes identity only, actual checks in W05 | Apache-2.0; [W00 LICENSE/NOTICE](../../migration/third-party-notices.md) |
+| Microsoft.NET.Test.Sdk | 17.14.1 | SDK testhost/dotnet test, tests only | MIT; [fixed-source LICENSE](licenses/vstest-17.14.1-LICENSE.txt) |
+| xunit | 2.9.3 | Unit/integration/dependency-direction tests, locally cached/offline reproducible | Apache-2.0; [fixed v2 license/MIT exceptions](licenses/xunit-2.9.3-LICENSE.txt), [full Apache-2.0](../../migration/licenses/ArchUnitNET-0.13.4-LICENSE.txt) |
+| xunit.runner.visualstudio | 3.1.4 | VSTest runner supporting .NET 8+/xUnit v2, PrivateAssets=all | Apache-2.0; nuspec/copyright retained in evidence/inventory |
 
-不用 Guard 的 shell 加载与安装作为入口，不为 W01 添加 Roslyn/schema/coverage 收集器等额外产品依赖。Microsoft.CodeCoverage 是 Test SDK 自带的传递包，本轮没有采集覆盖率。
+No Guard shell loading/installation entry or extra Roslyn/schema/coverage-collector product dependency. Microsoft.CodeCoverage is Test SDK transitive tooling; no coverage was collected.
 
-中央管理的四个直接包使用精确范围 `[version]`；传递解析版本和 NuGet contentHash 固定在 lock 中。测试项目的 runner 为 PrivateAssets=all；全部测试项目不打包，产品项目不引用测试项目。
+Four centrally managed direct packages use exact [version] ranges; locks pin transitive versions/contentHash. Test runners use PrivateAssets=all, test projects are not packaged and product projects never reference tests.
 
-## 真实解析与身份区别
+## Actual resolution and identity distinctions
 
-ArchUnit 项目的实际运行闭包含六个包：TngTech.ArchUnitNET、CycleDetection、JetBrains.Annotations、Mono.Cecil、Newtonsoft.Json 13.0.4、System.ValueTuple。W00 的 System.Collections.Immutable 只是候选，不在当前实际 lock 中。
+ArchUnit runtime closure has six packages: TngTech.ArchUnitNET, CycleDetection, JetBrains.Annotations, Mono.Cecil, Newtonsoft.Json 13.0.4, System.ValueTuple. W00 System.Collections.Immutable was a candidate, absent from actual locks.
 
-IntegrationTests 不引用 ArchUnit DLL，TestHost 单独解析 Newtonsoft.Json 13.0.3；另两个测试项目使用 13.0.4。两种版本分别锁定、分别保存 nuspec 和嵌入 LICENSE。不要把独立测试进程的版本差异误写成全 solution 只能有一个包版本。
+IntegrationTests does not reference ArchUnit DLL; its TestHost separately resolves Newtonsoft.Json 13.0.3, while two other test projects use 13.0.4. Lock/archive both versions separately. Independent test-process differences do not require one version across the solution.
 
-NuGet lock 的 contentHash 与恢复后 `.nupkg.metadata` 的 contentHash 对应；全 ZIP 字节的 rawNupkgSha512 与 W00 整包 SHA-512 对应，两种定义分开记录。恢复后全部 19 项 lock/metadata 匹配，但这不构成发布者签名验证或漏洞审计。
+NuGet lock contentHash corresponds to restored .nupkg.metadata contentHash; rawNupkgSha512 hashes full ZIP bytes, corresponding to W00 full-package SHA-512. Record definitions separately. All 19 locks/metadata match, without publisher-signature or vulnerability-audit claims.
 
-本机该包的 ArchUnitNET DLL AssemblyVersion 为 `0.13.0.0`、InformationalVersion 为 `1.0.0`。适配层的 package version 由中央版本生成 assembly metadata，明确返回 `0.13.4`；同时保留 LoadedAssemblyVersion。引擎版本信息不从 DLL 的信息版本猜测 NuGet 版本。
+Local ArchUnitNET DLL AssemblyVersion `0.13.0.0`, InformationalVersion `1.0.0`. Adapter generates package-version metadata centrally and explicitly returns `0.13.4`, retaining LoadedAssemblyVersion. Never infer NuGet identity from DLL informational version.
 
-## 许可和来源
+## Licensing and provenance
 
-全部解析包的 nuspec（统一 LF）存于 evidence，原缓存 nuspec 字节哈希、作者、版权、repository URL/commit 在清单中记录。已有运行依赖继续使用 W00 的完整许可/NOTICE；新增测试依赖许可仅影响开发工具链，W08 还需以真正 publish 输出筛选发行组件。
+All resolved nuspecs (LF-normalized) are in evidence; inventory records original cache nuspec hashes, authors, copyright, repository URL/commit. Runtime dependencies retain W00 full licenses/NOTICE. New test-tool licenses concern development; W08 must inspect actual publish output for distribution.
 
-xUnit 的包元数据声明 Apache-2.0；其固定 v2 源提交许可还注明特定导入代码的 MIT 例外，归档保留该文本。xunit.abstractions 2.0.3 只有旧 licenseUrl，没有许可证表达式与源码 commit，保留此限制，不冒称精确源码绑定。Microsoft 测试四包固定源码提交 `490850ae3fdc1b470e3804ceab4f6a41cf89ae51` 的完整 MIT 文本已归档。
+xUnit metadata declares Apache-2.0; fixed v2 source license retains MIT exceptions for imported code. xunit.abstractions 2.0.3 only has legacy licenseUrl, no expression/source commit; retain that limitation, not exact-source-binding claims. Full MIT text from Microsoft test packages source `490850ae3fdc1b470e3804ceab4f6a41cf89ae51` is archived.
 
-参考：[官方 restore 参数和显式 config/source](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-restore)、[NuGet 中央包管理](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management)、[xUnit v2 的 VSTest 使用说明](https://xunit.net/docs/getting-started/v2/getting-started)。
+References: [official restore config/source options](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-restore), [NuGet central package management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management), [xUnit v2 VSTest guide](https://xunit.net/docs/getting-started/v2/getting-started).
 
-## 离线与后续
+## Offline operation and later work
 
-根 NuGet.Config 清空继承源；开发检查通过显式本地 feed 恢复到仓库的隔离开发缓存。网络源、隐式 fallback 与漏洞 feed 均未启用；NuGetAudit=false 的原因是本轮离线，不代表漏洞检查通过。联网恢复或漏洞审计须作为显式操作另行记录。
+Root NuGet.Config clears inherited sources. Development checks explicitly restore from local feed into isolated repository cache. No network/implicit fallback/vulnerability feed. NuGetAudit=false means offline, not audit passed. Network restoration/audits require explicit recorded operations.
 
-W02 选择 schema 校验依赖时补理由、许可与 lock。W05 接入真正 ArchUnitNET 类型依赖正负例；W08 核对实际分发组件和 .NET 自包含运行时 notices。
+W02 records schema-validator rationale/license/locks; W05 real ArchUnitNET type-dependency positive/negatives; W08 actual distributed components and self-contained .NET runtime notices.

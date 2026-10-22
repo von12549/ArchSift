@@ -1,6 +1,6 @@
-# ArchSift 0.7.0 candidate package
+# ArchSift Workbench packages and Windows distribution
 
-Windows x64 self-contained CLI and loopback workbench. Declared project discovery requires no SDK or Guard installation and makes no persistent PATH/Profile changes. Isolated builds need supported target SDKs/targeting packs and default to offline restore. This package is a candidate until its exact bytes pass the release acceptance gates.
+This README accompanies the unified 0.10.0 release preparation; consult RELEASE_NOTES.md and the matching acceptance record for the actual version, artifact and qualification state. Library/tool packages target net10.0 and require compatible .NET tooling/runtime. The separate Windows x64 ZIP is self-contained for CLI/loopback Workbench launch. Target builds/tests still require their approved SDKs, packs and explicit dependencies. No Guard installation or persistent PATH/Profile changes are required. The commands below use an extracted Windows ZIP.
 
 After extracting, run in PowerShell:
 

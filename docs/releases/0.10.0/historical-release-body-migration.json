@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "scope": "English metadata-only migration of four historical release bodies; no new release",
+  "status": "passed",
+  "originalBodiesPreservedAt": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\remote-release-english\\original-releases.json",
+  "results": [
+    {
+      "tag": "v0.2.0",
+      "releaseId": 405027512,
+      "status": "passed",
+      "onlyBodyChanged": true,
+      "bodySha256": "ccf2ad48b5f08d244a20f3d09865054d200b74912f44fe0a786da5d600f0baf5",
+      "url": "https://github.com/von12549/ArchSift/releases/tag/v0.2.0"
+    },
+    {
+      "tag": "v0.3.0",
+      "releaseId": 405665282,
+      "status": "passed",
+      "onlyBodyChanged": true,
+      "bodySha256": "2d89f45c7c07773808e41aa5f258bbbe90efbb78ac30763f1c4c339081b607ad",
+      "url": "https://github.com/von12549/ArchSift/releases/tag/v0.3.0"
+    },
+    {
+      "tag": "v0.7.0",
+      "releaseId": 410565198,
+      "status": "passed",
+      "onlyBodyChanged": true,
+      "bodySha256": "fd798eb5c581cf47363714f68ed3bf9bf56a53fbeaa2d1e76889a8cb88045580",
+      "url": "https://github.com/von12549/ArchSift/releases/tag/v0.7.0"
+    },
+    {
+      "tag": "v0.9.0-dev",
+      "releaseId": 414456909,
+      "status": "passed",
+      "onlyBodyChanged": true,
+      "bodySha256": "95df14a7b07f86c7f1bc69619452d7c68b57e6911db39c48aceacd3b450675bb",
+      "url": "https://github.com/von12549/ArchSift/releases/tag/v0.9.0-dev"
+    }
+  ]
+}

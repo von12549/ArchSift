@@ -9,6 +9,55 @@ namespace ArchSift.IntegrationTests;
 
 public sealed class SetupTests
 {
+    [Theory]
+    [InlineData("0.10.0-rc.1")]
+    [InlineData("0.10.0")]
+    public async Task WorkbenchUpgradeAndRollbackPreserveStateAndReports(string version)
+    {
+        using var fixture = new Fixture(); var setup = new SetupService();
+        var old = fixture.Package("0.8.0");
+        var install = setup.PlanInstall(fixture.Install, old, SetupFiles.FileHash(old), fixture.Config, false);
+        var installed = await setup.ApplyAsync(install, install.PlanId, default);
+        var state = SetupFiles.Capture(installed.After.ConfigPath, installed.After.LibraryPath).Sha256;
+        Directory.CreateDirectory(fixture.Config.Output.Directory);
+        var report = Path.Combine(fixture.Config.Output.Directory, "retained.json");
+        File.WriteAllText(report, "previous report retained"); var hash = SetupFiles.FileHash(report);
+        var next = fixture.Package(version);
+        var plan = setup.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        var upgraded = await setup.ApplyAsync(plan, plan.PlanId, default);
+        Assert.Equal(version, SetupService.LoadInstallation(fixture.Install).SelectedVersion);
+        Assert.Equal(state, upgraded.AfterState.Sha256); Assert.Equal(hash, SetupFiles.FileHash(report));
+        var repeated = setup.PlanUpgrade(fixture.Install, next, SetupFiles.FileHash(next), false);
+        var noOp = await setup.ApplyAsync(repeated, repeated.PlanId, default);
+        Assert.Equal("no-op", noOp.Outcome);
+        // Roll back the original upgrade before any subsequent selection changes.
+        var reverted = setup.Rollback(fixture.Install, upgraded.Id, SetupFiles.FileHash(SetupService.Selection(fixture.Install)));
+        Assert.Equal("0.8.0", reverted.After.SelectedVersion);
+        Assert.Equal(state, reverted.AfterState.Sha256); Assert.Equal(hash, SetupFiles.FileHash(report));
+        var incompatible = fixture.Package(version, "schema");
+        Assert.Throws<ConfigurationException>(() => setup.PlanUpgrade(fixture.Install, incompatible, SetupFiles.FileHash(incompatible), false));
+    }
+
+    [Theory]
+    [InlineData("0.10.0-rc.0")]
+    [InlineData("0.10.0-rc.01")]
+    [InlineData("0.10.0-beta.1")]
+    [InlineData("0.11.0-rc.1")]
+    public void UnsupportedPrereleasePackagesRejectBeforeInstallation(string version)
+    {
+        using var fixture = new Fixture(); var setup = new SetupService();
+        var package = fixture.Package(version);
+        Assert.Throws<ConfigurationException>(() => setup.PlanInstall(fixture.Install, package, SetupFiles.FileHash(package), fixture.Config, false));
+        Assert.False(Directory.Exists(fixture.Install));
+    }
+
+    [Theory]
+    [InlineData("0.8.0", "archsift-0.8.0-win-x64.zip")]
+    [InlineData("0.10.0", "archsift-workbench-0.10.0-win-x64.zip")]
+    [InlineData("0.10.0-rc.1", "archsift-workbench-0.10.0-rc.1-win-x64.zip")]
+    public void AcquisitionUsesTheVersionSpecificPublicAssetName(string version, string expected) =>
+        Assert.Equal(expected, PackageReader.ReleaseArchiveName(version));
+
     [Fact]
     public async Task Upgrade060To070PreservesStateAndUnknownVersionsRemainRejected()
     {
@@ -344,7 +393,7 @@ public sealed class SetupTests
         {
             var files = new Dictionary<string, byte[]> { ["archsift.exe"] = Encoding.UTF8.GetBytes(alternate ? "different synthetic CLI" : "synthetic CLI; never execute"),
                 ["web/ArchSift.Web.exe"] = Encoding.UTF8.GetBytes("synthetic Web; never execute"), ["LICENSE"] = Encoding.UTF8.GetBytes("synthetic license") };
-            if (version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal) || version.StartsWith("0.7.", StringComparison.Ordinal) || version.StartsWith("0.8.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
+            if (PackageReader.IsWorkbenchVersion(version) || version.StartsWith("0.5.", StringComparison.Ordinal) || version.StartsWith("0.6.", StringComparison.Ordinal) || version.StartsWith("0.7.", StringComparison.Ordinal) || version.StartsWith("0.8.", StringComparison.Ordinal)) files["setup-compatibility.json"] = JsonSerializer.SerializeToUtf8Bytes(new SetupCompatibility(1, fault == "schema" ? 2 : 1, 1, 1), JsonContract.Options);
             var manifest = new PackageManifest(1, version, "win-x64", true, "candidate", new string('a', 40), false, false, new string('b', 64),
                 files.Select(p => new PackageFile(p.Key, p.Value.Length, SetupFiles.Hash(p.Value))).ToArray(), true);
             files["package-manifest.json"] = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonContract.Options);

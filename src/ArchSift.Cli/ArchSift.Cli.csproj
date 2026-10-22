@@ -2,9 +2,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>archsift</AssemblyName>
+    <ArchSiftPackageNotices Condition="'$(ArchSiftPackageNotices)' == ''">$(MSBuildThisFileDirectory)../../docs/migration/third-party-notices.md</ArchSiftPackageNotices>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="../../docs/migration/third-party-notices.md" Pack="true" PackagePath="tools/net10.0/any/notices/" />
+    <None Include="$(ArchSiftPackageNotices)" Pack="true" PackagePath="tools/net10.0/any/notices/third-party-notices.md" />
     <None Include="../../docs/migration/licenses/*" Pack="true" PackagePath="tools/net10.0/any/notices/licenses/" />
     <Compile Include="../Shared/UiProcess.cs" Link="UiProcess.cs" />
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />

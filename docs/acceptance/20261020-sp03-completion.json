@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "stage": "SP03",
+  "status": "SP03 COMPLETE / REAL LOCAL AND INDEPENDENT WINDOWS EQUIVALENCE PASSED / FORMAL ENTRY UNCHANGED",
+  "completedUtc": "2026-10-20T05:17:10.9117049Z",
+  "localDate": "2026-10-20",
+  "timezone": "Australia/Sydney",
+  "candidate": "0.10.0-sp03.1",
+  "baseCommit": "62945f43cbab7bbfb2bd483036ce18681e26a5a1",
+  "sp03Complete": true,
+  "acceptance": {
+    "localLegacyEquivalence": "passed",
+    "portableWorktreeCount": 2,
+    "portableReports": [
+      {
+        "path": "D:\\ArchSift-lab\\runs\\sp03-portable-first-20261020-02\\state\\runs\\full\\architecture-test-run.json",
+        "sha256": "d1a13c04b076d05efc76bd75d7bbf0d09891fdc23841bb4fb93ad500d3cda469",
+        "caseCount": 112,
+        "result": "passed",
+        "targetRoot": "D:\\ArchSift-lab\\fixtures\\sp03-20261020-01\\one space"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\sp03-portable-second-20261020-01\\state\\runs\\full\\architecture-test-run.json",
+        "sha256": "b960d4734ffc2a11e6d7755420dbb278be6f49c38f5dad00b1d3c48903f00034",
+        "caseCount": 112,
+        "result": "passed",
+        "targetRoot": "D:\\ArchSift-lab\\fixtures\\sp03-20261020-01\\different depth\\two spaces\\target"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\sp03-portable-warm-20261020-01\\state\\runs\\full\\architecture-test-run.json",
+        "sha256": "d6c249b21abf4662d8711af965ca57707e6e60f6230dda82c77594336ec6986f",
+        "caseCount": 112,
+        "result": "passed",
+        "targetRoot": "D:\\ArchSift-lab\\fixtures\\sp03-20261020-01\\one space"
+      }
+    ],
+    "independentWindows": "passed",
+    "csharp": 92,
+    "json": 20,
+    "total": 112,
+    "guestNativePassed": 112,
+    "failed": 0,
+    "skipped": 0,
+    "logicalIdentityAndTheoryParameters": "equal",
+    "original80AndAdditional12": "preserved",
+    "policyResponsibilities": "equal",
+    "registry4": "not-enabled",
+    "snapshotsAndFiveSecondAssertions": "preserved per local equivalence record"
+  },
+  "runtime": {
+    "sdk": "10.0.303",
+    "tfm": "net10.0",
+    "configuration": "Release",
+    "git": "2.49.0.windows.1",
+    "restore": "passed",
+    "build": "passed",
+    "test": "passed",
+    "lockedRestore": true,
+    "offlineSourceOnly": true,
+    "restoreProjects": 89,
+    "restoreSkipped": 0,
+    "audit": "not-run",
+    "snapshotsDisabled": true,
+    "sourceAndLocksChanged": false,
+    "dirtySource": "Expected fixed candidate overlay on pinned base; not a commit or unapproved drift",
+    "engines": {
+      "runner": "mtp-ctrf",
+      "testAdapter": "ArchSift.Testing 0.10.0.0",
+      "archUnitNet": "ArchUnitNET 0.13.0.0"
+    }
+  },
+  "guestRunId": "a93794f118dc4732b4aa8dd60640a816",
+  "guest": {
+    "os": "Microsoft Windows 11 Home",
+    "osVersion": "10.0.26300",
+    "architecture": "64-bit",
+    "powerShell": "7.6.6",
+    "machineLabel": "guest01",
+    "identitySha256": "d81da0ff9362c436a774f692cce2976e657853a815ca244f0cdbb130e480517f",
+    "controlIdentitySha256": "4e51c150acfebaab357180cc567641e72436491d16520f8f7dd0d4bfac30e594",
+    "identitiesDifferent": true,
+    "operatorConfirmedIndependent": true,
+    "knownHostSourcesAbsent": true,
+    "workspace": "C:\\SP03Lab\\ifx",
+    "independentGitMetadata": true,
+    "sourceFiles": 900,
+    "offlinePackages": 251
+  },
+  "guestEnvironment": {
+    "before": "b6ce42b83d98c6f31b5391b41de260564e00ce693f5b2ac620d3b47f2b8d9677",
+    "after": "b6ce42b83d98c6f31b5391b41de260564e00ce693f5b2ac620d3b47f2b8d9677",
+    "equal": true,
+    "processEqual": true,
+    "comparisonToHost": "not-applicable-different-machine-and-context"
+  },
+  "handoff": {
+    "source": "operator-provided screenshot of retained original guest ZIP hash command; visually transcribed by Agent",
+    "originalGuestPath": "C:\\Transfer\\guest01-evidence.zip",
+    "displayedCommand": "(Get-FileHash C:\\Transfer\\guest01-evidence.zip).Hash",
+    "guestHash": "7E0B7D7CCAC5CF993DBC85A84F9A1FF74DD9978EBFCE83FC47EE50B530EB0331",
+    "hexLength": 64,
+    "validFullSha256": true,
+    "archivePath": "D:\\ArchSift-lab\\evidence\\sp03-guest01-return-20261020-01\\guest01-evidence.zip",
+    "archiveSha256": "7e0b7d7ccac5cf993dbc85a84f9a1ff74dd9978ebfce83fc47ee50b530eb0331",
+    "equal": true,
+    "screenshotPath": "D:\\ArchSift-lab\\runs\\sp03-completion-20261020-01\\guest-original-zip-hash.png",
+    "screenshotSha256": "651f9626ad7c0c359189d14465f5252e293c3c730444e3fc6aab4d866aea446a",
+    "earlierManualReply": {
+      "value": "7E0B7D7CCAC5CF993DBC85A84F9A1FF74DD9978EBFC47EE50B530EB0331",
+      "length": 59,
+      "status": "incomplete transcription; not a full digest; superseded by screenshot, not repaired by guessing"
+    },
+    "vmFinalState": {
+      "state": "Off",
+      "source": "explicit operator reply after this read-only hash query: 已正常关机，当前 Off",
+      "liveAgentQuery": false
+    },
+    "sdkTestsOrExportRerunByAgent": false,
+    "vmOperationsByAgent": 0
+  },
+  "administratorHost": {
+    "path": "D:\\ArchSift-lab\\runs\\sp03-guest-admin-20261020-140227\\host-final-comparison.json",
+    "before": "24dc8883407df5c962a88ccff99ec43a4c5278b9a4654da5e25c170e94a13aad",
+    "after": "24dc8883407df5c962a88ccff99ec43a4c5278b9a4654da5e25c170e94a13aad",
+    "equal": true,
+    "matchesOriginalBaseline": true
+  },
+  "priorEvidence": [
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261020-sp03-repair-equivalence.json",
+      "sha256": "b1a909b042178391db26debbe10402355984d82378d22d0a7c504486266459fa",
+      "historicalStatusPreserved": true
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261020-sp03-independent-windows-evidence-review.json",
+      "sha256": "3c177d067183d74962ff4d4486ca407ac983c9560dd3ac0f4bda7c4685caeaa1",
+      "historicalStatusPreserved": true
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\sp03-legacy-20261020-01\\legacy-verification.json",
+      "sha256": "3a2e1e64a498a10ded67ca8197f48aef5daca57408f26b04181ab926d806121c"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\evidence\\sp03-guest01-return-20261020-01\\guest01-evidence.zip",
+      "sha256": "7e0b7d7ccac5cf993dbc85a84f9a1ff74dd9978ebfce83fc47ee50b530eb0331",
+      "zipFiles": 39,
+      "indexedFiles": 38,
+      "allIndexedHashesEqual": true,
+      "archivedReturnFiles": 13,
+      "allArchivedFilesRechecked": true
+    }
+  ],
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\sp03-completion-20261020-01",
+  "pending": [],
+  "agentHost": {
+    "stableSha256": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+    "before": "68787a07ae5990e767d1fb5f093a460dfc25a362e545cbe1250f7cd77d373e3e",
+    "after": "68787a07ae5990e767d1fb5f093a460dfc25a362e545cbe1250f7cd77d373e3e",
+    "equal": true,
+    "processEqual": true
+  },
+  "protectedOriginalLivePoliciesInProject": "equal",
+  "fixedTransfer03": "unchanged; ZIP and manifest hashes rechecked",
+  "iso": "untouched; previous verified identity retained; not rehashed in this closure",
+  "sp04Started": false,
+  "formalCIChanged": false,
+  "formalSwitchPerformed": false,
+  "hostPersistentEnvironmentChanged": false,
+  "committed": false,
+  "pushed": false,
+  "closingActions": {
+    "agentVmOperations": 0,
+    "guestCredentialsUsed": false,
+    "dotnetGitOrTestsExecuted": 0,
+    "exportRerun": false,
+    "onlyReadHashChecksAndEvidenceDocumentation": true
+  },
+  "limitations": [
+    "Review of operator-generated evidence is not independent forensic provenance or a broader SourceBound claim.",
+    "No security audit, CI, rollback/recovery, product human UI acceptance or formal switch performed.",
+    "Git official release checksum remains not independently checked; pinned local hash and Authenticode were used."
+  ],
+  "history": "Earlier stops, failed builds, reviewer corrections, SECOND WINDOWS NOT RUN snapshots and 59-character manual reply retained. Later screenshot and administrator Off confirmation close the handoff; no old outcome rewritten.",
+  "next": "SP04 requires separate user authorization; no CI, audit, rollback exercise, UI acceptance or formal switch started by this completion."
+}

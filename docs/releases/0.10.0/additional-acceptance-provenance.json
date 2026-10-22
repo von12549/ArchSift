@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "originals-preserved-english-narratives-in-source",
+  "originalArchiveSha256": "de2e121a073efe534aedafe14d58d4f47348033e66c8a25ccd6c33559fdcdd0c",
+  "originalArchiveRetainedAt": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\additional-acceptance-originals.zip",
+  "scope": "Nine selected historical acceptance narratives. Raw machine JSON remains byte-identical; one 49 MB execution inventory is retained externally rather than published in the source tree. English narratives retain dated outcomes and exact identities.",
+  "records": [
+    {
+      "originalPath": "docs/acceptance/20261021-source-archive-final-completion.json",
+      "sha256": "6a2fd639709d86fb30c1987477254a5420a415f0cd66a245ef120307b8905b88",
+      "bytes": 71570,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261021-source-archive-final-completion.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261021-source-archive-doc-final-completion.json",
+      "sha256": "19bfa32b2385c7fef335f677ef5a13f78325048c3326bfc1f3491c9efa01a2d8",
+      "bytes": 18405,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261021-source-archive-doc-final-completion.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261021-cl03-candidate-packaging.json",
+      "sha256": "21c33d5b037359a83a5abfe99457885d0f7e736809acb244202cb1f5eccdfc40",
+      "bytes": 13196,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261021-cl03-candidate-packaging.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261021-cl05-final-completion.json",
+      "sha256": "b649bf55fa8ddd316cd9306ffc6c71d32bfe1f2a33f617c66fe527b2b51cdca5",
+      "bytes": 21071,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261021-cl05-final-completion.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261022-b03rest-portable-activation.json",
+      "sha256": "c2159bb9cf8fb001a541a2040942c190b873faf3f64310672b3bbe23deef6f0b",
+      "bytes": 49592598,
+      "retainedAt": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\raw-acceptance-originals\\20261022-b03rest-portable-activation.json",
+      "sourceArchiveIncluded": false
+    },
+    {
+      "originalPath": "docs/acceptance/20261017-fa05-human-ui-completion.json",
+      "sha256": "37be834451fbc61bac7920674eb9b9937b15f9ad04bac981a7b609b1f54d1b0f",
+      "bytes": 10972,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261017-fa05-human-ui-completion.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261020-sp03-completion.json",
+      "sha256": "be59e63f060fec76b3dca2159d14ffadfca50c90fdb9a81f2a5273e63cc1b650",
+      "bytes": 8264,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261020-sp03-completion.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261020-sp04-ui-human-confirmation.json",
+      "sha256": "9b40c6bf36f73b7d422848c5d8ab0ff6c1a34e7ae1bdb2a0289dd8d693fdbf7d",
+      "bytes": 3213,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261020-sp04-ui-human-confirmation.json",
+      "sourceArchiveIncluded": true
+    },
+    {
+      "originalPath": "docs/acceptance/20261022-inproject-retirement.json",
+      "sha256": "0da8a60e68e66e186e5e321cfacfa535c041ad023ad37e683c78aa4ee7b7237c",
+      "bytes": 46581,
+      "retainedAt": "C:\\Users\\von12\\.codex\\worktrees\\workbench-release-0100\\ArchSift\\docs\\acceptance\\20261022-inproject-retirement.json",
+      "sourceArchiveIncluded": true
+    }
+  ],
+  "newReleaseAcceptance": false
+}

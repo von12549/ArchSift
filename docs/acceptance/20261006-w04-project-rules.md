@@ -1,15 +1,15 @@
-# W04 项目规则验收
+# W04 project-rule acceptance
 
-日期：2026-10-06（Australia/Sydney）
+Date: 2026-10-06 (Australia/Sydney).
 
-结论：W04 COMPLETE。项目引用、两类图完整性、literal TFM、直接 NuGet ID 禁止列表、项目/源码路径命名和未接受的规则建议已实现。程序集/type 命名与 type-dependency 留给 W05，未用声明图代替。
+Conclusion: W04 COMPLETE. Implemented project references, two graph-integrity checks, literal TFMs, direct NuGet-ID denylists, project/source-path naming and unaccepted rule suggestions. Assembly/type naming and type-dependency remained for W05; declaration graphs were not substituted for them.
 
-逐规则结果区分 pass、violation、inconclusive、not-applicable。source/scope 零匹配默认 inconclusive，显式 allowEmpty 才为 not-applicable；disabled 不运行。已知违规保留并优先报告 violation，同时保留部分覆盖 limitations。例外关联稳定 id/reason，原 finding 与 severity 不删除；有效违规计数排除明确豁免项。finding ID 由规则 ID、主体、依赖证据组成并稳定排序。
+Per-rule results distinguish pass, violation, inconclusive and not-applicable. Zero source/scope matches default to inconclusive; explicit allowEmpty gives not-applicable. Disabled rules do not run. Known violations remain and take violation precedence while preserving partial-coverage limitations. Exceptions reference stable IDs/reasons without deleting the original finding/severity; effective violation counts exclude explicitly exempt items. Finding IDs combine rule ID, subject and dependency evidence, with stable ordering.
 
-规则建议分别输出 observedFacts、candidateRules、unresolvedDecisions。候选全部 disabled，只建议内部引用解析与工具支持框架的审查；既有依赖不自动成为允许策略。
+Rule suggestions separately output observedFacts, candidateRules and unresolvedDecisions. Every candidate is disabled and suggests review only of internal-reference resolution/supported frameworks. Existing dependencies do not automatically become allowed policy.
 
-最终运行 `76d50c072ddb469c8ca60018d6d910c1`：SDK 10.0.303、net10.0、Debug；offline locked restore/build 成功、零警告/错误；65 unit + 12 integration + 2 architecture = 79/79 通过，主机环境/Profile 哈希每步及最终相等。
+Final run `76d50c072ddb469c8ca60018d6d910c1`: SDK 10.0.303/net10.0/Debug; offline locked restore/build succeeded with zero warnings/errors.65 unit +12 integration +2 architecture =79/79 passed. Host environment/Profile hashes matched at every checkpoint and completion.
 
-新增真实声明 fixtures 覆盖每类项目规则 clean/violation/missing/unsupported、NuGet 大小写与只做 ID 检查、例外证据保留、allowEmpty/disabled、solution-membership 缺失前置、external/uncovered、稳定 finding ID、源码路径命名和候选未接受状态。
+New actual-declaration fixtures cover each project rule's clean/violation/missing/unsupported paths; NuGet casing and ID-only behavior; retained exception evidence; allowEmpty/disabled; missing solution-membership prerequisite; external/uncovered states; stable finding IDs; source-path naming and unaccepted candidate state.
 
-归档：[checks](w04/checks.json)、[host-final](w04/host-final.json)、[build](w04/build.stdout.log)、[test](w04/test.stdout.log)。没有额外第三方依赖或 Guard 源码迁移。W05 将构建程序集输入、Worker、真正 ArchUnitNET 检查、isolated/offline 构建和可信度负例。
+Archived [checks](w04/checks.json), [host-final](w04/host-final.json), [build](w04/build.stdout.log) and [test](w04/test.stdout.log). No additional third-party dependencies or Guard-source migration. W05 would implement assembly inputs, Workers, real ArchUnitNET checks, isolated/offline builds and trust-negative cases.

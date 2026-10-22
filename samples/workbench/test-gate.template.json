@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "targetRoot": "D:/source/MyProject",
+  "testProject": "tests/MyProject.Architecture.Tests/MyProject.Architecture.Tests.csproj",
+  "testExecutableName": "MyProject.Architecture.Tests",
+  "targetFramework": "net10.0",
+  "configuration": "Release",
+  "nuGetConfig": "NuGet.Config",
+  "localFeed": "D:/ArchSift-state/MyProject/approved-feed",
+  "packageCache": "D:/ArchSift-state/MyProject/package-cache",
+  "rulesets": [
+    "architecture/rules.json"
+  ],
+  "runDirectory": "D:/ArchSift-state/MyProject/runs/new-unique-run",
+  "dotnetCliHome": "D:/ArchSift-state/MyProject/runs/new-unique-run/cli-home",
+  "runnerFormat": "mtp-ctrf",
+  "auditMode": "offline-architecture",
+  "toolIdentity": "0.10.0",
+  "policyFile": "architecture/policy.json",
+  "policySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "requiredCases": "architecture/required-cases.json",
+  "requiredCasesSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

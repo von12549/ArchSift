@@ -1,11 +1,11 @@
-# W06 报告与 CLI 验收
+# W06 reports and CLI acceptance
 
-日期：2026-10-06（Australia/Sydney）
+Date: 2026-10-06 (Australia/Sydney).
 
-结论：W06 COMPLETE。Core 共享服务合并项目/程序集结果，生成 schema 校验的 JSON 与转义 HTML；CLI analyze/verify/draft、参数覆盖、有效配置显示、退出码、取消和部分结果已实现。
+Conclusion: W06 COMPLETE. The shared Core service combines project/assembly results into schema-validated JSON and escaped HTML. CLI analyze/verify/draft, argument overrides, effective configuration, exit codes, cancellation and partial results were implemented.
 
-最终运行 `b68f322bcef54c9a828bbba34c443bb3`：SDK 10.0.303、net10.0、Debug；offline locked restore/build 成功，零 warning/error；70 unit + 17 integration + 2 architecture = 89/89 通过；每步与最终环境/Profile 哈希不变。
+Final run `b68f322bcef54c9a828bbba34c443bb3`: SDK 10.0.303/net10.0/Debug; offline locked restore/build succeeded with zero warnings/errors.70 unit +17 integration +2 architecture =89/89 passed. Environment/Profile hashes remained unchanged at every checkpoint and completion.
 
-新增验证覆盖无规则 analyze、违规默认 0、零匹配 4/disabled 不适用、CLI/服务稳定 finding parity、未知参数 2、缺失文件执行错误 3、HTML XSS 转义、当前运行 ID 独立、预取消 130、Worker 失败保留已完成项目结果，以及真实 CLI JSON/HTML/draft 与显式覆盖。旧入口测试曾把 verify 当成未实现命令，已调整为真正未知命令；help 仍保留 version/help。
+New coverage included analyze without rules; default violation exit 0; zero-match exit 4/disabled not-applicable; stable CLI/service finding parity; unknown argument 2; missing-file execution error 3; HTML XSS escaping; independent current run IDs; precancelled 130; completed project results retained on Worker failure; and actual CLI JSON/HTML/draft with explicit overrides. An old entry test incorrectly treated verify as unimplemented and was changed to an actually unknown command. Version/help behavior remained.
 
-归档：[checks](w06/checks.json)、[host-final](w06/host-final.json)、[build](w06/build.stdout.log)、[test](w06/test.stdout.log)。公共字段和限制见 [reports](../reports.md)、[cli](../cli.md)。没有启动真实 IFX/Guard 集成。W07 将使用同一 Core 服务与序列化器实现 loopback UI 和当前/历史结果区分。
+Archived [checks](w06/checks.json), [host-final](w06/host-final.json), [build](w06/build.stdout.log) and [test](w06/test.stdout.log). Public fields/limitations are in [reports](../reports.md) and [CLI](../cli.md). No real IFX/Guard integration started. W07 would use the same Core service/serializer for loopback UI and current/historical-result separation.

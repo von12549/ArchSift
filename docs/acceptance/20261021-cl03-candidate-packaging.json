@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "stage": "CL03",
+  "date": "2026-10-21",
+  "timezone": "Australia/Sydney",
+  "recordedUtc": "2026-10-21T03:27:19.0598276+00:00",
+  "status": "AUTHORIZED CANDIDATE PACKAGING AND SYNTHETIC VALIDATION COMPLETE / NOT PUBLISHED OR ADOPTED",
+  "stages": {
+    "CL05": "not-started",
+    "CL04": "not-started",
+    "CL02": "source-materials-and-synthetic-verification-complete",
+    "CL03": "authorized-candidate-work-complete",
+    "CL01": "formally-delivered-actual-main-ci-passed-local-main-updated"
+  },
+  "prerequisites": {
+    "CL02": {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl02-source-projection.json",
+      "sha256": "5a35e94d7b9b95cdea8f07618a9250de29e68177bcc0f7c7e9918d2f5e79eb5d"
+    },
+    "CL01": {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-document-main-ci.json",
+      "sha256": "5b72d499659e584b7ed9e3187a58584e0158a2d48c3d0c765cc338e4bf7a182d"
+    },
+    "cl02DeltasMatched": 11,
+    "remoteRequeried": false,
+    "fixedSourceScopeReviewed": 159,
+    "localUpdate": {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-local-ifx-update.json",
+      "sha256": "daf9a66e3ee0c9f8191f81e296eaff2289f754a33ae7bd00d3e2da3e1f41915f"
+    }
+  },
+  "source": {
+    "inputs": 250,
+    "exactCompilerInputClosureClaimed": false,
+    "archsiftHead": "044b67a684dcc6037169658ff9dfc5efbafad487",
+    "manifest": {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\source-inputs.json",
+      "sha256": "8571023e7da12c7933d95433f50ec43bcf810099f9fe973f64aba1629c1bddd4"
+    },
+    "committed": false,
+    "reproducibleBuildClaimed": false,
+    "snapshot": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\source",
+    "sourceCommitClaimed": false
+  },
+  "candidate": {
+    "cli": {
+      "path": "D:\\ArchSift-lab\\packages\\cl03-20261021-01\\ArchSift.Cli.0.10.0-cl03.1.nupkg",
+      "sha256": "aa8062e622a9d96d28b7c7619722200c8ed641a17e39effcdcbc566c20e57d2e"
+    },
+    "version": "0.10.0-cl03.1",
+    "cliPackages": 1,
+    "directory": "D:\\ArchSift-lab\\packages\\cl03-20261021-01",
+    "deliveryManifest": {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\artifact-review-03\\delivery-manifest.json",
+      "sha256": "c4998fb4501c16ef69d5e8b008644fa76988350d76a498f1f115e09f71cd24ae"
+    },
+    "webFrameworkDependent": true,
+    "thirdPartyPackages": 23,
+    "libraryPackages": 4,
+    "adoptedByIfx": false,
+    "published": false,
+    "web": {
+      "path": "D:\\ArchSift-lab\\packages\\cl03-20261021-01\\ArchSift.Web.0.10.0-cl03.1.framework-dependent.zip",
+      "sha256": "581c280b3910471d91ef803c06f6ee049ee83884b9f869a95b3cc8a5546f02f1"
+    },
+    "packageManifest": {
+      "path": "D:\\ArchSift-lab\\packages\\cl03-20261021-01\\package-manifest.json",
+      "sha256": "0fb8f16bcc2d6ab22285b671f42c37022d4ee967d26952a27ab85bf963ea6b16"
+    },
+    "totalNupkg": 28
+  },
+  "verification": {
+    "licenseFiles": 9,
+    "testingToolPackages": 10,
+    "coldSyntheticRuns": [
+      {
+        "pendingNotRun": 4,
+        "completed": 16,
+        "csharpPassed": 3,
+        "audit": "not-run",
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\first-02\\gate\\state\\runs\\full\\architecture-test-run.json",
+        "sha256": "20c195317d811e9146a13b93bf737c45f51f385df4bf1f585fc185542bf393b5",
+        "coverageComplete": true,
+        "logicalCases": 14,
+        "jsonCases": 2,
+        "synthetic": true,
+        "notIncluded": 588,
+        "gate": "allow"
+      },
+      {
+        "pendingNotRun": 4,
+        "completed": 16,
+        "csharpPassed": 3,
+        "audit": "not-run",
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\moved\\gate\\state\\runs\\full\\architecture-test-run.json",
+        "sha256": "454688543f81767f68113e0ca2c6f7d596be6d0fe1632fc57f84b46ed98ad7f0",
+        "coverageComplete": true,
+        "logicalCases": 14,
+        "jsonCases": 2,
+        "synthetic": true,
+        "notIncluded": 588,
+        "gate": "allow"
+      }
+    ],
+    "readerBinaryBindings": [
+      {
+        "sha256": "5f7b9c4345406a856240777a98342f64716180927963f7ed1b6a65f6540d3c88",
+        "testAndCliBytesEqual": true,
+        "assembly": "ArchSift.TestGate"
+      },
+      {
+        "sha256": "b5ef099c55eea71d777ab891c3da970204fa6484391935b052e924019108941c",
+        "testAndCliBytesEqual": true,
+        "assembly": "ArchSift.Core"
+      },
+      {
+        "sha256": "bcaee707d0a99d76979847d9a39729e180cbee5cd13bd1fce121893f17e580b6",
+        "testAndCliBytesEqual": true,
+        "assembly": "ArchSift.Testing"
+      }
+    ],
+    "platform": "Windows x64",
+    "sdk": "10.0.303",
+    "targetFramework": "net10.0",
+    "cliMetadataPackages": [
+      "CycleDetection/2.0.0",
+      "JetBrains.Annotations/2026.2.0",
+      "Mono.Cecil/0.11.6",
+      "Newtonsoft.Json/13.0.4",
+      "System.ValueTuple/4.6.2",
+      "TngTech.ArchUnitNET/0.13.4"
+    ],
+    "webBuildWarnings": 0,
+    "browserChecks": 11,
+    "freshVulnerabilityAudit": false,
+    "runtime": "10.0.11",
+    "humanReviewClaimed": false,
+    "schema": {
+      "cancelled": "pass",
+      "new": "pass",
+      "old": "pass",
+      "unknownProjection99": "rejected"
+    },
+    "httpServiceRun": false,
+    "thirdPartyChanged": false,
+    "browser": {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\compatibility\\browser-result.json",
+      "sha256": "351e4b8b130c44ffbe53c389d4eb1d49514909e83a6a45da5b847f69bbc50baf"
+    },
+    "projectionTests": {
+      "skipped": 0,
+      "passed": 3,
+      "failed": 0
+    },
+    "contractNegatives": [
+      {
+        "name": "unknown-format",
+        "exitCode": 5,
+        "elapsedMs": 90
+      },
+      {
+        "name": "missing-manifest",
+        "exitCode": 3,
+        "elapsedMs": 87
+      },
+      {
+        "name": "no-silent-legacy-fallback",
+        "exitCode": 5,
+        "elapsedMs": 85
+      },
+      {
+        "name": "mixed-modes",
+        "exitCode": 5,
+        "elapsedMs": 85
+      },
+      {
+        "name": "tampered-manifest",
+        "exitCode": 5,
+        "elapsedMs": 86
+      },
+      {
+        "name": "tampered-policy",
+        "exitCode": 5,
+        "elapsedMs": 112
+      },
+      {
+        "name": "wrong-testing-version",
+        "exitCode": 3,
+        "elapsedMs": 1021
+      },
+      {
+        "name": "cold-missing-dependency",
+        "exitCode": 3,
+        "elapsedMs": 2029
+      },
+      {
+        "name": "zero-matches",
+        "exitCode": 2,
+        "elapsedMs": 4546
+      }
+    ],
+    "cliBuildWarnings": 0,
+    "checks": [
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\build\\passed.json",
+        "sha256": "4a53e968a938a99650b8bc0423fbe1dbb43a7c6fbc0ce3b77dfa973c67e2c107"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\pack\\passed.json",
+        "sha256": "9f996bb3a0b79bf1ed62e88e22272a21f8919297141097a284d34734c60a0fa5"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\prepare\\passed.json",
+        "sha256": "d0abc9fa2565707f256d9649693af840ab901cbbcd9ea643310940360ab88d03"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\repairsynthetic\\passed.json",
+        "sha256": "70473715ade79a8c3702251fdf1ab4921fc9c295d9824fd1c078a24cd2e1ca94"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\first-02\\passed.json",
+        "sha256": "b3a11ca6baca73b6a30d0b275623649867031e5bd8c4daf8e7be84b692bb37c3"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\moved\\passed.json",
+        "sha256": "8e0fa5a42d1230ecf006ad5423e693d5edd0133aecd26a0324cb67fd36509034"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\negatives\\passed.json",
+        "sha256": "c72b6738c3791ca368c3e881b7950cecebe0f7b3b849afa8d5d966b637e8875a"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\compatibility\\passed.json",
+        "sha256": "36d43a315d89d8ac1884315158b885a62b9358d5554b56dd86ac0f9221eacc05"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\artifact-review-03\\passed.json",
+        "sha256": "4ba400491aa265dda075001975f396d91f68ef73328ed2cabd20ac9094924730"
+      },
+      {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\preservation\\passed.json",
+        "sha256": "758d0fe660029f4f989ea511bf6df6aae8dc14ca576315a506a0859012eb2215"
+      }
+    ],
+    "auditStatus": "not-run",
+    "packageNegatives": [
+      {
+        "name": "altered-cli-rejected",
+        "exitCode": 1,
+        "elapsedMs": 393
+      },
+      {
+        "name": "altered-library-rejected",
+        "exitCode": 3,
+        "elapsedMs": 3165
+      }
+    ],
+    "cliRuntimePackages": [
+      "CycleDetection/2.0.0",
+      "JetBrains.Annotations/2026.2.0",
+      "Mono.Cecil/0.11.6",
+      "Newtonsoft.Json/13.0.4",
+      "TngTech.ArchUnitNET/0.13.4"
+    ],
+    "licenseMetadataAndNoticeBytesPreserved": true,
+    "configuration": "Release"
+  },
+  "preservation": {
+    "ifxHead": "305fc99c61a22cad48b22f5f524673ca0d95675d",
+    "ifxInputsEqual": true,
+    "inProjectOperations": 0,
+    "remoteProtectionRequeried": false,
+    "headAndIndexEqual": true,
+    "oldPackageCount": 251,
+    "localWorkflowAndPoliciesPreserved": true,
+    "directPreviousDocumentAndIndexBackupRechecked": true,
+    "ifxConsumedVersion": "0.10.0-sp03.1",
+    "ifxClean": true,
+    "ifxInputCount": 911,
+    "cleanup": 0,
+    "otherPreexistingFilesPreserved": true,
+    "oldPackagesEqual": true,
+    "record": {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\preservation\\preserved.json",
+      "sha256": "7f8090d1201a3d1f906e07f42a2ba399b29baddc0ced58c0e430a8a9286129f7"
+    }
+  },
+  "interruptions": [
+    {
+      "phase": "first",
+      "exitCode": 3,
+      "resolution": "Synthetic-only substitute; first-02 used a new empty cache and run directory; package bytes unchanged",
+      "reason": "Synthetic fixture lacks current DeclarationInputs dependency",
+      "testStarted": false,
+      "preserved": true,
+      "gate": "block"
+    },
+    {
+      "phase": "artifact-review",
+      "preserved": true,
+      "resolution": "Original LICENSE bytes verified at actual archive path; no repack",
+      "reason": "Expected LICENSE path differed from actual extensionless NuGet entry"
+    },
+    {
+      "phase": "artifact-review-02",
+      "preserved": true,
+      "resolution": "artifact-review-03",
+      "reason": "Successful intermediate inspection recorded embedded deps list; final review additionally separates six resolved metadata packages and five runtime packages"
+    }
+  ],
+  "host": {
+    "stableBefore": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+    "fullProcessComparedAtEachSdkChild": true,
+    "stableAfter": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+    "childOnlyEnvironment": true,
+    "stableEqual": true
+  },
+  "excludedOperations": {
+    "ci": 0,
+    "freshOnlineAudit": 0,
+    "realIfx": 0,
+    "cleanup": 0,
+    "CL04": 0,
+    "ifxConsumptionUpdates": 0,
+    "commits": 0,
+    "pushes": 0,
+    "publication": 0
+  },
+  "maintenance": {
+    "path": "D:\\ArchSift\\docs\\distribution\\20261021-cl03-candidate-maintenance.md",
+    "sha256": "add17d6bc906e5ee355e70f011a90da56244022966fe2f729dac3d5a2d2eade5"
+  },
+  "retainedUntil": "Explicit object-specific disposition authorization; no automatic expiry",
+  "drivers": [
+    {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\record\\Build-Cl03Candidate.ps1",
+      "sha256": "84bc07ce67908c7e0f2b2d4da100a6087e71120d5902bd087880bb5bc1267cf8"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\record\\Test-Cl03Candidate.ps1",
+      "sha256": "723578086e809f28e72a3c172b6697f30ba5092b309c9b9d8f93db8c392e5744"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\record\\Verify-Cl03Artifacts.ps1",
+      "sha256": "9ce1ac0dc16a434d7183466d6dbe4c16b91b1bb470468f5b8eac439679c2fd56"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\record\\Record-Cl03Candidate.ps1",
+      "sha256": "84ead38ea125c4d1895aa927262f343da02d4f13f666892388da630b14a441b3"
+    }
+  ],
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\cl03-20261021-01",
+  "limitations": [
+    "Only synthetic targets were run; no new real IFX 112-case, remote CI/protection, or vulnerability acceptance.",
+    "Synthetic infrastructure includes explicit substitutes and does not establish equivalence to IFX DeclarationInputs.",
+    "Source snapshot is not a committed product tree or complete compiler/SDK input closure; byte reproducibility is not claimed.",
+    "Framework-dependent Web artifact was built and static rendering functions checked; no live HTTP or final human usability acceptance.",
+    "Prior real main CI, 27 generated-copy exceptions and migration-level rollback evidence remain historical and were not rerun."
+  ]
+}

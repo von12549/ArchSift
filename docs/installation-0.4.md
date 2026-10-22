@@ -86,7 +86,7 @@ Create `D:\Tools\ArchSift\config\project.json` manually in a text editor and sav
 Get-Content -LiteralPath 'D:\Tools\ArchSift\config\project.json' -Raw | ConvertFrom-Json | Out-Null
 ```
 
-The UI also validates schema and paths. See [CLI configuration](cli.md), [input boundaries](build-inputs.md), and the localized [IFX installation guide](../../IFX-10-Root/docs/ArchSift-0.4.0-IFX-安装配置说明书.md) for the reviewed IFX paths.
+The UI also validates schema and paths. See [CLI configuration](cli.md) and [input boundaries](build-inputs.md). The historical, separately maintained IFX-specific installation guide was outside this repository at `D:/IFX-10-Root/docs/` and documented the reviewed IFX paths; it is not a portable bundled instruction.
 
 ## Start and close the UI
 

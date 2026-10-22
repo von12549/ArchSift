@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "stage": "SP04",
+  "recordedUtc": "2026-10-20T07:01:49.2122517Z",
+  "localDate": "2026-10-20",
+  "timezone": "Australia/Sydney",
+  "status": "HUMAN UI FEEDBACK ACCEPTED / JSON RULE LIST REPAIR HUMAN CONFIRMED / REMOTE CI NOT RUN / SP04 INCOMPLETE",
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\sp04-ui-confirmation-20261020-01",
+  "uiRevision": "sp04-ui-feedback-20261020-01",
+  "toolIdentity": "0.10.0-sp03.1",
+  "originalHumanFeedback": {
+    "conclusionVerbatim": "基本通过",
+    "sha256": "a844fe7e85ba28e720c2e4a12c91cbf7ddd13995c2ce6a2431fb32ffe44e24ff",
+    "preserved": true,
+    "path": "D:\\ArchSift-lab\\runs\\sp04-ui-feedback-20261020-01\\human-feedback.json"
+  },
+  "repairHumanConfirmation": {
+    "newInteractiveSessionClaimed": false,
+    "agentFilledHumanAnswers": false,
+    "source": "human user in current chat",
+    "scope": "Numbered JSON rule list and long-name wrapping presented in the preceding desktop/narrow screenshots",
+    "status": "confirmed",
+    "verbatim": "符合预期"
+  },
+  "machineRepairEvidence": {
+    "sha256": "eff9cf93eec30d4d3ace30826a8ce47e26bb8bceb2175cdde4cf330498fe8b21",
+    "checks": 14,
+    "status": "passed",
+    "rerun": false,
+    "path": "D:\\ArchSift-lab\\runs\\sp04-ui-feedback-20261020-01\\acceptance.json"
+  },
+  "resolvedIssue": "Dot-joined JSON list replaced by individual numbered items with wrapping; human confirmation closes this readability issue.",
+  "previousEvidence": [
+    {
+      "hashesEqual": true,
+      "indexSha256": "bb1d7ce4ad2d0c87143d5b1589147ddb98500e30bf501759a53f9cd96f032338",
+      "files": 564,
+      "root": "D:\\ArchSift-lab\\runs\\sp04-20261020-01"
+    },
+    {
+      "hashesEqual": true,
+      "indexSha256": "f2e3ef929d837463878db60b04fd625ba5d3583e8b6961cb087e35977738f22a",
+      "files": 487,
+      "root": "D:\\ArchSift-lab\\runs\\sp04-ui-20261020-01"
+    },
+    {
+      "hashesEqual": true,
+      "indexSha256": "6ba0a99421a9287fa983d4e10ee4bbf34343089ed7a3c322f084e80225317045",
+      "files": 43,
+      "root": "D:\\ArchSift-lab\\runs\\sp04-ui-feedback-20261020-01"
+    }
+  ],
+  "originalSession": {
+    "restarted": false,
+    "exitCode": 0,
+    "safeShutdown": true,
+    "finalHostEqual": true
+  },
+  "host": {
+    "before": "2bb507ec5062400fa3cc13098e9b828ab4388e9e374b4636b8c6b2ab7cd04303",
+    "after": "2bb507ec5062400fa3cc13098e9b828ab4388e9e374b4636b8c6b2ab7cd04303",
+    "equal": true
+  },
+  "stableHostSha256": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+  "stableHostMatchesPrevious": true,
+  "protectedOriginalLivePoliciesInProject": "equal",
+  "remaining": [
+    "Actual remote candidate CI qualification, including reviewed candidate revision/dispatch conditions, runner/feed readiness, native checks, artifacts/logs and negative/cancel/skip/recovery evidence; separately authorized."
+  ],
+  "newSdkOperations": 0,
+  "newIfxGateRuns": 0,
+  "newAudits": 0,
+  "remoteCiRuns": 0,
+  "formalCIChanged": false,
+  "hostPersistentEnvironmentChanged": false,
+  "vmOperations": 0,
+  "committed": false,
+  "pushed": false,
+  "sp05Started": false,
+  "sp04Complete": false
+}

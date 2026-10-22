@@ -1,59 +1,59 @@
-# LT06 独立人工 UI 视觉与动手验收清单
+# LT06 independent human visual and hands-on checklist
 
-状态：**首轮候选需修订；修订候选独立人工 UI 复核通过；LT06 本地候选验收完成、未发布**。以下首轮表格只记录用户在聊天中明确报告的操作结果及疑问；末尾的新候选表格记录用户随后明确确认的五项结果。首轮候选源码 `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0`、载荷清单 SHA-256 `4a19cfd8ae57464d4b6a010dec9a2b923ab1e5b5aa5bf287b3b308fc2d768212`；修订候选清单 SHA-256 `34147699cb67d5f24d68e48de93152208ca75519fefbea38df66dc2376443c41`，见[修订机器记录](20261016-lightweight-lt06-ui-revision.md)及[候选指南](../lightweight-test-workbench-candidate.md)。评审只操作已授权的 `D:/ArchSift-lab/fixtures/lt05-shared-cc06528` 独立工作树和外置规则／报告目录，原 IFX checkout 与安装不动。
+**Initial candidate needs revision; revised independent UI passed; local LT06 accepted, not released.** The first table records explicit user results/questions; the final table records five later confirmations. Initial source `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0`, manifest SHA-256 `4a19cfd8ae57464d4b6a010dec9a2b923ab1e5b5aa5bf287b3b308fc2d768212`; revised manifest `34147699cb67d5f24d68e48de93152208ca75519fefbea38df66dc2376443c41`. See [machine record](20261016-lightweight-lt06-ui-revision.md) and [guide](../lightweight-test-workbench-candidate.md). Review uses only authorized external D:/ArchSift-lab/fixtures/lt05-shared-cc06528 and external rules/reports; original checkout/install remain untouched.
 
-评审人：用户（聊天反馈；正式确认待填）　日期／时区：2026-10-16／Australia/Sydney　浏览器／版本：Chrome 155.0.8059.40　候选清单复核：机器哈希一致；评审人确认待填
+Reviewer: user via chat; formal confirmation pending. Date/zone: 2026-10-16, Australia/Sydney. Browser: Chrome 155.0.8059.40. Machine manifest hashes match; reviewer confirmation pending.
 
-| 项目 | 人工观察与操作判据 | 结果（通过／失败／未测） | 备注／证据路径 |
+| Item | Human task/criterion | Result | Notes/evidence |
 | --- | --- | --- | --- |
-| 启动与会话 | 用候选 Web 命令打开本机 URL，页面可读、无明显布局遮挡；不外传会话令牌 | 通过（用户确认） | 用户确认启动与会话观察符合预期。 |
-| 三种来源与范围 | 在“架构测试”加载指定配置，能分清 IFX 原 C#、JSON 类型依赖、A/B 未纳入；80 个基准 ID 的“已读取”不被误认作已执行 | 通过（用户确认） | 用户确认三种来源与范围观察符合预期。 |
-| 规则编辑 | 将样例 JSON 复制到外置规则库，用既有编辑器读取、校验、保存；能辨认原 C# 测试只读和未保存草稿不参与运行 | 通过（用户确认） | 复制、读取、校验、保存流畅且文字清晰；原 C# 只读标记明确；未保存草稿提示清晰，完整运行仍使用已保存字节。外置副本：`D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/web-rules/test-feabc9a9.json`。 |
-| 完整运行 | 选择完整模式，观察启动／进度／最终状态；从本次报告核对原 80＋JSON 1、0 skip／缺失、`allow/0`，588 未纳入没有显示成通过 | 通过（用户报告；机器报告核对） | 用户报告完整运行符合预期、588 未纳入没有显示为通过；本次草稿边界运行报告为 `allow/0`、原 80＋JSON 1 已执行通过、0 skip／缺失。 |
-| 局部与取消 | 用实际发现的案例 UID 做局部诊断，界面明确 subset 不可放行；另一次运行点取消后，当前结果不回退显示旧成功 | 功能符合预期（用户报告）；可用性待修订 | 用户报告局部 `block/4`、取消 `cancelled · block/130` 符合预期；局部所需 UID 不能从界面取得，需读 `discovery.log`。 |
-| 失败辨识 | 如执行外置 JSON 规则负例，真实 finding 与原 IFX 断言消息要分清；失败运行显示 `block/2`，恢复外置规则后旧失败仍留历史 | 通过（用户确认；机器报告核对） | 负例 IFX 80 项通过、JSON 1 项失败，`block/2`、真实 finding 1 条；恢复后新运行 `finished · allow · exit 0`，用户确认旧失败仍作为独立历史存在。 |
-| 历史与下载 | 成功／失败／取消记录及历史新鲜度容易区分；JSON、HTML 下载与本次可见结论一致，缺失材料不显示成功 | 通过（用户确认） | 新成功／旧失败独立、0 测试 `block/3` 为错误；先前 JSON／HTML 下载符合预期。模拟缺失报告记录显示材料缺失原因和不可用状态，无“查看结果”或下载按钮。旧失败具体新鲜度文字未单独提供。 |
-| 完整证据入口 | 能找到既有完整证据工作台入口，理解它是独立流程，日常 `allow` 不会变成完整取证通过 | 通过（用户确认） | 用户确认入口及独立工作台呈现符合预期；未把日常 `allow/0` 显示为完整取证通过。 |
-| 可用性 | 文字、表格、键盘操作、等待／错误反馈与窄窗口布局可接受；记录阻碍实际日常使用的点 | 键盘与窄屏符合预期（用户报告）；体验需修订 | 用户确认键盘可操作、窄屏显示符合预期。待修订：局部案例 MTP 发现 UID 无界面入口；架构测试无英文；测试结果在历史下方，须长距离滚动；架构测试结果／历史与全局 Results／History 分离。 |
+| Startup/session | Open local candidate URL; readable layout without obstruction; keep token private | User pass | Observations as expected. |
+| Three sources/scope | Distinguish original C#, JSON and excluded policies; 80 loaded IDs are not execution | User pass | Observations as expected. |
+| Rule editing | Copy externally, read/validate/save; original C# read-only, unsaved drafts excluded | User pass | Smooth and clear, explicit read-only/draft prompts; full run uses saved bytes. Copy: D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/web-rules/test-feabc9a9.json. |
+| Full run | Observe progress/current 80+1, no skips/missing cases, allow/0; 588 excluded never passed | User/machine pass | Actual draft-boundary run agrees. |
+| Subset/cancel | Actual discovery UID, diagnostic-only subset, cancellation never shows old success | Function expected; usability needs revision | block/4 and cancelled/block/130 correct; UID available only in discovery.log. |
+| Failure | Distinguish JSON findings/native assertions; block/2 retained after restoration | User/machine pass | 80 originals passed, one JSON failure/finding; restored allow/0, old failure separate. |
+| History/downloads | Distinguish success/failure/cancel/freshness; current downloads, missing materials unavailable | User pass | New success/old failure separate; zero-test block/3 is error. Missing report gives reason and no view/download. Exact old freshness wording unspecified. |
+| Full evidence | Separate workflow; daily allow is not full evidence proof | User pass | Entry/scope as expected. |
+| Usability | Text/tables/keyboard/wait/error/narrow layout | Keyboard/narrow expected; experience needs revision | Missing UID/English; results below history; separate from global Results/History. |
 
-## 已收到的人工反馈（2026-10-16，Australia/Sydney）
+## Received human feedback (2026-10-16 Australia/Sydney)
 
-用户在聊天中确认导航步骤 1／2／3 均符合预期：① 展开 588 项未纳入清单，下载并查看 JSON／HTML；② 使用给定的实际发现 UID 执行局部诊断，结果不可放行；③ 再次完整启动并取消，当前结果未回退为旧成功。上述为用户报告，不等于其他清单项已通过。
+User confirmed navigation tasks 1/2/3: expand 588 exclusions and download formats; given actual UID yields nonrelease subset; restart/cancel without stale success. These confirmations do not pass unspecified items.
 
-发现的可用性问题：用户询问如何自行找到局部运行所需 UID。当前候选的结果表展示 CTRF 执行 ID，输入框却要求 MTP 发现 UID，二者不可互换；UID 目前只在对应运行目录的 `discovery.log` 中可查。复现路径：完整运行后查看结果表，再切换“局部”模式，尝试从页面找到可填写的发现 UID。页面缺少该入口，因此本轮人工可用性尚不能判为通过。
+UID issue: result table shows CTRF execution ID while input needs MTP discovery UID; they are not interchangeable. Only discovery.log exposes the needed UID. Reproduce by completing a run, viewing results, switching to subset and looking for a usable UID. Missing UI access prevents human usability pass.
 
-用户随后确认：样例 JSON 的复制、读取、校验与保存流畅，编辑器文字清晰、无疑义。只读核对显示外置规则副本已保存，SHA-256 为 `6d6bbf68d2bbbd80579167df911a647c91421b591a1d3edf8dd06ec6ab5233e8`；Web 生成的门禁配置指向该外置副本。
+User confirmed smooth copy/read/validate/save and clear text. Read-only external-copy SHA-256 `6d6bbf68d2bbbd80579167df911a647c91421b591a1d3edf8dd06ec6ab5233e8`; generated gate config points to it.
 
-用户进一步确认：原 IFX C# 测试只读标记明确；编辑器对草稿提示 “Unsaved changes; Verify uses saved bytes.”，在未保存负例草稿时执行完整门禁仍得到预期结果。用户明确要求将“启动与会话”和“三种来源与范围”标记为通过，两项观察符合预期。只读核对本次运行 `20261015T144526626-cdf6d9e9` 的权威 JSON：`full`、`allow/0`、覆盖完整，原 IFX 80 项及 JSON 1 项均为已执行通过，0 skip／缺失，588 项未纳入；外置已保存规则 SHA-256 仍为 `6d6bbf68d2bbbd80579167df911a647c91421b591a1d3edf8dd06ec6ab5233e8`。这与草稿不参与运行一致。
+User confirmed original C# read-only labeling and “Unsaved changes; Verify uses saved bytes.” Full gate with an unsaved negative draft behaved as expected. User explicitly passed startup and source/scope tasks. Report 20261015T144526626-cdf6d9e9 is full/allow/0, complete, 80+1 executed/passed, zero skips/missing, 588 excluded. Saved SHA-256 remains `6d6bbf68d2bbbd80579167df911a647c91421b591a1d3edf8dd06ec6ab5233e8`, consistent with draft exclusion.
 
-用户报告外置规则负例符合预期：IFX 专用 C# 测试 80 项通过，ArchSift JSON 类型依赖 1 项失败，失败消息明确给出 `IFX.Platform.Context.Contracts.EndpointScopeMetadata → IFX.Platform.Context.Contracts.ExecutionScope`。只读核对运行 `20261015T145020201-5f829ca2` 的权威 JSON：`full`、覆盖完整、`block/2`，原 80 项通过、JSON 唯一失败、0 skip／缺失、588 项未纳入；JSON 检查为 `violation`、matched=1，一条 finding 指向上述实际类型依赖。该 finding 是 ArchSift/ArchUnitNET 规则结果，与原 IFX 专用测试断言分属不同来源。负例期间外置规则 SHA-256 为 `8cf3119c6561ec2ae4e8593e65eca9779bfb60fa8df78784b8e3c5a2f39ddfde`。
+User's negative run: 80 C# passes, one JSON failure, explicit IFX.Platform.Context.Contracts.EndpointScopeMetadata → IFX.Platform.Context.Contracts.ExecutionScope. Report 20261015T145020201-5f829ca2 is full/complete/block/2, zero skips/missing, 588 excluded; JSON violation, matched=1, one actual finding. This ArchSift/ArchUnitNET result is distinct from native assertions. Negative-rule SHA-256 `8cf3119c6561ec2ae4e8593e65eca9779bfb60fa8df78784b8e3c5a2f39ddfde`.
 
-用户确认恢复后的完整运行显示 `finished · allow · exit 0`。只读核对外置规则副本 SHA-256 已恢复为负例前的 `6d6bbf68d2bbbd80579167df911a647c91421b591a1d3edf8dd06ec6ab5233e8`；新报告 `20261015T145402028-e312cbe2` 为 `full`、覆盖完整、`allow/0`，原 IFX 80 项及 JSON 1 项已执行通过，0 skip／缺失，588 项未纳入。旧 `block/2` 报告目录仍在。
+User confirmed restored run finished/allow/exit 0. Rule SHA-256 restored to `6d6bbf68d2bbbd80579167df911a647c91421b591a1d3edf8dd06ec6ab5233e8`; report 20261015T145402028-e312cbe2 is full/complete/allow/0, 80+1 executed/passed, zero skips/missing, 588 excluded. Old block/2 directory remains.
 
-用户随后确认两项界面检查均符合预期：① 历史保留恢复后的新成功和之前的失败，旧失败“查看结果”、新鲜度及先前 0 测试 `block/3` 的错误呈现均符合预期；② “完整证据工作台”入口可进入独立流程，日常 `allow/0` 未被当作完整取证通过。用户未单独提供旧失败新鲜度的确切文字。
+User confirmed new success and old failure remain separate, view/freshness/prior zero-test block/3 error are as expected, and full-evidence workflow is separate from daily allow/0. Exact old-failure freshness wording was not supplied.
 
-随后在外置 `web-output/test-runs` 中创建明确标为 `lt06-ui-missing-artifact-probe-20261016` 的临时模拟历史记录：状态标记声称 `finished/allow/0`，但没有权威 JSON／HTML 报告。用户刷新工作台后报告该条显示 “Authoritative JSON or HTML report is missing.” 和不可用状态，没有“查看结果”或 JSON／HTML 下载按钮；窄屏显示符合预期。该模拟记录仅用于 UI 负例观察，核对内容后已精确删除，`probeRemoved=True`；不属于真实门禁运行。
+An explicitly synthetic temporary history record lt06-ui-missing-artifact-probe-20261016 under external web-output/test-runs claimed finished/allow/0 without JSON/HTML. User observed “Authoritative JSON or HTML report is missing.”, unavailable state, no view/download and expected narrow layout. After inspection it was precisely removed, probeRemoved=True. This was not a real gate run.
 
-用户最后确认键盘操作可行，浏览器为 Chrome 155.0.8059.40。总体反馈为“候选的总体上是 OK 的，但还有几个小问题待修订”，故本轮不记为最终通过。除 UID 问题外，用户指出：① 架构测试页面只有中文，没有英文；② 测试结果位于测试历史清单下方，查看结果需滚动到底；③ 架构测试自己的结果／历史与 ArchSift 全局 Results／History 页面隔离。用户请求重新设计这部分；修订后须固定新候选身份，重做受影响机器检查和独立人工 UI 复核。
+User confirmed keyboard operation and Chrome 155.0.8059.40. Overall feedback, translated: generally OK, but small issues need revision; no final pass. Other findings: Chinese-only architecture page, results below history requiring long scrolling, and separation from global Results/History. User requested redesign, fixed new identity and affected machine/independent rechecks.
 
-总体人工结论（通过／失败／需修订）：需修订（依据用户上述总体反馈；新候选待复核）
+Initial overall human conclusion: NEEDS REVISION, based on user feedback; new candidate review pending then.
 
-问题与复现步骤：局部模式需 MTP 发现 UID，但结果表仅有 CTRF 执行 ID；切换英文时架构测试仍是中文；打开历史条目的“查看结果”后，结果出现在历史清单下方；全局 Results／History 不含架构测试对应内容。
+Reproduction: subset needs discovery UID while table shows execution ID; English switch leaves architecture page Chinese; history viewing appends results below list; global Results/History omit architecture tests.
 
-评审人确认：________
+Reviewer signature:________
 
-## 修订候选的独立人工复核（用户已确认）
+## Revised candidate independent review (user confirmed)
 
-评审对象：`D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a`；外置配置与报告根：`D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a`。机器完整 Web 门禁为 IFX 80＋JSON 1 `allow/0`。以下五项由用户在聊天中逐项确认，未把首轮候选的通过项自动迁为新候选通过。用户未提供本轮浏览器版本或窗口像素宽度；首轮所报 Chrome 155.0.8059.40 不作为本轮浏览器身份。
+Revised review: D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a; config/reports D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a. Machine Web gate 80+1 allow/0. User confirmed each of five items below, without automatic carryover. Revised browser/version/pixel width were not supplied; initial Chrome identity is not reused.
 
-| 复核点 | 操作与观察 | 人工结果（通过／失败／未测） | 备注 |
+| Review point | Task/observation | Human result | Notes |
 | --- | --- | --- | --- |
-| UID 查找 | “架构测试”切到“局部”，按案例名称搜索，点击“使用此 UID”；确认 UID 自动填入，且清楚区分发现 UID 与执行 ID。无需再次运行 IFX 测试。 | 通过（用户确认） | UID 可见；局部状态下点击“使用此 UID”后自动填入。 |
-| 中英切换 | 在“架构测试”及其 Results／History 视图来回切换 English／中文；确认主要标题、操作、状态与提示文字可读。 | 通过（用户确认） | 中英文切换可用，信息正确。 |
-| 结果位置 | “架构测试”点“在结果页查看测试”；确认 `allow/0` 报告就在 Results 的架构测试视图，无需越过历史清单。 | 通过（用户确认） | 结果在 Results，历史在 History，不再同页堆叠。 |
-| 整体接入 | 在全局 Results／History 的“分析”与“架构测试”视图间切换；从测试历史打开报告，确认页面关系清晰、旧分析流程仍易找。 | 通过（用户确认） | 页面关系清晰，旧分析仍易找。 |
-| 布局与键盘 | 以窄窗口和键盘访问修订后的 UID 搜索、视图切换、历史条目；确认没有遮挡或焦点迷失。 | 通过（用户确认） | 窄窗口显示正常，键盘可用，无遮挡或焦点迷失。 |
+| UID | In subset mode, search case and select Use this UID; distinguish discovery/execution; no IFX rerun needed | User pass | Visible and automatically filled. |
+| Languages | Switch English/Chinese in tests, Results and History | User pass | Correct and readable. |
+| Result location | Open report in Results without scrolling past history | User pass | Results and History separate. |
+| Global integration | Switch analysis/test views, open history report, find existing analysis workflow | User pass | Page relationships clear. |
+| Narrow/keyboard | Search, view switches and history without obstruction/lost focus | User pass | Narrow layout and keyboard normal. |
 
-修订候选总体人工结论：通过（上述五项均由用户确认）　评审人／日期：用户通过聊天反馈／2026-10-16（Australia/Sydney）　浏览器／版本：本轮未提供；窗口像素宽度：未提供。
+Revised overall human PASS: all five explicitly confirmed. Reviewer/date: user via chat, 2026-10-16 (Australia/Sydney). Revised browser/version/window pixels not provided.
 
-LT06 本地候选的机器及独立人工 UI 门槛均完成。此结论针对上列固定清单身份；若修改产品代码或重新封装候选，须更新候选身份并重做受影响检查。PR、合并、公开发布及 IFX 政策采纳均另行决定。
+Local LT06 machine and independent UI gates are complete for this fixed manifest. Product changes or repackaging require new identity and affected rechecks. PR, merge, publication and IFX policy adoption remain separate decisions.

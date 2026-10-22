@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "execution-authorized-in-progress",
+  "contract": "docs/releases/0.10.0/release-contract.json",
+  "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+  "authorityNote": "The user's 2026-10-23 execution authorization supersedes the earlier planning-only authorization statements. Publication is authorized, subject to all mandatory machine and independent human acceptance gates; do not ask for duplicate general permission.",
+  "workPackages": [
+    {
+      "id": "WB00",
+      "status": "complete",
+      "authorized": true
+    },
+    {
+      "id": "WB01",
+      "status": "complete",
+      "authorized": true
+    },
+    {
+      "id": "WB02",
+      "status": "complete",
+      "authorized": true
+    },
+    {
+      "id": "WB03",
+      "status": "in-progress",
+      "authorized": true
+    },
+    {
+      "id": "WB04",
+      "status": "not-started",
+      "authorized": true
+    },
+    {
+      "id": "WB05",
+      "status": "not-started",
+      "authorized": true
+    },
+    {
+      "id": "WB06",
+      "status": "not-started",
+      "authorized": true
+    },
+    {
+      "id": "WB07",
+      "status": "not-started",
+      "authorized": true
+    },
+    {
+      "id": "WB08",
+      "status": "not-started",
+      "authorized": true
+    },
+    {
+      "id": "WB09",
+      "status": "not-started",
+      "authorized": true
+    },
+    {
+      "id": "WB10",
+      "status": "not-started",
+      "authorized": true
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G01",
+      "status": "closed-for-github-channel-recheck-required"
+    },
+    {
+      "id": "G02",
+      "status": "open"
+    },
+    {
+      "id": "G03",
+      "status": "open"
+    },
+    {
+      "id": "G04",
+      "status": "open"
+    },
+    {
+      "id": "G05",
+      "status": "open"
+    },
+    {
+      "id": "G06",
+      "status": "open"
+    },
+    {
+      "id": "G07",
+      "status": "open"
+    },
+    {
+      "id": "G08",
+      "status": "open"
+    },
+    {
+      "id": "G09",
+      "status": "open"
+    },
+    {
+      "id": "G10",
+      "status": "open"
+    },
+    {
+      "id": "G11",
+      "status": "open"
+    },
+    {
+      "id": "G12",
+      "status": "open"
+    },
+    {
+      "id": "G13",
+      "status": "open"
+    },
+    {
+      "id": "G14",
+      "status": "open"
+    },
+    {
+      "id": "G15",
+      "status": "open"
+    }
+  ],
+  "productAcceptanceGranted": false,
+  "humanAcceptance": {
+    "status": "pending",
+    "answers": null
+  },
+  "published": false,
+  "liveIfxChanged": false,
+  "runRoot": "D:/ArchSift-lab/runs/workbench-release-20261023-01",
+  "knownStops": [
+    {
+      "id": "BOOTSTRAP-01",
+      "status": "resolved",
+      "reason": "PowerShell split the initial Git archive output argument. Retried with an argument array; original stop and host baseline retained."
+    }
+  ],
+  "documentationTranslation": {
+    "status": "source-prepared-artifact-and-human-review-pending",
+    "translatedDistinctOriginalFiles": 150,
+    "additionalHistoricalNarratives": 9,
+    "remainingFormalMarkdownHtmlContainingHan": 0,
+    "sourceLocalLinks": "passed",
+    "rawEvidenceExceptions": 9,
+    "originalArchiveIndependentlyVerified": true,
+    "identityCheck": "150 original files / 2966 changed lines / 1008 long historical identities compared",
+    "remoteHistoricalBodies": "four English body-only updates verified; no tag/assets/date/state change",
+    "finalArtifactReview": "pending"
+  },
+  "knownIssues": [
+    {
+      "id": "WB03-SETUP-0100",
+      "status": "local-source-regression-passed-final-package-qualification-pending",
+      "reason": "Setup previously rejected 0.10.0/RC identities and used the older asset filename. Compatibility, schema and acquisition naming are being updated with regression coverage."
+    },
+    {
+      "id": "WB03-LICENSE-PATH",
+      "status": "resolved-by-second-probe",
+      "reason": "Initial package metadata placed the extensionless license at LICENSE/LICENSE. Corrected to archive root; five new probe packages verified. Original failed-check packages retained."
+    },
+    {
+      "id": "WB03-NOTICE-LINKS",
+      "status": "source-repaired-full-clean-package-pending",
+      "reason": "Development bundle failed 18 relocated notice/evidence links; fresh curated documentation passed 42 local links and nine upstream license hashes."
+    },
+    {
+      "id": "WB03-OUTER-PROBE-CALLER",
+      "status": "rejected-and-replaced-by-fresh-strict-probes",
+      "reason": "Non-strict caller printed pass without qualification reports; fresh strict cold/moved probes passed 4/4 each. Failed attempt retained."
+    }
+  ],
+  "productBuildStarted": true,
+  "newReleasePublished": false,
+  "localSourceChecks": {
+    "status": "passed",
+    "configuration": "Release",
+    "sdk": "10.0.303",
+    "tfm": "net10.0",
+    "runtime": "10.0.11",
+    "architecture": 2,
+    "unit": 157,
+    "integration": 104,
+    "nativeMtp": 57,
+    "syntheticGate": 3,
+    "failed": 0,
+    "skipped": 0,
+    "templates": 8,
+    "contractChecks": 16,
+    "warnings": 0,
+    "errors": 0,
+    "hostBaselineEqual": true,
+    "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\source-checks-01\\runs\\development-e1d2f154127e4326b7f17b3959846ba2",
+    "limitation": "Local uncommitted source only; not actual-main CI or packaged RC/stable acceptance."
+  },
+  "packMetadataProbe": {
+    "status": "passed",
+    "version": "0.10.0-rc.1",
+    "packages": 5,
+    "internalDependencies": "exact same version",
+    "thirdPartyLocksUnchanged": true,
+    "versionOnlyLockFiles": 10,
+    "acceptedRc": false,
+    "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\pack-probe-02\\verification.json"
+  },
+  "firstPrCi": {
+    "pr": 15,
+    "head": "16d6ea200c71272002af5e5938b07c140f416532",
+    "run": 39809335859,
+    "attempt": 1,
+    "platforms": [
+      "windows-latest",
+      "ubuntu-latest"
+    ],
+    "status": "passed",
+    "perPlatform": {
+      "architecture": 2,
+      "unit": 157,
+      "integration": 104,
+      "nativeMtp": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    "nativeLogicalCrossPlatformCasesEqual": 57,
+    "actualMainAcceptance": false
+  },
+  "releaseTooling": {
+    "status": "source-prepared-clean-complete-build-pending",
+    "procedure": "docs/releases/0.10.0/release-tooling.md",
+    "acceptance": "docs/acceptance/20261023-workbench-release-tooling.md",
+    "candidateAccepted": false,
+    "stableCut": "reviewed central-version and lock commit, CI and fresh stable build",
+    "genericConsumerProbe": {
+      "cold": 4,
+      "moved": 4,
+      "failed": 0,
+      "skipped": 0,
+      "baselineAndPolicyBytesEqual": true
+    },
+    "ridLocksReviewed": 8,
+    "existingThirdPartyLockIdentitiesUnchanged": true,
+    "repairedNativeBundleVerified": false
+  }
+}

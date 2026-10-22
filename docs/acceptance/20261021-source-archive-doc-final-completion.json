@@ -1,0 +1,425 @@
+{
+  "local": {
+    "stagingEmpty": true,
+    "otherMaterialsIntentionallyUncommitted": true,
+    "branch": "main",
+    "indexSha256": "034c031e63dfcaeb263f0785315982f8e78b0af2c5d80a0346f21fa29d37e79c",
+    "formalDocumentsClean": true,
+    "head": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+    "originMain": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+    "visibleInputsBefore": 1926,
+    "ignoredInputs": 5478
+  },
+  "existingAcceptance": [
+    {
+      "nodeChecksPassed": true,
+      "stage": "pr",
+      "run": 39592521765,
+      "platform": "windows",
+      "templates": 8,
+      "configuration": "Release",
+      "unit": 157,
+      "checkout": "18bf2836b61e677283acf05b6e3bbfe6f5acb7bc",
+      "event": "pull_request",
+      "mtp": {
+        "passed": 57,
+        "original57NamesEqual": true,
+        "failed": 0,
+        "skipped": 0
+      },
+      "existingEvidenceOnly": true,
+      "head": "7e4c91d57186ce59035e51a12b68e615cd11261b",
+      "synthetic": 3,
+      "hostEqual": true,
+      "tfm": "net10.0",
+      "attempt": 1,
+      "architecture": 2,
+      "sdk": "10.0.401",
+      "integration": 95,
+      "contracts": 16,
+      "jobId": 119196743205
+    },
+    {
+      "nodeChecksPassed": true,
+      "stage": "pr",
+      "run": 39592521765,
+      "platform": "ubuntu",
+      "templates": 8,
+      "configuration": "Release",
+      "unit": 157,
+      "checkout": "18bf2836b61e677283acf05b6e3bbfe6f5acb7bc",
+      "event": "pull_request",
+      "mtp": {
+        "passed": 57,
+        "original57NamesEqual": true,
+        "failed": 0,
+        "skipped": 0
+      },
+      "existingEvidenceOnly": true,
+      "head": "7e4c91d57186ce59035e51a12b68e615cd11261b",
+      "synthetic": 3,
+      "hostEqual": true,
+      "tfm": "net10.0",
+      "attempt": 1,
+      "architecture": 2,
+      "sdk": "10.0.401",
+      "integration": 95,
+      "contracts": 16,
+      "jobId": 119196743023
+    },
+    {
+      "nodeChecksPassed": true,
+      "stage": "main",
+      "run": 39593509623,
+      "platform": "windows",
+      "templates": 8,
+      "configuration": "Release",
+      "unit": 157,
+      "checkout": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+      "event": "push",
+      "mtp": {
+        "passed": 57,
+        "original57NamesEqual": true,
+        "failed": 0,
+        "skipped": 0
+      },
+      "existingEvidenceOnly": true,
+      "head": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+      "synthetic": 3,
+      "hostEqual": true,
+      "tfm": "net10.0",
+      "attempt": 1,
+      "architecture": 2,
+      "sdk": "10.0.402",
+      "integration": 95,
+      "contracts": 16,
+      "jobId": 119200061384
+    },
+    {
+      "nodeChecksPassed": true,
+      "stage": "main",
+      "run": 39593509623,
+      "platform": "ubuntu",
+      "templates": 8,
+      "configuration": "Release",
+      "unit": 157,
+      "checkout": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+      "event": "push",
+      "mtp": {
+        "passed": 57,
+        "original57NamesEqual": true,
+        "failed": 0,
+        "skipped": 0
+      },
+      "existingEvidenceOnly": true,
+      "head": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+      "synthetic": 3,
+      "hostEqual": true,
+      "tfm": "net10.0",
+      "attempt": 1,
+      "architecture": 2,
+      "sdk": "10.0.402",
+      "integration": 95,
+      "contracts": 16,
+      "jobId": 119200061010
+    }
+  ],
+  "deliveryDistinctions": {
+    "packages": "Existing frozen packages retained, no rebuild or publication",
+    "ifx": "Existing active0.10.0-cl03.1 on cleanmainf58205b",
+    "remainingMaterials": "Uncommitted documentation, validation, operations and history retained",
+    "productSource": "43 files formally delivered in PR9/main3f61be0",
+    "documentation": "2 files formally delivered in PR10/main5e6c4cd, now locally adopted",
+    "web": "Local verified candidate only"
+  },
+  "authorization": "Final two-document delivery closeout review and records only: verify PR10 formal delivery, actualmain acceptance, local5e, original draft backups, remaining materials and044 history; preserve all changes/IFX/policies/packages/backups; no realIFX/CI/commit/push/release/cleanup/Registry4.",
+  "verification": {
+    "hostHash": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+    "historicalEvidenceFiles": 6140,
+    "retention": {
+      "backups": 6,
+      "ifx": {
+        "indexSha256": "f2538ac5ce15c77862830dd72afe6cc6d57c6d2a8c27ffd49319438123f940db",
+        "head": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+        "status": "",
+        "refs": "refs/codex/turn-diffs/checkpoints/40f95e4faf12c57d72e43daefa0f81b0/1e1a0251e793d7753943bbace55f017a/1790683751070/d9872ed3-4737-4e13-a034-99d999106a35 328bdbbd8b66e1346bd877e1f00864f85b8875f5 \nrefs/codex/turn-diffs/checkpoints/6d40cfe3cce5dc07475f1d29f0ec4360/22d8a4f434b17881e2b64e8eda627944/1791027265061/8454b3d8-5941-46a7-940d-9aa31900ea95 79558d7bf8d9a983b61fcbd6fa73f376d29664c9 \nrefs/codex/turn-diffs/checkpoints/b437f7e799486dab5f27e1d6df18d804/cbc53007d9d657d4009a71b9e78f6014/1791026301855/48726da3-87f4-46c2-9e1f-a47c62d581b7 79558d7bf8d9a983b61fcbd6fa73f376d29664c9 \nrefs/codex/turn-diffs/checkpoints/dae68a97cfa6d47d44d056da7e40cdcb/23168539bc4ecb6e255b3d1ade528714/1790939599561/ac27a016-eef2-40fa-aeed-dcb2e69c1c4c cb33bc1a1a132a7e7b72ca39807fcb5ce1ba693c \nrefs/heads/codex/cl01-portable-documentation-20261021-01 8a241b92239ca37fecb73876b0be97b6ee9bfdfb \nrefs/heads/codex/cl05-doc01-portable-guidance-20261021-01 7b372d586430d32044d3684ec4c912e0f52d5c95 \nrefs/heads/codex/ifx-before-5861f5a-20261020 cc06528ab17052baafa496df2a89f6cde9207384 \nrefs/heads/main f58205b2c1edd4887811d4feed553d61ebddd69a \nrefs/remotes/origin/HEAD f58205b2c1edd4887811d4feed553d61ebddd69a refs/remotes/origin/main\nrefs/remotes/origin/codex/cl01-portable-documentation-20261021-01 8a241b92239ca37fecb73876b0be97b6ee9bfdfb \nrefs/remotes/origin/codex/cl05-doc01-portable-guidance-20261021-01 7b372d586430d32044d3684ec4c912e0f52d5c95 \nrefs/remotes/origin/main f58205b2c1edd4887811d4feed553d61ebddd69a ",
+        "branch": "main"
+      },
+      "inputs": 908,
+      "protected": 568
+    },
+    "indices": [
+      {
+        "indexSha256": "5736dd3c7a1c337f6d1abb34ae68ccb9611b6d7dfe417cbdad2b194d7c824196",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-verify01-20261021-01",
+        "files": 136
+      },
+      {
+        "indexSha256": "2adc738a524e14825620d1fa19be6ffb5b23b73220b6b030c11707b43c89f739",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-pr-ci-20261021-01",
+        "files": 333
+      },
+      {
+        "indexSha256": "3e8bcb485e6b00d05038d634f3378940149270888c6c6065e7bcb1984c82d580",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-ci01-fix-20261021-01",
+        "files": 450
+      },
+      {
+        "indexSha256": "5f604f3792afa5c7c2360e7557c580b2e97c80d5b1a32a15331a4d0e0c93d600",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-main-ci-20261021-01",
+        "files": 422
+      },
+      {
+        "indexSha256": "3714f4f2165e8afadeb655bed27da6ab1b1a5dd94def27345943297082676333",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-local-main-update-20261021-01",
+        "files": 1951
+      },
+      {
+        "indexSha256": "ec8f4a67060e23cbb78e3f32698fa89a7b02175986fe29d4780a69597ca0e347",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-final-closeout-20261021-01",
+        "files": 15
+      },
+      {
+        "indexSha256": "a3014339c45385008b17518d8f6cf2ad150af7f72bf6cb9350d675c3ac5bffda",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-doc-tense-20261021-01",
+        "files": 32
+      },
+      {
+        "indexSha256": "9f90d104cb27e4092bdfa2e25885f8aa6363b91474221b70d781605a13e28605",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-doc-delivery-20261021-01",
+        "files": 846
+      },
+      {
+        "indexSha256": "c28f6c2d5abf9b9f38f40d6460939775a3a4d877c4510034ebf70deea1c60c80",
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-doc-local-update-20261021-01",
+        "files": 1955
+      }
+    ],
+    "merged43Retained": true,
+    "zeroSkipGuard": "if ($mtpPassed -lt 17 -or $mtpFailed -ne 0 -or $mtpSkipped -ne 0)"
+  },
+  "status": "TWO-DOCUMENT DELIVERY FINAL CLOSEOUT COMPLETE / LOCAL MAIN 5e6c4cd VERIFIED / ORIGINAL DRAFTS AND REMAINING MATERIALS RETAINED / NO NEW RUN OR RELEASE",
+  "remainingMaterials": {
+    "trackedModified": 3,
+    "untracked": 1275,
+    "notPartOfPr10": true,
+    "notAuthorizedForSubmission": true,
+    "groups": [
+      {
+        "count": 425,
+        "group": "acceptance-history"
+      },
+      {
+        "count": 6,
+        "group": "documentation-materials"
+      },
+      {
+        "count": 50,
+        "group": "other-retained-materials"
+      },
+      {
+        "count": 4,
+        "group": "plans-history"
+      },
+      {
+        "count": 793,
+        "group": "validation-operations"
+      }
+    ],
+    "manifest": "D:\\ArchSift-lab\\runs\\source-archive-doc-final-closeout-20261021-01\\remaining-materials.json",
+    "count": 1278
+  },
+  "backups": {
+    "history16": [
+      {
+        "blob": "d106999a5d61a98cfa714450a797ad38291e5362",
+        "sha256": "8fa78e1d6623cb9f2d33dcce16d8ff837e3becb9e2750e18dd2fdac6da26b846",
+        "path": "docs/acceptance/20261019-r3-ci-qualification.json"
+      },
+      {
+        "blob": "bc06185deff62677f557ade891383a74f35278d7",
+        "sha256": "87d1a4bb6867a36ae17eebdb720b81e09de6115515c24cb293c27bdefe7f9a40",
+        "path": "docs/acceptance/20261019-r3-ci-qualification.md"
+      },
+      {
+        "blob": "cba2952a55a03ac7abb1ee30ce479bd6d38dc744",
+        "sha256": "4aa685d60d6669b9bc4bc35576012dd0e04ad396fc35c69a7a37fbd385f4904c",
+        "path": "docs/acceptance/20261019-r3-crmapplication-complete-review.json"
+      },
+      {
+        "blob": "208e4337c775990f97d6a8c8f05655f5f727b9cb",
+        "sha256": "09c74c8d6da282c20d06db5af8005644cba662d2513cd3475e6cec8512c5e7f1",
+        "path": "docs/acceptance/20261019-r3-crmapplication-complete-review.md"
+      },
+      {
+        "blob": "b04bd273aa97e17af03d7e20c5d5ada912e91c0a",
+        "sha256": "d00f0be5b1a7dabb214109dfeac9e7e8bfd53e4147a3ff0e75abe8cffbaba806",
+        "path": "docs/acceptance/20261019-r3-crmapplication-trial.json"
+      },
+      {
+        "blob": "620468182a0e9b582ed7efbf9b6bb69330de4b33",
+        "sha256": "d798440bf188998bead51b4540a40212f5ce0e997f5f85fde4130bea7a275911",
+        "path": "docs/acceptance/20261019-r3-crmapplication-trial.md"
+      },
+      {
+        "blob": "4dad5541908a6ef1728d4d9f12ca777fcbfbd70b",
+        "sha256": "143e1248ccbbbd2eeec7fd6e065657e0085ee4e7500a52eac061415d8a39139a",
+        "path": "docs/acceptance/20261019-r3-formal-adoption.json"
+      },
+      {
+        "blob": "b02297a3201d37d82a82dff14cca801175885f2b",
+        "sha256": "4e680ef41666ab4bded6c3efb8c44981bf3aeee83c570cc84eb5f3e2ff106c54",
+        "path": "docs/acceptance/20261019-r3-formal-adoption.md"
+      },
+      {
+        "blob": "8a8ff0f88dc0e30ee769147298054cf50a1c6906",
+        "sha256": "8e9b639407eff8d9b487bea986a4ffb8dee4394182f45e34b0d98f3b938a61bf",
+        "path": "docs/acceptance/20261019-r3-human-ui.json"
+      },
+      {
+        "blob": "eb2811c56db20c3e95e836a1e85b83cc998ba4ba",
+        "sha256": "48aa10439256e05db1664d370d183015427cae8e6c4866c557a684b90926aee5",
+        "path": "docs/acceptance/20261019-r3-human-ui.md"
+      },
+      {
+        "blob": "8ccbe58cd6cd43d5403764ee14ad0839cba4bd92",
+        "sha256": "6e2ded0ffb69bd8994ca48eebdacc5bb8f440f9199ce839aed79f6d92de3af3c",
+        "path": "docs/acceptance/20261019-r3-main-ci.json"
+      },
+      {
+        "blob": "9d281549915eb04d88c72be404169f1ef4a5b258",
+        "sha256": "a8bb15ed42bebd7d573fc89cea8b2a624870abffe6950c0a37887b021d22bfc7",
+        "path": "docs/acceptance/20261019-r3-main-ci.md"
+      },
+      {
+        "blob": "82fa485a5e0e7d76db37406dd275738b8b6fd40a",
+        "sha256": "45a0f46e40d726426dfc137aadd06400cdda9d2f71e76b583453921918a15e3f",
+        "path": "docs/acceptance/20261019-r3-title-ui.json"
+      },
+      {
+        "blob": "c5b873f46ed8c9065cc1cfe87fe61c479ca4b8a5",
+        "sha256": "d9f8208ef06f80b7d32f5304c23063e60fdcea01555893512a2e28b2df8bb52a",
+        "path": "docs/acceptance/20261019-r3-title-ui.md"
+      },
+      {
+        "blob": "6998dd885205f9434d09a5de64a0f03bc6ec4557",
+        "sha256": "2b6a62c73e0fcbdbd7e05c9acd8fdede7103dbfe8c03ad666fa4d08cc38daa7e",
+        "path": "docs/acceptance/20261019-r3-web-resume.json"
+      },
+      {
+        "blob": "ee0e0156e2f107607ec59bfc326f869c38b9c389",
+        "sha256": "7a6ab486c08434b6f394bc4c7a6a8fa212adae0ab3f6d3a6db59f7599e3b12a5",
+        "path": "docs/acceptance/20261019-r3-web-resume.md"
+      }
+    ],
+    "newBundle": {
+      "heads": "3f61be0d4fa3b6c681cbdc5e223c68048126364d refs/heads/main\n044b67a684dcc6037169658ff9dfc5efbafad487 refs/heads/codex/archsift-before-main-3f61be0-20261021-01",
+      "sha256": "bebfc05e35a5c4e7b22a1e7a69271b6af9968cd052ba008495cb425b4ee093db",
+      "path": "D:\\ArchSift-lab\\runs\\source-archive-doc-local-update-20261021-01\\backup\\main3f-and-history044.bundle"
+    },
+    "historical18": [
+      "M\t.gitattributes",
+      "A\tdocs/acceptance/20261019-r3-ci-qualification.json",
+      "A\tdocs/acceptance/20261019-r3-ci-qualification.md",
+      "A\tdocs/acceptance/20261019-r3-crmapplication-complete-review.json",
+      "A\tdocs/acceptance/20261019-r3-crmapplication-complete-review.md",
+      "A\tdocs/acceptance/20261019-r3-crmapplication-trial.json",
+      "A\tdocs/acceptance/20261019-r3-crmapplication-trial.md",
+      "A\tdocs/acceptance/20261019-r3-formal-adoption.json",
+      "A\tdocs/acceptance/20261019-r3-formal-adoption.md",
+      "A\tdocs/acceptance/20261019-r3-human-ui.json",
+      "A\tdocs/acceptance/20261019-r3-human-ui.md",
+      "A\tdocs/acceptance/20261019-r3-main-ci.json",
+      "A\tdocs/acceptance/20261019-r3-main-ci.md",
+      "A\tdocs/acceptance/20261019-r3-title-ui.json",
+      "A\tdocs/acceptance/20261019-r3-title-ui.md",
+      "A\tdocs/acceptance/20261019-r3-web-resume.json",
+      "A\tdocs/acceptance/20261019-r3-web-resume.md",
+      "M\tdocs/plans/20261006-archsift-implementation-plan.md"
+    ],
+    "originalVisibleRawBackups": 1924,
+    "oldBundle": {
+      "heads": "044b67a684dcc6037169658ff9dfc5efbafad487 refs/heads/main",
+      "bundle": "D:\\ArchSift-lab\\runs\\source-archive-local-main-update-20261021-01\\backup\\history-main-044b67a.bundle",
+      "sha256": "2de4fa94c37b69d3ebfdbe467efb2571814ec5d3d7fd3a7359c59e125d46032b",
+      "allWorkspaceBackups": 1916,
+      "head": "044b67a684dcc6037169658ff9dfc5efbafad487",
+      "historical18": [
+        "M\t.gitattributes",
+        "A\tdocs/acceptance/20261019-r3-ci-qualification.json",
+        "A\tdocs/acceptance/20261019-r3-ci-qualification.md",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-complete-review.json",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-complete-review.md",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-trial.json",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-trial.md",
+        "A\tdocs/acceptance/20261019-r3-formal-adoption.json",
+        "A\tdocs/acceptance/20261019-r3-formal-adoption.md",
+        "A\tdocs/acceptance/20261019-r3-human-ui.json",
+        "A\tdocs/acceptance/20261019-r3-human-ui.md",
+        "A\tdocs/acceptance/20261019-r3-main-ci.json",
+        "A\tdocs/acceptance/20261019-r3-main-ci.md",
+        "A\tdocs/acceptance/20261019-r3-title-ui.json",
+        "A\tdocs/acceptance/20261019-r3-title-ui.md",
+        "A\tdocs/acceptance/20261019-r3-web-resume.json",
+        "A\tdocs/acceptance/20261019-r3-web-resume.md",
+        "M\tdocs/plans/20261006-archsift-implementation-plan.md"
+      ]
+    },
+    "allPriorBackupsPreserved": true
+  },
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\source-archive-doc-final-closeout-20261021-01",
+  "historicalNotes": [
+    "Prior plan, acceptance records and PR delivery-time body remain historical snapshots. This record closes only the authorized two-document delivery scope.",
+    "Existing actualmain CI evidence is bound to5e6c4cd and its original attempt1; this closeout does not create a new execution result."
+  ],
+  "schemaVersion": 1,
+  "cl05Closed": true,
+  "acceptanceRerun": false,
+  "authorizedScopeOpenItems": [],
+  "sourceArchiveClosed": true,
+  "authorizedScopeClosed": true,
+  "formalDelivery": {
+    "documents": [
+      {
+        "originalSha256": "b78676f2498ab5c285b2d638544d7199d39b49be7edd67467ad841ff349fd644",
+        "originalDraftBackup": "D:\\ArchSift-lab\\runs\\source-archive-doc-local-update-20261021-01\\backup\\workspace\\README.md",
+        "workingClean": true,
+        "formalSha256": "eb38df55634daf977ca29b6d683ce357651815e353d4eda5e1314e83764feeb3",
+        "path": "README.md",
+        "formalBlob": "4053b87ad65a7c7b0acb0613a378ba1dd17b296b"
+      },
+      {
+        "originalSha256": "d8542c7e4807dfd49d8d4e9ddd0f9d65b26e15c137a637919e3e9ab7b60c80d3",
+        "originalDraftBackup": "D:\\ArchSift-lab\\runs\\source-archive-doc-local-update-20261021-01\\backup\\workspace\\docs\\reports.md",
+        "workingClean": true,
+        "formalSha256": "b46fd63d85af76f5544ad8a6ae041bfa694c159d24250f388ca02c713278b7a3",
+        "path": "docs/reports.md",
+        "formalBlob": "c9f706120b11f17eb4dcb61621a6feceeff73bec"
+      }
+    ],
+    "actualMain": "5e6c4cdfac3f33e2075e06473cc87fb6db3c8f5b",
+    "base": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+    "pr": 10,
+    "tree": "62b9275bdd2302414ee13a9d1bf9b1d8c19aaac7",
+    "url": "https://github.com/von12549/ArchSift/pull/10",
+    "deletions": 0,
+    "head": "7e4c91d57186ce59035e51a12b68e615cd11261b",
+    "insertions": 12,
+    "files": [
+      "README.md",
+      "docs/reports.md"
+    ]
+  },
+  "date": "2026-10-21",
+  "noNew": {
+    "dotnet": true,
+    "realIfx": true,
+    "ci": true,
+    "registry4": true,
+    "push": true,
+    "cleanup": true,
+    "publish": true,
+    "commit": true
+  },
+  "projectWideClosureClaimed": false
+}

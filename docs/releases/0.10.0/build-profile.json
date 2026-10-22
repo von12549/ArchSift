@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "versionInput": "Directory.Build.props/ArchSiftReleaseVersion",
+  "versionCutPolicy": "Release tooling consumes the central version unchanged. Cut stable 0.10.0 in a reviewed source/lock commit after RC gates, then build and qualify stable bytes afresh.",
+  "sdk": "10.0.303",
+  "runtime": "10.0.11",
+  "tfm": "net10.0",
+  "rid": "win-x64",
+  "configuration": "Release",
+  "networkRestore": false,
+  "productPackages": [
+    "ArchSift.Contracts",
+    "ArchSift.Core",
+    "ArchSift.ArchUnit",
+    "ArchSift.Testing",
+    "ArchSift.Cli"
+  ],
+  "genericRunner": {
+    "id": "xunit.v3",
+    "version": "4.0.1",
+    "format": "mtp-ctrf"
+  }
+}

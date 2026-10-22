@@ -1,38 +1,38 @@
-# W10 0.2.0 报告接入验收
+# W10 0.2.0 report-integration acceptance
 
-日期：2026-10-07（Australia/Sydney）。状态：COMPLETE / PASS；正式发布资产另行构建、校验和登记，不把工作区候选当作正式资产。
+Date: 2026-10-07 (Australia/Sydney). Status: COMPLETE / PASS. Formal release assets are built, verified and registered separately; working candidates are not formal assets.
 
-发布前远程 CI 补充：首次 run [37509047659](https://github.com/von12549/ArchSift/actions/runs/37509047659) 在两平台均真实失败；仅 net8/net9 fixture 的 SDK 身份断言失败。GitHub runner 同时预装 9.0.318，fixture 的 latestPatch 正确选择了新 patch，而断言仍要求 9.0.314。修正为 fixture 内 rollForward=disable，以落实测试明确要求的固定 9.0.314；不改产品 global.json，不放宽结果断言，不更新宿主 SDK/PATH。两平台宿主哈希仍相等，失败日志/TRX/artifact 保留；发布暂停到修复后的远程检查通过。
+Pre-release remote-CI update: the first [run37509047659](https://github.com/von12549/ArchSift/actions/runs/37509047659) actually failed on both platforms, solely in the net8/net9 fixture SDK-identity assertion. GitHub runners also had 9.0.318 installed. The fixture's latestPatch correctly selected it while the assertion required 9.0.314. The fix set fixture rollForward=disable to enforce its explicitly required 9.0.314, without changing product global.json, weakening assertions or updating host SDK/PATH. Both host hashes still matched. Failed logs/TRX/artifacts remained, and release paused until repaired remote checks passed.
 
-第二轮 [37509769540](https://github.com/von12549/ArchSift/actions/runs/37509769540)：两平台 net9 已通过，仅 net8 离线 restore 缺少固定 SDK 所需 8.0.27 targeting packs，准确失败而未回退联网。修复是在一次性 CI 的显式联网准备阶段，从实际 SDK 9.0.314 的 KnownFrameworkReferences 读取并固定所需 pack，下载到 runner temp feed；合成测试只读取该明确本地 feed，产品仍默认离线且不忽略失败。另按官方相对 URI 语义补充 SARIF originalUriBaseIds；schema 结构校验之外同时验证消费定位基准。
+Second [run37509769540](https://github.com/von12549/ArchSift/actions/runs/37509769540): net9 passed on both platforms; only net8 offline restore failed accurately because the fixed SDK needed missing 8.0.27 targeting packs, without network fallback. The repair explicitly prepared the ephemeral CI feed online, deriving/pinning required packs from actual SDK 9.0.314 KnownFrameworkReferences into runner temp. Synthetic tests read only that explicit local feed; the product remained offline by default without ignored failures. SARIF originalUriBaseIds was also added according to official relative-URI semantics, checking consumer location bases as well as schema structure.
 
-补充修复最终通过：[37511008332](https://github.com/von12549/ArchSift/actions/runs/37511008332) 与最终 NoProfile 提交的 [37511164383](https://github.com/von12549/ArchSift/actions/runs/37511164383) 均 Windows/Linux 各 109/109，全部无失败/跳过，覆盖 net8/net9/net10。最终 TRX 已下载到 `D:\ArchSift-lab\evidence\github-ci-37511164383`；前两轮失败 artifacts 分别归档，不删除。最终本机 URI 修复回归为 `development-582cecc73cf04997840c72068c635f43`（109/109），Docker 为 `linux-c8d019cdce9b452c87e86a55613596df`（107/107、core parity=true），宿主哈希始终相等。
+The repaired [run37511008332](https://github.com/von12549/ArchSift/actions/runs/37511008332) and final NoProfile-commit [run37511164383](https://github.com/von12549/ArchSift/actions/runs/37511164383) each passed 109/109 on Windows/Linux, zero failed/skipped, covering net8/net9/net10. Final TRX files were downloaded to `D:\ArchSift-lab\evidence\github-ci-37511164383`; both earlier failed artifact sets were archived separately without deletion. Final local URI-fix regression was `development-582cecc73cf04997840c72068c635f43` (109/109); Docker was `linux-c8d019cdce9b452c87e86a55613596df` (107/107, core parity=true). Host hashes always matched.
 
-正式固定资产源 commit `528ebb1237256018e3ca556919d25908c9b5c92d`，ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`；产物根 `release-bcb316f692f44725850ad6867c4bc6ab`、最终新解压 `smoke-b51e9d52f7e14f5783b452965f2cf627`。607 payload 条目 + manifest，逐字节/路径/文件集合/许可、native CLI/Worker/UI、无 SDK changes、普通/比较 SARIF 官方 schema 全通过；五次 113–130ms、231–263ms、约 27–34MiB，未超冻结阈值。整个 W09/W10 的 User/Machine、Process PATH 与四个 Profiles 同初始 W09 基线一致。包基于 committed 产品输入；另有未确认 W08 反馈文档未提交并保留，未纳入 ZIP，因此全仓 sourceDirty=true 而 productSourceDirty=false。最终接受状态由 [固定发布验收](../releases/0.2.0/acceptance.json)绑定，冻结 manifest 不改写。
+Formal fixed-asset source commit `528ebb1237256018e3ca556919d25908c9b5c92d`, ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`; output root `release-bcb316f692f44725850ad6867c4bc6ab`, final fresh extraction `smoke-b51e9d52f7e14f5783b452965f2cf627`. All 607 payload entries plus manifest passed byte/path/file-set/license, native CLI/Worker/UI, no-SDK changes and official ordinary/comparison SARIF-schema checks. Five runs measured 113-130ms, 231-263ms and approximately 27-34MiB, below frozen thresholds. W09/W10 User/Machine, Process PATH and four Profiles matched the initial W09 baseline. Packages used committed product inputs; unconfirmed W08 feedback documentation stayed uncommitted/outside the ZIP, so whole-source sourceDirty=true but productSourceDirty=false. [Fixed release acceptance](../releases/0.2.0/acceptance.json) binds final acceptance; frozen manifests remain unchanged.
 
-## 当前源码验证
+## Source verification at this historical stage
 
-- Windows x64 / SDK 10.0.303 / net10.0：Release 109/109（78 unit、29 integration、2 architecture），零编译警告/错误，运行 `development-76dcf0d5e3024406aa9b1350139c91df`；最终 Debug/静态安全复核同为 109/109，运行 `development-3e2011b369e84a97980c17b387bb2c88`。net8/net9 真实程序集 fixture 使用已安装 SDK 9.0.314/packs。
-- Linux Docker / SDK 10.0.401 / net10.0 / Release：107/107（78 unit、27 integration、2 architecture），离线 locked restore、编译、真实 ArchUnitNET/隔离构建、CLI/HTTP/比较均通过。仅固定 SDK 9.0.314 的 net8/net9 两例未在该镜像重复，Windows 已验证；不将它写成 Linux 109 项通过。
-- Linux 最终运行 `D:\ArchSift-lab\runs\linux-953b0ab394714fc3941ad42286f7fa6f`，result.json SHA-256 `b543a9f4a36f569f6ac256de9577c7bd59a0d37aca311998a0472949b7096e8e`。容器按已存在镜像 ID 固定，禁止网络/pull、只读根、cap-drop ALL，源码副本与输出在外置 lab。同一两项目违规输入的 Windows/Linux 核心 JSON（除本机路径/时间元数据）逐字段相等，包括 inputs、findings、coverage、状态及引擎身份。
-- 每次 .NET 检查及最终 User/Machine、Process PATH、四个 Profile 哈希相等。Linux 的 workload 提示保留，未依提示运行更新或自动修复。
+- Windows x64 / SDK 10.0.303 / net10.0: Release 109/109 (78 unit, 29 integration, 2 architecture), zero build warnings/errors, run `development-76dcf0d5e3024406aa9b1350139c91df`. Final Debug/static-safety regression also 109/109, run `development-3e2011b369e84a97980c17b387bb2c88`. Actual net8/net9 assembly fixtures used installed SDK 9.0.314/packs.
+- Linux Docker / SDK 10.0.401 / net10.0 / Release: 107/107 (78 unit, 27 integration, 2 architecture). Offline locked restore, build, real ArchUnitNET/isolated-build, CLI/HTTP/comparison passed. The two fixed-SDK 9.0.314 net8/net9 fixtures were not repeated in that image and were verified on Windows; do not report Linux 109 passes.
+- Final Linux run `D:\ArchSift-lab\runs\linux-953b0ab394714fc3941ad42286f7fa6f`, result.json SHA-256 `b543a9f4a36f569f6ac256de9577c7bd59a0d37aca311998a0472949b7096e8e`. The container pinned an existing image ID, disabled network/pull, used a read-only root/cap-drop ALL and external source/output copies. Windows/Linux core JSON for the same two-project violating input matched field by field except machine-path/time metadata, including inputs/findings/coverage/status/engine identity.
+- User/Machine environment, Process PATH and four Profile hashes matched every .NET check and completion. Linux workload notices were retained without following them to update or automatically repair anything.
 
-## SARIF 与 CI
+## SARIF and CI
 
-- Analysis 与 comparison 导出 SARIF 2.1.0；CLI 配置、UI 下载、错误/例外/无映射及 fingerprint fixtures 通过。只有全面可比结果使用 baselineState；partial/policy change 不伪造解决。JSON 仍为权威，HTML/SARIF 为投影。
-- OASIS 官方 schema 下载到外置 evidence；SHA-256 `ad6db49878699b091f3eeb765b6e29e92a34bad4da88664d000c923b549c3a25`。Windows/Linux 普通报告、原生包普通/比较 SARIF 均通过独立 PowerShell Test-Json。
-- 自身 Windows/Linux CI 和 samples/ci workflow_dispatch 样例以官方 action commit SHA 固定；actionlint 通过。首轮 runner context 作用域错误被真实检测并修正。当前只记录本地 YAML 校验；远程 CI 是否通过以实际 run 为准。
-- 样例不写消费 CI/required checks，不启用 code scanning；违规 exit 0，错误 2/3/4/130 保留且 always 上传 artifact，不用 continue-on-error 隐藏失败。
+- Analysis/comparison export SARIF 2.1.0. CLI configuration, UI downloads, error/exception/unmapped and fingerprint fixtures passed. baselineState is used only for fully comparable results; partial/policy changes never fabricate resolution. JSON remains authoritative; HTML/SARIF are projections.
+- The official OASIS schema was downloaded to external evidence, SHA-256 `ad6db49878699b091f3eeb765b6e29e92a34bad4da88664d000c923b549c3a25`. Independent PowerShell Test-Json verified Windows/Linux ordinary reports and native-package ordinary/comparison SARIF.
+- Product Windows/Linux CI and samples/ci workflow_dispatch example pin official action commit SHAs. actionlint passed. The first runner-context-scope error was actually detected/fixed. This stage originally recorded local YAML checks only; remote-CI status depends on actual runs.
+- The example changes neither consumer CI/required checks nor code-scanning opt-in. Violation exit 0 and errors 2/3/4/130 remain, with always-uploaded artifacts and no continue-on-error hiding failures.
 
-## 候选与 UI
+## Candidate and UI
 
-- 先提交 `63419d4` 冻结 W10 固定输入预算，再测候选。Windows 自包含原型 ZIP SHA-256 `3991e436833bc3936a919fcf46c503a2e29f6f7fc587506c2e1d540731f3e966`，位于 `D:\ArchSift-lab\packages\release-c13e99ee76874803aa0c21f98efd7808`；它基于未提交 W10 工作区，只作为功能候选证据，禁止作为最终上传资产。
-- 新解压 smoke `smoke-409d0e8f22e74381975c6fac491f4817`：版本、许可/hash/字节/文件集合、native CLI/Worker/UI、缺失 Git exit 3、只含 Git 而无 SDK PATH 的 changes（新增 1 / 既有 100）、SARIF/schema、参数错误、无绑定 exit 4 均通过。
-- 五次候选分析 111–139ms，墙钟 231–269ms，采样峰值约 29–33MiB；低于 700ms/1000ms/64MiB。仅声明链输入，不承诺 Git 快照/IFX/构建性能，也不声称强制 cold disk。
-- 最终真实浏览器合成运行 `w09-ui-a028b68eaacd4a80a4dd18afbab8dd23` 显示已知新增违规及 JSON/HTML/SARIF 三下载入口，[截图](w10/sarif-comparison.png)。认证 HTTP 已实际下载 SARIF。预览 PID 经配置/入口精确确认后停止，端口 12320 listener=0，preview-host-state-equal=True。未替独立操作员打分，未运行真实 Guard/IFX。
+- Commit `63419d4` first froze W10's fixed-input budget, then the candidate was measured. Windows self-contained prototype ZIP SHA-256 `3991e436833bc3936a919fcf46c503a2e29f6f7fc587506c2e1d540731f3e966` was at `D:\ArchSift-lab\packages\release-c13e99ee76874803aa0c21f98efd7808`. It used an uncommitted W10 worktree and is functional-candidate evidence only, prohibited as the final upload.
+- Fresh extraction smoke `smoke-409d0e8f22e74381975c6fac491f4817` passed version/license/hash/byte/file-set, native CLI/Worker/UI, missing-Git exit 3, changes with Git but no SDK PATH (one new/100 existing), SARIF/schema, invalid arguments and unbound exit 4 checks.
+- Five candidate analyses measured 111-139ms, wall 231-269ms and sampled peak approximately 29-33MiB, below 700ms/1000ms/64MiB. These declaration-chain inputs promise neither Git-snapshot/IFX/build performance nor forcibly cold disk.
+- Final actual synthetic browser run `w09-ui-a028b68eaacd4a80a4dd18afbab8dd23` showed a known new violation and JSON/HTML/SARIF download actions; see the [screenshot](w10/sarif-comparison.png). Authenticated HTTP actually downloaded SARIF. The exact preview PID was confirmed by configuration/entry before stopping: port 12320 listener=0 and preview-host-state-equal=True. No independent operator score or real Guard/IFX run was supplied.
 
-## 发布边界
+## Release boundaries
 
-用户选择 MIT；第三方库与 .NET runtime 完整 notices 不变。正式包将从已提交产品输入构建，source commit、产品输入哈希、逐文件 manifest 和 ZIP SHA-256 固定后再验收/上传。冻结候选不改写。W08 与失败/中断历史全部保留。
+The user selected MIT; complete third-party library/.NET runtime notices stayed unchanged. Formal packages would build from committed product inputs, then fix source commit, product-input hash, per-file manifest and ZIP SHA-256 before acceptance/upload. Frozen candidates were not rewritten. W08 and failed/interrupted history remained.
 
-NuGet tool 分发、W11 allowlist/UX、Linux Web UI、传递包/版本范围、网络漏洞审计、fail-on、强制 CI 不在本轮交付内。没有发布前自动新增消费项目策略。
+NuGet-tool distribution, W11 allowlist/UX, Linux Web UI, transitive-package/version-range rules, online vulnerability auditing, fail-on and mandatory CI were outside this delivery. No consumer policy was automatically added before release.

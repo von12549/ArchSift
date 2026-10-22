@@ -1,9 +1,9 @@
-# IFX 架构测试接入样例（LT02A）
+# IFX architecture-test integration example (LT02A)
 
-此目录保存 LT02A 在独立 IFX 副本中实际构建、运行的新增测试代码和机制验证规则。`lt02a-mechanism.json` 只验证 JSON → ArchUnitNET → xUnit → MTP/CTRF → 门禁的链路；它不是已批准的 IFX B 类政策。
+This directory preserves the additional test code and mechanism-validation rules actually built and run in an independent IFX copy during LT02A. `lt02a-mechanism.json` validates only the JSON -> ArchUnitNET -> xUnit -> MTP/CTRF -> gate chain. It is not approved IFX Class B policy.
 
-被验证的 IFX 源提交为 `cc06528ab17052baafa496df2a89f6cde9207384`。将两个文件复制到该提交的独立副本 `tests/Architecture/IFX.Architecture.Tests/`，并在原测试项目末尾增加指向本仓库 `src/ArchSift.Testing/ArchSift.Testing.csproj` 的 `ProjectReference`。保留原来的全部 16 个 `ProjectReference`、三个原测试类、Theory 数据及五秒断言。IFX 副本根目录的 `NuGet.config` 清空隐式包源；restore 命令显式指定获准的本机离线源。不要在原 IFX checkout 或安装上应用此样例。
+The verified IFX source commit was `cc06528ab17052baafa496df2a89f6cde9207384`. Copy the two files into `tests/Architecture/IFX.Architecture.Tests/` in an independent copy of that commit and append a `ProjectReference` to this repository's `src/ArchSift.Testing/ArchSift.Testing.csproj` in the original test project. Preserve all 16 original `ProjectReference` entries, three original test classes, Theory data and the five-second assertion. Clear implicit package sources in the copy's root `NuGet.config`; restore explicitly selects the approved local offline source. Do not apply this example to the original IFX checkout or installation.
 
-门禁配置须设置 `runnerFormat: "mtp-ctrf"`，`testProject` 指向原 `IFX.Architecture.Tests.csproj`，`originalBaseline` 指向 [`docs/decisions/20261015-lightweight-ifx-original-case-ids.json`](../../docs/decisions/20261015-lightweight-ifx-original-case-ids.json)，`originalBaselineSha256` 使用该文件的实际 SHA-256。`rulesets` 指向副本内的规则文件；运行目录和包缓存放在源根外。协调器对子进程强制 `IFX_UPDATE_SNAPSHOTS=0`。正式 B 类规则需另行审查和启用，不由此样例自动采用。
+Set `runnerFormat: "mtp-ctrf"`, point `testProject` at the original `IFX.Architecture.Tests.csproj`, and point `originalBaseline` at [`docs/decisions/20261015-lightweight-ifx-original-case-ids.json`](../../docs/decisions/20261015-lightweight-ifx-original-case-ids.json), with that file's actual SHA-256 in `originalBaselineSha256`. `rulesets` points to rules in the copy; keep run directories and package caches outside source. The coordinator forces `IFX_UPDATE_SNAPSHOTS=0` in child processes. Formal Class B rules need separate review/enablement and are not adopted automatically by this example.
 
-实际机器结果和输入身份见 [`LT02A 验收记录`](../../docs/acceptance/20261015-lightweight-lt02a-ifx-gate.md)。
+Actual machine results and input identities are recorded in [LT02A acceptance](../../docs/acceptance/20261015-lightweight-lt02a-ifx-gate.md).
