@@ -144,7 +144,7 @@ public static class Program
         try
         {
             using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
-            var url = "https://github.com/von12549/ArchSift/releases/download/v" + version + "/archsift-" + version + "-win-x64.zip";
+            var url = "https://github.com/von12549/ArchSift/releases/download/v" + version + "/" + PackageReader.ReleaseArchiveName(version);
             using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellation); response.EnsureSuccessStatusCode();
             if (response.Content.Headers.ContentLength > PackageReader.MaximumZipBytes) throw new IOException("Download exceeds 1 GiB.");
             Directory.CreateDirectory(Path.GetDirectoryName(output)!); SetupFiles.Safe(staging);

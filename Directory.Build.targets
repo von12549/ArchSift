@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'ArchSift.Contracts' Or '$(MSBuildProjectName)' == 'ArchSift.Core' Or '$(MSBuildProjectName)' == 'ArchSift.ArchUnit' Or '$(MSBuildProjectName)' == 'ArchSift.Testing' Or '$(MSBuildProjectName)' == 'ArchSift.Cli'">
+    <PackageId>$(MSBuildProjectName)</PackageId>
+    <PackageVersion>$(ArchSiftReleaseVersion)</PackageVersion>
+    <Authors>ArchSift contributors</Authors>
+    <Description>ArchSift architecture analysis and architecture-test tooling.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/von12549/ArchSift</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/von12549/ArchSift</PackageProjectUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'ArchSift.Cli'">
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>archsift</ToolCommandName>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'ArchSift.Contracts' Or '$(MSBuildProjectName)' == 'ArchSift.Core' Or '$(MSBuildProjectName)' == 'ArchSift.ArchUnit' Or '$(MSBuildProjectName)' == 'ArchSift.Testing' Or '$(MSBuildProjectName)' == 'ArchSift.Cli'">
+    <None Include="$(MSBuildThisFileDirectory)docs/package-readme.md" Pack="true" PackagePath="README.md" />
+    <None Include="$(MSBuildThisFileDirectory)RELEASE_NOTES.md" Pack="true" PackagePath="RELEASE_NOTES.md" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <!-- NuGet Pack consumes ProjectVersion as a range; product packages must stay in one release. -->
+  <Target Name="PinArchSiftPackageDependencies" AfterTargets="_GetProjectReferenceVersions">
+    <ItemGroup>
+      <_ProjectReferencesWithVersions Update="@(_ProjectReferencesWithVersions)" Condition="$([System.IO.Path]::GetFileNameWithoutExtension('%(_ProjectReferencesWithVersions.Identity)').StartsWith('ArchSift.'))">
+        <ProjectVersion>[$(ArchSiftReleaseVersion)]</ProjectVersion>
+      </_ProjectReferencesWithVersions>
+    </ItemGroup>
+  </Target>
+</Project>

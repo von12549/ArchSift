@@ -13,8 +13,18 @@ public static class PackageReader
     public const int MaximumEntries = 10000;
     public static void Version(string version)
     {
-        if (!System.Text.RegularExpressions.Regex.IsMatch(version, "^\\d+\\.\\d+\\.\\d+$")) throw new ConfigurationException("A stable semantic version is required.");
+        if (!System.Text.RegularExpressions.Regex.IsMatch(version, "^(?:\\d+\\.\\d+\\.\\d+|0\\.10\\.0-rc\\.[1-9]\\d*)$"))
+            throw new ConfigurationException("A stable semantic version or supported 0.10.0 release candidate is required.");
     }
+    public static bool IsWorkbenchVersion(string version) => version == "0.10.0" ||
+        System.Text.RegularExpressions.Regex.IsMatch(version, "^0\\.10\\.0-rc\\.[1-9]\\d*$");
+
+    public static string ReleaseArchiveName(string version)
+    {
+        Version(version);
+        return (IsWorkbenchVersion(version) ? "archsift-workbench-" : "archsift-") + version + "-win-x64.zip";
+    }
+
     public static void Compatibility(PackageManifest manifest, Func<string, byte[]> read)
     {
         if (manifest.SchemaVersion != 1 || manifest.Rid != "win-x64" || !manifest.SelfContained || manifest.ProductSourceDirty)
@@ -26,7 +36,8 @@ public static class PackageReader
         if (manifest.Version != "0.4.0")
         {
             if (!manifest.Version.StartsWith("0.5.", StringComparison.Ordinal) && !manifest.Version.StartsWith("0.6.", StringComparison.Ordinal) &&
-                !manifest.Version.StartsWith("0.7.", StringComparison.Ordinal) && !manifest.Version.StartsWith("0.8.", StringComparison.Ordinal))
+                !manifest.Version.StartsWith("0.7.", StringComparison.Ordinal) && !manifest.Version.StartsWith("0.8.", StringComparison.Ordinal) &&
+                !IsWorkbenchVersion(manifest.Version))
                 throw new ConfigurationException("Unknown package compatibility; migration is unsupported.");
             var compatibility = SetupFiles.Parse<SetupCompatibility>(read("setup-compatibility.json"));
             if (compatibility != new SetupCompatibility(1, 1, 1, 1)) throw new ConfigurationException("Unsupported config/library/chain schema migration.");

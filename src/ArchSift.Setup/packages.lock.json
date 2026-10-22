@@ -8,7 +8,7 @@
       "archsift.core": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Contracts": "[0.9.0-dev, )"
+          "ArchSift.Contracts": "[0.10.0-rc.1, )"
         }
       }
     }
