@@ -1,0 +1,239 @@
+{
+  "status": "published-and-download-verified",
+  "utc": "2026-10-22T21:39:47.367289+00:00",
+  "releaseUrl": "https://github.com/von12549/ArchSift/releases/tag/v0.10.0",
+  "releaseId": 421227281,
+  "tag": "v0.10.0",
+  "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
+  "sourceTree": "cb39393645daa2467ac63b84fd9448834946eef5",
+  "publishedAt": "2026-10-22T21:39:24Z",
+  "draft": false,
+  "prerelease": false,
+  "checksumCoverage": 10,
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "timezone": "Australia/Sydney",
+  "displayName": "ArchSift Workbench",
+  "version": "0.10.0",
+  "recordedUtc": "2026-10-22T21:44:23.755778+00:00",
+  "assets": [
+    {
+      "file": "acceptance.json",
+      "bytes": 11183,
+      "sha256": "84dd130cb0ebf8535a1519e703f4f18a3da377cc5291cd3f655e8e235be0c30f",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/acceptance.json",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "archsift-workbench-0.10.0-offline-feed.zip",
+      "bytes": 16379467,
+      "sha256": "ddb9fdbae3bea5cbe6c8f09134180cbde8e0fefb6c4453122c9dbd2cb13d7df7",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/archsift-workbench-0.10.0-offline-feed.zip",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "archsift-workbench-0.10.0-win-x64.zip",
+      "bytes": 90124589,
+      "sha256": "015f6e055458cbc66a91e2a899ea0055c33389a3862581980dec00a7ba94a7b2",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/archsift-workbench-0.10.0-win-x64.zip",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "ArchSift.ArchUnit.0.10.0.nupkg",
+      "bytes": 30552,
+      "sha256": "a5c0839b0bea185e2261f5fb0dbcc2d80314a98d97a77d5b6d46c5e98bfd5388",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/ArchSift.ArchUnit.0.10.0.nupkg",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "ArchSift.Cli.0.10.0.nupkg",
+      "bytes": 1260886,
+      "sha256": "601c3710dd387f4a5fd33e539d35bd1f0fc36ff8f6a4b65330b3afe346acc17f",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/ArchSift.Cli.0.10.0.nupkg",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "ArchSift.Contracts.0.10.0.nupkg",
+      "bytes": 90098,
+      "sha256": "11416f06eae4738f61fada3b42dc43826e95728a0db7984637a16bb137a06eb2",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/ArchSift.Contracts.0.10.0.nupkg",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "ArchSift.Core.0.10.0.nupkg",
+      "bytes": 161005,
+      "sha256": "7fb3825ad5c848ef73f7b76bdbce6330507963cc222c620a82b873d248420390",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/ArchSift.Core.0.10.0.nupkg",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "ArchSift.Setup.exe",
+      "bytes": 74497834,
+      "sha256": "707be7b6d2948382db53d666262b134b0b5e33205c02f9b4ea769d74c919bb37",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/ArchSift.Setup.exe",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "ArchSift.Testing.0.10.0.nupkg",
+      "bytes": 25844,
+      "sha256": "527b5634b18a57bccc7b9e21e5df95b91376874a85c896077e86f48f258ca7fe",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/ArchSift.Testing.0.10.0.nupkg",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "artifact-manifest.json",
+      "bytes": 2832,
+      "sha256": "94ec3b7bbaba7adde760d8e7ab86cf97a9e531dae6769848087ae568f9120651",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/artifact-manifest.json",
+      "anonymous": true,
+      "httpStatus": 200
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 955,
+      "sha256": "09fb2758e4e1a5515a45f21a4a006a06678e8d4e8218de935b7b1a95c0267cc4",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.0/SHA256SUMS.txt",
+      "anonymous": true,
+      "httpStatus": 200
+    }
+  ],
+  "sourceArchives": [
+    {
+      "format": "zip",
+      "url": "https://codeload.github.com/von12549/ArchSift/zip/refs/tags/v0.10.0",
+      "bytes": 3101427,
+      "sha256": "3a95ee33c56a949aeac181d8e7ac6f91cfd6f3be548a91d326d3e4acc7bc1097",
+      "trackedFilesEqualGitBlobs": 717,
+      "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4"
+    },
+    {
+      "format": "tar.gz",
+      "url": "https://codeload.github.com/von12549/ArchSift/tar.gz/refs/tags/v0.10.0",
+      "bytes": 2576097,
+      "sha256": "020e31c63e74bef276b33b1e37021e7bc0cd07e5e7c70f9304f1472a4c5a6814",
+      "trackedFilesEqualGitBlobs": 717,
+      "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4"
+    }
+  ],
+  "sourceDocumentation": {
+    "englishAndLocalLinksPassed": true,
+    "localAnchorsPassed": true
+  },
+  "humanAcceptance": {
+    "status": "accepted-by-user",
+    "basis": "Direct user response after reviewing the exact stable payload in both prepared sessions.",
+    "behaviorAsExpected": true,
+    "usabilityRatingOutOf5": 4,
+    "defects": [],
+    "untestedItems": [],
+    "safeShutdownObservedBothSessions": true,
+    "machineCloseout": {
+      "bothCliExitCodes": 0,
+      "bothListenersClosed": true,
+      "hostHashEqual": true,
+      "protectedFilesEqual": 2809
+    },
+    "retainedOriginalResponseSha256": "966898921b0cdc52e7fa8a32fd51c1386006f9a9b9d73e3b89b55c0122735a78"
+  },
+  "acceptanceFile": "0.10.0/acceptance.json",
+  "sourceLinks": {
+    "pr": "https://github.com/von12549/ArchSift/pull/18",
+    "prVerification": "https://github.com/von12549/ArchSift/actions/runs/39850936965",
+    "mainVerification": "https://github.com/von12549/ArchSift/actions/runs/39852293028",
+    "originalBuild": "https://github.com/von12549/ArchSift/actions/runs/39853656594",
+    "independentWindows": "https://github.com/von12549/ArchSift/actions/runs/39854526540"
+  },
+  "postDownload": {
+    "coldOfflineConsumer": {
+      "status": "passed",
+      "version": "0.10.0",
+      "sdk": "10.0.303",
+      "tfm": "net10.0",
+      "configuration": "Release",
+      "actualCases": 4,
+      "originalCSharpCases": 3,
+      "jsonCases": 1,
+      "failed": 0,
+      "skipped": 0,
+      "coverageComplete": true,
+      "gate": "allow",
+      "audit": "not-run",
+      "normalToolRestore": true,
+      "testingProjectReferences": false,
+      "hostEqual": true
+    },
+    "setup": {
+      "hostEqual": true,
+      "installationRetainedAsEvidence": true,
+      "zipSha256": "015f6e055458cbc66a91e2a899ea0055c33389a3862581980dec00a7ba94a7b2",
+      "reviewedPlanId": "3f3a529d510898755b77f36a441f35ca78956ab41dd97770ef4177859ebea15b",
+      "privateWebSmoke": true,
+      "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
+      "anonymousDownloadedSetup": true,
+      "planReadOnly": true,
+      "anonymousDownloadedZip": true,
+      "status": "passed",
+      "ownedProcessesRemaining": 0,
+      "targetUnchanged": true,
+      "selectedVersion": "0.10.0",
+      "analysisPerformed": false,
+      "version": "0.10.0",
+      "inspectPassed": true,
+      "installOutcome": "success"
+    },
+    "protection": {
+      "status": "passed-after-public-download-and-usage",
+      "utc": "2026-10-22T21:44:23.755778+00:00",
+      "protectedFilesEqual": 2809,
+      "sourceInputFilesEqual": 717,
+      "publicAssetsEqual": 11,
+      "offlineFeedPackagesVerified": 28,
+      "hostEqual": true,
+      "frozenSourceWorktreeUnchanged": true,
+      "liveIfxUpgrade": false,
+      "cleanupRequired": false
+    }
+  },
+  "evidence": {
+    "publicDownloads": {
+      "sha256": "42a6d16450caf4493679bc55cae30400d757be38c0c4eddfec09c8496cd183e9",
+      "retention": "Retained external release evidence."
+    },
+    "sourceArchives": {
+      "sha256": "c73bf78a52062c23d974fe4e494ddd1100fa62afb04c1108c2c3e8b68a8723b7",
+      "retention": "Retained external release evidence."
+    },
+    "coldConsumer": {
+      "sha256": "54f85449e5965bd95e392c834b2c72e09355630ea6c2350d00cbb9de9dd198f4",
+      "retention": "Retained external release evidence."
+    },
+    "setup": {
+      "sha256": "fd0ab0931e2ec96eb6ee618ecce0b08a8390690c03c46c2c0de1e8c4d284317f",
+      "retention": "Retained external release evidence."
+    },
+    "postDownloadProtection": {
+      "sha256": "1986e8a47d61502acb307b1318731c0ed17dc15288454cd5d1b21c06d0f3a9a7",
+      "retention": "Retained external release evidence."
+    },
+    "humanShutdown": {
+      "sha256": "861b278a69a0d44d20dfbd43c1a84140b55beb476035dd56ac2c21fbe3650c6d",
+      "retention": "Retained external release evidence."
+    }
+  },
+  "tagAndAssetsRemainImmutable": true,
+  "registryPublished": false,
+  "liveIfxUpgraded": false,
+  "formalDocumentationLanguage": "English",
+  "documentationFollowup": "This record is a subsequent documentation-only main-branch change. The release tag, accepted source and uploaded assets remain fixed.",
+  "releaseAcceptanceSha256": "84dd130cb0ebf8535a1519e703f4f18a3da377cc5291cd3f655e8e235be0c30f",
+  "acceptanceCopy": "JSON values match the immutable release acceptance attachment; repository text line endings may differ."
+}
