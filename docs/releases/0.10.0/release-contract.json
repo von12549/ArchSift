@@ -5,7 +5,7 @@
   "product": "ArchSift",
   "displayName": "ArchSift Workbench",
   "stableVersion": "0.10.0",
-  "candidateVersion": "0.10.0-rc.2",
+  "candidateVersion": "0.10.0-rc.3",
   "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
   "releaseSourceCommit": null,
   "authorization": {
@@ -148,6 +148,12 @@
       "state": "rejected-by-runtime-advisory-gate",
       "bundledRuntime": "10.0.11",
       "reason": "13 current advisory matches across NETCore/ASPNetCore runtime packages, including two critical ASP.NET advisories. Preserve original bytes; rebuild RC2 with patched 10.0.13."
+    },
+    {
+      "version": "0.10.0-rc.2",
+      "source": "6575161adf6dac547d9c7ecae6b474e99f61afc8",
+      "state": "rejected-by-packaged-http-gate",
+      "reason": "CLI accepted an isolated per-run DOTNET_CLI_HOME, but Web retained that directory after allocating a different run. Actual packaged HTTP job failed before execution. Correct both run and copy-rule paths and requalify RC3."
     }
   ]
 }

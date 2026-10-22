@@ -30,7 +30,7 @@
       "archsift.archunit": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Core": "[0.10.0-rc.2, )",
+          "ArchSift.Core": "[0.10.0-rc.3, )",
           "TngTech.ArchUnitNET": "[0.13.4, 0.13.4]"
         }
       },
@@ -40,13 +40,13 @@
       "archsift.core": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Contracts": "[0.10.0-rc.2, )"
+          "ArchSift.Contracts": "[0.10.0-rc.3, )"
         }
       },
       "archsift.testing": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.ArchUnit": "[0.10.0-rc.2, )"
+          "ArchSift.ArchUnit": "[0.10.0-rc.3, )"
         }
       },
       "TngTech.ArchUnitNET": {

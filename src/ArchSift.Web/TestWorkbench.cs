@@ -73,8 +73,7 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
                 var manualRun = Path.Combine(HistoryRoot(), "manual-" + Guid.NewGuid().ToString("N"));
                 using (var file = new FileStream(savedConfig, FileMode.CreateNew, FileAccess.Write, FileShare.None))
                 using (var writer = new StreamWriter(file, new UTF8Encoding(false)))
-                    writer.Write(JsonSerializer.Serialize(next with { RunDirectory = manualRun,
-                        FilterCaseId = null }, JsonContract.Options));
+                    writer.Write(JsonSerializer.Serialize(ForRun(next, manualRun) with { FilterCaseId = null }, JsonContract.Options));
                 selected = next;
                 selectedPath = savedConfig;
                 return Results.Json(new { fileName = card.FileName, entryId = card.EntryId, path = target,
@@ -116,7 +115,7 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
                 Directory.CreateDirectory(root);
                 var runId = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N")[..8];
                 var runDirectory = Path.Combine(root, runId);
-                config = selectedConfig with { RunDirectory = runDirectory,
+                config = ForRun(selectedConfig, runDirectory) with {
                     FilterCaseId = mode == "subset" ? caseId : null };
                 configPath = Path.Combine(root, runId + ".config.json");
                 using (var file = new FileStream(configPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
@@ -316,6 +315,12 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
         }
         return new { available = false, reason = "Run a complete daily test to discover case UIDs." };
     }
+
+    private static TestGateConfig ForRun(TestGateConfig config, string runDirectory) => config with
+    {
+        RunDirectory = runDirectory,
+        DotnetCliHome = config.DotnetCliHome is null ? null : Path.Combine(runDirectory, "cli-home")
+    };
 
     private TestGateConfig Selected() => selected ?? throw new ConfigurationException("Select a daily-test configuration first.");
     private string HistoryRoot() => Path.GetFullPath(Path.Combine(context().Output.Directory, "test-runs"));

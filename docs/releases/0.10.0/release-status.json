@@ -23,17 +23,17 @@
     },
     {
       "id": "WB03",
-      "status": "in-progress-runtime-fix",
+      "status": "in-progress-web-run-isolation-fix",
       "authorized": true
     },
     {
       "id": "WB04",
-      "status": "rc1-built-inspected-security-rejected-rc2-pending",
+      "status": "rc2-retained-http-rejected-rc3-pending",
       "authorized": true
     },
     {
       "id": "WB05",
-      "status": "runtime-findings-returned-to-WB03",
+      "status": "http-run-isolation-returned-to-WB03",
       "authorized": true
     },
     {
@@ -177,24 +177,102 @@
   "newReleasePublished": false,
   "localSourceChecks": {
     "status": "passed",
-    "configuration": "Release",
+    "version": "0.10.0-rc.3",
+    "sourceBase": "6575161adf6dac547d9c7ecae6b474e99f61afc8",
+    "sourceEvidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-source-checks-02\\runs\\development-87dd18371e95496294d12be9c03034ed",
+    "counts": {
+      "architecture": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "notExecuted": 0
+      },
+      "integration": {
+        "total": 105,
+        "passed": 105,
+        "failed": 0,
+        "notExecuted": 0
+      },
+      "unit": {
+        "total": 157,
+        "passed": 157,
+        "failed": 0,
+        "notExecuted": 0
+      }
+    },
+    "newHttpRegressionPassed": true,
+    "nativeLogicalProjectionsUnchanged": 57,
+    "semanticProductOnlyLocks": [
+      {
+        "path": "src/ArchSift.ArchUnit/packages.lock.json",
+        "sha256": "050cd3f8b7a0a9d602d3b37c614b477b520b5b5fe6512d5136c81f860e1deeba"
+      },
+      {
+        "path": "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
+        "sha256": "9f5fe4ba970f4fdd0de8d497ea6bc0b3209493902ef6a627fedd03b1c11aafa1"
+      },
+      {
+        "path": "src/ArchSift.Cli/packages.lock.json",
+        "sha256": "d036c2965ff5282d7139d0484110238ad2330dc9ea793602f8d77c87786a7262"
+      },
+      {
+        "path": "src/ArchSift.Cli/packages.win-x64.lock.json",
+        "sha256": "bd8ca36d178bc5694e8bbbf259962793c4dd6b9b3a494f3e5674d48550ed3502"
+      },
+      {
+        "path": "src/ArchSift.Setup/packages.lock.json",
+        "sha256": "c93d957013935d7fffd1920a5d36f4128aea523fc548fee06d3c62341960baba"
+      },
+      {
+        "path": "src/ArchSift.Setup/packages.win-x64.lock.json",
+        "sha256": "68f4f265d9e149f990e74b349705c670e0f52066382a493a5a45a3470fde9734"
+      },
+      {
+        "path": "src/ArchSift.TestGate/packages.lock.json",
+        "sha256": "ff6fa56d9ae7e02c550bb27c01299adaac5e6d5c9f4b5963cfc82dfedd7063c5"
+      },
+      {
+        "path": "src/ArchSift.TestGate/packages.win-x64.lock.json",
+        "sha256": "94a4f43388bec5408c9d5d29381ffdf122b7aafc8dd66baaac7b4380852e3976"
+      },
+      {
+        "path": "src/ArchSift.Testing/packages.lock.json",
+        "sha256": "19a7bf36881b52593ae77b5725ae55eb579cc6449b9f21a12b5aa16f815f89ae"
+      },
+      {
+        "path": "src/ArchSift.Testing/packages.win-x64.lock.json",
+        "sha256": "6813fae50d00cd5e9385de950551f8e5d46fdd710c5c0321157daed2080b73e6"
+      },
+      {
+        "path": "src/ArchSift.Web/packages.lock.json",
+        "sha256": "6f7562c089342c3e5398f8edb0ffe72fc406a3d226e70bd6fff70a62daaa2c18"
+      },
+      {
+        "path": "src/ArchSift.Web/packages.win-x64.lock.json",
+        "sha256": "e11860cd1fe17e96eb8309a5a228782823e86b207b3877fc0f9a00682e121b77"
+      },
+      {
+        "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
+        "sha256": "fea7bb3f3cc297ac2bd5249e836f555031297c1256f726ef8c864835162e81e8"
+      },
+      {
+        "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
+        "sha256": "35d062339cbb1888a40c81d54387ec6f5341f8e186f228f44b5fa6089d074239"
+      },
+      {
+        "path": "tests/ArchSift.Testing.Tests/packages.lock.json",
+        "sha256": "e1f62f67e17c67e6c296f427ebd0cb650f5a653408cbe8cd21d9db4c199e3f4b"
+      },
+      {
+        "path": "tests/ArchSift.UnitTests/packages.lock.json",
+        "sha256": "fea7bb3f3cc297ac2bd5249e836f555031297c1256f726ef8c864835162e81e8"
+      }
+    ],
+    "thirdPartyGraphsUnchanged": true,
+    "runtime": "10.0.13",
     "sdk": "10.0.303",
-    "tfm": "net10.0",
-    "runtime": "10.0.11",
-    "architecture": 2,
-    "unit": 157,
-    "integration": 104,
-    "nativeMtp": 57,
-    "syntheticGate": 3,
-    "failed": 0,
-    "skipped": 0,
-    "templates": 8,
-    "contractChecks": 16,
-    "warnings": 0,
-    "errors": 0,
-    "hostBaselineEqual": true,
-    "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\source-checks-01\\runs\\development-e1d2f154127e4326b7f17b3959846ba2",
-    "limitation": "Local uncommitted source only; not actual-main CI or packaged RC/stable acceptance."
+    "hostEqual": true,
+    "scope": "Local uncommitted source; PR/main and clean RC3 artifacts pending"
   },
   "packMetadataProbe": {
     "status": "passed",
@@ -245,7 +323,7 @@
     "repairedNativeBundleVerified": false
   },
   "runtimeSecurityStop": {
-    "status": "source-fixed-local-checks-passed-new-pr-main-ci-and-candidate-audit-pending",
+    "status": "closed-for-rc2-patched-bytes-new-rc3-audit-required",
     "candidateRejected": "0.10.0-rc.1",
     "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
     "audit": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc1-closure-audit-02/audit.json",
@@ -262,12 +340,12 @@
     "liveIfxChanged": false
   },
   "actualMainCi": {
-    "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
-    "run": 39820963171,
+    "source": "6575161adf6dac547d9c7ecae6b474e99f61afc8",
+    "run": 39829706427,
     "status": "passed",
     "actualCheckoutVerified": true,
     "crossPlatformNativeLogicalCasesEqual": 57,
-    "scope": "Earlier RC1 source; not new runtime-fix head acceptance"
+    "scope": "RC2 source; does not qualify the new Web correction"
   },
   "runtimeFixLocalChecks": {
     "status": "passed-local-source-and-development-publisher-only",
@@ -335,5 +413,12 @@
       "missing net8/net9 offline targeting packs",
       "SDK apphost query lacked assumed version metadata; corrected to official raw-code hash and actual package identity"
     ]
+  },
+  "webIsolationStop": {
+    "rejectedCandidate": "0.10.0-rc.2",
+    "newCandidate": "0.10.0-rc.3",
+    "evidence": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc2-packaged-http-03/failure.json",
+    "status": "local-fix-and-http-regression-passed-new-ci-artifacts-required",
+    "source": "6575161adf6dac547d9c7ecae6b474e99f61afc8"
   }
 }
