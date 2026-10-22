@@ -1,65 +1,72 @@
-name: ArchSift verification
+name: Independent Workbench package qualification
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
+    inputs:
+      source_commit:
+        description: Exact already-reviewed product source commit
+        required: true
+        type: string
 permissions:
   contents: read
 jobs:
-  regression:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    env:
-      DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: '0'
-      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
-      DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE: '1'
+  independent-windows:
+    runs-on: windows-2025
+    timeout-minutes: 40
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          dotnet-version: |
-            10.0.303
-            10.0.402
-            9.0.314
-            8.0.x
-      - name: Explicit CI restore followed by offline, hash-checked regression
+          path: driver
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.source_commit }}
+          path: source
+      - name: Build exact pinned source with private verified tools and explicit frozen packages
         shell: pwsh -NoProfile -NonInteractive -File {0}
         env:
-          DOTNET_CLI_HOME: ${{ runner.temp }}/archsift-dotnet-home
+          REVIEWED_SOURCE_COMMIT: ${{ inputs.source_commit }}
         run: |
-          $ErrorActionPreference = 'Stop'
-          . ./scripts/HostState.ps1
-          $before = Get-ArchSiftHostHash
-          $feed = Join-Path $env:RUNNER_TEMP 'archsift-ci-feed'
+          $ErrorActionPreference='Stop'
+          & ./driver/scripts/Invoke-IndependentWorkbenchBuild.ps1 -SourceRoot (Join-Path $env:GITHUB_WORKSPACE 'source') -SourceCommit $env:REVIEWED_SOURCE_COMMIT -OutputRoot (Join-Path $env:RUNNER_TEMP 'workbench-independent')
+      - name: Qualify exact native assets in a fresh official Windows container without an SDK
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:RUNNER_TEMP 'workbench-independent'
+          $guestInput=Join-Path $root 'guest-input'
+          $guest=Join-Path $root 'guest-evidence'
+          [void][IO.Directory]::CreateDirectory($guestInput)
+          [void][IO.Directory]::CreateDirectory($guest)
+          Copy-Item -LiteralPath (Join-Path $root 'transfer') -Destination $guestInput -Recurse
+          Copy-Item -LiteralPath './driver/scripts/Test-IndependentWindowsNoSdk.ps1' -Destination $guestInput
+          & docker version
+          if($LASTEXITCODE -ne 0){throw 'Docker is unavailable; do not change the host.'}
+          & docker pull mcr.microsoft.com/windows/servercore:ltsc2025
+          if($LASTEXITCODE -ne 0){throw 'Official base image pull failed.'}
+          $image=(& docker image inspect mcr.microsoft.com/windows/servercore:ltsc2025|ConvertFrom-Json)[0]
+          if($LASTEXITCODE -ne 0 -or $image.Architecture -cne 'amd64' -or $image.Os -cne 'windows' -or $image.RepoDigests.Count -ne 1){throw 'Unexpected official Windows image identity.'}
+          $digest=$image.RepoDigests[0]
+          if($digest -cnotmatch '^mcr.microsoft.com/windows/servercore@sha256:[a-f0-9]{64}$'){throw 'Unpinned container image.'}
+          @{image=$digest;imageId=$image.Id;osVersion=$image.OsVersion;architecture=$image.Architecture;runnerOs=[Environment]::OSVersion.VersionString;network='none';isolation='process';inputReadOnly=$true}|ConvertTo-Json|Set-Content (Join-Path $root 'guest-image.json') -Encoding utf8NoBOM
+          $name='archsift-no-sdk-'+$env:GITHUB_RUN_ID
           try {
-            & dotnet restore ArchSift.slnx --locked-mode --configfile NuGet.Config --source https://api.nuget.org/v3/index.json --packages $feed -p:NuGetAudit=false
-            if ($LASTEXITCODE -ne 0) { throw 'Explicit CI restore failed' }
-            & ./scripts/Prepare-CiFrameworkFeed.ps1 -Feed $feed
-            if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift after restore' }
-            & ./scripts/Invoke-DevelopmentChecks.ps1 -LocalFeed $feed -LabRoot (Join-Path $env:RUNNER_TEMP 'archsift-evidence') -Configuration Release -VerifyContracts
-            & node ./scripts/Test-WorkbenchLifecycle.mjs
-            if ($LASTEXITCODE -ne 0) { throw 'Workbench lifecycle/locale regression failed' }
-            & node ./scripts/Test-LauncherClose.mjs
-            if ($LASTEXITCODE -ne 0) { throw 'Launcher shutdown feedback regression failed' }
-            foreach ($script in Get-ChildItem ./scripts -Filter '*.ps1' -File) {
-              $parseErrors = $null
-              [void][System.Management.Automation.Language.Parser]::ParseFile($script.FullName, [ref]$null, [ref]$parseErrors)
-              if ($parseErrors.Count) { throw ('PowerShell syntax failed: ' + $script.Name) }
-            }
-            & node ./scripts/Check-ReleaseDocumentation.mjs
-            if ($LASTEXITCODE -ne 0) { throw 'English documentation or local-link validation failed' }
+            & docker run --name $name --isolation process --network none --mount "type=bind,source=$guestInput,target=C:\input,readonly" $digest powershell.exe -NoProfile -NonInteractive -File C:\input\Test-IndependentWindowsNoSdk.ps1
+            $code=$LASTEXITCODE
+            & docker cp "${name}:C:\work\." $guest
+            if($LASTEXITCODE -ne 0){throw 'Guest evidence copy failed.'}
+            if($code -ne 0){throw 'Independent no-SDK gate stopped; retain all evidence.'}
           } finally {
-            $equal = (Get-ArchSiftHostHash) -ceq $before
-            Write-Output "CI final host-state-equal=$equal"
-            if (-not $equal) { throw 'Host drift; no repair performed' }
+            & docker rm $name
+            if($LASTEXITCODE -ne 0){Write-Warning 'Owned container cleanup failed; hosted VM teardown remains.'}
           }
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: regression-${{ matrix.os }}
-          path: ${{ runner.temp }}/archsift-evidence
-          if-no-files-found: warn
+          name: independent-workbench-${{ inputs.source_commit }}
+          path: |
+            ${{ runner.temp }}/workbench-independent/transfer
+            ${{ runner.temp }}/workbench-independent/*.json
+            ${{ runner.temp }}/workbench-independent/*.log
+            ${{ runner.temp }}/workbench-independent/guest-evidence
+          retention-days: 3
+          if-no-files-found: error
+          include-hidden-files: true
