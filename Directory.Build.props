@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
-    <!-- Override only this property when building the separately qualified stable release. -->
+    <!-- Cut the stable version here in a reviewed source/lock commit; release scripts consume it unchanged. -->
     <ArchSiftReleaseVersion Condition="'$(ArchSiftReleaseVersion)' == ''">0.10.0-rc.1</ArchSiftReleaseVersion>
     <Version>$(ArchSiftReleaseVersion)</Version>
     <VersionPrefix>$([System.String]::Copy('$(ArchSiftReleaseVersion)').Split('-')[0])</VersionPrefix>

@@ -161,6 +161,16 @@
       "id": "WB03-LICENSE-PATH",
       "status": "resolved-by-second-probe",
       "reason": "Initial package metadata placed the extensionless license at LICENSE/LICENSE. Corrected to archive root; five new probe packages verified. Original failed-check packages retained."
+    },
+    {
+      "id": "WB03-NOTICE-LINKS",
+      "status": "source-repaired-full-clean-package-pending",
+      "reason": "Development bundle failed 18 relocated notice/evidence links; fresh curated documentation passed 42 local links and nine upstream license hashes."
+    },
+    {
+      "id": "WB03-OUTER-PROBE-CALLER",
+      "status": "rejected-and-replaced-by-fresh-strict-probes",
+      "reason": "Non-strict caller printed pass without qualification reports; fresh strict cold/moved probes passed 4/4 each. Failed attempt retained."
     }
   ],
   "productBuildStarted": true,
@@ -195,5 +205,43 @@
     "versionOnlyLockFiles": 10,
     "acceptedRc": false,
     "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\pack-probe-02\\verification.json"
+  },
+  "firstPrCi": {
+    "pr": 15,
+    "head": "16d6ea200c71272002af5e5938b07c140f416532",
+    "run": 39809335859,
+    "attempt": 1,
+    "platforms": [
+      "windows-latest",
+      "ubuntu-latest"
+    ],
+    "status": "passed",
+    "perPlatform": {
+      "architecture": 2,
+      "unit": 157,
+      "integration": 104,
+      "nativeMtp": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    "nativeLogicalCrossPlatformCasesEqual": 57,
+    "actualMainAcceptance": false
+  },
+  "releaseTooling": {
+    "status": "source-prepared-clean-complete-build-pending",
+    "procedure": "docs/releases/0.10.0/release-tooling.md",
+    "acceptance": "docs/acceptance/20261023-workbench-release-tooling.md",
+    "candidateAccepted": false,
+    "stableCut": "reviewed central-version and lock commit, CI and fresh stable build",
+    "genericConsumerProbe": {
+      "cold": 4,
+      "moved": 4,
+      "failed": 0,
+      "skipped": 0,
+      "baselineAndPolicyBytesEqual": true
+    },
+    "ridLocksReviewed": 8,
+    "existingThirdPartyLockIdentitiesUnchanged": true,
+    "repairedNativeBundleVerified": false
   }
 }

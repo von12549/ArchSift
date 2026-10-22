@@ -1,6 +1,6 @@
 # Getting started with ArchSift Workbench
 
-These instructions describe the planned 0.10.0 layout. Until [release status](releases/0.10.0/release-status.json) records publication and verification, use them for candidate qualification only. Download links and exact accepted hashes belong to the matching release; older hashes do not verify a new version.
+These instructions cover the 0.10.0 layout and its numbered release candidates. Use the full version in the artifact manifest. Source [release status](releases/0.10.0/release-status.json) records packaging-stage progress; the separate matching release acceptance record establishes final acceptance/publication for exact bytes. Older hashes do not verify a new version.
 
 ## Choose the entry point
 

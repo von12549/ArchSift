@@ -1,6 +1,6 @@
 # Integrating ArchSift into a project
 
-This guide accompanies the unified 0.10.0 release preparation. Accepted artifact identity and actual validation status are recorded in [release status](releases/0.10.0/release-status.json). The generic templates contain no private IFX inputs. Adopting them is a consumer change requiring review of that project's tests, policy and dependencies.
+This guide covers the unified 0.10.0 release and its candidates. The separate matching acceptance record binds accepted artifact bytes; source [release status](releases/0.10.0/release-status.json) records its dated preparation progress. The generic templates contain no private IFX inputs. Adopting them is a consumer change requiring review of that project's tests, policy and dependencies.
 
 ## Package and runner inputs
 

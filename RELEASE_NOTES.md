@@ -1,6 +1,6 @@
 # ArchSift Workbench 0.10.0
 
-Status: release preparation in progress. No 0.10.0 artifact is accepted or published yet. See [release status](docs/releases/0.10.0/release-status.json) for actual gate results.
+These notes are prepared before packaging. A payload remains a candidate until the separate matching acceptance.json binds final acceptance to its exact bytes. The source [release ledger](docs/releases/0.10.0/release-status.json) records its dated preparation state; the published release record governs final distribution.
 
 This release brings the existing packaged architecture-test workflow and local Workbench under one version. The display name is ArchSift Workbench; package IDs and the `archsift` command remain unchanged. CLI, Web, Setup and the four public libraries use the same release version. Release candidates include their complete suffix and are built separately from stable artifacts.
 

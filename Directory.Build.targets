@@ -1,6 +1,8 @@
 <Project>
   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'ArchSift.Contracts' Or '$(MSBuildProjectName)' == 'ArchSift.Core' Or '$(MSBuildProjectName)' == 'ArchSift.ArchUnit' Or '$(MSBuildProjectName)' == 'ArchSift.Testing' Or '$(MSBuildProjectName)' == 'ArchSift.Cli'">
     <PackageId>$(MSBuildProjectName)</PackageId>
+    <ArchSiftPackageReadme Condition="'$(ArchSiftPackageReadme)' == ''">$(MSBuildThisFileDirectory)docs/package-readme.md</ArchSiftPackageReadme>
+    <ArchSiftPackageReleaseNotes Condition="'$(ArchSiftPackageReleaseNotes)' == ''">$(MSBuildThisFileDirectory)RELEASE_NOTES.md</ArchSiftPackageReleaseNotes>
     <PackageVersion>$(ArchSiftReleaseVersion)</PackageVersion>
     <Authors>ArchSift contributors</Authors>
     <Description>ArchSift architecture analysis and architecture-test tooling.</Description>
@@ -15,8 +17,8 @@
     <ToolCommandName>archsift</ToolCommandName>
   </PropertyGroup>
   <ItemGroup Condition="'$(MSBuildProjectName)' == 'ArchSift.Contracts' Or '$(MSBuildProjectName)' == 'ArchSift.Core' Or '$(MSBuildProjectName)' == 'ArchSift.ArchUnit' Or '$(MSBuildProjectName)' == 'ArchSift.Testing' Or '$(MSBuildProjectName)' == 'ArchSift.Cli'">
-    <None Include="$(MSBuildThisFileDirectory)docs/package-readme.md" Pack="true" PackagePath="README.md" />
-    <None Include="$(MSBuildThisFileDirectory)RELEASE_NOTES.md" Pack="true" PackagePath="RELEASE_NOTES.md" />
+    <None Include="$(ArchSiftPackageReadme)" Pack="true" PackagePath="README.md" />
+    <None Include="$(ArchSiftPackageReleaseNotes)" Pack="true" PackagePath="RELEASE_NOTES.md" />
     <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="/" />
   </ItemGroup>
   <!-- NuGet Pack consumes ProjectVersion as a range; product packages must stay in one release. -->

@@ -1,6 +1,6 @@
 # Windows installation and configuration — ArchSift Workbench 0.10.0
 
-0.10.0 is in release preparation; exact assets, support and acceptance remain governed by [release status](releases/0.10.0/release-status.json). These instructions describe the intended verified Windows delivery and retain the established profile/ownership model. They do not claim new package qualification. Start with [getting started](getting-started.md) and [project integration](project-integration.md). Earlier [0.5.0 installation](installation-0.5.md), [Setup](setup-0.5.md) and [0.4.0 manual](installation-0.4.md) guides remain historical.
+These instructions were prepared for 0.10.0 qualification. Exact assets, support and final acceptance are established by the separate matching release record; source [release status](releases/0.10.0/release-status.json) retains its packaging-stage timing. These instructions describe the intended verified Windows delivery and retain the established profile/ownership model. They do not claim new package qualification. Start with [getting started](getting-started.md) and [project integration](project-integration.md). Earlier [0.5.0 installation](installation-0.5.md), [Setup](setup-0.5.md) and [0.4.0 manual](installation-0.4.md) guides remain historical.
 
 ## Requirements
 
