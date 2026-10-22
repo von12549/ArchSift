@@ -17,14 +17,14 @@ try{
     $metadata=[Text.Encoding]::UTF8.GetString($raw)|ConvertFrom-Json
     $tools=Join-Path $out 'private-tools';[void][IO.Directory]::CreateDirectory($tools)
     $sdkProof=@(foreach($version in @('10.0.303','10.0.402')){
-        $matches=@($metadata.releases|ForEach-Object{$_.sdks}|Where-Object version -CEQ $version|ForEach-Object{$_.files}|Where-Object{$_.rid -ceq 'win-x64' -and $_.name.EndsWith('.zip')}|Sort-Object url -Unique)
-        if($matches.Count -ne 1){throw 'Ambiguous official SDK archive.'};$entry=$matches[0]
+        $sdkFiles=@($metadata.releases|ForEach-Object{$_.sdks}|Where-Object version -CEQ $version|ForEach-Object{$_.files}|Where-Object{$_.rid -ceq 'win-x64' -and $_.name.EndsWith('.zip')}|Sort-Object url -Unique)
+        if($sdkFiles.Count -ne 1){throw 'Ambiguous official SDK archive.'};$entry=$sdkFiles[0]
         $zip=Join-Path $out ('dotnet-sdk-'+$version+'-win-x64.zip');[IO.File]::WriteAllBytes($zip,$http.GetByteArrayAsync($entry.url).GetAwaiter().GetResult())
         $actual=(Get-FileHash -LiteralPath $zip -Algorithm SHA512).Hash.ToLowerInvariant()
         if($actual -cne $entry.hash.ToLowerInvariant()){throw 'Official SDK archive SHA512 differs.'}
         if($version -ceq '10.0.402'){
-            $profile=Get-Content (Join-Path $source 'docs/releases/0.10.0/build-profile.json') -Raw|ConvertFrom-Json
-            if($actual -cne $profile.appHostTemplate.providerSdkArchiveSha512){throw 'Runtime provider differs from reviewed profile.'}
+            $buildProfile=Get-Content (Join-Path $source 'docs/releases/0.10.0/build-profile.json') -Raw|ConvertFrom-Json
+            if($actual -cne $buildProfile.appHostTemplate.providerSdkArchiveSha512){throw 'Runtime provider differs from reviewed profile.'}
         }
         [IO.Compression.ZipFile]::ExtractToDirectory($zip,$tools,$true)
         @{version=$version;url=$entry.url;sha512=$actual;archiveSha256=(Hash $zip);installedToPrivateDirectory=$true}
