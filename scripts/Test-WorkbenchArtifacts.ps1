@@ -70,6 +70,15 @@ foreach($id in $release.profile.productPackages){
 $native=Get-Content -LiteralPath $NativeResult -Raw|ConvertFrom-Json
 if($native.version -cne $release.version -or $native.sourceCommit -cne $SourceCommit -or $native.productSourceDirty -or -not $native.hostStateEqual){throw 'Native result source identity differs.'}
 $payload=[IO.Path]::GetFullPath($native.payloadRoot)
+foreach($project in @('Cli','Web','Setup')){
+    $proof=Get-Content (Join-Path $native.runRoot ('apphost-'+$project+'-identity.json')) -Raw|ConvertFrom-Json
+    if($proof.version -cne $release.profile.runtime -or $proof.sha256 -cne $release.profile.appHostTemplate.sha256 -or -not $proof.approvedOfficialCodeHashEqual){throw 'Patched native apphost proof differs.'}
+}
+foreach($relative in @('archsift.runtimeconfig.json','web/ArchSift.Web.runtimeconfig.json')){
+    $runtime=Get-Content (Join-Path $payload $relative) -Raw|ConvertFrom-Json
+    foreach($framework in $runtime.runtimeOptions.includedFrameworks){if($framework.version -cne $release.profile.runtime){throw 'Actual bundled framework patch differs.'}}
+}
+
 $nativeVersions=@(foreach($path in @((Join-Path $payload 'archsift.exe'),(Join-Path $payload 'web/ArchSift.Web.exe'),$native.setupPath)) {Check-Version $path $false})
 foreach($path in Get-ChildItem -LiteralPath $payload -Recurse -Filter '*.dll' -File|Where-Object{$_.Name -match '^(?:ArchSift\..+|archsift)\.dll$'}){$nativeVersions+=Check-Version $path.FullName $true}
 $manifest=Get-Content (Join-Path $payload 'package-manifest.json') -Raw|ConvertFrom-Json
@@ -90,10 +99,12 @@ try{
         if($hash -cne $entry.sha256){throw 'Actual ZIP bytes differ from payload manifest.'}
     }
 }finally{$zip.Dispose()}
+. (Join-Path $PSScriptRoot 'ReleaseRuntimeProof.ps1')
+$runtimeCode=@(Get-ArchSiftRuntimeCodeProof $payload (Join-Path $native.runRoot 'nuget-cache') $release)
 $contract=Get-Content (Join-Path $repo 'docs/releases/0.10.0/release-contract.json') -Raw|ConvertFrom-Json
 foreach($path in $contract.bundledDocumentation.requiredFiles){if(-not(Test-Path -LiteralPath (Join-Path $payload $path) -PathType Leaf)){throw 'Native guide missing.'}}
 foreach($file in Get-ChildItem -LiteralPath (Join-Path $payload 'docs') -Recurse -Filter '*.md' -File){if([IO.File]::ReadAllText($file.FullName) -match '[\p{IsCJKUnifiedIdeographs}]'){throw 'Untranslated bundled guide.'}}
 & (Join-Path $PSScriptRoot 'Test-ReleaseDocumentation.ps1') -PayloadRoot $payload -SourceCommit $SourceCommit -Version $release.version
-$result=@{schemaVersion=1;status='passed';version=$release.version;sourceCommit=$SourceCommit;packages=$packages.ToArray();nativeVersions=$nativeVersions;nativePayloadEntries=$manifest.entries.Count;requiredGuidesPresent=$true;zipPayloadHashesEqual=$true;sourceBoundComplianceClaim=$false;independentMachineAndHuman='separate pending gates'}
+$result=@{schemaVersion=1;status='passed';version=$release.version;sourceCommit=$SourceCommit;packages=$packages.ToArray();nativeVersions=$nativeVersions;nativePayloadEntries=$manifest.entries.Count;runtimeCode=$runtimeCode;patchedNativeHostsVerified=$true;requiredGuidesPresent=$true;zipPayloadHashesEqual=$true;sourceBoundComplianceClaim=$false;independentMachineAndHuman='separate pending gates'}
 [IO.File]::WriteAllText((Join-Path $output 'verification.json'),(($result|ConvertTo-Json -Depth 15)+"`n"),[Text.UTF8Encoding]::new($false))
 Write-Output ('artifact-identity=passed packages=5 native-entries='+$manifest.entries.Count)

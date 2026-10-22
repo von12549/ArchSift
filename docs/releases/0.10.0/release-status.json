@@ -23,17 +23,17 @@
     },
     {
       "id": "WB03",
-      "status": "in-progress",
+      "status": "in-progress-runtime-fix",
       "authorized": true
     },
     {
       "id": "WB04",
-      "status": "not-started",
+      "status": "rc1-built-inspected-security-rejected-rc2-pending",
       "authorized": true
     },
     {
       "id": "WB05",
-      "status": "not-started",
+      "status": "runtime-findings-returned-to-WB03",
       "authorized": true
     },
     {
@@ -243,5 +243,97 @@
     "ridLocksReviewed": 8,
     "existingThirdPartyLockIdentitiesUnchanged": true,
     "repairedNativeBundleVerified": false
+  },
+  "runtimeSecurityStop": {
+    "status": "source-fixed-local-checks-passed-new-pr-main-ci-and-candidate-audit-pending",
+    "candidateRejected": "0.10.0-rc.1",
+    "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
+    "audit": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc1-closure-audit-02/audit.json",
+    "vulnerableRuntime": "10.0.11",
+    "patchedRuntime": "10.0.13",
+    "newCandidate": "0.10.0-rc.2",
+    "matchedPackages": 2,
+    "matchedAdvisories": 13,
+    "critical": 2,
+    "high": 9,
+    "moderate": 2,
+    "noSuppression": true,
+    "systemToolsChanged": false,
+    "liveIfxChanged": false
+  },
+  "actualMainCi": {
+    "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
+    "run": 39820963171,
+    "status": "passed",
+    "actualCheckoutVerified": true,
+    "crossPlatformNativeLogicalCasesEqual": 57,
+    "scope": "Earlier RC1 source; not new runtime-fix head acceptance"
+  },
+  "runtimeFixLocalChecks": {
+    "status": "passed-local-source-and-development-publisher-only",
+    "sourceBase": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
+    "branch": "codex/workbench-rc2-runtime-fix",
+    "dirtySource": true,
+    "version": "0.10.0-rc.2",
+    "sdk": "10.0.303",
+    "runtime": "10.0.13",
+    "tests": {
+      "architecture": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "notExecuted": 0
+      },
+      "integration": {
+        "total": 104,
+        "passed": 104,
+        "failed": 0,
+        "notExecuted": 0
+      },
+      "unit": {
+        "total": 157,
+        "passed": 157,
+        "failed": 0,
+        "notExecuted": 0
+      }
+    },
+    "nativeCases": 57,
+    "nativeLogicalCasesEqualEarlierActualMain": true,
+    "thirdPartyLockGraphsUnchanged": true,
+    "versionOnlyChangedLocks": [
+      "src/ArchSift.ArchUnit/packages.lock.json",
+      "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
+      "src/ArchSift.Cli/packages.lock.json",
+      "src/ArchSift.Cli/packages.win-x64.lock.json",
+      "src/ArchSift.Setup/packages.lock.json",
+      "src/ArchSift.Setup/packages.win-x64.lock.json",
+      "src/ArchSift.TestGate/packages.lock.json",
+      "src/ArchSift.TestGate/packages.win-x64.lock.json",
+      "src/ArchSift.Testing/packages.lock.json",
+      "src/ArchSift.Testing/packages.win-x64.lock.json",
+      "src/ArchSift.Web/packages.lock.json",
+      "src/ArchSift.Web/packages.win-x64.lock.json",
+      "tests/ArchSift.ArchitectureTests/packages.lock.json",
+      "tests/ArchSift.IntegrationTests/packages.lock.json",
+      "tests/ArchSift.Testing.Tests/packages.lock.json",
+      "tests/ArchSift.UnitTests/packages.lock.json"
+    ],
+    "nativeApphosts": 3,
+    "approvedRuntimePackageCodeImages": 619,
+    "distributedRuntimeCodeImagesVerified": 517,
+    "englishInputs": 33,
+    "bundledLocalLinks": 42,
+    "parentHostBaselineEqual": true,
+    "childHostBaselineEqual": true,
+    "acceptedCandidate": false,
+    "newHeadCi": "pending",
+    "freshCandidateAudit": "pending",
+    "stopsRetained": [
+      "provider duplicate reference-pack entry",
+      "child PowerShell PATH order before SDK use",
+      "missing Desktop offline prerequisite",
+      "missing net8/net9 offline targeting packs",
+      "SDK apphost query lacked assumed version metadata; corrected to official raw-code hash and actual package identity"
+    ]
   }
 }
