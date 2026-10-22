@@ -1,5 +1,7 @@
 # Getting started with ArchSift Workbench
 
+Release status: **0.10.0 published and download-verified**. See the [publication record](releases/0.10.0-publication.md) for exact assets, final acceptance and successful public-download usage. The following instructions retain their packaging-stage context; immutable bundled copies are qualified by the matching final acceptance record.
+
 These instructions cover the 0.10.0 layout and its numbered release candidates. Use the full version in the artifact manifest. Source [release status](releases/0.10.0/release-status.json) records packaging-stage progress; the separate matching release acceptance record establishes final acceptance/publication for exact bytes. Older hashes do not verify a new version.
 
 ## Choose the entry point

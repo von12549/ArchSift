@@ -1,5 +1,7 @@
 # ArchSift Workbench 0.10.0 portable Setup
 
+Release status: **0.10.0 published and download-verified**. See the [publication record](releases/0.10.0-publication.md) for exact assets, final acceptance and successful public-download usage. The following instructions retain their packaging-stage context; immutable bundled copies are qualified by the matching final acceptance record.
+
 These instructions were prepared for 0.10.0 qualification. The separate matching release record establishes final accepted assets; source [release status](releases/0.10.0/release-status.json) records its dated preparation state. See [getting started](getting-started.md) for initial use. The intended release retains the existing plan/apply and config/default.json model; 0.10.0 compatibility must pass its own package/lifecycle gates before acceptance. Unknown versions or schema migrations must reject. Earlier [0.5.0 Setup instructions](setup-0.5.md) remain historical.
 
 `ArchSift.Setup.exe` is a separate self-contained Windows x64 executable. It performs user-writable filesystem installation without elevation, SDK/runtime prerequisites, PATH changes, service registration or target execution. `--notices` prints embedded ArchSift/.NET license and third-party notices. Run PowerShell 7 with `-NoProfile` and use full executable paths.

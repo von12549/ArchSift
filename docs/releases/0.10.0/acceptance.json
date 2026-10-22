@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "displayName": "ArchSift Workbench",
+  "version": "0.10.0",
+  "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
+  "sourceTree": "cb39393645daa2467ac63b84fd9448834946eef5",
+  "sdk": "10.0.303",
+  "runtime": "10.0.13",
+  "tfm": "net10.0",
+  "rid": "win-x64",
+  "configuration": "Release",
+  "sourceInputFilesVerified": 717,
+  "sourceBuildRun": 39853656594,
+  "independentGuestRun": 39854526540,
+  "originalBuildOverallConclusion": "failure-docker-host-unavailable-before-guest",
+  "originalBuildAndGenericConsumption": "passed",
+  "sameOriginalAssetsReplayedWithoutRebuild": true,
+  "sourceCiPerPlatform": {
+    "architecture": 2,
+    "unit": 157,
+    "integration": 105,
+    "nativeMtp": 57,
+    "failed": 0,
+    "skipped": 0
+  },
+  "genericColdAndMovedCasesEach": 4,
+  "nativeManifestEntries": 679,
+  "productPackages": 5,
+  "runtimeCodeImagesVerified": 517,
+  "packagedNegativeCases": 15,
+  "nativeSmokeChecks": 17,
+  "sarifReports": 23,
+  "lifecycleChecks": 20,
+  "performanceCeilings": {
+    "analysisMilliseconds": 700,
+    "processWallMilliseconds": 1000,
+    "sampledPeakBytes": 67108864
+  },
+  "performance": [
+    {
+      "iteration": 0,
+      "analysisMilliseconds": 163,
+      "processWallMilliseconds": 300,
+      "sampledPeakBytes": 51253248
+    },
+    {
+      "iteration": 1,
+      "analysisMilliseconds": 136,
+      "processWallMilliseconds": 269,
+      "sampledPeakBytes": 56950784
+    },
+    {
+      "iteration": 2,
+      "analysisMilliseconds": 133,
+      "processWallMilliseconds": 259,
+      "sampledPeakBytes": 58433536
+    },
+    {
+      "iteration": 3,
+      "analysisMilliseconds": 134,
+      "processWallMilliseconds": 265,
+      "sampledPeakBytes": 55242752
+    },
+    {
+      "iteration": 4,
+      "analysisMilliseconds": 141,
+      "processWallMilliseconds": 271,
+      "sampledPeakBytes": 51712000
+    }
+  ],
+  "ifx": {
+    "sourceCommit": "96803ed6165c46c0b1d561fddebfc33f5501a0e1",
+    "cliWebTypedCasesEqual": 493,
+    "csharp": 92,
+    "json": 401,
+    "policyResponsibilitySources": 404,
+    "freshProductionAssemblies": 89,
+    "officialAuditedProjects": 105,
+    "skipped": 0,
+    "findings": 0,
+    "unchangedTrackedInputsAcrossCliWeb": 928,
+    "liveUpgrade": false,
+    "outOfDailyProjectionItemsUnknownNotRun": 187
+  },
+  "assets": [
+    {
+      "sha256": "ddb9fdbae3bea5cbe6c8f09134180cbde8e0fefb6c4453122c9dbd2cb13d7df7",
+      "file": "archsift-workbench-0.10.0-offline-feed.zip",
+      "bytes": 16379467
+    },
+    {
+      "sha256": "015f6e055458cbc66a91e2a899ea0055c33389a3862581980dec00a7ba94a7b2",
+      "file": "archsift-workbench-0.10.0-win-x64.zip",
+      "bytes": 90124589
+    },
+    {
+      "sha256": "a5c0839b0bea185e2261f5fb0dbcc2d80314a98d97a77d5b6d46c5e98bfd5388",
+      "file": "ArchSift.ArchUnit.0.10.0.nupkg",
+      "bytes": 30552
+    },
+    {
+      "sha256": "601c3710dd387f4a5fd33e539d35bd1f0fc36ff8f6a4b65330b3afe346acc17f",
+      "file": "ArchSift.Cli.0.10.0.nupkg",
+      "bytes": 1260886
+    },
+    {
+      "sha256": "11416f06eae4738f61fada3b42dc43826e95728a0db7984637a16bb137a06eb2",
+      "file": "ArchSift.Contracts.0.10.0.nupkg",
+      "bytes": 90098
+    },
+    {
+      "sha256": "7fb3825ad5c848ef73f7b76bdbce6330507963cc222c620a82b873d248420390",
+      "file": "ArchSift.Core.0.10.0.nupkg",
+      "bytes": 161005
+    },
+    {
+      "sha256": "707be7b6d2948382db53d666262b134b0b5e33205c02f9b4ea769d74c919bb37",
+      "file": "ArchSift.Setup.exe",
+      "bytes": 74497834
+    },
+    {
+      "sha256": "527b5634b18a57bccc7b9e21e5df95b91376874a85c896077e86f48f258ca7fe",
+      "file": "ArchSift.Testing.0.10.0.nupkg",
+      "bytes": 25844
+    }
+  ],
+  "limitations": [
+    "Independent no-SDK qualification covers an official Server Core 2025 container on an independent hosted Windows VM; desktop visual/hands-on acceptance is user-owned.",
+    "Windows x64 is the binary delivery; Linux CLI/source regression does not qualify Linux Web or ARM64. No minimum-Windows or publisher-signature certification.",
+    "Target builds/tests need their approved SDKs/dependencies. FDD consumers must supply a supported patched .NET10 runtime, at least10.0.13 at release.",
+    "493 configured daily cases passed.187 out-of-daily projection items remain unknown/not-run. No additional IFX policy adoption or live upgrade.",
+    "Source/build and89 fresh assembly identities do not establish a complete compiler-input/SourceBound closure or bit-reproducible build.",
+    "Official advisory snapshots are time-bound and do not prove vulnerability absence.",
+    "19 upstream archives contain no separate legal file; exact available originals and metadata are preserved. No new rights are assigned.",
+    "Commit-addressed source ZIP/TAR were checked prepublication. Actual v0.10.0 tagged archives and every public asset need postpublication download verification."
+  ],
+  "status": "accepted-with-documented-limitations",
+  "recordedUtc": "2026-10-22T21:34:36.317108+00:00",
+  "finalAcceptance": true,
+  "humanAcceptance": {
+    "status": "accepted-by-user",
+    "basis": "Direct user response after reviewing the exact stable payload in both prepared sessions.",
+    "behaviorAsExpected": true,
+    "usabilityRatingOutOf5": 4,
+    "defects": [],
+    "untestedItems": [],
+    "safeShutdownObservedBothSessions": true,
+    "machineCloseout": {
+      "bothCliExitCodes": 0,
+      "bothListenersClosed": true,
+      "hostHashEqual": true,
+      "protectedFilesEqual": 2809
+    },
+    "retainedOriginalResponseSha256": "966898921b0cdc52e7fa8a32fd51c1386006f9a9b9d73e3b89b55c0122735a78"
+  },
+  "evidence": {
+    "prCi": {
+      "sha256": "8cfa60ce6ebd5e08977530cd694b6904c0b8ec2bf221155780ab1304851dbad4",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "mainCi": {
+      "sha256": "1436103d1da4510b45c818bf82056d8ddb15365a3600f76a1224b389252d244f",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "buildMaterialization": {
+      "sha256": "e787829976384fabd54fbb29b375412183f74da12677c88e9bc36916f77b733f",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "independentWindows": {
+      "sha256": "af93349a0d33af3724dbfe18d81db90c7d596898c0d891cc604fc4ad24a48368",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "independentWindowsRaw": {
+      "sha256": "3a2a7363373ef8a6b85973d0c172657c3c226efce0e08e84e3b32a7e0dc0e7d4",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "artifactIdentity": {
+      "sha256": "cfa42e908d564b9eacd976fe07dad74d59edb469e66e204739833b8c1536b6e0",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "advisoryAudit": {
+      "sha256": "1936b1b73410dba35a6e73edaa5cc2f2daf6030dd9e8d278ce197cc8a72a16d6",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "licenseIntegrity": {
+      "sha256": "c7473e3e45f6e482b342fae872a7c48d6ffada55ccdc1ba6b628978e231b3253",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "packagedNegatives": {
+      "sha256": "4c69447d969474a52fe48f84fc265b138a3d8de108fd1ac7cbc05748b5b6a194",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "packagedHttp": {
+      "sha256": "f35825d89b4fb2e25ed30b0e41209ce1c60b796d35d7dc74f7717c9f6de0d047",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "nativeSmoke": {
+      "sha256": "020c9a7831f0d8bc99033fe2b4e7977cc7d1e44d788a55e844b5d2c320528a40",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "officialSarif": {
+      "sha256": "178700b1c1ca300a8c63c6f9f58b4662fc6ae426f62379d236fc1f5b389a1b0c",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "realIfx": {
+      "sha256": "cca1dd86ef801869d3d9d306a4f88786b3fc665887aea3217d9086a49b80cd01",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "lifecycle": {
+      "sha256": "7d36457f697de430b311c16d4d46b421017bd6e721e7f252ecb7acd199785696",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "sourceArchives": {
+      "sha256": "92eb75a78f89c8e6eaa51b93848797ff9e0541d8b4d395271790c77dcf1043b5",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    },
+    "remoteEntryLinks": {
+      "sha256": "e7ce59c6e360d4d3e7716a58865fb2798d037ec5628afe671ab3d69dc216c54c",
+      "retention": "Retained release evidence; private consumer sources and configuration are not distributed."
+    }
+  },
+  "sourceLinks": {
+    "pr": "https://github.com/von12549/ArchSift/pull/18",
+    "prVerification": "https://github.com/von12549/ArchSift/actions/runs/39850936965",
+    "mainVerification": "https://github.com/von12549/ArchSift/actions/runs/39852293028",
+    "originalBuild": "https://github.com/von12549/ArchSift/actions/runs/39853656594",
+    "independentWindows": "https://github.com/von12549/ArchSift/actions/runs/39854526540"
+  },
+  "publisherSignatures": {
+    "ArchSift.Setup.exe": "NotSigned",
+    "archsift.exe": "NotSigned",
+    "ArchSift.Web.exe": "NotSigned"
+  },
+  "documentation": {
+    "language": "English",
+    "bundledVersionNotesConfigurationAndUsageGuides": true,
+    "schemasAndGenericTemplates": true,
+    "existingChineseUiLocalePreserved": true,
+    "privateIfxConfigurationAndFeedIncluded": false,
+    "sourceArchiveFilesVerified": 717
+  },
+  "publication": {
+    "authorized": true,
+    "channel": "GitHub Releases",
+    "tag": "v0.10.0",
+    "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
+    "stateAtRecordCreation": "accepted-before-publication",
+    "postDownloadVerification": "Required separately; see the final publication record.",
+    "registryPublication": false,
+    "liveIfxUpgrade": false
+  },
+  "knownAdvisoryReview": {
+    "status": "no-known-matches-in-reviewed-snapshot",
+    "checkedPackageAndHostIds": 31,
+    "findings": 0,
+    "timeBound": true
+  },
+  "preservedStops": [
+    "RC1 runtime advisory rejection",
+    "RC2 actual HTTP per-run CLI-home ownership defect",
+    "Original stable independent run could not connect to the hosted Docker daemon before guest execution; the same exact successful build assets passed on a fresh runner."
+  ]
+}

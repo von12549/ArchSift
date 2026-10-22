@@ -7,7 +7,7 @@
   "stableVersion": "0.10.0",
   "candidateVersion": "0.10.0-rc.3",
   "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
-  "releaseSourceCommit": null,
+  "releaseSourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
   "authorization": {
     "executeReleasePlan": true,
     "fixIssues": true,
@@ -28,7 +28,8 @@
     "stableAndRcTagPrefixesAbsent": true,
     "stableReleaseAbsent": true,
     "reserved": false,
-    "recheckBeforePublication": true
+    "recheckBeforePublication": true,
+    "observationScope": "Historical prepublication absence check; actual published tag is recorded in completion."
   },
   "versionPolicy": {
     "singleInput": "Directory.Build.props release-version properties consumed by all release scripts",
@@ -164,5 +165,10 @@
     }
   ],
   "activeBuildVersion": "0.10.0",
-  "stableCutStatus": "source-cut-in-progress-new-ci-build-and-final-gates-required"
+  "stableCutStatus": "complete-accepted-published-download-verified",
+  "completion": {
+    "status": "fulfilled-and-published",
+    "record": "docs/releases/0.10.0-publication.json",
+    "tagAndAcceptedAssetsUnchanged": true
+  }
 }

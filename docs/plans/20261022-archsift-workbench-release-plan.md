@@ -1,15 +1,17 @@
 # ArchSift Workbench unified release plan
 
 Date: 2026-10-22 (Australia/Sydney)
-Status: RC3 MACHINE QUALIFIED / WB08 STABLE CUT IN PROGRESS / FINAL STABLE AND HUMAN GATES PENDING / NOT PUBLISHED
+Status: ACCEPTED WITH DOCUMENTED LIMITATIONS / PUBLISHED / DOWNLOAD VERIFIED
 Product: ArchSift
 Workbench name: ArchSift Workbench
-Proposed stable release: 0.10.0
+Published stable release: 0.10.0
 Local candidate sequence: 0.10.0-rc.1, then additional numbered candidates if required
 
 Execution update, 2026-10-23: the user authorized this complete plan, including issue fixes, commits/pushes, PRs, CI, merges and publication. The [frozen execution contract](../releases/0.10.0/release-contract.json) and [current ledger](../releases/0.10.0/release-status.json) supersede the planning-only restrictions below. Final independent human UI review remains user-owned; live IFX adoption and registry publishing remain excluded. No duplicate general publication permission is required. Historical planning observations and original authorization boundaries below retain their 2026-10-22 timing.
 
 The machine-readable planning authority is [the release assessment](../decisions/20261022-workbench-release-assessment.json). This document projects its observations, gap register and work-package dependencies. It records a proposed release route, not product acceptance or authorization to execute that route.
+
+Completion update, 2026-10-23: [publication](../releases/0.10.0-publication.md) closes WB00-WB10 and G01-G15 after final stable machine/user acceptance and public download/usage verification. Source f082894 and all accepted assets remain immutable. Sections below preserve the original planning assessment; their OPEN/not-started wording is historical.
 
 ## 1. Original planning authorization and scope
 

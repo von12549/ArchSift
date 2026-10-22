@@ -1,10 +1,12 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "stable-source-cut-in-progress-not-accepted",
   "contract": "docs/releases/0.10.0/release-contract.json",
   "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
   "authorityNote": "The user's 2026-10-23 execution authorization supersedes the earlier planning-only authorization statements. Publication is authorized, subject to all mandatory machine and independent human acceptance gates; do not ask for duplicate general permission.",
+  "status": "published-and-download-verified",
+  "sourceCommit": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
+  "publicationRecord": "docs/releases/0.10.0-publication.json",
   "workPackages": [
     {
       "id": "WB00",
@@ -23,510 +25,676 @@
     },
     {
       "id": "WB03",
-      "status": "complete-for-rc3-stable-requalification-required",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB04",
-      "status": "complete-for-rc3-stable-requalification-required",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB05",
-      "status": "complete-for-rc3-stable-requalification-required",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB06",
-      "status": "complete-for-rc3-stable-requalification-required",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB07",
-      "status": "complete-for-rc3-stable-requalification-required",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB08",
-      "status": "in-progress-stable-source-cut",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB09",
-      "status": "not-started",
+      "status": "complete",
       "authorized": true
     },
     {
       "id": "WB10",
-      "status": "not-started",
+      "status": "complete",
       "authorized": true
     }
   ],
   "gaps": [
     {
       "id": "G01",
-      "status": "closed-for-github-channel-recheck-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G02",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G03",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G04",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G05",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G06",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G07",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G08",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G09",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G10",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G11",
-      "status": "rc3-machine-closed-final-stable-requalification-required"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G12",
-      "status": "pending-user-only-final-stable-ui-review"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G13",
-      "status": "source-and-rc3-english-complete-final-source-archives-pending"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G14",
-      "status": "pending-final-stable-assets-and-human-acceptance"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     },
     {
       "id": "G15",
-      "status": "not-started-already-authorized-after-mandatory-gates"
+      "status": "closed-for-declared-github-release-scope",
+      "evidence": "docs/releases/0.10.0-publication.json"
     }
   ],
-  "productAcceptanceGranted": false,
+  "productAcceptanceGranted": true,
   "humanAcceptance": {
-    "status": "pending",
-    "answers": null
+    "status": "accepted-by-user",
+    "basis": "Direct user response after reviewing the exact stable payload in both prepared sessions.",
+    "behaviorAsExpected": true,
+    "usabilityRatingOutOf5": 4,
+    "defects": [],
+    "untestedItems": [],
+    "safeShutdownObservedBothSessions": true,
+    "machineCloseout": {
+      "bothCliExitCodes": 0,
+      "bothListenersClosed": true,
+      "hostHashEqual": true,
+      "protectedFilesEqual": 2809
+    },
+    "retainedOriginalResponseSha256": "966898921b0cdc52e7fa8a32fd51c1386006f9a9b9d73e3b89b55c0122735a78"
   },
-  "published": false,
+  "published": true,
   "liveIfxChanged": false,
-  "runRoot": "D:/ArchSift-lab/runs/workbench-release-20261023-01",
-  "knownStops": [
-    {
-      "id": "BOOTSTRAP-01",
-      "status": "resolved",
-      "reason": "PowerShell split the initial Git archive output argument. Retried with an argument array; original stop and host baseline retained."
+  "registryPublished": false,
+  "finalAcceptanceRecord": "docs/releases/0.10.0/acceptance.json",
+  "historicalPreparationSnapshot": {
+    "scope": "Unmodified dated preparation ledger from accepted source f082894; its pending statuses are historical, superseded by this final record.",
+    "record": {
+      "schemaVersion": 1,
+      "date": "2026-10-23",
+      "status": "stable-source-cut-in-progress-not-accepted",
+      "contract": "docs/releases/0.10.0/release-contract.json",
+      "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+      "authorityNote": "The user's 2026-10-23 execution authorization supersedes the earlier planning-only authorization statements. Publication is authorized, subject to all mandatory machine and independent human acceptance gates; do not ask for duplicate general permission.",
+      "workPackages": [
+        {
+          "id": "WB00",
+          "status": "complete",
+          "authorized": true
+        },
+        {
+          "id": "WB01",
+          "status": "complete",
+          "authorized": true
+        },
+        {
+          "id": "WB02",
+          "status": "complete",
+          "authorized": true
+        },
+        {
+          "id": "WB03",
+          "status": "complete-for-rc3-stable-requalification-required",
+          "authorized": true
+        },
+        {
+          "id": "WB04",
+          "status": "complete-for-rc3-stable-requalification-required",
+          "authorized": true
+        },
+        {
+          "id": "WB05",
+          "status": "complete-for-rc3-stable-requalification-required",
+          "authorized": true
+        },
+        {
+          "id": "WB06",
+          "status": "complete-for-rc3-stable-requalification-required",
+          "authorized": true
+        },
+        {
+          "id": "WB07",
+          "status": "complete-for-rc3-stable-requalification-required",
+          "authorized": true
+        },
+        {
+          "id": "WB08",
+          "status": "in-progress-stable-source-cut",
+          "authorized": true
+        },
+        {
+          "id": "WB09",
+          "status": "not-started",
+          "authorized": true
+        },
+        {
+          "id": "WB10",
+          "status": "not-started",
+          "authorized": true
+        }
+      ],
+      "gaps": [
+        {
+          "id": "G01",
+          "status": "closed-for-github-channel-recheck-required"
+        },
+        {
+          "id": "G02",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G03",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G04",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G05",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G06",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G07",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G08",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G09",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G10",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G11",
+          "status": "rc3-machine-closed-final-stable-requalification-required"
+        },
+        {
+          "id": "G12",
+          "status": "pending-user-only-final-stable-ui-review"
+        },
+        {
+          "id": "G13",
+          "status": "source-and-rc3-english-complete-final-source-archives-pending"
+        },
+        {
+          "id": "G14",
+          "status": "pending-final-stable-assets-and-human-acceptance"
+        },
+        {
+          "id": "G15",
+          "status": "not-started-already-authorized-after-mandatory-gates"
+        }
+      ],
+      "productAcceptanceGranted": false,
+      "humanAcceptance": {
+        "status": "pending",
+        "answers": null
+      },
+      "published": false,
+      "liveIfxChanged": false,
+      "runRoot": "D:/ArchSift-lab/runs/workbench-release-20261023-01",
+      "knownStops": [
+        {
+          "id": "BOOTSTRAP-01",
+          "status": "resolved",
+          "reason": "PowerShell split the initial Git archive output argument. Retried with an argument array; original stop and host baseline retained."
+        }
+      ],
+      "documentationTranslation": {
+        "status": "source-prepared-artifact-and-human-review-pending",
+        "translatedDistinctOriginalFiles": 150,
+        "additionalHistoricalNarratives": 9,
+        "remainingFormalMarkdownHtmlContainingHan": 0,
+        "sourceLocalLinks": "passed",
+        "rawEvidenceExceptions": 9,
+        "originalArchiveIndependentlyVerified": true,
+        "identityCheck": "150 original files / 2966 changed lines / 1008 long historical identities compared",
+        "remoteHistoricalBodies": "four English body-only updates verified; no tag/assets/date/state change",
+        "finalArtifactReview": "pending"
+      },
+      "knownIssues": [
+        {
+          "id": "WB03-SETUP-0100",
+          "status": "local-source-regression-passed-final-package-qualification-pending",
+          "reason": "Setup previously rejected 0.10.0/RC identities and used the older asset filename. Compatibility, schema and acquisition naming are being updated with regression coverage."
+        },
+        {
+          "id": "WB03-LICENSE-PATH",
+          "status": "resolved-by-second-probe",
+          "reason": "Initial package metadata placed the extensionless license at LICENSE/LICENSE. Corrected to archive root; five new probe packages verified. Original failed-check packages retained."
+        },
+        {
+          "id": "WB03-NOTICE-LINKS",
+          "status": "source-repaired-full-clean-package-pending",
+          "reason": "Development bundle failed 18 relocated notice/evidence links; fresh curated documentation passed 42 local links and nine upstream license hashes."
+        },
+        {
+          "id": "WB03-OUTER-PROBE-CALLER",
+          "status": "rejected-and-replaced-by-fresh-strict-probes",
+          "reason": "Non-strict caller printed pass without qualification reports; fresh strict cold/moved probes passed 4/4 each. Failed attempt retained."
+        }
+      ],
+      "productBuildStarted": true,
+      "newReleasePublished": false,
+      "localSourceChecks": {
+        "status": "passed",
+        "version": "0.10.0-rc.3",
+        "sourceBase": "6575161adf6dac547d9c7ecae6b474e99f61afc8",
+        "sourceEvidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-source-checks-02\\runs\\development-87dd18371e95496294d12be9c03034ed",
+        "counts": {
+          "architecture": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "notExecuted": 0
+          },
+          "integration": {
+            "total": 105,
+            "passed": 105,
+            "failed": 0,
+            "notExecuted": 0
+          },
+          "unit": {
+            "total": 157,
+            "passed": 157,
+            "failed": 0,
+            "notExecuted": 0
+          }
+        },
+        "newHttpRegressionPassed": true,
+        "nativeLogicalProjectionsUnchanged": 57,
+        "semanticProductOnlyLocks": [
+          {
+            "path": "src/ArchSift.ArchUnit/packages.lock.json",
+            "sha256": "050cd3f8b7a0a9d602d3b37c614b477b520b5b5fe6512d5136c81f860e1deeba"
+          },
+          {
+            "path": "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
+            "sha256": "9f5fe4ba970f4fdd0de8d497ea6bc0b3209493902ef6a627fedd03b1c11aafa1"
+          },
+          {
+            "path": "src/ArchSift.Cli/packages.lock.json",
+            "sha256": "d036c2965ff5282d7139d0484110238ad2330dc9ea793602f8d77c87786a7262"
+          },
+          {
+            "path": "src/ArchSift.Cli/packages.win-x64.lock.json",
+            "sha256": "bd8ca36d178bc5694e8bbbf259962793c4dd6b9b3a494f3e5674d48550ed3502"
+          },
+          {
+            "path": "src/ArchSift.Setup/packages.lock.json",
+            "sha256": "c93d957013935d7fffd1920a5d36f4128aea523fc548fee06d3c62341960baba"
+          },
+          {
+            "path": "src/ArchSift.Setup/packages.win-x64.lock.json",
+            "sha256": "68f4f265d9e149f990e74b349705c670e0f52066382a493a5a45a3470fde9734"
+          },
+          {
+            "path": "src/ArchSift.TestGate/packages.lock.json",
+            "sha256": "ff6fa56d9ae7e02c550bb27c01299adaac5e6d5c9f4b5963cfc82dfedd7063c5"
+          },
+          {
+            "path": "src/ArchSift.TestGate/packages.win-x64.lock.json",
+            "sha256": "94a4f43388bec5408c9d5d29381ffdf122b7aafc8dd66baaac7b4380852e3976"
+          },
+          {
+            "path": "src/ArchSift.Testing/packages.lock.json",
+            "sha256": "19a7bf36881b52593ae77b5725ae55eb579cc6449b9f21a12b5aa16f815f89ae"
+          },
+          {
+            "path": "src/ArchSift.Testing/packages.win-x64.lock.json",
+            "sha256": "6813fae50d00cd5e9385de950551f8e5d46fdd710c5c0321157daed2080b73e6"
+          },
+          {
+            "path": "src/ArchSift.Web/packages.lock.json",
+            "sha256": "6f7562c089342c3e5398f8edb0ffe72fc406a3d226e70bd6fff70a62daaa2c18"
+          },
+          {
+            "path": "src/ArchSift.Web/packages.win-x64.lock.json",
+            "sha256": "e11860cd1fe17e96eb8309a5a228782823e86b207b3877fc0f9a00682e121b77"
+          },
+          {
+            "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
+            "sha256": "fea7bb3f3cc297ac2bd5249e836f555031297c1256f726ef8c864835162e81e8"
+          },
+          {
+            "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
+            "sha256": "35d062339cbb1888a40c81d54387ec6f5341f8e186f228f44b5fa6089d074239"
+          },
+          {
+            "path": "tests/ArchSift.Testing.Tests/packages.lock.json",
+            "sha256": "e1f62f67e17c67e6c296f427ebd0cb650f5a653408cbe8cd21d9db4c199e3f4b"
+          },
+          {
+            "path": "tests/ArchSift.UnitTests/packages.lock.json",
+            "sha256": "fea7bb3f3cc297ac2bd5249e836f555031297c1256f726ef8c864835162e81e8"
+          }
+        ],
+        "thirdPartyGraphsUnchanged": true,
+        "runtime": "10.0.13",
+        "sdk": "10.0.303",
+        "hostEqual": true,
+        "scope": "Local uncommitted source; PR/main and clean RC3 artifacts pending"
+      },
+      "packMetadataProbe": {
+        "status": "passed",
+        "version": "0.10.0-rc.1",
+        "packages": 5,
+        "internalDependencies": "exact same version",
+        "thirdPartyLocksUnchanged": true,
+        "versionOnlyLockFiles": 10,
+        "acceptedRc": false,
+        "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\pack-probe-02\\verification.json"
+      },
+      "firstPrCi": {
+        "pr": 15,
+        "head": "16d6ea200c71272002af5e5938b07c140f416532",
+        "run": 39809335859,
+        "attempt": 1,
+        "platforms": [
+          "windows-latest",
+          "ubuntu-latest"
+        ],
+        "status": "passed",
+        "perPlatform": {
+          "architecture": 2,
+          "unit": 157,
+          "integration": 104,
+          "nativeMtp": 57,
+          "failed": 0,
+          "skipped": 0
+        },
+        "nativeLogicalCrossPlatformCasesEqual": 57,
+        "actualMainAcceptance": false
+      },
+      "releaseTooling": {
+        "status": "source-prepared-clean-complete-build-pending",
+        "procedure": "docs/releases/0.10.0/release-tooling.md",
+        "acceptance": "docs/acceptance/20261023-workbench-release-tooling.md",
+        "candidateAccepted": false,
+        "stableCut": "reviewed central-version and lock commit, CI and fresh stable build",
+        "genericConsumerProbe": {
+          "cold": 4,
+          "moved": 4,
+          "failed": 0,
+          "skipped": 0,
+          "baselineAndPolicyBytesEqual": true
+        },
+        "ridLocksReviewed": 8,
+        "existingThirdPartyLockIdentitiesUnchanged": true,
+        "repairedNativeBundleVerified": false
+      },
+      "runtimeSecurityStop": {
+        "status": "closed-rc3-patched-assets-fresh-audit-zero-known-matches-stable-recheck-required",
+        "candidateRejected": "0.10.0-rc.1",
+        "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
+        "audit": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc1-closure-audit-02/audit.json",
+        "vulnerableRuntime": "10.0.11",
+        "patchedRuntime": "10.0.13",
+        "newCandidate": "0.10.0-rc.2",
+        "matchedPackages": 2,
+        "matchedAdvisories": 13,
+        "critical": 2,
+        "high": 9,
+        "moderate": 2,
+        "noSuppression": true,
+        "systemToolsChanged": false,
+        "liveIfxChanged": false
+      },
+      "actualMainCi": {
+        "source": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
+        "run": 39839468823,
+        "status": "passed",
+        "actualCheckoutVerified": true,
+        "crossPlatformNativeLogicalCasesEqual": 57,
+        "scope": "Qualified RC3 source; final stable source needs new CI"
+      },
+      "runtimeFixLocalChecks": {
+        "status": "passed-local-source-and-development-publisher-only",
+        "sourceBase": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
+        "branch": "codex/workbench-rc2-runtime-fix",
+        "dirtySource": true,
+        "version": "0.10.0-rc.2",
+        "sdk": "10.0.303",
+        "runtime": "10.0.13",
+        "tests": {
+          "architecture": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "notExecuted": 0
+          },
+          "integration": {
+            "total": 104,
+            "passed": 104,
+            "failed": 0,
+            "notExecuted": 0
+          },
+          "unit": {
+            "total": 157,
+            "passed": 157,
+            "failed": 0,
+            "notExecuted": 0
+          }
+        },
+        "nativeCases": 57,
+        "nativeLogicalCasesEqualEarlierActualMain": true,
+        "thirdPartyLockGraphsUnchanged": true,
+        "versionOnlyChangedLocks": [
+          "src/ArchSift.ArchUnit/packages.lock.json",
+          "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
+          "src/ArchSift.Cli/packages.lock.json",
+          "src/ArchSift.Cli/packages.win-x64.lock.json",
+          "src/ArchSift.Setup/packages.lock.json",
+          "src/ArchSift.Setup/packages.win-x64.lock.json",
+          "src/ArchSift.TestGate/packages.lock.json",
+          "src/ArchSift.TestGate/packages.win-x64.lock.json",
+          "src/ArchSift.Testing/packages.lock.json",
+          "src/ArchSift.Testing/packages.win-x64.lock.json",
+          "src/ArchSift.Web/packages.lock.json",
+          "src/ArchSift.Web/packages.win-x64.lock.json",
+          "tests/ArchSift.ArchitectureTests/packages.lock.json",
+          "tests/ArchSift.IntegrationTests/packages.lock.json",
+          "tests/ArchSift.Testing.Tests/packages.lock.json",
+          "tests/ArchSift.UnitTests/packages.lock.json"
+        ],
+        "nativeApphosts": 3,
+        "approvedRuntimePackageCodeImages": 619,
+        "distributedRuntimeCodeImagesVerified": 517,
+        "englishInputs": 33,
+        "bundledLocalLinks": 42,
+        "parentHostBaselineEqual": true,
+        "childHostBaselineEqual": true,
+        "acceptedCandidate": false,
+        "newHeadCi": "pending",
+        "freshCandidateAudit": "pending",
+        "stopsRetained": [
+          "provider duplicate reference-pack entry",
+          "child PowerShell PATH order before SDK use",
+          "missing Desktop offline prerequisite",
+          "missing net8/net9 offline targeting packs",
+          "SDK apphost query lacked assumed version metadata; corrected to official raw-code hash and actual package identity"
+        ]
+      },
+      "webIsolationStop": {
+        "rejectedCandidate": "0.10.0-rc.2",
+        "newCandidate": "0.10.0-rc.3",
+        "evidence": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc2-packaged-http-03/failure.json",
+        "status": "closed-rc3-actual-ci-and-packaged-http-passed",
+        "source": "6575161adf6dac547d9c7ecae6b474e99f61afc8"
+      },
+      "rc3Qualification": {
+        "source": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
+        "record": "docs/acceptance/20261023-workbench-rc3-machine-qualification.json",
+        "status": "machine-qualified",
+        "stableAcceptance": false
+      },
+      "stableLocalSourceChecks": {
+        "status": "passed-local-stable-source-not-final-acceptance",
+        "version": "0.10.0",
+        "sourceBase": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
+        "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\stable-source-checks-01\\runs\\development-d9223b43e1ba4753a9eae0a728e2abec",
+        "counts": {
+          "architecture": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "notExecuted": 0
+          },
+          "integration": {
+            "total": 105,
+            "passed": 105,
+            "failed": 0,
+            "notExecuted": 0
+          },
+          "unit": {
+            "total": 157,
+            "passed": 157,
+            "failed": 0,
+            "notExecuted": 0
+          }
+        },
+        "nativeMtp": 57,
+        "nativeTypedLogicalCasesEqualToRc3Main": true,
+        "sdk": "10.0.303",
+        "runtime": "10.0.13",
+        "configuration": "Release",
+        "normalAndRidProductOnlyLocks": [
+          {
+            "path": "src/ArchSift.ArchUnit/packages.lock.json",
+            "sha256": "4ef4bb8bd76dadb80e6e7633efbf4953852a62b54b52bd56cc62b2dd4cad9bb9"
+          },
+          {
+            "path": "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
+            "sha256": "531ed8b845ba34c4edc874c9ff9d1c644e82201e21c921c0518d036843d84643"
+          },
+          {
+            "path": "src/ArchSift.Cli/packages.lock.json",
+            "sha256": "82316f7242fb1b0d37f5351939c6fc4fd8ecf47d502d2c2c37afd46a558ff26f"
+          },
+          {
+            "path": "src/ArchSift.Cli/packages.win-x64.lock.json",
+            "sha256": "b7728fec9dac509a6dc4d728183d771420203f66b8b1112812a6a0560a726bc4"
+          },
+          {
+            "path": "src/ArchSift.Setup/packages.lock.json",
+            "sha256": "b93d1be446be01a209209556612e957475f5382c2bc2fb068bc9952ce046646e"
+          },
+          {
+            "path": "src/ArchSift.Setup/packages.win-x64.lock.json",
+            "sha256": "e13bb7cc78ad989b9d870fc204f561bb7bf7fe1d6341ee9697b89867c8b9c33b"
+          },
+          {
+            "path": "src/ArchSift.TestGate/packages.lock.json",
+            "sha256": "86b2e6b241ecfb3d8b9f3275070e7ea5ad8c89fb2924a0c2f2d2f64cb22b6e6a"
+          },
+          {
+            "path": "src/ArchSift.TestGate/packages.win-x64.lock.json",
+            "sha256": "3c2b97765b3b9e89c0720ed6ac72d088a0ba488c921a3efdab5e48d3787ba631"
+          },
+          {
+            "path": "src/ArchSift.Testing/packages.lock.json",
+            "sha256": "431da144a9c6f2c71ca62a5ae70f8ce71841a8bfd510b48f8a3227e6ecb6b254"
+          },
+          {
+            "path": "src/ArchSift.Testing/packages.win-x64.lock.json",
+            "sha256": "53d13bdf9d1491727ba1c244c4a625f4501fbdfc71a55c7e9b81edca43c70cf9"
+          },
+          {
+            "path": "src/ArchSift.Web/packages.lock.json",
+            "sha256": "b95a3112797ea9ab0279e15999bc25f260935a0cd9182e0896fd387052fad830"
+          },
+          {
+            "path": "src/ArchSift.Web/packages.win-x64.lock.json",
+            "sha256": "8bd966fde8a3940843f08fe7aec4317fee0521a7b8f34abc51d3ac675b5a9442"
+          },
+          {
+            "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
+            "sha256": "4bb81e31eadb43a02acdd3166bc3c461b2e80674b6ca3415def180cf0a9b444e"
+          },
+          {
+            "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
+            "sha256": "5d50c486326d2e185de659a9a436be84871f587b53a875597fb72ac6038dbeae"
+          },
+          {
+            "path": "tests/ArchSift.Testing.Tests/packages.lock.json",
+            "sha256": "e38c79120a9f0be0861d391b33daa51f21df8803867e04913c760ee1dbde0e3e"
+          },
+          {
+            "path": "tests/ArchSift.UnitTests/packages.lock.json",
+            "sha256": "4bb81e31eadb43a02acdd3166bc3c461b2e80674b6ca3415def180cf0a9b444e"
+          }
+        ],
+        "thirdPartyGraphsUnchanged": true,
+        "templates": 8,
+        "contractChecks": 16,
+        "hostEqual": true,
+        "scope": "Reviewed uncommitted stable source/locks; new PR/main CI, fresh stable assets and final user-only human gates remain."
+      }
     }
-  ],
-  "documentationTranslation": {
-    "status": "source-prepared-artifact-and-human-review-pending",
-    "translatedDistinctOriginalFiles": 150,
-    "additionalHistoricalNarratives": 9,
-    "remainingFormalMarkdownHtmlContainingHan": 0,
-    "sourceLocalLinks": "passed",
-    "rawEvidenceExceptions": 9,
-    "originalArchiveIndependentlyVerified": true,
-    "identityCheck": "150 original files / 2966 changed lines / 1008 long historical identities compared",
-    "remoteHistoricalBodies": "four English body-only updates verified; no tag/assets/date/state change",
-    "finalArtifactReview": "pending"
-  },
-  "knownIssues": [
-    {
-      "id": "WB03-SETUP-0100",
-      "status": "local-source-regression-passed-final-package-qualification-pending",
-      "reason": "Setup previously rejected 0.10.0/RC identities and used the older asset filename. Compatibility, schema and acquisition naming are being updated with regression coverage."
-    },
-    {
-      "id": "WB03-LICENSE-PATH",
-      "status": "resolved-by-second-probe",
-      "reason": "Initial package metadata placed the extensionless license at LICENSE/LICENSE. Corrected to archive root; five new probe packages verified. Original failed-check packages retained."
-    },
-    {
-      "id": "WB03-NOTICE-LINKS",
-      "status": "source-repaired-full-clean-package-pending",
-      "reason": "Development bundle failed 18 relocated notice/evidence links; fresh curated documentation passed 42 local links and nine upstream license hashes."
-    },
-    {
-      "id": "WB03-OUTER-PROBE-CALLER",
-      "status": "rejected-and-replaced-by-fresh-strict-probes",
-      "reason": "Non-strict caller printed pass without qualification reports; fresh strict cold/moved probes passed 4/4 each. Failed attempt retained."
-    }
-  ],
-  "productBuildStarted": true,
-  "newReleasePublished": false,
-  "localSourceChecks": {
-    "status": "passed",
-    "version": "0.10.0-rc.3",
-    "sourceBase": "6575161adf6dac547d9c7ecae6b474e99f61afc8",
-    "sourceEvidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-source-checks-02\\runs\\development-87dd18371e95496294d12be9c03034ed",
-    "counts": {
-      "architecture": {
-        "total": 2,
-        "passed": 2,
-        "failed": 0,
-        "notExecuted": 0
-      },
-      "integration": {
-        "total": 105,
-        "passed": 105,
-        "failed": 0,
-        "notExecuted": 0
-      },
-      "unit": {
-        "total": 157,
-        "passed": 157,
-        "failed": 0,
-        "notExecuted": 0
-      }
-    },
-    "newHttpRegressionPassed": true,
-    "nativeLogicalProjectionsUnchanged": 57,
-    "semanticProductOnlyLocks": [
-      {
-        "path": "src/ArchSift.ArchUnit/packages.lock.json",
-        "sha256": "050cd3f8b7a0a9d602d3b37c614b477b520b5b5fe6512d5136c81f860e1deeba"
-      },
-      {
-        "path": "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
-        "sha256": "9f5fe4ba970f4fdd0de8d497ea6bc0b3209493902ef6a627fedd03b1c11aafa1"
-      },
-      {
-        "path": "src/ArchSift.Cli/packages.lock.json",
-        "sha256": "d036c2965ff5282d7139d0484110238ad2330dc9ea793602f8d77c87786a7262"
-      },
-      {
-        "path": "src/ArchSift.Cli/packages.win-x64.lock.json",
-        "sha256": "bd8ca36d178bc5694e8bbbf259962793c4dd6b9b3a494f3e5674d48550ed3502"
-      },
-      {
-        "path": "src/ArchSift.Setup/packages.lock.json",
-        "sha256": "c93d957013935d7fffd1920a5d36f4128aea523fc548fee06d3c62341960baba"
-      },
-      {
-        "path": "src/ArchSift.Setup/packages.win-x64.lock.json",
-        "sha256": "68f4f265d9e149f990e74b349705c670e0f52066382a493a5a45a3470fde9734"
-      },
-      {
-        "path": "src/ArchSift.TestGate/packages.lock.json",
-        "sha256": "ff6fa56d9ae7e02c550bb27c01299adaac5e6d5c9f4b5963cfc82dfedd7063c5"
-      },
-      {
-        "path": "src/ArchSift.TestGate/packages.win-x64.lock.json",
-        "sha256": "94a4f43388bec5408c9d5d29381ffdf122b7aafc8dd66baaac7b4380852e3976"
-      },
-      {
-        "path": "src/ArchSift.Testing/packages.lock.json",
-        "sha256": "19a7bf36881b52593ae77b5725ae55eb579cc6449b9f21a12b5aa16f815f89ae"
-      },
-      {
-        "path": "src/ArchSift.Testing/packages.win-x64.lock.json",
-        "sha256": "6813fae50d00cd5e9385de950551f8e5d46fdd710c5c0321157daed2080b73e6"
-      },
-      {
-        "path": "src/ArchSift.Web/packages.lock.json",
-        "sha256": "6f7562c089342c3e5398f8edb0ffe72fc406a3d226e70bd6fff70a62daaa2c18"
-      },
-      {
-        "path": "src/ArchSift.Web/packages.win-x64.lock.json",
-        "sha256": "e11860cd1fe17e96eb8309a5a228782823e86b207b3877fc0f9a00682e121b77"
-      },
-      {
-        "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
-        "sha256": "fea7bb3f3cc297ac2bd5249e836f555031297c1256f726ef8c864835162e81e8"
-      },
-      {
-        "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
-        "sha256": "35d062339cbb1888a40c81d54387ec6f5341f8e186f228f44b5fa6089d074239"
-      },
-      {
-        "path": "tests/ArchSift.Testing.Tests/packages.lock.json",
-        "sha256": "e1f62f67e17c67e6c296f427ebd0cb650f5a653408cbe8cd21d9db4c199e3f4b"
-      },
-      {
-        "path": "tests/ArchSift.UnitTests/packages.lock.json",
-        "sha256": "fea7bb3f3cc297ac2bd5249e836f555031297c1256f726ef8c864835162e81e8"
-      }
-    ],
-    "thirdPartyGraphsUnchanged": true,
-    "runtime": "10.0.13",
-    "sdk": "10.0.303",
-    "hostEqual": true,
-    "scope": "Local uncommitted source; PR/main and clean RC3 artifacts pending"
-  },
-  "packMetadataProbe": {
-    "status": "passed",
-    "version": "0.10.0-rc.1",
-    "packages": 5,
-    "internalDependencies": "exact same version",
-    "thirdPartyLocksUnchanged": true,
-    "versionOnlyLockFiles": 10,
-    "acceptedRc": false,
-    "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\pack-probe-02\\verification.json"
-  },
-  "firstPrCi": {
-    "pr": 15,
-    "head": "16d6ea200c71272002af5e5938b07c140f416532",
-    "run": 39809335859,
-    "attempt": 1,
-    "platforms": [
-      "windows-latest",
-      "ubuntu-latest"
-    ],
-    "status": "passed",
-    "perPlatform": {
-      "architecture": 2,
-      "unit": 157,
-      "integration": 104,
-      "nativeMtp": 57,
-      "failed": 0,
-      "skipped": 0
-    },
-    "nativeLogicalCrossPlatformCasesEqual": 57,
-    "actualMainAcceptance": false
-  },
-  "releaseTooling": {
-    "status": "source-prepared-clean-complete-build-pending",
-    "procedure": "docs/releases/0.10.0/release-tooling.md",
-    "acceptance": "docs/acceptance/20261023-workbench-release-tooling.md",
-    "candidateAccepted": false,
-    "stableCut": "reviewed central-version and lock commit, CI and fresh stable build",
-    "genericConsumerProbe": {
-      "cold": 4,
-      "moved": 4,
-      "failed": 0,
-      "skipped": 0,
-      "baselineAndPolicyBytesEqual": true
-    },
-    "ridLocksReviewed": 8,
-    "existingThirdPartyLockIdentitiesUnchanged": true,
-    "repairedNativeBundleVerified": false
-  },
-  "runtimeSecurityStop": {
-    "status": "closed-rc3-patched-assets-fresh-audit-zero-known-matches-stable-recheck-required",
-    "candidateRejected": "0.10.0-rc.1",
-    "source": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
-    "audit": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc1-closure-audit-02/audit.json",
-    "vulnerableRuntime": "10.0.11",
-    "patchedRuntime": "10.0.13",
-    "newCandidate": "0.10.0-rc.2",
-    "matchedPackages": 2,
-    "matchedAdvisories": 13,
-    "critical": 2,
-    "high": 9,
-    "moderate": 2,
-    "noSuppression": true,
-    "systemToolsChanged": false,
-    "liveIfxChanged": false
-  },
-  "actualMainCi": {
-    "source": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
-    "run": 39839468823,
-    "status": "passed",
-    "actualCheckoutVerified": true,
-    "crossPlatformNativeLogicalCasesEqual": 57,
-    "scope": "Qualified RC3 source; final stable source needs new CI"
-  },
-  "runtimeFixLocalChecks": {
-    "status": "passed-local-source-and-development-publisher-only",
-    "sourceBase": "f22ac27fd67908e0cca6e064270e8e086b9858c8",
-    "branch": "codex/workbench-rc2-runtime-fix",
-    "dirtySource": true,
-    "version": "0.10.0-rc.2",
-    "sdk": "10.0.303",
-    "runtime": "10.0.13",
-    "tests": {
-      "architecture": {
-        "total": 2,
-        "passed": 2,
-        "failed": 0,
-        "notExecuted": 0
-      },
-      "integration": {
-        "total": 104,
-        "passed": 104,
-        "failed": 0,
-        "notExecuted": 0
-      },
-      "unit": {
-        "total": 157,
-        "passed": 157,
-        "failed": 0,
-        "notExecuted": 0
-      }
-    },
-    "nativeCases": 57,
-    "nativeLogicalCasesEqualEarlierActualMain": true,
-    "thirdPartyLockGraphsUnchanged": true,
-    "versionOnlyChangedLocks": [
-      "src/ArchSift.ArchUnit/packages.lock.json",
-      "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
-      "src/ArchSift.Cli/packages.lock.json",
-      "src/ArchSift.Cli/packages.win-x64.lock.json",
-      "src/ArchSift.Setup/packages.lock.json",
-      "src/ArchSift.Setup/packages.win-x64.lock.json",
-      "src/ArchSift.TestGate/packages.lock.json",
-      "src/ArchSift.TestGate/packages.win-x64.lock.json",
-      "src/ArchSift.Testing/packages.lock.json",
-      "src/ArchSift.Testing/packages.win-x64.lock.json",
-      "src/ArchSift.Web/packages.lock.json",
-      "src/ArchSift.Web/packages.win-x64.lock.json",
-      "tests/ArchSift.ArchitectureTests/packages.lock.json",
-      "tests/ArchSift.IntegrationTests/packages.lock.json",
-      "tests/ArchSift.Testing.Tests/packages.lock.json",
-      "tests/ArchSift.UnitTests/packages.lock.json"
-    ],
-    "nativeApphosts": 3,
-    "approvedRuntimePackageCodeImages": 619,
-    "distributedRuntimeCodeImagesVerified": 517,
-    "englishInputs": 33,
-    "bundledLocalLinks": 42,
-    "parentHostBaselineEqual": true,
-    "childHostBaselineEqual": true,
-    "acceptedCandidate": false,
-    "newHeadCi": "pending",
-    "freshCandidateAudit": "pending",
-    "stopsRetained": [
-      "provider duplicate reference-pack entry",
-      "child PowerShell PATH order before SDK use",
-      "missing Desktop offline prerequisite",
-      "missing net8/net9 offline targeting packs",
-      "SDK apphost query lacked assumed version metadata; corrected to official raw-code hash and actual package identity"
-    ]
-  },
-  "webIsolationStop": {
-    "rejectedCandidate": "0.10.0-rc.2",
-    "newCandidate": "0.10.0-rc.3",
-    "evidence": "D:/ArchSift-lab/runs/workbench-release-20261023-01/rc2-packaged-http-03/failure.json",
-    "status": "closed-rc3-actual-ci-and-packaged-http-passed",
-    "source": "6575161adf6dac547d9c7ecae6b474e99f61afc8"
-  },
-  "rc3Qualification": {
-    "source": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
-    "record": "docs/acceptance/20261023-workbench-rc3-machine-qualification.json",
-    "status": "machine-qualified",
-    "stableAcceptance": false
-  },
-  "stableLocalSourceChecks": {
-    "status": "passed-local-stable-source-not-final-acceptance",
-    "version": "0.10.0",
-    "sourceBase": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
-    "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\stable-source-checks-01\\runs\\development-d9223b43e1ba4753a9eae0a728e2abec",
-    "counts": {
-      "architecture": {
-        "total": 2,
-        "passed": 2,
-        "failed": 0,
-        "notExecuted": 0
-      },
-      "integration": {
-        "total": 105,
-        "passed": 105,
-        "failed": 0,
-        "notExecuted": 0
-      },
-      "unit": {
-        "total": 157,
-        "passed": 157,
-        "failed": 0,
-        "notExecuted": 0
-      }
-    },
-    "nativeMtp": 57,
-    "nativeTypedLogicalCasesEqualToRc3Main": true,
-    "sdk": "10.0.303",
-    "runtime": "10.0.13",
-    "configuration": "Release",
-    "normalAndRidProductOnlyLocks": [
-      {
-        "path": "src/ArchSift.ArchUnit/packages.lock.json",
-        "sha256": "4ef4bb8bd76dadb80e6e7633efbf4953852a62b54b52bd56cc62b2dd4cad9bb9"
-      },
-      {
-        "path": "src/ArchSift.ArchUnit/packages.win-x64.lock.json",
-        "sha256": "531ed8b845ba34c4edc874c9ff9d1c644e82201e21c921c0518d036843d84643"
-      },
-      {
-        "path": "src/ArchSift.Cli/packages.lock.json",
-        "sha256": "82316f7242fb1b0d37f5351939c6fc4fd8ecf47d502d2c2c37afd46a558ff26f"
-      },
-      {
-        "path": "src/ArchSift.Cli/packages.win-x64.lock.json",
-        "sha256": "b7728fec9dac509a6dc4d728183d771420203f66b8b1112812a6a0560a726bc4"
-      },
-      {
-        "path": "src/ArchSift.Setup/packages.lock.json",
-        "sha256": "b93d1be446be01a209209556612e957475f5382c2bc2fb068bc9952ce046646e"
-      },
-      {
-        "path": "src/ArchSift.Setup/packages.win-x64.lock.json",
-        "sha256": "e13bb7cc78ad989b9d870fc204f561bb7bf7fe1d6341ee9697b89867c8b9c33b"
-      },
-      {
-        "path": "src/ArchSift.TestGate/packages.lock.json",
-        "sha256": "86b2e6b241ecfb3d8b9f3275070e7ea5ad8c89fb2924a0c2f2d2f64cb22b6e6a"
-      },
-      {
-        "path": "src/ArchSift.TestGate/packages.win-x64.lock.json",
-        "sha256": "3c2b97765b3b9e89c0720ed6ac72d088a0ba488c921a3efdab5e48d3787ba631"
-      },
-      {
-        "path": "src/ArchSift.Testing/packages.lock.json",
-        "sha256": "431da144a9c6f2c71ca62a5ae70f8ce71841a8bfd510b48f8a3227e6ecb6b254"
-      },
-      {
-        "path": "src/ArchSift.Testing/packages.win-x64.lock.json",
-        "sha256": "53d13bdf9d1491727ba1c244c4a625f4501fbdfc71a55c7e9b81edca43c70cf9"
-      },
-      {
-        "path": "src/ArchSift.Web/packages.lock.json",
-        "sha256": "b95a3112797ea9ab0279e15999bc25f260935a0cd9182e0896fd387052fad830"
-      },
-      {
-        "path": "src/ArchSift.Web/packages.win-x64.lock.json",
-        "sha256": "8bd966fde8a3940843f08fe7aec4317fee0521a7b8f34abc51d3ac675b5a9442"
-      },
-      {
-        "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
-        "sha256": "4bb81e31eadb43a02acdd3166bc3c461b2e80674b6ca3415def180cf0a9b444e"
-      },
-      {
-        "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
-        "sha256": "5d50c486326d2e185de659a9a436be84871f587b53a875597fb72ac6038dbeae"
-      },
-      {
-        "path": "tests/ArchSift.Testing.Tests/packages.lock.json",
-        "sha256": "e38c79120a9f0be0861d391b33daa51f21df8803867e04913c760ee1dbde0e3e"
-      },
-      {
-        "path": "tests/ArchSift.UnitTests/packages.lock.json",
-        "sha256": "4bb81e31eadb43a02acdd3166bc3c461b2e80674b6ca3415def180cf0a9b444e"
-      }
-    ],
-    "thirdPartyGraphsUnchanged": true,
-    "templates": 8,
-    "contractChecks": 16,
-    "hostEqual": true,
-    "scope": "Reviewed uncommitted stable source/locks; new PR/main CI, fresh stable assets and final user-only human gates remain."
   }
 }
