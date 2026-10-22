@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "rc3-machine-qualified-stable-requalification-required",
+  "version": "0.10.0-rc.3",
+  "sourceCommit": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
+  "sourceTree": "91ae74fe777ed4ac634b1d5adece10bbaac3a5d2",
+  "sdk": "10.0.303",
+  "runtime": "10.0.13",
+  "configuration": "Release",
+  "tfm": "net10.0",
+  "rid": "win-x64",
+  "sourceInputsVerified": 715,
+  "pr": 17,
+  "prCi": 39838490813,
+  "mainCi": 39839468823,
+  "sourceBuildRun": 39841489662,
+  "independentGuestRun": 39843764047,
+  "sameOriginalAssetsReplayedWithoutRebuild": true,
+  "sourceCiPerPlatform": {
+    "architecture": 2,
+    "unit": 157,
+    "integration": 105,
+    "nativeMtp": 57,
+    "failed": 0,
+    "skipped": 0
+  },
+  "packageCount": 5,
+  "genericOfflinePackages": 28,
+  "coldAndMovedCasesEach": 4,
+  "nativeManifestEntries": 679,
+  "nativeHostProofs": 3,
+  "distributedRuntimeCodeImagesVerified": 517,
+  "bundledDocumentationInputs": 33,
+  "bundledLocalLinks": 42,
+  "knownAdvisoryMatches": 0,
+  "knownAdvisoryPackageHostIds": 31,
+  "packagedNegativeCases": 15,
+  "nativeSmokeChecks": 17,
+  "lifecycleChecks": 20,
+  "sarifReportsValidated": 23,
+  "performance": [
+    {
+      "iteration": 0,
+      "analysisMilliseconds": 158,
+      "processWallMilliseconds": 297,
+      "sampledPeakBytes": 49205248
+    },
+    {
+      "iteration": 1,
+      "analysisMilliseconds": 130,
+      "processWallMilliseconds": 276,
+      "sampledPeakBytes": 47689728
+    },
+    {
+      "iteration": 2,
+      "analysisMilliseconds": 140,
+      "processWallMilliseconds": 270,
+      "sampledPeakBytes": 57425920
+    },
+    {
+      "iteration": 3,
+      "analysisMilliseconds": 130,
+      "processWallMilliseconds": 259,
+      "sampledPeakBytes": 47104000
+    },
+    {
+      "iteration": 4,
+      "analysisMilliseconds": 138,
+      "processWallMilliseconds": 266,
+      "sampledPeakBytes": 56406016
+    }
+  ],
+  "performanceCeilingsUnchanged": true,
+  "ifx": {
+    "sourceCommit": "96803ed6165c46c0b1d561fddebfc33f5501a0e1",
+    "cliWebTypedCasesEqual": 493,
+    "csharp": 92,
+    "json": 401,
+    "policyResponsibilitySources": 404,
+    "freshProductionAssemblies": 89,
+    "officialAuditedProjects": 105,
+    "skipped": 0,
+    "findings": 0,
+    "unchangedTrackedInputsAcrossCliWeb": 928,
+    "outOfDailyProjectionItems": 187,
+    "liveUpgrade": false
+  },
+  "evidence": {
+    "prCi": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\pr17-ci-\\39838490813\\verification.json",
+      "sha256": "fdb0ad3474e80616af74eefed18f63559fccd6b51a33c4660edd1959a7cd51c9"
+    },
+    "mainCi": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\main-ci-\\39839468823\\verification.json",
+      "sha256": "c98cbcb320e6e027a2758cabd21ce8d66529e530ad54f911ca4f9016637a6db3"
+    },
+    "sourceBuildMaterialization": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-build-01\\materialization.json",
+      "sha256": "eb2a50494471fccecf7ffc9e53ae24847ef91d3a18607144837167ee3f9adc08"
+    },
+    "artifactIdentity": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-artifact-local-verification-01\\verification.json",
+      "sha256": "4f7c7753e527012bc6c3bbf18254d84afa712efe21ee7b3680d35bf1798d690e"
+    },
+    "advisoryAudit": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-closure-audit-01\\audit.json",
+      "sha256": "dac0445ed6784461467a6eaa64faf6b7538e0de7549544158d0a952743f6578a"
+    },
+    "licenseIntegrity": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-license-review-01\\licenses.json",
+      "sha256": "d23926813f2f4043eac0eb645d606e6e923fbb6cc42e3a60daf7f0c03ef6d0b3"
+    },
+    "packagedNegatives": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-package-negatives-01\\verification.json",
+      "sha256": "c9781bee561e4515472aff9b77b8cc56f63fb5ff4fe99aa724bb4c4de98892c4"
+    },
+    "packagedHttp": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-packaged-http-02\\verification.json",
+      "sha256": "76721e6697ca526a43adb1960b7e57ecd0fe56c886944b65190c50bc6b4cc0cc"
+    },
+    "nativeSmoke": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-native-smoke-01\\packages\\smoke-98383b2f8be74ecda8da27bfb6194265\\smoke-result.json",
+      "sha256": "0d75ee21c0041a7f2dbd80e79e2dae9976b31343e07f10a887e52b1f6250b33d"
+    },
+    "officialSarif": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-sarif-review.json",
+      "sha256": "995a6ec02d32ccb55604524cfc1d80ebcc5335afdc5c525a3929bc03ef5f4065"
+    },
+    "independentWindows": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\independent-ci-39843764047\\verification.json",
+      "sha256": "25962e3b7e3a24cf4a8152e2e9adc48d2ddaf7d0dc692581eb37a9b078359c7b"
+    },
+    "realIfx": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-ifx-snapshot-02\\real-qualification.json",
+      "sha256": "eb1020c5d020dbb23d42d6f26eee8452bd19cc135a8983150581906916f5460f"
+    },
+    "lifecycle": {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\rc3-lifecycle-01\\packages\\setup-smoke-d8cbb08d8c4f4e64bf26b38f42ddcea4\\setup-smoke-result.json",
+      "sha256": "8accb6d9bf2331abfb9635920a7e23b9032ac414fa890c311c453f05eb8d23a8"
+    }
+  },
+  "assets": [
+    {
+      "file": "archsift-workbench-0.10.0-rc.3-offline-feed.zip",
+      "bytes": 16380043,
+      "sha256": "686624dd5e21820b82e80993509a4ec2a65bca243c1ae711b886a75207ac8fed"
+    },
+    {
+      "file": "archsift-workbench-0.10.0-rc.3-win-x64.zip",
+      "bytes": 90125043,
+      "sha256": "35a5133170e2562b8266cb96ef621568d801217478317b821d917db4a8c9d55d"
+    },
+    {
+      "file": "ArchSift.ArchUnit.0.10.0-rc.3.nupkg",
+      "bytes": 30575,
+      "sha256": "a6e71d8e013f64907332d7af8570e1d4142d5f370246f4016f065ee922fa4499"
+    },
+    {
+      "file": "ArchSift.Cli.0.10.0-rc.3.nupkg",
+      "bytes": 1261003,
+      "sha256": "c7f1cd1f618663e71319d56be35e540bcf5b89b8b7102e3e89e9a0749cdd12b1"
+    },
+    {
+      "file": "ArchSift.Contracts.0.10.0-rc.3.nupkg",
+      "bytes": 90128,
+      "sha256": "601302d2299e2704968696af117c9d8aebe54f460e453cdd85dc83da006330bf"
+    },
+    {
+      "file": "ArchSift.Core.0.10.0-rc.3.nupkg",
+      "bytes": 161040,
+      "sha256": "cc7695f79775ff496023bc7fb74fead8dbee0955bb6b1a54ecae663e7d3d519f"
+    },
+    {
+      "file": "ArchSift.Setup.exe",
+      "bytes": 74497874,
+      "sha256": "d1bc59904055902ae692c04e61613df1bc505ec4055f259a371fc560f0883399"
+    },
+    {
+      "file": "ArchSift.Testing.0.10.0-rc.3.nupkg",
+      "bytes": 25863,
+      "sha256": "72b4ee986aa6f106f287ca8e723759ee572c71935d1b39310ca3d8453a150290"
+    },
+    {
+      "file": "artifact-manifest.json",
+      "bytes": 2416,
+      "sha256": "69873d8868dffe6bf27e82e39cb70ed73078179bc99122806fa0e46d55c1a023"
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 898,
+      "sha256": "3f4c4c6b2e99899c3d0024baf5bb7cbb2838b085c1d2306a42c9af7dda396d09"
+    }
+  ],
+  "stableAcceptance": false,
+  "humanAcceptance": "pending-final-stable-bytes-user-only",
+  "published": false,
+  "limitations": [
+    "Independent no-SDK execution covers a fresh official Windows Server Core 2025 container on an independent hosted Windows VM; desktop visual/hands-on acceptance is user-owned.",
+    "FDD consumers must supply a supported patched .NET 10 runtime; the SDK identity does not establish its shared-runtime patch.",
+    "493 configured daily cases passed; 187 out-of-daily projection items remain unknown/not-run. No additional IFX policy adoption.",
+    "Fresh source/build/89-assembly identities are recorded, without claiming a complete compiler-input closure or bit-reproducible build.",
+    "Advisory observations are bound to the recorded official snapshot and are not proof of vulnerability absence.",
+    "Nineteen upstream archives have no separate license file; exact archives/metadata and available original texts are retained. No new rights are assigned."
+  ],
+  "retainedStops": [
+    "RC1 runtime advisory rejection",
+    "RC2 real packaged Web CLI-home defect",
+    "UTF8/OEM capture diagnosis",
+    "Negative-stream and typed-skip harness diagnostics",
+    "Independent driver Profile-name and manifest/evidence-copy stops",
+    "HTTP taskkill assertion stop, then fresh owned Process.Kill(true) suite pass",
+    "Long-path snapshot Git stop; fresh short source used without system/global settings repair"
+  ]
+}

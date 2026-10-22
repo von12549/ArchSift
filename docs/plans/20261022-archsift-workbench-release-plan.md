@@ -1,7 +1,7 @@
 # ArchSift Workbench unified release plan
 
 Date: 2026-10-22 (Australia/Sydney)
-Status: EXECUTION AUTHORIZED / WB01–WB02 COMPLETE / WB03 IN PROGRESS / RELEASE NOT ACCEPTED OR PUBLISHED
+Status: RC3 MACHINE QUALIFIED / WB08 STABLE CUT IN PROGRESS / FINAL STABLE AND HUMAN GATES PENDING / NOT PUBLISHED
 Product: ArchSift
 Workbench name: ArchSift Workbench
 Proposed stable release: 0.10.0

@@ -154,6 +154,15 @@
       "source": "6575161adf6dac547d9c7ecae6b474e99f61afc8",
       "state": "rejected-by-packaged-http-gate",
       "reason": "CLI accepted an isolated per-run DOTNET_CLI_HOME, but Web retained that directory after allocating a different run. Actual packaged HTTP job failed before execution. Correct both run and copy-rule paths and requalify RC3."
+    },
+    {
+      "version": "0.10.0-rc.3",
+      "source": "64897e3de914f466bb783b1fc1cdd9d103190ccc",
+      "state": "machine-qualified-not-final-stable-acceptance",
+      "qualification": "docs/acceptance/20261023-workbench-rc3-machine-qualification.json",
+      "human": "pending-final-stable-bytes"
     }
-  ]
+  ],
+  "activeBuildVersion": "0.10.0",
+  "stableCutStatus": "source-cut-in-progress-new-ci-build-and-final-gates-required"
 }
