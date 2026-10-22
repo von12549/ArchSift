@@ -1,0 +1,784 @@
+{
+  "schemaVersion": 1,
+  "kind": "releasePlanningAssessment",
+  "date": "2026-10-22",
+  "timezone": "Australia/Sydney",
+  "status": "planning-complete-release-preparation-not-started",
+  "plan": "docs/plans/20261022-archsift-workbench-release-plan.md",
+  "authorization": {
+    "authorized": [
+      "local-release-plan",
+      "read-only-version-and-readiness-checks",
+      "documentation-language-policy",
+      "local-implementation-plan-status-entry"
+    ],
+    "notAuthorized": [
+      "product-or-version-change",
+      "bulk-translation",
+      "build",
+      "test-run",
+      "install",
+      "real-ifx-run",
+      "ci-dispatch",
+      "staging",
+      "commit",
+      "push",
+      "pull-request",
+      "merge",
+      "tag",
+      "upload",
+      "publication",
+      "live-ifx-adoption",
+      "cleanup"
+    ],
+    "humanAcceptanceOwner": "user"
+  },
+  "identity": {
+    "product": "ArchSift",
+    "workbench": "ArchSift Workbench",
+    "unifiedVersion": true,
+    "proposedStableVersion": "0.10.0",
+    "proposedFirstCandidateVersion": "0.10.0-rc.1",
+    "proposedStableTag": "v0.10.0",
+    "reserved": false,
+    "versionFilesChanged": false,
+    "currentDevelopmentDefault": "0.9.0-dev",
+    "currentAcceptedIfxVersion": "0.10.0-cl03.1",
+    "reportSchemaVersionChangePlanned": false,
+    "packageIds": [
+      "ArchSift.Contracts",
+      "ArchSift.Core",
+      "ArchSift.ArchUnit",
+      "ArchSift.Testing",
+      "ArchSift.Cli"
+    ],
+    "assemblyFileVersionPolicy": "0.10.0.0; full prerelease identity remains in package/informational/display versions"
+  },
+  "source": {
+    "localHead": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+    "remoteMain": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+    "remoteTree": "f4c2686d2ef9b536a06d7f72ac8250445a6c21f8",
+    "releaseCommitFrozen": false,
+    "remoteMainProtected": false,
+    "remoteMainQuery": "https://api.github.com/repos/von12549/ArchSift/branches/main",
+    "beforeRoundStatus": {
+      "untracked": 1439,
+      "modifiedTracked": 3
+    },
+    "beforeRoundStagedPaths": [],
+    "sourceArchiveDelivery": "complete-PR9-main-3f61be0",
+    "documentationDelivery": "complete-PR10-main-5e6c4cd-current-docs-PR14-main-7964e4",
+    "reproducibleBuildClaimed": false
+  },
+  "versionChecks": {
+    "observationDate": "2026-10-22",
+    "checkedBeforeBaselineUtc": "2026-10-22T12:53:16Z",
+    "conclusion": "provisional-github-target-no-observed-collision-not-reserved",
+    "github": {
+      "status": "no-observed-0100-collision",
+      "releaseListUrls": [
+        "https://api.github.com/repos/von12549/ArchSift/releases?per_page=100&page=1",
+        "https://api.github.com/repos/von12549/ArchSift/releases?per_page=100&page=2"
+      ],
+      "tagUrls": [
+        "https://api.github.com/repos/von12549/ArchSift/git/refs/tags",
+        "https://api.github.com/repos/von12549/ArchSift/git/matching-refs/tags/0.10.0",
+        "https://api.github.com/repos/von12549/ArchSift/git/matching-refs/tags/v0.10.0"
+      ],
+      "releaseCount": 8,
+      "releaseSecondPageCount": 0,
+      "tagCount": 8,
+      "matchingStableOrCandidatePrefixes": [],
+      "latestObservedStable": "v0.8.0",
+      "latestObservedPrerelease": "v0.9.0-dev",
+      "releases": [
+        {
+          "tag": "v0.9.0-dev",
+          "name": "ArchSift 0.9.0-dev",
+          "draft": false,
+          "prerelease": true,
+          "publishedAt": "2026-10-16T02:03:48Z",
+          "assets": []
+        },
+        {
+          "tag": "v0.8.0",
+          "name": "ArchSift 0.8.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-13T12:56:58Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.8.0-win-x64.zip",
+            "ArchSift.Setup.exe",
+            "SHA256SUMS.txt"
+          ]
+        },
+        {
+          "tag": "v0.7.0",
+          "name": "ArchSift 0.7.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-12T12:34:00Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.7.0-win-x64.zip",
+            "ArchSift.Setup.exe",
+            "SHA256SUMS.txt"
+          ]
+        },
+        {
+          "tag": "v0.6.0",
+          "name": "ArchSift 0.6.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-11T05:45:55Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.6.0-win-x64.zip",
+            "ArchSift.Setup.exe",
+            "SHA256SUMS.txt"
+          ]
+        },
+        {
+          "tag": "v0.5.0",
+          "name": "ArchSift 0.5.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-09T18:16:54Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.5.0-win-x64.zip",
+            "ArchSift.Setup.exe",
+            "SHA256SUMS.txt"
+          ]
+        },
+        {
+          "tag": "v0.4.0",
+          "name": "ArchSift 0.4.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-09T01:27:12Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.4.0-win-x64.zip",
+            "SHA256SUMS.txt"
+          ]
+        },
+        {
+          "tag": "v0.3.0",
+          "name": "ArchSift 0.3.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-07T10:59:15Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.3.0-win-x64.zip",
+            "SHA256SUMS.txt"
+          ]
+        },
+        {
+          "tag": "v0.2.0",
+          "name": "ArchSift 0.2.0",
+          "draft": false,
+          "prerelease": false,
+          "publishedAt": "2026-10-06T18:31:57Z",
+          "assets": [
+            "acceptance.json",
+            "archsift-0.2.0-win-x64.zip",
+            "SHA256SUMS.txt"
+          ]
+        }
+      ],
+      "tagCollectionFallback": "The generic tags collection was rejected by the connector; the supported Git refs collection and both prefix queries succeeded."
+    },
+    "nugetOrg": {
+      "status": "no-public-product-index-observed",
+      "method": "GET flat-container index; no restore/install/push",
+      "initialSandboxAndWebQueries": "unavailable-no-conclusion",
+      "successfulNetworkRetry": true,
+      "results": [
+        {
+          "packageId": "archsift.contracts",
+          "url": "https://api.nuget.org/v3-flatcontainer/archsift.contracts/index.json",
+          "httpStatus": 404
+        },
+        {
+          "packageId": "archsift.core",
+          "url": "https://api.nuget.org/v3-flatcontainer/archsift.core/index.json",
+          "httpStatus": 404
+        },
+        {
+          "packageId": "archsift.archunit",
+          "url": "https://api.nuget.org/v3-flatcontainer/archsift.archunit/index.json",
+          "httpStatus": 404
+        },
+        {
+          "packageId": "archsift.testing",
+          "url": "https://api.nuget.org/v3-flatcontainer/archsift.testing/index.json",
+          "httpStatus": 404
+        },
+        {
+          "packageId": "archsift.cli",
+          "url": "https://api.nuget.org/v3-flatcontainer/archsift.cli/index.json",
+          "httpStatus": 404
+        }
+      ],
+      "idOwnership": "not-established",
+      "publicationRights": "not-established",
+      "reservationClaimed": false
+    },
+    "githubPackages": {
+      "status": "inconclusive",
+      "url": "https://api.github.com/users/von12549/packages?package_type=nuget&per_page=100&page=1",
+      "httpStatus": 403,
+      "reason": "Credential requires read:packages scope to list packages.",
+      "credentialsOrPermissionsChanged": false,
+      "blockingCondition": "required only if GitHub Packages registry publication becomes in scope"
+    },
+    "localFeeds": {
+      "inspection": "top-level product nupkg filenames only; no new integrity acceptance",
+      "results": [
+        {
+          "directory": "D:/ArchSift-lab/packages/cl03-20261021-01",
+          "productPackageCount": 5,
+          "version": "0.10.0-cl03.1",
+          "stable0100Count": 0
+        },
+        {
+          "directory": "D:/ArchSift-lab/packages/cl04-ifx-offline-20261021-01",
+          "productPackageCount": 5,
+          "version": "0.10.0-cl03.1",
+          "stable0100Count": 0
+        },
+        {
+          "directory": "D:/ArchSift-lab/packages/sp03-ifx-offline-20261020-02",
+          "productPackageCount": 5,
+          "version": "0.10.0-sp03.1",
+          "stable0100Count": 0
+        }
+      ]
+    },
+    "recheckAt": [
+      "WB01-version-allocation",
+      "WB09-final-review",
+      "immediately-before-WB10-publication"
+    ]
+  },
+  "distribution": {
+    "primaryChannel": "GitHub Releases with downloadable assets and reviewed offline consumption",
+    "registryPublicationInDefaultScope": false,
+    "requiredAssets": [
+      "self-contained-windows-x64-workbench-cli-zip",
+      "matching-separate-setup",
+      "five-product-nupkg-assets",
+      "approved-generic-offline-consumption-bundle",
+      "english-formal-documentation",
+      "acceptance-json",
+      "artifact-manifest",
+      "sha256sums",
+      "tagged-source-archives"
+    ],
+    "optionalAssets": [
+      "separately-qualified-framework-dependent-web-zip"
+    ],
+    "liveIfx251PackageFeedPublication": false,
+    "liveIfxUpgradeIncluded": false,
+    "rcPublicationAutomatic": false,
+    "stableArtifactsRenamedFromRc": false
+  },
+  "acceptedIfxBaseline": {
+    "evidence": "docs/acceptance/20261022-b03rest-portable-activation.md",
+    "recordedMain": "b591b9f2ffca5d0bbbfb1f9352a56870fadf927c",
+    "version": "0.10.0-cl03.1",
+    "packageFeedCount": 251,
+    "passed": 493,
+    "csharpCases": 92,
+    "jsonCases": 401,
+    "skipped": 0,
+    "responsibilitySources": 404,
+    "productionAssemblies": 89,
+    "independentOfficialAuditPassed": 105,
+    "sdk": "10.0.303",
+    "targetFramework": "net10.0",
+    "configuration": "Release",
+    "platform": "Windows x64",
+    "rerunThisRound": false,
+    "liveCheckoutRevalidatedThisRound": false,
+    "currentSourceConformanceClaimedFor0100": false,
+    "deferredA": 179,
+    "deferredB07": 5,
+    "csharpResponsibilities": 3,
+    "notExecutedAsJson": 187,
+    "policyChangesPlanned": false
+  },
+  "language": {
+    "policy": "English for all new/revised formal repository and distribution documentation; Chinese only for internal conversation/quick reading.",
+    "existingUiLocalizationChanged": false,
+    "rawEvidenceAndLegalTextPreserved": true,
+    "commitsTagsPublishedAssetBytesImmutable": true,
+    "remoteTreeQuery": "https://api.github.com/repos/von12549/ArchSift/git/trees/f4c2686d2ef9b536a06d7f72ac8250445a6c21f8?recursive=1",
+    "remoteTreeTruncated": false,
+    "screeningSource": "git show HEAD:<path> at local HEAD equal to observed remote main; immutable tracked Markdown/HTML only",
+    "screenedTrackedDocumentCount": 187,
+    "hanContainingTrackedDocumentCount": 149,
+    "screeningIsTranslationVerdict": false,
+    "hanContainingPaths": [
+      "README.md",
+      "docs/acceptance/20261006-implementation-readiness.md",
+      "docs/acceptance/20261006-w00-completion.md",
+      "docs/acceptance/20261006-w00-takeover-review.md",
+      "docs/acceptance/20261006-w01-foundation.md",
+      "docs/acceptance/20261006-w02-contracts.md",
+      "docs/acceptance/20261006-w03-discovery.md",
+      "docs/acceptance/20261006-w04-project-rules.md",
+      "docs/acceptance/20261006-w05-assemblies.md",
+      "docs/acceptance/20261006-w06-reports-cli.md",
+      "docs/acceptance/20261007-0.2.0-post-release-verification.md",
+      "docs/acceptance/20261007-w07-workbench.md",
+      "docs/acceptance/20261007-w08-completion.md",
+      "docs/acceptance/20261007-w08-readiness.md",
+      "docs/acceptance/20261007-w09-comparison.md",
+      "docs/acceptance/20261007-w10-report-integration.md",
+      "docs/acceptance/20261007-w11-allowlists-ui.md",
+      "docs/acceptance/20261010-0.5-candidate-readiness.md",
+      "docs/acceptance/20261010-0.5-final-acceptance.md",
+      "docs/acceptance/20261010-0.5-ifx-step01-plan.md",
+      "docs/acceptance/20261010-0.5-ifx-step02-install.md",
+      "docs/acceptance/20261010-0.5-ifx-step03-ctrl-c.md",
+      "docs/acceptance/20261010-0.5-ifx-step03-pipe-file.md",
+      "docs/acceptance/20261010-0.5-ifx-step03-safe-shutdown.md",
+      "docs/acceptance/20261010-0.5-ifx-step04a-copy-plan.md",
+      "docs/acceptance/20261010-0.5-ifx-step04b-adopt-upgrade-plan.md",
+      "docs/acceptance/20261010-0.5-ifx-step04c-upgrade.md",
+      "docs/acceptance/20261010-0.5-ifx-step04d-rollback.md",
+      "docs/acceptance/20261010-0.5-launch-regression.md",
+      "docs/acceptance/20261010-0.5-setup-development.md",
+      "docs/acceptance/20261011-0.6-a-contracts.md",
+      "docs/acceptance/20261011-0.6-b-progress.md",
+      "docs/acceptance/20261011-0.6-c-serial-baseline.md",
+      "docs/acceptance/20261011-0.6-candidate-readiness.md",
+      "docs/acceptance/20261011-0.6-d-launcher.md",
+      "docs/acceptance/20261011-0.6-e-parallel-performance.md",
+      "docs/acceptance/20261011-0.6-final-acceptance.md",
+      "docs/acceptance/20261011-0.6-human-r2-checklist.md",
+      "docs/acceptance/20261011-0.6-human-usability-checklist.md",
+      "docs/acceptance/20261011-0.6-ifx-step02-install.md",
+      "docs/acceptance/20261011-0.6-ifx-step03a-policy-freeze.md",
+      "docs/acceptance/20261011-0.6-ifx-step03a-stop.md",
+      "docs/acceptance/20261011-0.6-ifx-step03b-serial-canary.md",
+      "docs/acceptance/20261011-0.6-ifx-step03c-cli-measurements.md",
+      "docs/acceptance/20261011-0.6-ifx-step03d-first-stop.md",
+      "docs/acceptance/20261011-0.6-ifx-step03d-ui-measurements.md",
+      "docs/acceptance/20261011-0.6-ifx-step03e-cli-qualification.md",
+      "docs/acceptance/20261011-0.6-ifx-step03f-ui-qualification.md",
+      "docs/acceptance/20261011-0.6-ifx-step04-human-usability.md",
+      "docs/acceptance/20261011-0.6-operator-gates.md",
+      "docs/acceptance/20261011-0.6-r2-cli-measurements.md",
+      "docs/acceptance/20261011-0.6-r2-install.md",
+      "docs/acceptance/20261011-0.6-r2-lifecycle-copy-adopt.md",
+      "docs/acceptance/20261011-0.6-r2-lifecycle-rollback.md",
+      "docs/acceptance/20261011-0.6-r2-lifecycle-upgrade.md",
+      "docs/acceptance/20261011-0.6-r2-machine-audit.md",
+      "docs/acceptance/20261011-0.6-r2-plan.md",
+      "docs/acceptance/20261011-0.6-r2-policy-freeze.md",
+      "docs/acceptance/20261011-0.6-r2-serial-canary.md",
+      "docs/acceptance/20261011-0.6-r2-ui-measurements.md",
+      "docs/acceptance/20261011-0.6-replacement-candidate.md",
+      "docs/acceptance/20261012-0.7-candidate-readiness.md",
+      "docs/acceptance/20261012-0.7-context-closure.md",
+      "docs/acceptance/20261012-0.7-context-implementation.md",
+      "docs/acceptance/20261012-0.7-core-evidence.md",
+      "docs/acceptance/20261012-0.7-final-acceptance.md",
+      "docs/acceptance/20261012-0.7-human-ui-checklist-27c993a.md",
+      "docs/acceptance/20261012-0.7-human-ui-checklist.md",
+      "docs/acceptance/20261012-0.7-human-workbench-bc936cb.md",
+      "docs/acceptance/20261012-0.7-ifx-external-evidence.md",
+      "docs/acceptance/20261012-0.7-workbench-launcher.md",
+      "docs/acceptance/20261012-0.7-worker-cleanup.md",
+      "docs/acceptance/20261013-0.8-1a-contracts.md",
+      "docs/acceptance/20261013-0.8-1b-aggregate.md",
+      "docs/acceptance/20261013-0.8-1c-history.md",
+      "docs/acceptance/20261013-0.8-1d-evidence.md",
+      "docs/acceptance/20261013-0.8-1e-workbench.md",
+      "docs/acceptance/20261013-0.8-2-evidence-jobs.md",
+      "docs/acceptance/20261013-0.8-3-review-seal.md",
+      "docs/acceptance/20261013-0.8-4-lifecycle.md",
+      "docs/acceptance/20261013-0.8-5-candidate-progress.md",
+      "docs/acceptance/20261013-0.8-5-machine-qualification.md",
+      "docs/acceptance/20261013-0.8-final-acceptance.md",
+      "docs/acceptance/20261013-0.8-human-ui-checklist.md",
+      "docs/acceptance/20261013-0.8-plan-handoff.md",
+      "docs/acceptance/20261013-0.8-s4-retirement-retest.md",
+      "docs/acceptance/20261015-lightweight-lt00-contracts.md",
+      "docs/acceptance/20261015-lightweight-lt01-synthetic.md",
+      "docs/acceptance/20261015-lightweight-lt02-synthetic-gate.md",
+      "docs/acceptance/20261015-lightweight-lt02a-ifx-gate.md",
+      "docs/acceptance/20261015-lightweight-lt03-reports-history.md",
+      "docs/acceptance/20261015-lightweight-lt04-web-workbench.md",
+      "docs/acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md",
+      "docs/acceptance/20261016-lightweight-lt06-candidate.md",
+      "docs/acceptance/20261016-lightweight-lt06-human-ui-review.md",
+      "docs/acceptance/20261016-lightweight-lt06-release-regression.md",
+      "docs/acceptance/20261016-lightweight-lt06-ui-revision.md",
+      "docs/acceptance/ifx-local-analysis.md",
+      "docs/acceptance/w11-ifx-allowlist-task.md",
+      "docs/architecture-test-workbench.md",
+      "docs/cli.md",
+      "docs/decisions/20261006-w02-schema-validation.md",
+      "docs/decisions/20261006-w07-ui-design.md",
+      "docs/decisions/20261007-w11-policy-composition.md",
+      "docs/decisions/20261010-0.5-setup-contracts.md",
+      "docs/decisions/20261011-0.6-execution-launcher-contracts.md",
+      "docs/decisions/20261012-0.7-evidence-and-ui-contracts.md",
+      "docs/decisions/20261012-0.7-project-context-closure.md",
+      "docs/decisions/20261013-0.8-evidence-jobs.md",
+      "docs/decisions/20261013-0.8-review-seal.md",
+      "docs/decisions/20261013-0.8-setup-retirement.md",
+      "docs/decisions/20261013-0.8-workbench-contracts.md",
+      "docs/decisions/20261015-lightweight-test-workbench-lt00-contracts.md",
+      "docs/decisions/20261022-inproject-retirement.md",
+      "docs/dependencies/w01/README.md",
+      "docs/distribution/20261021-cl03-candidate-maintenance.md",
+      "docs/distribution/20261022-materials-retention.md",
+      "docs/external-build-evidence.md",
+      "docs/installation-0.4.md",
+      "docs/lightweight-test-workbench-candidate.md",
+      "docs/migration/third-party-notices.md",
+      "docs/performance/0.6-reference-measurements.md",
+      "docs/plans/20261006-archsift-implementation-plan.md",
+      "docs/plans/20261006-dotnet-architecture-analyzer-draft.md",
+      "docs/plans/20261009-archsift-0.4.0-improvement-plan.md",
+      "docs/plans/20261010-archsift-0.5.0-plan.md",
+      "docs/plans/20261011-archsift-0.6.0-improvements.md",
+      "docs/plans/20261011-archsift-0.6.0-plan.md",
+      "docs/plans/20261012-archsift-0.7.0-improvement-plan.md",
+      "docs/plans/20261013-archsift-0.8.0-evidence-ui-plan.md",
+      "docs/plans/20261015-archsift-lightweight-test-workbench-plan.md",
+      "docs/releases/0.2.0-notes.md",
+      "docs/releases/0.2.0-publication.md",
+      "docs/releases/0.3.0-notes.md",
+      "docs/releases/0.3.0-publication.md",
+      "docs/releases/0.5.0-publication.md",
+      "docs/releases/0.6.0-publication.md",
+      "docs/releases/0.7.0-notes.md",
+      "docs/releases/0.7.0-publication.md",
+      "docs/releases/0.7.0-readiness.md",
+      "docs/releases/0.8.0-publication.md",
+      "docs/releases/0.9.0-dev-notes.md",
+      "docs/releases/0.9.0-dev-publication.md",
+      "docs/reports.md",
+      "samples/ci/README.md",
+      "samples/ifx-lt02a/README.md",
+      "samples/portable-ifx/README.md",
+      "src/ArchSift.Web/wwwroot/index.html",
+      "src/ArchSift.Web/wwwroot/launcher.html"
+    ],
+    "observedReleaseDescriptionsContainingHan": [
+      "v0.2.0",
+      "v0.3.0",
+      "v0.7.0",
+      "v0.9.0-dev"
+    ],
+    "nonMarkdownProseAudit": "pending",
+    "translationPerformed": false,
+    "historicalRemoteMetadataEdited": false
+  },
+  "evidenceInputsRead": [
+    {
+      "path": "docs/acceptance/20261021-source-archive-final-completion.md",
+      "sha256": "5df943e66a677460fd3b6db79bc70cff58139a9661b8d25becc09aad8e632b29"
+    },
+    {
+      "path": "docs/acceptance/20261021-source-archive-doc-final-completion.md",
+      "sha256": "41fb68bf7a711f449ebac97992698ed20cfdce818763b58626483b1c139f7017"
+    },
+    {
+      "path": "docs/acceptance/20261021-cl03-candidate-packaging.md",
+      "sha256": "99d97d7a27c7fcf8636fb0385054e1e00608a0ba2d0bb4b55e763b96d3d82507"
+    },
+    {
+      "path": "docs/acceptance/20261021-cl05-final-completion.md",
+      "sha256": "c9bf463552fecd5dc197f9a103e661c872afc8d87e71de27ad6e296324b27f54"
+    },
+    {
+      "path": "docs/acceptance/20261022-b03rest-portable-activation.md",
+      "sha256": "a79cd3a584ffc30c82eb8090803e7c2afcb2736f41fa07bb15e30f7941bb01ab"
+    },
+    {
+      "path": "docs/acceptance/20261017-fa05-human-ui-completion.md",
+      "sha256": "df6a30a10b9beb1295e954a17bd6523ebac87baf19d9774d1734e5505191b596"
+    },
+    {
+      "path": "docs/acceptance/20261020-sp03-completion.md",
+      "sha256": "c4351abb32d1318237582d776fe042907a52fc9f2fb5399f7049914ec53e9d90"
+    },
+    {
+      "path": "docs/acceptance/20261020-sp04-ui-human-confirmation.md",
+      "sha256": "9e7349f4bbf6a0151fc24f1f45efd6b48d5b5c897adcb0991fda40cc07143d69"
+    },
+    {
+      "path": "docs/acceptance/20261022-inproject-retirement.md",
+      "sha256": "971bdac2602c5ff9b3806b4e3584f4961e26b4159ced3f597df6e0c695bc43bf"
+    }
+  ],
+  "preservationInputsBeforeRound": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "6914318a30070f03c8d5ae67d45eb3ffeda46919a30158fdc25ee84ca24db272"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "0f3c944458ddf00d6f071330edd8a519371acf0216d0f44b5f8f2a3e39569ccc"
+    },
+    {
+      "path": "scripts/Verify-Lt02Synthetic.ps1",
+      "sha256": "efa92c1a1324ed4607da27f284e6f735452ff2a91a84fcd7a35c668a711c27fc"
+    },
+    {
+      "path": "Directory.Build.props",
+      "sha256": "4c0cafb04e7a616ec6bfd9675a6c56c3325235926924e07ca2d023c41aaa03a3"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "sha256": "4e6f8da2d6229206c7a07dc96e1fafb83999d386fefa977c9e7e28b7cd3bd526"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "8a742ecd5a74b9d8e458b945b75997d78675bcd2908eff67feb0bac068e8f3c2"
+    },
+    {
+      "path": "docs/plans/20261006-archsift-implementation-plan.md",
+      "sha256": "83d662307ae1af4b2939d6dcb98e18384a3a07192612baa3509ed985159b260f"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G01",
+      "status": "open",
+      "observation": "OPEN: provisional version and channel",
+      "closure": "Recheck tags/releases/local feeds; define exact assets. Registry inventory/ownership is mandatory only if a registry is added as a channel."
+    },
+    {
+      "id": "G02",
+      "status": "open",
+      "observation": "OPEN: default 0.9.0-dev and candidate-specific version overrides",
+      "closure": "Central version input; inspect all product DLLs, CLI/Web/Setup displays, package metadata, dependencies and report tool identity."
+    },
+    {
+      "id": "G03",
+      "status": "open",
+      "observation": "OPEN: final release provenance",
+      "closure": "Select a reviewed committed source/tree, locks, build tools/properties and source manifest; map package inputs without claiming unsupported byte reproducibility. Prior source delivery is complete."
+    },
+    {
+      "id": "G04",
+      "status": "open",
+      "observation": "OPEN: final Windows ZIP/Setup and package closure",
+      "closure": "Produce new immutable RC/stable outputs; verify generic cold consumption, moved paths, empty caches, both hashes and all notices."
+    },
+    {
+      "id": "G05",
+      "status": "open",
+      "observation": "OPEN: final-source regression",
+      "closure": "Actual Windows/Ubuntu checks and required unit/integration/native MTP/architecture/templates/schema/Node checks; compare case identities and explain deltas. Prior 57 native cases and 2/157/95/3 development groups are historical references, not a prescribed substitute for current discovery."
+    },
+    {
+      "id": "G06",
+      "status": "open",
+      "observation": "OPEN: final Web HTTP behavior and CLI/Web parity",
+      "closure": "Launch the packaged loopback server; run/list/filter rules, full/subset/cancel/error/history/download flows; compare authoritative JSON and CLI results on identical inputs."
+    },
+    {
+      "id": "G07",
+      "status": "open",
+      "observation": "OPEN: latest IFX against new bytes",
+      "closure": "Reviewed external snapshot; current 493-case selection, 404 responsibilities, 89 assembly identities and zero skipped/unexpected cases; preserve policies, snapshots, assertions and timing thresholds. Explain any baseline change before proceeding."
+    },
+    {
+      "id": "G08",
+      "status": "open",
+      "observation": "OPEN: failure/status isolation",
+      "closure": "Missing/unknown/duplicate/skip/zero-match/tamper/wrong-version/unbound/missing-source and interrupted/cancelled runs fail correctly; never show a prior success as current. Pass, violation, inconclusive, not-applicable and error remain distinct."
+    },
+    {
+      "id": "G09",
+      "status": "open",
+      "observation": "OPEN: final-closure vulnerability and license review",
+      "closure": "Actual product/tool/runtime and consumer closures; separately authorized explicit audit sources, timestamp and severity handling. Offline Audit=not-run is not a security pass. Preserve all legal text."
+    },
+    {
+      "id": "G10",
+      "status": "open",
+      "observation": "OPEN: install/upgrade/rollback/uninstall",
+      "closure": "New Windows delivery on fresh and existing state, spaces/non-ASCII paths, wrong/missing runtime for optional FDD, occupied port, safe shutdown and process/listener closure; recoverable version removal preserves reports/config/history/evidence."
+    },
+    {
+      "id": "G11",
+      "status": "open",
+      "observation": "OPEN: independent machine/support claims",
+      "closure": "New payload on an independent supported Windows x64 environment, including self-contained launch without SDK/runtime; record exact OS/tools and actual target-build prerequisites. Unsupported platforms/signing stay explicit limitations unless separately qualified."
+    },
+    {
+      "id": "G12",
+      "status": "open",
+      "observation": "OPEN: final human UI and usability",
+      "closure": "User reviews exact final stable payload after machine gates; English guidance/version identity, complete/subset/cancel/failure/history, sorting/wrapping, existing locale switch, narrow window/keyboard, safe close. Keep answers blank until supplied by the user."
+    },
+    {
+      "id": "G13",
+      "status": "open",
+      "observation": "OPEN: English formal documentation",
+      "closure": "Complete migration manifest and reviewed exceptions, correct instructions/links, English release bodies and packaged/source-archive prose for the new release. Historical remote-body conversion is separately tracked."
+    },
+    {
+      "id": "G14",
+      "status": "open",
+      "observation": "OPEN: artifact/acceptance integrity",
+      "closure": "acceptance.json plus final manifest/sums bind exact source, properties, assets, machine and human results; independently re-read archives; disclose signatures/support limits."
+    },
+    {
+      "id": "G15",
+      "status": "not-started",
+      "observation": "NOT STARTED: publication and post-download validation",
+      "closure": "After explicit publication authorization, create the exact tag/release and upload accepted bytes, then download and compare every asset and source archive; test documented installation/consumption and record final closure."
+    }
+  ],
+  "workPackages": [
+    {
+      "id": "WB00",
+      "title": "Plan and assessment",
+      "dependencies": [],
+      "status": "planning-complete",
+      "authorized": true
+    },
+    {
+      "id": "WB01",
+      "title": "Freeze release contract",
+      "dependencies": [
+        "WB00"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB02",
+      "title": "Branding and English migration",
+      "dependencies": [
+        "WB01"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB03",
+      "title": "Source and release tooling delivery",
+      "dependencies": [
+        "WB02"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB04",
+      "title": "RC build and package inspection",
+      "dependencies": [
+        "WB03"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB05",
+      "title": "Synthetic, regression and closure gates",
+      "dependencies": [
+        "WB04"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB06",
+      "title": "Real IFX snapshot and parity",
+      "dependencies": [
+        "WB05"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB07",
+      "title": "Lifecycle and independent Windows",
+      "dependencies": [
+        "WB06"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB08",
+      "title": "Stable candidate and human acceptance",
+      "dependencies": [
+        "WB07"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB09",
+      "title": "Final release review",
+      "dependencies": [
+        "WB08"
+      ],
+      "status": "not-started",
+      "authorized": false
+    },
+    {
+      "id": "WB10",
+      "title": "Publish and verify distribution",
+      "dependencies": [
+        "WB09",
+        "explicit-publication-authorization"
+      ],
+      "status": "not-started",
+      "authorized": false
+    }
+  ],
+  "execution": {
+    "dotnetBuildTestInstall": 0,
+    "realIntegrationRuns": 0,
+    "uiSessions": 0,
+    "ciDispatches": 0,
+    "staging": 0,
+    "commits": 0,
+    "pushes": 0,
+    "pullRequests": 0,
+    "merges": 0,
+    "tags": 0,
+    "packageUploads": 0,
+    "publications": 0,
+    "externalArtifactDirectoriesCreated": 0,
+    "remoteReadsOnly": true,
+    "environmentOrProfileMutation": false,
+    "hostBaselineRequiredForThisReadOnlyPlanning": false
+  },
+  "localDocumentationValidation": {
+    "jsonParsed": true,
+    "gapCount": 15,
+    "workPackageCount": 11,
+    "relativePlanLinksExist": true,
+    "dependencyReferencesValid": true,
+    "newPlanAndAssessmentContainNoHan": true,
+    "futurePackagesNotStartedAndUnauthorized": true,
+    "executionCountersZero": true,
+    "protectedExistingFileHashesCompared": 14,
+    "protectedExistingFileHashesEqual": true,
+    "implementationPlanHistoryEqualAfterRemovingNewStatusEntry": true,
+    "headUnchanged": true,
+    "stagedPaths": [],
+    "gitDiffCheckPassed": true,
+    "productTestsRun": false,
+    "productTestsReason": "Documentation-only planning; no build or runtime changes."
+  },
+  "nextScope": "WB01 only after a new request authorizes it",
+  "releaseAcceptanceGranted": false
+}

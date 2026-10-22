@@ -54,5 +54,12 @@
 
 - Execute the checks appropriate to the authorized package and record real results, SDK/TFM/configuration, input identity, coverage and limitations. Cache existence or a prior report does not prove restore/build or current-source conformance.
 - Keep pass, violation, inconclusive, not-applicable and error distinct. Zero source matches default to inconclusive; unbound assemblies cannot prove current-source compliance. Failed/cancelled runs must not display an old success as current.
-- Machine contracts use stable English fields; Chinese readable documentation/UI is preferred. JSON is the executable rule/report authority and Markdown/HTML are projections.
+- Machine contracts use stable English fields. JSON is the executable rule/report authority and Markdown/HTML are projections. Follow the documentation-language policy below; existing UI localization is separate.
 - No subagents are required by this project; use them only when explicitly requested by the user or applicable instructions.
+
+## Documentation language
+
+- From 2026-10-22, create and revise formal repository and distribution documentation in English, including README files, guides, plans, decisions, acceptance narratives, release notes, PR descriptions and future commit subjects/bodies. Git remotes and release channels use English formal documentation.
+- Chinese is for internal conversation and quick reading only. Keep new Chinese internal summaries outside committed or distributed formal documentation. This policy does not remove existing UI localization or translate source identifiers, user data or machine contracts.
+- Preserve third-party license/attribution text and original hash-bound evidence verbatim. Provide English formal explanations without inventing or altering historical results. Existing commits, tags and published artifact bytes remain immutable.
+- Migrate existing Chinese formal documentation through an explicitly scoped, reviewed English-documentation batch; retain independently verifiable originals and chronology. The language policy does not authorize bulk edits, remote metadata changes, commits, pushes or publication by itself.

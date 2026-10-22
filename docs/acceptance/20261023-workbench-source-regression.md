@@ -1,0 +1,15 @@
+# Workbench 0.10.0 source regression and package metadata probe
+
+2026-10-23. **LOCAL SOURCE VALIDATION PASSED / PR AND ACTUAL-MAIN CI PENDING / NO ACCEPTED RC OR STABLE RELEASE**. The [machine record](20261023-workbench-source-regression.json) identifies actual scope; the [release ledger](../releases/0.10.0/release-status.json) governs remaining work.
+
+The isolated worktree passed explicit offline restore, intentional product-version lock refresh, locked restore and Release build with SDK 10.0.303, runtime 10.0.11 and net10.0, with zero warnings/errors. Architecture 2/2, Unit 157/157, Integration 104/104 and native MTP 57/57 passed with zero failures/skips. The independent synthetic portable gate passed 3/3. Eight templates passed independent schema validation plus CLI validation/rendering, 16 CLI checks. Workbench lifecycle, current-result/history isolation, copies/sorting/locales and Launcher close Node checks passed.
+
+Nine added integration cases exercise supported 0.10.0/RC upgrade, state/report retention, no-op and rollback, unsupported prerelease rejection before installation, and version-specific asset acquisition names. Unknown release families and schema migrations remain rejected. The UI now identifies ArchSift Workbench with the actual full candidate version; command/package IDs remain unchanged.
+
+Five actual development-probe nupkg files carried 0.10.0-rc.1, README, release notes and the original MIT license. Product-library dependency ranges were exactly [0.10.0-rc.1]; CLI retained the archsift tool command. Ten lock files changed only product-reference version requirements; third-party lock nodes/content hashes remained identical. An initial check found LICENSE/LICENSE placement for the extensionless license. Root placement was fixed and fresh second-probe packages passed; original failed-check packages/logs remain retained.
+
+The source-document check passed 345 prose-bearing files, 692 local links and nine hash-bound historical evidence/example exceptions. It does not certify prose quality, remote URLs, Markdown anchors or generated package contents. English source preparation and historical body-only Release migration are recorded separately from final artifact/user acceptance.
+
+All SDK/process checkpoints and the final outer check matched the preserved host baseline. No persistent environment, PATH or Profile repair occurred. Offline vulnerability audit is **not-run**, not a security pass. Real IFX and the live installation were unchanged; final human answers remain blank.
+
+Evidence: D:/ArchSift-lab/runs/workbench-release-20261023-01/source-checks-01, development-e1d2f154127e4326b7f17b3959846ba2, source-documentation-check.json and pack-probe-01/02. The tested source was an uncommitted isolated worktree. Later changes were packaging-path metadata, documentation/CI-check additions and LF normalization under the existing Git policy, with raw imported JSON excluded. Final committed PR/main CI and new packaged RC/stable qualifications remain required; these probes are not release artifacts.

@@ -1,9 +1,9 @@
-# 可选 CI 报告
+# Optional CI reporting
 
-`archsift-report.yml` 仅为 workflow_dispatch 样例。用户自行复制到消费项目 `.github/workflows`，填入已复核发布版本、ZIP SHA-256 与配置路径；ArchSift 不自动修改消费项目工作流、required checks、分支策略或代码扫描权限。
+`archsift-report.yml` is only a workflow_dispatch example. Copy it into the consumer's `.github/workflows` yourself and supply a reviewed release version, ZIP SHA-256 and configuration path. ArchSift does not automatically change consumer workflows, required checks, branch policies or code-scanning permissions.
 
-配置应显式包含 `output.formats: ["json", "html", "sarif"]`；源码根/输出由样例覆盖为 checkout/runner temp。项目声明分析不需安装 SDK；isolated build 必须另行配置目标 SDK/pack、离线 feed 或明确的联网来源，不应默认开启。
+Configuration should explicitly include `output.formats: ["json", "html", "sarif"]`; the example overrides the source root/output with checkout/runner temp paths. Declaration-only project analysis does not need an installed SDK. Isolated builds require separately configured target SDKs/packs, an offline feed or explicit network sources; do not enable them by default.
 
-违规默认 exit 0，不阻断；参数错误、执行错误、无法判定、取消分别保留 2/3/4/130。样例不使用 `continue-on-error` 隐藏工具失败；always 上传报告及 exit-code.txt，检查未配置为 required。SARIF 默认只作 artifact；上传 GitHub code scanning 需要消费项目自行 opt in 和授权，不在样例中开启。
+Violations default to exit 0 and do not block. Invalid arguments, execution errors, inconclusive results and cancellation retain 2/3/4/130 respectively. The example does not hide tool failures with `continue-on-error`; it always uploads reports and exit-code.txt, and its check is not required. SARIF is an artifact by default. Upload to GitHub code scanning requires the consumer's separate opt-in and authorization and is not enabled here.
 
-自身 CI 的显式联网 restore 仅作用于一次性 GitHub runner，不改变产品默认离线策略。actions 以复核过的官方 v4 commit SHA 固定。CI 完成与否必须看实际运行证据，文件存在不等于跨平台通过。
+The product's own CI explicitly restores over the network only on an ephemeral GitHub runner, without changing the product's offline default. Actions are pinned to reviewed official v4 commit SHAs. CI completion must be established from actual run evidence; a workflow file's existence does not prove cross-platform success.

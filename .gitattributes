@@ -2,3 +2,13 @@
 *.png binary
 *.zip binary
 *.nupkg binary
+
+# Preserve imported raw acceptance evidence byte-for-byte in new Git objects.
+docs/acceptance/20261021-source-archive-final-completion.json -text -diff -merge
+docs/acceptance/20261021-source-archive-doc-final-completion.json -text -diff -merge
+docs/acceptance/20261021-cl03-candidate-packaging.json -text -diff -merge
+docs/acceptance/20261021-cl05-final-completion.json -text -diff -merge
+docs/acceptance/20261017-fa05-human-ui-completion.json -text -diff -merge
+docs/acceptance/20261020-sp03-completion.json -text -diff -merge
+docs/acceptance/20261020-sp04-ui-human-confirmation.json -text -diff -merge
+docs/acceptance/20261022-inproject-retirement.json -text -diff -merge

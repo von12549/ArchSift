@@ -1,6 +1,6 @@
-# ArchSift 0.8.0 portable setup — candidate
+# ArchSift Workbench 0.10.0 portable Setup
 
-0.8.0 remains a candidate; do not treat source implementation as a published package. The [0.6.0 publication record](releases/0.6.0-publication.md) preserves the recorded stable version. Existing command syntax and config/default.json remain. Candidate Setup recognizes supported 0.5/0.6/0.7/0.8 contracts and rejects unknown versions or migrations; use the version-specific verified Setup after its release gates pass. Earlier [0.5.0 Setup instructions](setup-0.5.md) remain historical.
+0.10.0 is in release preparation. Use [release status](releases/0.10.0/release-status.json) for actual qualification/publication and [getting started](getting-started.md) for initial use. The intended release retains the existing plan/apply and config/default.json model; 0.10.0 compatibility must pass its own package/lifecycle gates before acceptance. Unknown versions or schema migrations must reject. Earlier [0.5.0 Setup instructions](setup-0.5.md) remain historical.
 
 `ArchSift.Setup.exe` is a separate self-contained Windows x64 executable. It performs user-writable filesystem installation without elevation, SDK/runtime prerequisites, PATH changes, service registration or target execution. `--notices` prints embedded ArchSift/.NET license and third-party notices. Run PowerShell 7 with `-NoProfile` and use full executable paths.
 
@@ -10,7 +10,7 @@ Download the version-specific Windows ZIP, Setup executable, checksums and accep
 
 ```powershell
 $setup = 'D:\Tools\ArchSift.Setup.exe'
-$zip = 'D:\Tools\downloads\archsift-0.8.0-win-x64.zip'
+$zip = 'D:\Tools\downloads\archsift-workbench-0.10.0-win-x64.zip'
 $zipHash = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
 # Compare zipHash with the independently obtained release record before continuing.
 & $setup plan install --root 'D:\Tools\ArchSift' --package $zip --sha256 $zipHash --target 'D:\source\MyApp' --entry 'MyApp.sln' --tfm net10.0 --smoke true > 'D:\Tools\install-plan.json'

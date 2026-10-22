@@ -1,0 +1,291 @@
+{
+  "machineAcceptance": {
+    "sha256": "ba56b3bbcbff0184765942cada3592424c34b333f2089e328016ccb13ad1daa4",
+    "record": "docs/acceptance/20261017-fa05-remaining-machine-completion.json",
+    "priorEvidenceLedger": {
+      "path": "D:\\ArchSift-lab\\runs\\fa05-20261017-04\\final-audit\\evidence-files.json",
+      "count": 268,
+      "sha256": "bbac41b305874148e2b87fa0f926c0e7921d66780fce8c82e90223c4621b407d"
+    },
+    "localMachineGatesComplete": true
+  },
+  "session": {
+    "completeRuns": 2,
+    "humanDriven": true,
+    "automaticAgentTestRuns": 0,
+    "subsetRuns": 1,
+    "webExit": 0,
+    "observedJobs": 6,
+    "unapprovedDraftRejections": 2,
+    "cancelledRuns": 1,
+    "startedUtc": "2026-10-17T00:43:32.751408+11:00",
+    "closedAustraliaSydney": "2026-10-17T00:51:56.5514359+11:00",
+    "closedUtc": "2026-10-16T13:51:56.5514359+00:00",
+    "initialSessionAndChecklistUnchanged": true
+  },
+  "closure": {
+    "activeRelevantProcesses": 0,
+    "mutexAcquiredAfterSupervisorRelease": true,
+    "listeners": 0,
+    "newBuildTestOrAuditRunByAgent": false,
+    "loopbackPort": 1265
+  },
+  "jobs": [
+    {
+      "notRun": 0,
+      "htmlSha256": "95f1cc9d116f3f4ea4cb4bbb3250c5f5286dc4b9daae06ca3346ed643401093d",
+      "auditStatus": "not-run",
+      "jobId": "20261016T134649186-21d84e9c",
+      "reportSha256": "63d84498991417dd7550241f102399f05f21c9cb117b9f38a06f6c9bccd3322c",
+      "reportPath": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\web-output\\test-runs\\20261016T134649186-21d84e9c\\architecture-test-run.json",
+      "gate": "allow",
+      "reportId": "b51da6d65d4143a8acf1eb615af0d3ba",
+      "mode": "full",
+      "passed": 97,
+      "total": 97,
+      "executed": 97,
+      "exitCode": 0,
+      "state": "finished"
+    },
+    {
+      "notRun": 96,
+      "htmlSha256": "a6f0117e86aa28882c90dd0b6ad27f9d9fb5114b2345764da917e94bb9b79645",
+      "auditStatus": "not-run",
+      "jobId": "20261016T134844414-72950c34",
+      "reportSha256": "34661fe1b26ea4359e3563d8e3a6068698dc9d046f9ee14b4a86485bd82544c1",
+      "reportPath": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\web-output\\test-runs\\20261016T134844414-72950c34\\architecture-test-run.json",
+      "gate": "block",
+      "reportId": "cdf3323da4b84b46b919816265e6628d",
+      "mode": "subset",
+      "passed": 1,
+      "total": 97,
+      "executed": 1,
+      "exitCode": 4,
+      "state": "finished"
+    },
+    {
+      "notRun": 97,
+      "htmlSha256": "04e03a44e49691651f1f907a39abbdfa3ea3dbf7125c9b308c1082bec812601b",
+      "auditStatus": "not-run",
+      "jobId": "20261016T134920496-9ee5edcf",
+      "reportSha256": "abdb75a841bc7c280379f40562f2ed86366937bca0676cceed4a9e2c7bc2da04",
+      "reportPath": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\web-output\\test-runs\\20261016T134920496-9ee5edcf\\architecture-test-run.json",
+      "gate": "block",
+      "reportId": "5e08c99eec5149e192eae7309dab82aa",
+      "mode": "full",
+      "passed": 0,
+      "total": 97,
+      "executed": 0,
+      "exitCode": 130,
+      "state": "cancelled"
+    },
+    {
+      "configSha256": "a88dbb91b03ce47dada05d9557ccf2735e5b9205c32fe3593f39859aebd03014",
+      "configPath": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\web-output\\test-runs\\20261016T135016671-7a07a722.config.json",
+      "buildStarted": false,
+      "reportPublished": false,
+      "classification": "expected-unapproved-draft-rejection",
+      "state": "failed",
+      "jobId": "20261016T135016671-7a07a722"
+    },
+    {
+      "configSha256": "4141edf7d338e38fad554776777b5b08c350a8287d6f92a0127a717ed16ad9b9",
+      "configPath": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\web-output\\test-runs\\20261016T135048111-42da40ee.config.json",
+      "buildStarted": false,
+      "reportPublished": false,
+      "classification": "expected-unapproved-draft-rejection",
+      "state": "failed",
+      "jobId": "20261016T135048111-42da40ee"
+    },
+    {
+      "notRun": 0,
+      "htmlSha256": "045efc687eab332bd42cba40988e4a59306c6310cb6ee6c7374a87a510ac0594",
+      "auditStatus": "not-run",
+      "jobId": "20261016T135118523-7646b269",
+      "reportSha256": "8ed5602821cfa0848d8e7c34e9197b13a800c5004e9a1568f0018c4e4a539642",
+      "reportPath": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\web-output\\test-runs\\20261016T135118523-7646b269\\architecture-test-run.json",
+      "gate": "allow",
+      "reportId": "3f5c122af42848feac8014fa7e592eae",
+      "mode": "full",
+      "passed": 97,
+      "total": 97,
+      "executed": 97,
+      "exitCode": 0,
+      "state": "finished"
+    }
+  ],
+  "timezone": "Australia/Sydney",
+  "remaining": {
+    "fa05Complete": false,
+    "actualGithubCandidate": "not installed/triggered; remains pending",
+    "fa06Started": false,
+    "formalPolicyAdopted": false,
+    "independentHumanUiComplete": true
+  },
+  "host": {
+    "after": "364ec6a885b3387d0b93f1bc14be64d1d6c85d0a3bcd331b0240503e7666efdb",
+    "equal": true,
+    "before": "364ec6a885b3387d0b93f1bc14be64d1d6c85d0a3bcd331b0240503e7666efdb"
+  },
+  "candidate": {
+    "frozen": true,
+    "toolIdentity": "fa05-ui-20261016-23a656b62463-r2",
+    "sourceOverlay": "Five UI feedback fixes and raw discovery console decoding; JSON exception-family assertion corrected; no Git commit",
+    "plannedFixedRoot": "D:\\ArchSift-lab\\tools\\fa05-ui-20261016-23a656b62463-r2",
+    "sourceDigest": "23a656b62463847aed33fb0a8cdd823e59b98f5da3914d04dbf07e35583cb378",
+    "toolRoot": "D:\\ArchSift-lab\\tools\\fa05-ui-20261016-23a656b62463-r2",
+    "sourceCommit": "4f066b50e5d5383bc2f8b2b2c2b946a02cd2c646",
+    "validationRoot": "D:\\ArchSift-lab\\fixtures\\fa05-ui-20261016-23a656b62463-r2-validation",
+    "toolManifestSha256": "b3590b4b94e3f9e0d081607176bcf8fa89c662368340e3734c84f68466898c45",
+    "fileCount": 258
+  },
+  "humanAcceptance": {
+    "fiveUiFixes": {
+      "englishPolicyTitle": "passed by user",
+      "resultSummary": "passed by user",
+      "discoveryEncoding": "passed by user",
+      "historyAlignment": "passed by user",
+      "caseRuleResultSorting": "passed by user"
+    },
+    "usabilityScaleMaximum": 5,
+    "agentPerformedHumanReview": false,
+    "source": "Direct user message in current conversation",
+    "assistanceLevel": "not provided",
+    "operator": "user",
+    "usabilityScore": 4,
+    "steps": [
+      {
+        "label": "Identity and sources",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 1
+      },
+      {
+        "label": "History control alignment",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 2
+      },
+      {
+        "label": "Policy sources localization",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 3
+      },
+      {
+        "label": "Complete run and summary",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 4
+      },
+      {
+        "label": "Theory discovery encoding",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 5
+      },
+      {
+        "label": "Subset summary and incomplete gate",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 6
+      },
+      {
+        "label": "Architecture results sorting",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 7
+      },
+      {
+        "label": "Cancel and history",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 8
+      },
+      {
+        "label": "Draft and formal source protection",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 9
+      },
+      {
+        "label": "Restore formal configuration",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 10
+      },
+      {
+        "label": "Language, narrow viewport and usability",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 11
+      },
+      {
+        "label": "Safe shutdown",
+        "authority": "explicit user confirmation that all12 passed",
+        "result": "passed",
+        "number": 12
+      }
+    ],
+    "safeShutdownReportedByUser": true,
+    "verbatim": "12 项均通过，易用性 4/5，已安全关闭。",
+    "all12Passed": true
+  },
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01",
+  "evidenceLedger": {
+    "sha256": "491743aca7f6f41b917e2e89ab039dcbb934d6cc142e918cfd2f62920c0f2efb",
+    "count": 166,
+    "path": "D:\\ArchSift-lab\\runs\\fa05-20261017-human-ui-01\\final-audit\\evidence-files.json"
+  },
+  "date": "2026-10-17",
+  "maps": [
+    {
+      "cases": 92,
+      "identityInputs": 31,
+      "baselineSha256": "bd435303a2e3a662e915604cdf477ecc1b61ed562f411b8c713cf4e77bf0f2ff",
+      "equal": true,
+      "mappingSha256": "c319af1bbaca5a442fd67f8fe0401f0c384f05fb4355bf1df1f6275f67f6fa5c",
+      "tree": "a"
+    },
+    {
+      "cases": 92,
+      "identityInputs": 31,
+      "baselineSha256": "8a22f2081b8a7a006baad76ca32388127b8b1461dd23723e7594d80c87cc11a0",
+      "equal": true,
+      "mappingSha256": "46159d2c8518e5251cd5cb71adb8d425b1082e1ed98b98c04789cfbc78fe06f2",
+      "tree": "b"
+    }
+  ],
+  "boundaries": {
+    "originalIfxReadOnly": true,
+    "published": false,
+    "policyRelaxed": false,
+    "targetApplicationEntryPointsRun": false,
+    "pushPerformed": false,
+    "formalProtectionRulesChanged": false,
+    "commitCreated": false,
+    "inProjectUnchanged": true,
+    "fixedCandidateChanged": false,
+    "diagnosticSuppressionAdded": false,
+    "targetSourceChanged": false
+  },
+  "status": "CURRENT CANDIDATE HUMAN UI ACCEPTED / POST-CLOSE AUDIT PASSED / ACTUAL GITHUB CANDIDATE PENDING / FA06 NOT AUTHORIZED",
+  "preservation": {
+    "prior03Evidence295Equal": true,
+    "old05To09EvidenceAndArchivesEqual": true,
+    "prior01Evidence1063Equal": true,
+    "allOldFailureLocksAndEvidenceRetained": true,
+    "prior02ScriptError46Equal": true,
+    "priorMachineEvidence268Equal": true,
+    "oldUiFailuresAndHumanEvidenceEqual": true,
+    "currentColdArchive4610Equal": true,
+    "twoOld257AndCurrent258ToolsEqual": true,
+    "originalIfxClean": true
+  },
+  "schemaVersion": 1,
+  "inProject": {
+    "after": "2877974fb38a12e856a6045ba223615c200841ee",
+    "equal": true,
+    "before": "2877974fb38a12e856a6045ba223615c200841ee"
+  }
+}

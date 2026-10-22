@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "local-source-validation-passed",
+  "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+  "testedSource": "Isolated uncommitted release worktree; source-before.json and logs fix the actual inputs. Subsequent changes were packaging-path metadata, documentation/CI-check additions and text-only eol=lf normalization. Final committed PR/main CI and packaged RC/stable checks remain mandatory.",
+  "sdk": "10.0.303",
+  "runtime": "10.0.11",
+  "tfm": "net10.0",
+  "configuration": "Release",
+  "offlineRestore": true,
+  "lockedRestore": true,
+  "audit": "not-run-offline",
+  "warnings": 0,
+  "errors": 0,
+  "testSuites": {
+    "architecture": 2,
+    "unit": 157,
+    "integration": 104,
+    "nativeMtp": 57,
+    "externalSyntheticGate": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "newIntegrationCases": 9,
+  "templates": 8,
+  "schemaCliContractChecks": 16,
+  "nodeChecks": "Workbench lifecycle/results/copy/sorting/locales and Launcher close passed",
+  "sourceDocumentationCheck": {
+    "documents": 345,
+    "localLinks": 692,
+    "immutableHanEvidenceExceptions": 9,
+    "status": "passed"
+  },
+  "packageMetadataProbe": {
+    "status": "passed",
+    "version": "0.10.0-rc.1",
+    "packages": 5,
+    "internalDependencies": "exact same version",
+    "thirdPartyLocksUnchanged": true,
+    "versionOnlyLockFiles": 10,
+    "acceptedRc": false,
+    "evidence": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01\\pack-probe-02\\verification.json"
+  },
+  "hostBaselineSha256": "e50e6009cab1a812f621ef44f2dfa393d6f29b813e4bb24b29fe2bc201fb2e02",
+  "allHostCheckpointsEqual": true,
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\workbench-release-20261023-01",
+  "publishedNewRelease": false,
+  "liveIfxChanged": false,
+  "humanAcceptance": "pending-user-only"
+}

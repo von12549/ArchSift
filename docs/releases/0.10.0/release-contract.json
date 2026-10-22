@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "frozen",
+  "product": "ArchSift",
+  "displayName": "ArchSift Workbench",
+  "stableVersion": "0.10.0",
+  "candidateVersion": "0.10.0-rc.1",
+  "sourceBase": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+  "releaseSourceCommit": null,
+  "authorization": {
+    "executeReleasePlan": true,
+    "fixIssues": true,
+    "commit": true,
+    "push": true,
+    "pr": true,
+    "ci": true,
+    "merge": true,
+    "publish": true,
+    "finalHumanUiAcceptance": "user-only",
+    "liveIfxUpgrade": false,
+    "registryPublication": false
+  },
+  "channel": "GitHub Releases",
+  "tag": "v0.10.0",
+  "versionAvailability": {
+    "checkedDate": "2026-10-23",
+    "stableAndRcTagPrefixesAbsent": true,
+    "stableReleaseAbsent": true,
+    "reserved": false,
+    "recheckBeforePublication": true
+  },
+  "versionPolicy": {
+    "singleInput": "Directory.Build.props release-version properties consumed by all release scripts",
+    "preservePackageIds": true,
+    "exactInternalDependencies": true,
+    "assemblyAndFileVersion": "0.10.0.0",
+    "informationalVersion": "full SemVer plus source commit",
+    "reportSchemaChange": false
+  },
+  "support": {
+    "productTfm": "net10.0",
+    "analysisTfms": [
+      "net8.0",
+      "net9.0",
+      "net10.0"
+    ],
+    "primaryDistribution": "Windows x64 self-contained",
+    "dailyTestGate": "SDK-style C# net10.0, xUnit v3 4.x, Microsoft.Testing.Platform",
+    "loopbackOnly": true,
+    "linux": "CLI/source regression only",
+    "arm64": "not-qualified",
+    "publisherSignature": "not-certified; disclose actual asset signature state"
+  },
+  "requiredAssets": [
+    "archsift-workbench-0.10.0-win-x64.zip",
+    "ArchSift.Setup.exe",
+    "ArchSift.Contracts.0.10.0.nupkg",
+    "ArchSift.Core.0.10.0.nupkg",
+    "ArchSift.ArchUnit.0.10.0.nupkg",
+    "ArchSift.Testing.0.10.0.nupkg",
+    "ArchSift.Cli.0.10.0.nupkg",
+    "archsift-workbench-0.10.0-offline-feed.zip",
+    "acceptance.json",
+    "artifact-manifest.json",
+    "SHA256SUMS.txt",
+    "GitHub tagged source zip and tar archives"
+  ],
+  "bundledDocumentation": {
+    "language": "English",
+    "requiredFiles": [
+      "README.md",
+      "RELEASE_NOTES.md",
+      "docs/getting-started.md",
+      "docs/project-integration.md",
+      "docs/installation.md",
+      "docs/setup.md",
+      "docs/cli.md",
+      "docs/reports.md",
+      "docs/rules.md",
+      "docs/build-inputs.md",
+      "docs/external-build-evidence.md",
+      "docs/architecture-test-workbench.md"
+    ],
+    "projectInstructions": [
+      "sample project package references",
+      "configuration field explanations",
+      "explicit local package-source and locked restore",
+      "test-project adapter example",
+      "rule and case-identity setup",
+      "local full/subset run",
+      "CI invocation",
+      "upgrade and rollback",
+      "external state and reports"
+    ],
+    "sampleMode": "Templates only; machine paths, baseline identities and approvals must be supplied and reviewed per consumer.",
+    "includeSchemasAndTemplates": true,
+    "includePrivateIfxConfiguration": false,
+    "includePrivateIfx251Feed": false
+  },
+  "preservation": {
+    "originalSourceArchive": "D:/ArchSift-lab/runs/workbench-release-20261023-01/original-source-7964e425.zip",
+    "archiveSha256": "6cf4cb04016deb9bf80088cc6ee9150576a6bc5f91ac4a5c670a5c2ebbe14fbe",
+    "historicalOriginalCommit": "7964e425aa611b1d32a9a16bfa05e94d93bd538a",
+    "primaryWorkspaceUnrelatedMaterials": "preserve",
+    "existingCandidateAndCurrentFeeds": "preserve",
+    "cleanupAlreadyAuthorizedAndCompleted": "Respect exact cleanup receipts; deleted historical caches are not required release inputs."
+  },
+  "buildInputs": {
+    "sdkPolicy": "Pin actual approved SDK/runtime and resolved packages for release; use explicit offline sources and fresh caches.",
+    "originalInputCount": 657,
+    "freezeFinalManifestAt": "WB03",
+    "approvedOfflineIfxFeed": "D:/ArchSift-lab/packages/cl04-ifx-offline-20261021-01",
+    "consumerFullFeedCount": 251,
+    "publicFeedPolicy": "Minimal reviewed generic product/test closure, not the complete private consumer feed."
+  },
+  "acceptance": {
+    "gapRegister": "docs/decisions/20261022-workbench-release-assessment.json",
+    "ifxBaseline": {
+      "version": "0.10.0-cl03.1",
+      "main": "b591b9f2ffca5d0bbbfb1f9352a56870fadf927c",
+      "cases": 493,
+      "csharp": 92,
+      "json": 401,
+      "responsibilities": 404,
+      "productionAssemblies": 89,
+      "skipped": 0,
+      "officialAuditPassed": 105
+    },
+    "requireFinalStableBytes": true,
+    "requireIndependentWindows": true,
+    "requireFinalHumanReview": true,
+    "noOldPassAsCurrent": true,
+    "sourceFixRequiresNewEvidence": true
+  },
+  "publication": {
+    "alreadyAuthorizedByUser": true,
+    "humanAcceptanceStillRequired": true,
+    "concreteReviewPacketRequired": true,
+    "sameVersionBytesImmutable": true,
+    "postDownloadVerificationRequired": true,
+    "oldHistoricalReleaseBodyEnglishMigration": "Authorized metadata-only translation with original bodies preserved and asset/tag identity unchanged."
+  }
+}

@@ -1,340 +1,340 @@
-# ArchSift 轻量架构测试工作台实施计划
+# ArchSift lightweight architecture-test Workbench implementation plan
 
-日期：2026-10-15（Australia/Sydney）。当前状态：**LT00–LT06 COMPLETE / 0.9.0-dev LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED**。本计划首次编写时的未授权状态和范围记录保留在下文。
+Date: 2026-10-15 (Australia/Sydney). **LT00–LT06 COMPLETE / 0.9.0-dev LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED** at this point. Original planning authorization/scope remain below.
 
-2026-10-16 发布授权更新：用户授权本工作流后续 PR、合并与发布，并选择 `0.9.0-dev` 预发布身份；IFX 正式政策安排在发布完成后处理。预发布范围为当前已验收的本地候选所对应源码，公开资产限标签源码归档；路径绑定的本地评审载荷不作为通用安装包。[预发布说明](../releases/0.9.0-dev-notes.md)记录功能与限制。执行 PR、CI、合并及发布时逐项保留实际证据，未完成前不把授权记为发布成功。
+Release update 2026-10-16: user authorized PR, merge and publication as 0.9.0-dev prerelease; formal IFX policy follows publication separately. Scope is accepted local candidate source; public assets only tagged source archives, not path-bound local payloads as generic installers. [Notes](../releases/0.9.0-dev-notes.md). Record actual PR/CI/merge/release evidence, never equate authority with success.
 
-2026-10-16 LT06 最终人工复核更新：用户对修订候选逐项确认 UID 查找／填入、中英文信息、Results／History 分离、旧分析入口、窄窗口和键盘操作均符合预期，见[独立人工清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)。结合[修订候选机器记录](../acceptance/20261016-lightweight-lt06-ui-revision.md)，LT06 本地候选验收完成。验收对象是清单哈希固定的 `0.9.0-dev` 本地载荷；完整源码绑定、未迁入规则和跨机器分发仍按[候选指南](../lightweight-test-workbench-candidate.md)所列限制处理。PR、合并、公开发布、安装和 IFX 正式政策采纳未获本次授权。
+Final human update 2026-10-16: user individually confirmed UID search/fill, languages, Results/History integration, existing analysis entry, narrow/keyboard. [Human](../acceptance/20261016-lightweight-lt06-human-ui-review.md)/[machine](../acceptance/20261016-lightweight-lt06-ui-revision.md) complete local LT06. Acceptance binds manifest-fixed 0.9.0-dev; [limits](../lightweight-test-workbench-candidate.md) retain full-source binding/excluded rules/portability. That review itself did not authorize PR/merge/publication/install/IFX adoption.
 
-2026-10-16 LT06 界面修订更新：用户首轮人工复核确认总体可用，并指出局部测试 UID 难找、架构测试页仅中文、结果在长历史列表之后，以及架构测试结果／历史与全局页面割裂。[首轮观察与空白复核清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)保留用户原话和待确认项。已完成[修订候选机器复核](../acceptance/20261016-lightweight-lt06-ui-revision.md)：增加按名称／UID 搜索并填入发现 UID、架构测试中英切换、结果置于全局 Results、历史置于全局 History；新独立 Web 载荷真实 IFX 完整门禁 80＋1 `allow/0`，覆盖和报告身份一致。用户对新布局的独立视觉／可用性复核仍待完成，LT06 尚未阶段提交或推送。
+Earlier revision update: first human found UID difficult, Chinese-only tests, results after long history and global-page separation. [Observations/checklist](../acceptance/20261016-lightweight-lt06-human-ui-review.md) preserve feedback. [Revision machine checks](../acceptance/20261016-lightweight-lt06-ui-revision.md) add UID search/fill, languages/global Results/History; fresh Web real IFX 80+1 allow 0 with matching coverage/identity. Human recheck/commit/push pending then.
 
-2026-10-16 LT06 机器候选更新：[本地候选记录](../acceptance/20261016-lightweight-lt06-candidate.md)将 LT00 的开发身份落实为 `0.9.0-dev`，固定产品源码 `e0b3bdd` 和逐文件哈希的外置 CLI/Web 载荷；离线锁定恢复、旧／新测试 265 项、封装 CLI 的真实 IFX 80＋1 `allow/0`、Web loopback 清单冒烟和宿主哈希均通过。[使用／限制与分发方案](../lightweight-test-workbench-candidate.md)及[空白独立人工 UI 清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)已备好。人工结论未填，产品未接受或发布。
+Earlier LT06 [candidate](../acceptance/20261016-lightweight-lt06-candidate.md) fixes development 0.9.0-dev/source e0b3bdd/external CLI-Web hashes. Offline locked restore/265 tests/packaged real IFX 80+1 allow 0/Web inventory/host passed. [Guide](../lightweight-test-workbench-candidate.md)/[blank human](../acceptance/20261016-lightweight-lt06-human-ui-review.md) ready, unaccepted/unreleased then.
 
-2026-10-15 LT05 执行更新：[IFX 回归与测量验收](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md)记录同一外置工作树下原生、CLI、Web 各三次冷／热全工程运行共 18 次，均 80＋1 通过；无 UI 的本地 CI 模拟与 CLI/Web 的案例和未纳入清单逐项一致。真实 IFX API 快照负例及 JSON 依赖负例分别 `block/2`，源、规则、11 个快照与宿主哈希恢复／保持一致。跨工作树 CTRF ID 不可直接复用，已核对 80 个原名称并建立显式本地基准。冷运行约 118 秒由重建主导，未观察到明确成本改善；LT06 候选整理和独立人工 UI 验收仍待完成。
+LT05 update: [measurements](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md) same external worktree/native-CLI-Web/three cold-three warm each=18, all 80+1 passed. Local headless CI/parity agrees. API/JSON negatives block 2, source/rules/11 snapshots/host restored-equal. CTRF IDs not reusable across worktrees; compare 80 names/create explicit local baseline. Cold 118 s rebuild-dominated, no clear cost improvement; LT06/human pending then.
 
-2026-10-15 LT04 执行更新：[Web 接入与机器验收](../acceptance/20261015-lightweight-lt04-web-workbench.md)记录现有 Web 规则编辑器复用、三来源清单、完整／局部／取消、独立历史和报告下载。外置 IFX 副本的 Web 完整门禁为 80＋1 `allow/0`，局部为 `block/4`，取消为 `block/130`，Web 编辑的真实 JSON 依赖负例为 `block/2` 且有一条 finding；保存的同一规则输入经 CLI 完整门禁亦为 `allow/0`，案例与未纳入清单逐项一致。旧产品 248 项与 Testing 17 项通过，宿主哈希、原 IFX checkout 与副本源码保持稳定。LT05 同条件测量和最终独立人工 UI 验收仍待完成。
+LT04 [Web acceptance](../acceptance/20261015-lightweight-lt04-web-workbench.md): reused editor, three sources/full-subset-cancel/history/downloads. External IFX Web 80+1 allow 0/subset block 4/cancel 130/real JSON negative block 2-one finding. Matched CLI allow 0/cases-exclusions agree.248 legacy+17 Testing passed, host/original/copy stable. LT05/human pending.
 
-2026-10-15 LT03 执行更新：[报告与基本历史验收](../acceptance/20261015-lightweight-lt03-reports-history.md)记录冻结 schema 的权威 JSON、安全 HTML、真实 JSON finding／原 IFX 断言消息、A/B 未纳入清单及只读历史；真实 IFX 81/81 正例和两类 `block/2` 负例、合成报告保存失败 `block/3`、历史 stale/unavailable/interrupted 均通过。旧产品 248 项回归通过；LT04 UI、LT05 同条件测量和最终人工验收尚未开始。
+LT03 [reports/history](../acceptance/20261015-lightweight-lt03-reports-history.md): frozen JSON/safe HTML/actual JSON findings-native assertions/exclusions/history. Real 81 positive/two block 2 negatives/save failure block 3/stale-unavailable-interrupted passed.248 legacy passed; UI/measurement/human unstarted.
 
-2026-10-15 LT02A 执行更新：[真实 IFX 门禁验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md)记录获授权的外置 IFX 副本 `cc06528`：原生 MTP 全工程 80/80，接入后原 80 ID 保留且新增 JSON 1，完整门禁 `allow/0`，API 快照不匹配和真实 JSON 类型依赖均 `block/2`，父 1／子 0 且原快照字节不变；20 个原测试文件、16 个原项目引用和五秒断言未减损。IFX 原 checkout／安装仍只读，LT03 报告历史与 LT04 UI 尚未开始，正式 B 政策和人工 UI 验收未获通过。
+LT02A [real gate](../acceptance/20261015-lightweight-lt02a-ifx-gate.md): authorized cc06528 copy/native 80 pass/integrated same 80+1/allow 0/API-JSON block 2/parent 1-child 0/snapshots unchanged.20 original files/16 refs/five-second assertion retained.Original read only, LT03-04 unstarted/no formal B-human pass.
 
-2026-10-15 LT02 执行更新：[合成门禁验收](../acceptance/20261015-lightweight-lt02-synthetic-gate.md)记录代码提交 `3ddd0dc`：无界面协调入口、离线 restore／增量 build／MTP 全工程原生案例核对、子进程快照隔离、取消／日志／源码变化观察已通过合成正反例；旧产品 248 项回归通过。真实 IFX 接入、独立原测试基线与初步冷热验证仍是 LT02A 的前置门槛，尚未执行。
+LT02 [synthetic gate](../acceptance/20261015-lightweight-lt02-synthetic-gate.md), code 3ddd0dc:headless/offline-incremental-MTP/full case checks/snapshot isolation/cancel-logs-source watch positives-negatives, 248 legacy passed. Real IFX/native baseline/cold-warm remain LT02A prerequisite, not run then.
 
-2026-10-15 LT01 执行更新：用户授权后续开发、验收和每阶段提交推送；另明确授权 LT02A／LT05 在 `D:/ArchSift-lab` 下创建独立 IFX 副本或 worktree，执行已审查的离线 restore/build、架构测试、快照正反例和性能测量。原 IFX checkout／安装保持只读，最终独立人工 UI 验收由用户完成。[LT01 合成验收](../acceptance/20261015-lightweight-lt01-synthetic.md)记录代码提交 `082d0ec`、实际 ArchUnitNET／MTP 正反例、旧产品回归和限制。LT02 尚未开始；LT02A 真实 IFX 接入仍须等待 LT02 通过。
+LT01 authority covers later development/acceptance/stage commits-pushes and specific LT02A/LT05 external IFX copies/worktrees/reviewed offline build/tests/snapshot negatives/measurements under D:/ArchSift-lab. Originals read only/final UI user. [Synthetic](../acceptance/20261015-lightweight-lt01-synthetic.md)082d0ec/actual ArchUnitNET-MTP/regressions/limits. LT02 unstarted, LT02A waiting it.
 
-2026-10-15 执行更新：用户授权创建开发分支，将本计划与总计划索引作为首个提交并推送，随后开始 LT00。分支 `codex/archsift-lightweight-workbench` 的首提交 `d1b089d` 已推送。LT00 的[范围与契约](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md)、[静态验收](../acceptance/20261015-lightweight-lt00-contracts.md)、[IFX 原测试源码基线](../decisions/20261015-lightweight-ifx-source-baseline.json)、[A/B 归属清单](../decisions/20261015-lightweight-policy-inventory.json)及[报告 schema](../../schemas/architecture-test-run.schema.json)已完成；用户随后另行授权提交并推送这些 LT00 成果。真实运行器案例数、JSON 执行与 IFX 接入仍待后续阶段；LT01、真实 IFX 操作、PR、合并与发布尚未获本次授权。
+Initial execution authority created/pushed codex/archsift-lightweight-workbench plan-first d1b089d, then LT00. [Contracts](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md), [static](../acceptance/20261015-lightweight-lt00-contracts.md), [baseline](../decisions/20261015-lightweight-ifx-source-baseline.json), [responsibilities](../decisions/20261015-lightweight-policy-inventory.json), [schema](../../schemas/architecture-test-run.schema.json) complete; later LT00 commit-push separately authorized. Runtime counts/JSON/IFX/next stage/PR-merge-release not yet authorized.
 
-本计划落实新的讨论方向：保留 IFX 专用架构测试，由 JSON 驱动 ArchUnitNET 参数化测试，ArchSift UI 负责规则编辑、启动与报告；日常门禁与完整取证独立。首次编写本计划时的授权仅包括先保存并推送旧分支修改、返回 main、编写／修订本计划及索引；随后授权变化以上述执行更新为准。
+Direction: preserve dedicated IFX tests; JSON drives ArchUnitNET parameterized tests; UI edits/starts/reports. Daily gates independent of full evidence. Original authority only saved/pushed old branch, returned main, wrote plan/index; later updates govern expanded authority.
 
-2026-10-15 审查修订：明确完整门禁必须运行 IFX 整个原有架构测试工程，隔离 `IFX_UPDATE_SNAPSHOTS` 更新模式，将本次门禁与历史新鲜度分离，在报告历史与 UI 开发前加入 LT02A IFX 早期接入门槛，并将首版历史管理收敛为独立报告目录、基本运行状态和历史列表。仅修订计划与索引，实施状态不变。
+Review 2026-10-15: require whole original test project, force snapshot updates off, separate gate/history, add early LT02A before reports/UI, limit history to independent directories/basic state/list. Docs-only revision.
 
-2026-10-15 规则归属与 UI 补充：首版日常范围明确为 IFX 全部原专用测试＋经审查启用的 B 类 JSON 类型依赖测试；A 类未迁入增量仍由原 ArchSift 执行，不算本次覆盖。UI 统一显示检查来源、执行责任方、测试清单、实际结果与未纳入项，保留 IFX C# 权威，不将读取测试清单等同于解释／编辑 C# 检测语义。未执行／未覆盖项不得显示通过；阶段与 LA18／LA19 验收同步补充，仍只修订文档。
+Responsibility/UI supplement: full original IFX+reviewed enabled B only; unmigrated A remains original ArchSift, not current coverage. Show provenance/executor/inventory/actual results/exclusions, retain C#authority, reading inventory does not interpret C#interpretation/editing. Unexecuted/uncovered never passed; stage/LA18-19 updated, docs only.
 
-## 1. 基线、来源与旧计划保护
+## 1. Baselines, provenance and legacy preservation
 
-- 实施设计基线为 ArchSift `main` 提交 `acbcff1c18b30f33a41c98e8e76cc5a2ecd3d68e`，对应已发布的 0.8.0 后续记录。后续实施应重新核对 main 的实际提交及变化，不自动沿用旧工作树状态。
-- 编写前，旧分支 `codex/archsift-inproject-0.1.0` 的两处既有修改已原样提交为 `2877974fb38a12e856a6045ba223615c200841ee` 并推送。内容为 IFX 升级收尾记录和证据阶段取消／共享引用图回归覆盖；未修改 InProject 实现。随后切回干净 main，并核对其与远端 main 相同。
-- InProject 的现有状态为 IP08 MACHINE COMPLETE / HUMAN PARTIAL / WORK PAUSED / NOT ACCEPTED / NOT RELEASED。其代码、规格、实施计划、验收记录、分支和材料保持原状；不合并、重命名、删除或按新契约改写。
-- main 没有 InProject 的实现文件。对照材料使用固定提交链接：[旧实施计划](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/docs/plans/20261014-archsift-inproject-0.1.0-implementation-plan.md)、[IP08 机器记录](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/docs/acceptance/20261015-inproject-ip08-ifx-machine.md)、[旧规则服务](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/src/ArchSift.InProject.Runtime/InProjectRuleService.cs)、[旧测试桥接](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/src/ArchSift.InProject.TestBridge/ArchitectureRuleBridge.cs)。不把旧分支路径写成 main 中不存在的相对链接。
-- IFX 设计参照为 `D:/IFX-10-Root/IFX-New`、提交 `cc06528ab17052baafa496df2a89f6cde9207384`。真实操作时重新确认目标、未提交变更和测试配置；本计划不授予对该目标的写入或运行权限。
-- 本计划是同仓新工作流，暂用“轻量架构测试工作台”名称。正式产品名、包名、版本、命令与安装方式在 LT00 确认；不沿用 InProject 的发布身份，也不新建整个仓库副本。
+- Design baseline main `acbcff1c18b30f33a41c98e8e76cc5a2ecd3d68e`, post 0.8 publication records. Recheck actual main/changes before implementation, no stale-worktree assumptions.
+- Two existing old branch changes saved unchanged as `2877974fb38a12e856a6045ba223615c200841ee`/pushed: IFX upgrade closeout/evidence-cancel-shared-reference graph regressions, no InProject code changes. Returned clean main equal remote.
+- InProject IP08 MACHINE COMPLETE/HUMAN PARTIAL/WORK PAUSED/NOT ACCEPTED/NOT RELEASED. Keep code/spec/plan/evidence/branch unchanged, no merge/rename/delete/new-contract rewrite.
+- Main has no InProject files. Fixed [old plan](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/docs/plans/20261014-archsift-inproject-0.1.0-implementation-plan.md), [IP08](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/docs/acceptance/20261015-inproject-ip08-ifx-machine.md), [service](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/src/ArchSift.InProject.Runtime/InProjectRuleService.cs), [bridge](https://github.com/von12549/ArchSift/blob/2877974fb38a12e856a6045ba223615c200841ee/src/ArchSift.InProject.TestBridge/ArchitectureRuleBridge.cs). No nonexistent main-relative links.
+- IFX reference D:/IFX-10-Root/IFX-New, commit `cc06528ab17052baafa496df2a89f6cde9207384`. Recheck target/dirty/tests at execution; plan alone grants no writes/runs.
+- New same-repository workflow, provisional lightweight architecture-test Workbench. LT00 decides official identity/version/commands/install, never InProject release identity/new repository clone.
 
-## 2. 首版范围与交付目标
+## 2. Initial scope
 
-### 2.1 首版必须完成
+### 2.1 Required
 
-1. 完整门禁运行 IFX 整个原有 `IFX.Architecture.Tests` 工程，再追加 JSON 测试；全部原测试、Theory 数据、正反例及断言均保留，不以配置子集、数量相同或通用 JSON 代替。
-2. 项目内参数化测试直接读取经过校验的 JSON，调用 ArchUnitNET，产生逐规则结果和违规明细。
-3. 首期 JSON 执行范围为现有 schemaVersion 1 的 `type-dependency`。其他启用规则类型明确报告不支持，不静默跳过；后续扩展另行列范围、责任方和验收。
-4. 优先沿用 IFX 的 net10.0、xUnit v3、Microsoft.Testing.Platform 测试工程与运行器。已有 ArchSift 产品测试仍使用原配置，不全局切换测试框架。
-5. 不依赖 UI 服务即可运行测试；CLI、CI 和 UI 使用同一测试执行与覆盖核对逻辑。
-6. 日常路径采用当前 worktree 正常恢复、增量构建和测试；保留轻量报告、必要日志及明确的门禁结论。
-7. UI 完成规则编辑／保存、目标选择、完整门禁／局部诊断选择、启动／取消、进度、最近运行结果、基本历史列表及报告下载；统一显示 JSON／IFX 专用测试／原 ArchSift 检查的来源、责任方、测试清单与实际结果，局部诊断和未覆盖项不能显示完整通过。
-8. 完整取证沿用 ArchSift 0.8 已有独立能力，提供明确入口和结果区分，不建设第三套取证系统。
+1. Full IFX.Architecture.Tests plus JSON; preserve all tests/Theory/positive-negative/assertions, not subsets/equal counts/generic replacements.
+2. Project parameterized tests directly read validated JSON/call ArchUnitNET/emit per-rule results/findings.
+3. Initially schema 1 type-dependency only; other enabled types reject explicitly, not silent skip. Extensions require scoped ownership/acceptance.
+4. Prefer IFX net 10/xUnit v3/MTP; existing product tests unchanged, no wholesale framework switch.
+5. Headless runs, shared CLI-CI-UI execution/coverage.
+6. Normal current-worktree restore/incremental build/tests, lightweight reports/logs/explicit gate.
+7. UI edits/saves/selects target/full-subset/start-cancel/progress/current results/history/downloads. Unified source/executor/inventory/results, subset/uncovered not full pass.
+8. Separate existing 0.8 full-evidence entry/results, not third proof system.
 
-### 2.2 首版不做
+### 2.2 Excluded
 
-- 不修改或完成 InProject；不把旧 IP 阶段结果记为本计划验收。
-- 不在日常运行中创建完整业务源码快照、执行逐项目编译取证、生成完整 DLL／包归档或要求独立 `SourceBound`。
-- 不为确认历史新鲜度重建源码输入证明链；首版不实施报告自动轮转／清理、固定保留、引用保护图、归档恢复或容量预算系统。
-- 不从 UI 编写／执行任意 C#、脚本、MSBuild 命令或自定义检测插件。
-- 不全面迁移 A 类 JSON、不扩展 Handler／TenantId／Catalog／权限／API 快照的通用 DSL。
-- 不支持任意现成外部 DLL 直接取得日常门禁通过，不默认使用 `--no-build` 复用不明来源输出。
-- 不承诺首版适配全部测试框架、混合 TFM 或同名异版本装载组合；IFX net10.0 以外组合先明确支持矩阵。
-- 不自动采纳 IFX 政策、配置必需 CI 检查或部署工作流，不启动 IFX 业务应用或顺带运行全部功能集成测试。
-- 不自动发布 NuGet 包、安装产品、上传报告或变更 Git 分支保护。
+- No InProject completion/modification or old IP results counted here.
+- No daily full business snapshot/per-project compilation proof/DLL-package archive/SourceBound requirement.
+- No history proof rebuild/rotation-cleanup/pinning/reference protection/archive-recovery/capacity system.
+- No arbitrary UI C#/scripts/MSBuild/plugins.
+- No complete A migration/generic Handler-TenantId-Catalog-permissions-API DSL.
+- No arbitrary DLLs earn daily allow/no default no-build unknown outputs.
+- No all framework/mixed TFM/multiversion-load promise; explicit support matrix beyond IFX net 10.
+- No automatic IFX policy/required CI/deployment/app/all functional integration tests.
+- No automatic NuGet publication/install/report upload/branch protection.
 
-## 3. 规则责任与唯一权威
+## 3. Responsibilities and authority
 
-| 政策类别 | 权威来源与执行方 | 首版处理 |
+| Policy | Authority/executor | Initial treatment |
 | --- | --- | --- |
-| 项目层边界、直接包与框架引用、跨项目声明包禁令 | IFX 的 ProjectGraph／LayeringRules／LayerPolicy | 原测试保留；同义 A 类 JSON 不在日常重复执行 |
-| Handler 调用、非 Migrator DDL、TenantId、DbContext 归属 | IFX TypeRules 等 C# 测试 | 原测试及负向夹具保留 |
-| ApplicationOwnedPorts、动态程序集归属与命名 | IFX C# 测试 | 保留；B07 不能替代其实际程序集与递归签名检查 |
-| Catalog、权限登记、授权边界、公开 API 快照 | IFX 专用模型及测试 | 保留；UI 首先展示原生测试结果 |
-| 通用类型依赖禁令 | 版本化 JSON + 通用测试适配层 + ArchUnitNET | UI 编辑 JSON，一条启用规则形成一个可识别测试案例 |
-| TFM、solution 成员及其他通用声明增量 | LT00 责任清单中的候选 | 首版不自动迁移；需要时增加独立测试与负例，不让 ArchUnitNET 承担项目 XML 检查 |
+| Project boundaries/packages/frameworks/cross-project package bans | IFX ProjectGraph/LayeringRules/LayerPolicy | Original tests, no redundant equivalent A JSON daily |
+| Handler/DDL outside Migrator/TenantId/DbContext | IFX TypeRules/C# | Preserve original/negative fixtures |
+| ApplicationOwnedPorts/assembly ownership/naming | IFXC# | B07 not replacement for actual assembly/recursive signatures |
+| Catalog/permissions/authorization/API snapshots | IFX models/tests | Original native results |
+| Generic type bans | Versioned JSON/adapter/ArchUnitNET | Editable JSON, one case per enabled rule |
+| TFM/solution/declaration increment | LT00 inventory | Not automatically migrated, independent tests if needed, not XML via ArchUnitNET |
 
-首版日常完整门禁只针对“IFX 原专用测试全工程＋本次经审查启用的 B 类 JSON 测试”这一明确范围，不自动等于原 ArchSift A 类、B 类与 IFX 测试覆盖范围的并集。未纳入的 A 类增量必须在覆盖清单和 UI 中列明，不能借用日常 allow 声称全部架构政策合规。
+Full daily means original whole project+reviewed B, not automatic union of old A/B/IFX coverage.Excluded A listed, inability to claim full-policy compliance from daily allowance.
 
-B02（IServiceProvider）、B03（TransactionScope）、B05（第一方 Newtonsoft API）可以作为增量样例。它们可能比 IFX 原断言更严格，必须逐条审查范围与例外，不能因为旧候选零 finding 就认定政策已批准。
+B02 IServiceProvider/B03 TransactionScope/B05 Newtonsoft may be stricter increments; review scope/exceptions individually, old zero findings not approval.
 
-现有 182 条 A 类与 406 条 B 类是展开的规则数量，不代表专用规则等价覆盖。规则清单、JSON 和同义手写 Fluent 规则不能同时成为政策权威。UI 不创建另一份有效政策副本；规则库导入／导出用于人工选择，正式执行路径由项目配置明确指定。
+182 A/406 B expanded counts are not dedicated policy-equivalence. Inventory/JSON/duplicate Fluent definitions cannot all be authoritative.UI has no extra effective policy copy; imports-exports for selection, project configuration determines execution.
 
-### 3.1 IFX 全部原测试保留基线
+### 3.1 Original IFX retention
 
-完整门禁的最低范围是整个原有 `IFX.Architecture.Tests` 工程，而不是只执行 `ArchitectureTests` 类或某个可编辑测试组。当前设计参照至少包括以下三个测试类；未来新增测试类默认随全工程执行，不能把本表当作只允许这三类的白名单。
+Minimum whole IFX.Architecture.Tests, not ArchitectureTests-only/editable groups. Classes below illustrative, future classes normally executed, not a whitelist.
 
-| 原测试类 | 必须保留的责任 |
+| Class | Required responsibilities |
 | --- | --- |
-| `ArchitectureTests` | 对真实 src、程序集和目录运行全部原规则，包含五秒性能断言 |
-| `FixtureTests` | 原检测规则的合法／违规夹具、Theory 数据及基础设施回归 |
-| `ApplicationPortAdapterTests` | 适配器的上下文、授权边界、审计／事件事实等回归；不能因其含行为断言而排除 |
+|ArchitectureTests|All actual source/assembly/directory rules/five-second assertion|
+|FixtureTests|Positive-negative/Theory/infrastructure|
+|ApplicationPortAdapterTests|Context/authorization/audit-events, behavior assertions not excluded|
 
-LT00 对固定 IFX 基线建立测试文件／案例／Theory 数据和断言变更核对清单；LT02A 使用实际运行器结果核对接入前后全部原案例均执行，新增 JSON 案例另列。核对不只比较总数：删除案例后添加同数量 JSON、增加 skip、缩减 Theory 数据、修改断言或放宽性能阈值均不算完整保留。正常扩展测试可以更新基线，但减少原覆盖必须单独审查，不能由 UI 或配置自动批准。
+LT00 file/case/Theory/assertion inventory; LT02A actual runner before-after/no originals lost/JSON separate. Counts insufficient: deletion-plus replacement, skips/reduced Theory/assertion changes/relaxed budget not retention.Normal extensions can update baseline, coverage reductions require review, not UI approval.
 
-文件、Theory 数据及断言清单用于接入核对与后续变更审查；日常运行通过原生案例结果核对执行覆盖，不自动解析全部 C# 断言、不生成源码保留证明或全树哈希链。
+Source inventory supports integration/change review. Daily native results verify execution without parsing all C#/source-retention proof/full tree hash chain.
 
-完整入口固定执行全工程，不提供排除原类／案例的过滤设置。用户选择单条、测试组或其他过滤时统一标记 `subset`，即使配置中所选案例全部通过也不能取得完整门禁 allow。若 JSON 适配被放入独立工程，完整入口仍须执行原 IFX 全工程及新增工程，不能替换原工程。
+Full entry always whole project, no filter originals. Any case/group/filter subset cannot allow even all selected pass. Separate JSON project still requires original whole project.
 
-### 3.2 A 类、B 类与 IFX 测试的执行归属
+### 3.2 Execution ownership
 
-| 原检查类别 | 权威来源／首版执行方 | 轻量日常门禁范围 | UI 处理 |
+| Check | Authority/executor | Daily scope | UI |
 | --- | --- | --- | --- |
-| A 类中与 IFX 实际等价的项目引用、零包等政策 | IFX 原 C# 测试；原 A 类 JSON 仍保留在原 ArchSift | 按已核对的具体断言由 IFX 执行，不在日常重复跑同义 A 类 JSON | 标明由哪项 IFX 测试承担；旧 JSON 可列为对应参照，不虚构为本次已执行 |
-| A 类未迁入增量，例如 TFM、solution 成员、IFX 未覆盖的精确包白名单或其他声明规则 | 原 ArchSift 的 JSON／Core 检测 | 未纳入新首版日常范围；逐项登记实际缺口，后续单独决定是否接入测试 | 显示“由原 ArchSift 检查／未纳入本次日常门禁”，提供原工具入口或独立历史报告链接 |
-| B 类中经审查启用的 `type-dependency` | 项目 JSON＋参数化测试适配层＋ArchUnitNET | 纳入本次 JSON 测试；一条启用规则对应可识别案例 | 显示 JSON 来源、规则／案例 ID、范围、理由、执行状态和 finding，可编辑正式登记的 JSON |
-| 与 IFX 部分重叠的 B02／B03／B07 等 | IFX 原断言与 B 类 JSON 各自保持权威 | 原专用测试完整保留；额外 B 类断言按批准的范围执行，不因重叠删掉原测试 | 并列显示两种来源及各自断言范围；“部分重叠”不合并成一条已执行结果 |
-| IFX 专有的 Handler、TenantId、ApplicationOwnedPorts、DbContext、Catalog、权限、API 快照等 | IFX C# 测试与项目／目录模型 | 原全工程纳入，无需转换成 JSON | 展示原生测试清单、结果、断言消息及可取得的 Violation，检测逻辑继续由 C# 维护 |
-| IFX 的 FixtureTests、ApplicationPortAdapterTests | 原 C# 测试、Theory 数据与夹具 | 随原工程完整运行 | 显示实际案例及结果，不作为未被调用的源码文件冒充已执行测试 |
-| 未经审查／未启用的 B 类候选、其他未支持的 JSON 规则 | 保留原文件与原工具使用方式 | 不自动加入；406 条候选不是默认批准集合 | 显示候选／未启用／不支持及原因；若不支持规则被加入新入口的启用必检集合，配置明确拒绝，不能跳过后放行 |
+| Proven equivalent A project/zero package | original IFX C#, old JSON retained | Specific verified assertions, no equivalent JSON duplicate | Actual test owner/reference only, no fabricated execution |
+| Unmigrated A TFM/solution/exact packages/declarations | Original ArchSift JSON-Core | Excluded, gaps listed, later decision | Show old tool/excluded entry/history |
+| Reviewed enabled B type | Project JSON/adapter/ArchUnitNET | One identifiable case per rule | Source-ID-scope-reason-state-finding/edit registered JSON |
+| Partial overlap B02/B03/B07 | separate C#/JSON authority | Preserve originals, approved increment | Parallel scopes, no merged execution |
+| IFX dedicated Handler/TenantId/ports/DbContext/Catalog/permissions/API | C#/models | Whole project, no JSON conversion | Native cases/results/assertions/available Violation, C#logic maintained |
+| FixtureTests/ApplicationPortAdapterTests | C#/Theory/fixtures | Whole project | Actual cases, not files as execution |
+| Unreviewed-disabled B/unsupported JSON | Original files/tool | Not automatic, 406 not default approval | Candidate-disabled-unsupported reasons, enabled required unsupported rejects |
 
-LT00 为实际规则／检查建立轻量责任与覆盖清单：原规则／测试身份、来源、执行方、对应测试或旧工具入口、等价／部分重叠／未迁入关系、是否属于本次必检及理由。该清单只是说明与导航元数据，不新增检测 DSL，不自动解析 C# 推断政策，也不因为名称相似就判等价。TFM／图完整性及包闭集与前缀禁令等不同语义须分别核对。
+LT00 lightweight responsibility inventory: identity/source/executor/test-old entry/equivalent-overlap-unmigrated/current required/reason. Navigation metadata, no DSL/C#policy inference/name-equivalence. Separately compare TFM/integrity/closed packages/prefix bans.
 
-原 A 类 JSON 不删除、不自动导入新的测试配置；新入口仍只执行首版支持的类型。原编辑器可以继续管理旧规则；新 UI 对未迁入项优先只读展示并提供原工具入口，查看或编辑文件均不表示本次执行。来自原 ArchSift 的成功报告始终保留其 run、目标、规则身份和时间，不用于填补新日常报告的未执行结果。
+Retain A JSON, no automatic test import.New entry only supported types.Old editor still manages old rules; UI excluded read only/old entry, view-edit not execution.Old success keeps run-target-rule-time, never fills missing daily results.
 
-## 4. 组件边界与依赖方向
+## 4. Component boundaries
 
 ```text
-规则编辑 UI ──校验／原子保存──> 项目 JSON
+Rule-editing UI ── validate / atomic save ──> Project JSON
                                     │
-UI / 无界面入口 / CI ──> 轻量运行协调服务
+UI / headless entry / CI ──> Lightweight run coordinator
                                     │
-                           正常恢复／构建／测试
+                           Normal restore / build / test
                                     │
                     ┌───────────────┴──────────────┐
                     ▼                              ▼
-             IFX 专用 C# 测试               JSON 参数化测试入口
+             Dedicated IFX C# tests            JSON parameterized tests
                     │                              │
-             原规则／原夹具                 共享规则解释与检测库
+             Original rules / fixtures         Shared rule and analysis library
                     │                              │
                     │                         ArchUnitNET
                     └───────────────┬──────────────┘
                                     ▼
-                    运行器结果 + 结构化规则／违规明细
+                    Native results + structured rules / findings
                                     │
-                        必检覆盖核对／门禁汇总
+                        Required coverage / gate summary
                                     │
-                         JSON / HTML / UI 历史
+                         JSON / HTML / UI history
 
-完整取证入口 ──> 现有 ArchSift evidence 工作流／原报告
-                    （独立运行，不是 daily 前置）
+Full-evidence entry ──> Existing ArchSift evidence workflow / reports
+                    (Independent, never a daily prerequisite)
 ```
 
-| 逻辑组件 | 负责 | 不负责／依赖限制 |
+| Component | Owns | Exclusions / dependencies |
 | --- | --- | --- |
-| 规则解释与检测库 | schema／语义校验、选择器、例外、类型依赖模型、finding | 不引用 xUnit、CLI、Web；不自己构建目标、启动测试或判完整取证关联 |
-| 测试适配层 | JSON → 稳定案例 ID、调用检测库、断言、输出规则明细 | 不读取 Worker 预计算结果作测试；不设置 `SourceBound=true` |
-| IFX 专用测试接入 | 执行现有规则、保持原断言；小型适配器输出现有 Violation | 不为报告重写专用检测逻辑；不因格式适配放宽断言 |
-| 运行协调服务 | worktree／配置、进程、取消、基本状态、原 IFX 全工程与 JSON 案例覆盖核对、原生测试发现／结果读取、来源标识 | 不再运行平行的 B 类检测；不解析显示名认定覆盖；不建立材料生命周期或任务恢复系统 |
-| UI／轻量 CLI | 展示检查来源／责任／清单／结果和未纳入项，传递明确请求，管理原工具与报告入口 | 不独立实现门禁、解释／编辑 C# 检测语义或隐藏失败；不要求 CI 启动 Web |
-| 完整取证入口 | 指向既有配置和流程，显示独立结果来源 | 不冒充运行了全部 IFX 专用测试；不把 daily 报告改标签升级 |
+| Shared rule library | Schema/semantic validation, selectors, exceptions, type model, findings | No xUnit/CLI/Web; no builds, test launch or full-evidence binding decision |
+| Test adapter | JSON to stable cases, analysis calls, assertions, structured output | No Worker-result playback or fabricated SourceBound |
+| IFX integration | Original rules/assertions, small existing-Violation adapter | No rewritten detection or weakened assertions for reporting |
+| Coordinator | Worktree/config/processes/cancel/basic state/native discovery/results/original and JSON coverage/provenance | No parallel B evaluation, display-name identities, material lifecycle or task recovery system |
+| UI / lightweight CLI | Source/responsibility/inventory/results/exclusions, explicit requests, old-tool/report entries | No separate gate/C# semantics editor, hidden failures or Web prerequisite for CI |
+| Full evidence entry | Existing config/workflow, independent provenance | No claim of all IFX tests or relabeled daily proof |
 
-首选把 JSON 参数化测试接入现有 `IFX.Architecture.Tests`，保持其真实项目引用。若 LT01 发现依赖冲突，应以兼容证据决定分离薄测试工程，不引入另一套业务构建／取证宿主。核心库实际文件拆分和命名由 LT00 冻结，不在计划阶段建立空项目或修改 solution。
+Prefer JSON in IFX.Architecture.Tests with real project references. If LT01 finds conflicts, use compatibility evidence for a thin separate test project, not another business-build/evidence host. LT00 freezes shared files/names; no empty plan-stage projects/solution changes.
 
-## 5. main 可复用资产与边界
+## 5. Reuse from main
 
-| 当前资产 | 复用方式 | 必须守住的边界 |
+| Asset | Reuse | Boundary |
 | --- | --- | --- |
-| [RuleLoader](../../src/ArchSift.Core/RuleLoader.cs)、[SelectorMatcher](../../src/ArchSift.Core/SelectorMatcher.cs)、现有规则 schema | 优先直接复用；确有必要时抽取无宿主依赖部分 | 不在 schemaVersion 1 偷改原字段语义；不支持类型在新执行配置中显式拒绝 |
-| [AssemblyWorker](../../src/ArchSift.ArchUnit/AssemblyWorker.cs) 的类型／泛型依赖遍历 | 实施时抽取可复用计算逻辑，或以最小共享接口接入 | 不能直接调用要求 SourceBound 的整条旧判定链，再伪造绑定绕过它 |
-| finding 身份、例外规则、JSON 转义与显示组件 | 复用语义与纯投影逻辑 | 原 analysis／chain 报告及 stable ID 语义保持；新测试报告使用独立文档契约 |
-| [Web 规则编辑器](../../src/ArchSift.Web/wwwroot/app.js)、规则校验与保存服务 | 复用编辑控件和校验，增加测试工作流适配 | 不把旧 Verify／Chain 端点改成运行测试；不默认把 UI 库的所有规则加入项目 |
-| History 的只读列表／展示、任务进度、owned 进程和路径保护 | 复用必要展示与安全能力 | 不引入证据目录登记、自动轮转、固定／引用保护、归档恢复；新旧报告和取消对象明确区分 |
-| [证据工作流](../external-build-evidence.md)、[CLI](../cli.md)、[报告](../reports.md) | 维持原行为，提供独立入口 | 无新的 daily 默认依赖；无旧 evidence schema 改义 |
-| InProject 分支 | 只读设计参照、失败场景与验收经验 | 不复制整套运行时／安装器／绑定验证器，不自动恢复其开发 |
+| [RuleLoader](../../src/ArchSift.Core/RuleLoader.cs), [SelectorMatcher](../../src/ArchSift.Core/SelectorMatcher.cs), schema | Reuse directly or extract host-free logic if needed | No silent schema 1 semantic changes; unsupported enabled types reject |
+| [AssemblyWorker](../../src/ArchSift.ArchUnit/AssemblyWorker.cs) type/generic traversal | Extract minimal shared computation/interface | Never call old bound-verification chain then fake binding |
+| Finding identity, exceptions, escaping/display | Reuse semantics/pure projections | Old reports/IDs unchanged; separate test-report contract |
+| [Web editor](../../src/ArchSift.Web/wwwroot/app.js), validation/save | Adapt existing controls/services | Old Verify/Chain endpoints never become test runners; no auto-import of all library rules |
+| History/progress/process/path safety | Necessary display/safety reuse | No evidence registration/rotation/pinning/reference graph/archive recovery; distinguish old/new reports and cancellation owners |
+| [Evidence](../external-build-evidence.md), [CLI](../cli.md), [reports](../reports.md) | Preserve independent entry/behavior | No daily dependency or evidence-schema reinterpretation |
+| InProject branch | Read-only design/failure lessons | No copied whole runtime/installer/binder or automatic resumption |
 
-抽取共享实现时须为旧入口和新入口运行相同合法／违规／泛型／例外场景，并验证旧产品回归。现有第三方许可与迁移资产约束仍适用，不以“复用”绕过来源核对。
+Shared extraction must run identical valid/violating/generic/exception examples through old/new entries plus legacy regressions. Existing provenance/license constraints still apply.
 
-## 6. 日常执行路径
+## 6. Daily execution
 
-1. 读取明确的 worktree、Configuration、TFM、规则路径和运行模式。完整门禁包含 IFX 原架构测试全工程及 JSON 案例；任何类／案例过滤进入 subset。验证目标、SDK／运行器兼容；未登记路径和不支持组合拒绝。
-2. 固定本次规则字节、原测试保留基线及案例身份，禁止运行中编辑改变已执行语义。记录源码上下文和明确的必要本地输入摘要，不复制业务源码，不追踪完整编译因果。
-3. 在所有受控构建／测试子进程中显式设置 `IFX_UPDATE_SNAPSHOTS=0`，覆盖继承值；不修改父进程或持久环境。使用正常恢复及增量构建，沿用明确的离线／源策略，不能默默联网或忽略恢复失败。不强制每次清空缓存或重编译每个项目。
-4. 执行 IFX 原架构测试全工程与 JSON 参数化测试；不得只运行 `ArchitectureTests` 而漏掉夹具或适配器测试。原测试读取当前目标；JSON 检测读取明确的测试构建输出及目标程序集集合，不递归扫描任意 bin 目录或把测试夹具当成生产源。
-5. 同一测试进程／有效程序集上下文内共享 ArchUnitNET 模型。规则／程序集上下文变化后重建；不跨 worktree、TFM、配置或 DLL 版本误用全局缓存。
-6. 原生测试结果记录发现／执行／终态；JSON 检测同步输出规则键、匹配数、源／目标类型、finding 和限制。每条记录绑定本次 run ID，但不再增加独立回执文件与签名式交叉链。
-7. 汇总必检测试范围与原始结果，写入门禁报告。失败、取消或输出不完整仍写本次诊断，不复用旧成功。
-8. 本次执行期间已知相关业务输入或规则发生变化时，本次门禁阻断并保留原因。运行终结后的已知变化只更新历史新鲜度为 stale；不能确认则为 unknown，均不改写已完成运行的原门禁、测试结果或退出码。必要轻量观察只覆盖明确的相关输入，不宣称完整编译因果。
+1. Read explicit worktree/configuration/TFM/rules/mode. Full includes whole original project plus JSON; any filter is subset. Validate target/SDK/runner and reject unregistered/unsupported combinations.
+2. Freeze current rules, retention baseline and case identities. Editing cannot change completed semantics. Record source context and necessary local input summaries without source copies or full compilation-causality tracing.
+3. Force IFX_UPDATE_SNAPSHOTS=0 in every controlled build/test child, overriding inheritance without parent/persisted writes. Normal restore/incremental build with explicit offline/source policy; no silent network/ignored failures or mandatory cache clearing/full rebuild.
+4. Run all original classes, fixtures and adapters plus JSON. Original tests read actual target; JSON reads explicit current test outputs/target assemblies, never recursive arbitrary bin scans or fixture-as-production.
+5. Share ArchUnitNET only inside current process/valid assembly context. Rebuild for changed rules/context, never global cross-worktree/TFM/config/DLL cache reuse.
+6. Native discovery/execution/terminal records plus JSON rule key/matches/types/findings/limits bind run ID, without extra receipt/signature-style chains.
+7. Aggregate required coverage/results and save gate. Fail/cancel/incomplete output retains current diagnostics, never stale success.
+8. Known relevant input/rule changes during execution block with reason. Post-run changes affect only stale history; unknown observations stay unknown. Never rewrite original gate/results/exit. Lightweight monitoring claims no full causality.
 
-IDE 单条测试用于诊断，显示 subset；完整门禁必须满足第 3.1 节的全工程基线。CLI／CI 可用同一无界面入口，或相同测试命令加共享环境约束和结果校验，不依赖 UI 服务。纯测试断言仍由测试进程完成，协调服务只核对执行完整性与汇总。
+Single IDE tests are subset diagnostics. Full entry satisfies section 3.1. CLI/CI use shared headless coordination or equivalent commands/environment/result checks, no UI requirement. Test process asserts; coordinator checks completeness/summary.
 
-### 6.1 API 快照更新模式隔离
+### 6.1 Snapshot update isolation
 
-IFX 的 `PublicApiRules` 在 `IFX_UPDATE_SNAPSHOTS=1` 时写入基准并跳过比较。因此完整门禁与工作台局部诊断都必须在子进程中显式设为 `0`；配置或任意环境参数不得覆盖该约束。启动器在日志中记录“快照更新已禁用”，不记录其他环境原值。无法落实子进程约束时拒绝启动，不允许更新后再把结果判为通过。
+PublicApiRules with IFX_UPDATE_SNAPSHOTS=1 writes baselines/skips comparison. Full/subset children must force 0, unoverrideable by config/environment options. Log only snapshot updates disabled, not other raw environment values. Reject if unenforceable, never update then pass.
 
-不修改 IFX 原快照更新代码。开发者显式更新快照仍是独立开发操作，不提供为工作台门禁模式，也不能作为其通过记录。原生手工测试若开启更新模式，不得导入成工作台完整门禁成功。
+Keep original update code. Explicit developer snapshot updates remain separate, never a Workbench gate mode or imported full success.
 
-验收在外置受控 IFX 副本中让测试父进程携带 `IFX_UPDATE_SNAPSHOTS=1`，再通过统一入口运行；测试子进程必须读取 `0`，父进程值保持不变。对故意不匹配的 API 基准必须失败，快照文件字节不变；对匹配基准正常通过。UI／CLI／CI 共用这条约束，不以修改宿主环境代替。
+Authorized external-copy acceptance: parent 1/child 0/parent unchanged, mismatch fails with unchanged snapshots, matching baseline passes. UI/CLI/CI share enforcement, never modify host.
 
-## 7. 配置、存储和宿主保护
+## 7. Configuration, storage and host
 
-- 首选将 JSON rulesets 与测试执行配置放在已跟踪的架构测试目录，例如 `tests/Architecture/IFX.Architecture.Tests/Rulesets/` 及相邻配置；这只是拟定布局，真实 IFX 写入另需授权。路径相对配置解析，原生测试可找到同一份配置。
-- 首版不创建 InProject 风格的 `.archsift/runtime`、版本载荷或专用 SDK runner。测试依赖通过项目现有中央版本／锁策略固定；UI 不代替 NuGet／构建系统管理测试运行时。
-- JSON 保存只写已登记规则路径，先验证后原子替换，检测并发编辑冲突。未保存草稿不参与运行；规则停用、例外变化和删除明确显示为政策变更，不自动算代码修复。
-- 源文件、项目和配置只由正常开发流程修改；daily 正常构建会写 bin/obj，这是未来目标接入需明确授权的行为，不沿用旧工具“目标无写入”的承诺。
-- 报告默认外置于明确的 owned 运行根，开发／真实验收遵循 `D:/ArchSift-lab/runs` 等现有约束；CI 使用已登记 artifacts 目录。每个 worktree／run 分区，成功、失败、取消独立保留。
-- 首版历史仅包括每次独立报告目录、必要日志、基本运行／终态和只读历史列表；“最近一次运行”与其成功／失败／取消如实显示，不回退旧成功。列表直接读取运行摘要，或使用可重建的简单索引，不建立材料引用图。
-- 首版不自动删除、轮转或归档报告，不实现 30 天／100 次策略、固定保留、当前引用保护或容量预算。UI 显示报告位置，用户可在任务结束后独立管理文件；材料缺失显示 unavailable，不改变历史测试结论，也不自动重新执行。业务 bin/obj、共享缓存、旧证据及 InProject 目录不由新工作流清理。
-- 取消与进程退出处理保留；宿主重开后无法确认的遗留运行标为 interrupted／unknown，不显示成功，不自动续跑或恢复任务。首版不建设持久 lease／任务重放系统。
-- 不修改 User／Machine 环境、注册表环境、PowerShell Profile 或启动文件，不写 PATH。受控 dotnet 子进程若设置隔离 DOTNET_CLI_HOME，须同时设置 DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0，仅限子进程。
-- 产品开发与真实接入的构建／测试前后继续核对环境／Profile 摘要；发生漂移立即停止并保留材料，不自动修复。取消仅终止 owned 进程树，不影响其他 worktree。
+- Prefer tracked architecture-test rules/config, e.g. tests/Architecture/IFX.Architecture.Tests/Rulesets and adjacent config; proposed only, real IFX writes separately authorized. Paths resolve from config; native tests use same input.
+- No .archsift/runtime, version payload or dedicated SDK runner. Existing project central versions/locks pin test dependencies; UI does not manage NuGet/build runtime.
+- Save registered JSON only, validate then atomic replace with conflict checks. Unsaved drafts excluded; disable/exception/delete are policy changes, not automatic source repairs.
+- Normal development owns source/projects/config. Daily builds write bin/obj and need explicit integration authority; no inherited promise of zero target writes.
+- External owned run roots, development/acceptance under existing D:/ArchSift-lab/runs rules, registered CI artifacts. Separate worktree/run/success/failure/cancel.
+- Initial history: independent report directories/logs/basic states/read-only list. Latest actual outcome never falls back to old success. Summaries or rebuildable simple index, no reference graph.
+- No automatic deletion/rotation/archive, 30-day/100-run policy, pinning/reference/capacity system. Show paths; user manages after jobs. Missing unavailable, original result unchanged, no rerun. Never clean business outputs/shared cache/old evidence/InProject.
+- Keep cancel/exit handling. Unconfirmed leftover jobs after restart interrupted/unknown, never success/resume. No persistent lease/replay system.
+- No User/Machine/registry/Profile/startup/PATH writes. Isolated child DOTNET_CLI_HOME pairs DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0.
+- Hash-check host/Profile before/after development/real builds/tests; drift stops/preserves without repair. Cancel exact owned trees only.
 
-## 8. 结果契约与门禁
+## 8. Results and gate
 
-日常报告使用独立 `architecture-test-run` 文档类型和版本化 schema；不把 `SourceBound=false` 填入旧报告后强行放行，也不把普通测试运行写成 `SourceBound=true`。首次契约在 LT00 冻结。
+Separate versioned architecture-test-run, not old report with SourceBound=false bypass or ordinary testing relabeled SourceBound=true. LT00 freezes contract.
 
-最小字段组：run／worktree 身份、Git 提交与 dirty 状态、实际目标与测试项目、SDK／TFM／Configuration、规则字节摘要、测试／适配器／ArchUnitNET 版本、检查来源与执行责任方、原测试基线与发现／实际案例集合、原生结果、规则原始状态、finding、执行状态、覆盖完整性、未纳入项及理由、`runGate`、日志和材料位置。`historyFreshness` 是独立的当前展示信息，不是运行放行所需证明字段。Git 身份只是上下文，不能证明源码内容或构建关联。
+Minimum: run/worktree/Git/dirty/target/project/SDK-TFM-config/rule hashes/test-adapter-engine versions/source-executor/baseline/discovered-actual IDs/native results/raw rule states/findings/execution/coverage/exclusions-reasons/runGate/logs/material paths. historyFreshness separate display, no gate-proof prerequisite. Git is context, not byte/build proof.
 
-### 8.1 本次门禁与历史新鲜度
+### 8.1 Current gate versus historical applicability
 
-- `runGate` 回答“这一次正常构建和完整测试是否成功”：依据子进程环境约束、构建／测试结果、原测试全工程与 JSON 案例覆盖，以及本次已知输入变化判定。运行终结后原结论不因后续编辑而改写。
-- `historyFreshness` 回答“历史结果是否已知仍适用于现在”：已知后续变化为 stale，缺少观察信息为 unknown；可确认的相同观察上下文只说明该观察范围，不能冒充 SourceBound。
-- 一次有效完整运行可以 `runGate=allow`、`historyFreshness=unknown`。历史 unknown 本身不阻断本次运行，不触发补构建、全树哈希、编译输入捕获或独立绑定验证；它也不能用于声称当前代码已通过。
-- 必检漏执行、测试结果缺失及已知运行中相关输入变化仍阻断，不能用“历史 unknown 不阻断”放宽执行完整性。用户需要新的当前结论时显式再运行，UI 不后台自动补取证。
-- UI 并列展示“本次运行结果／时间”和“历史结果对当前的适用性”，不以一个绿色状态混合两者；运行后编辑不会把历史 pass 改成 violation。
+- runGate: this normal build/full test succeeded according to child constraints, outputs, original/JSON coverage and known input changes; immutable after completion.
+- historyFreshness: known changes stale, missing observations unknown; identical observed context proves only observed scope, never SourceBound.
+- Valid full allow may have unknown history. Unknown does not block run or trigger rebuild/full-tree hashes/input capture/binding, nor prove current source compliance.
+- Missing required execution/results or known run-time changes still block. User explicitly reruns for current results, no background evidence acquisition.
+- UI separately shows run result/time and current applicability, never one merged green state. Later edits do not turn historical pass into violation.
 
-IFX 专用测试先展示运行器结果和原断言文本；能直接取得原 Violation 的位置通过小型报告适配器输出结构化明细。没有结构化数据不能伪造细分规则执行数、类型位置或源代码行号。覆盖键可以是测试／测试组，不把一条包含多种断言的 Fact 虚报成多个已独立执行案例。
+Show native IFX results/assertions first; adapt actual Violation when available. No invented subrule counts/type/source locations. Coverage may use tests/groups; multi-assertion Fact is not multiple independently executed cases.
 
-MTP 原生结构化结果为 IFX 首选来源；TRX 只在实际支持时作为导出，不强制 VSTest，也不通过测试显示名字符串猜测案例身份。JSON／HTML 为首版交付；SARIF 复用投影在 LT03 决定，不能用未完成的 SARIF 集成阻塞基础测试正确性。
+Prefer native MTP structured results; TRX only when actually supported, no forced VSTest/display-name guessing. JSON/HTML initial; LT03 decides optional SARIF without blocking basic correctness.
 
-### 8.2 UI 统一检查清单与显示规则
+### 8.2 Unified inventory/display
 
-| 检查来源标识 | 清单与结果来源 | 首版可操作范围 |
+| Source | Inventory/results | Operations |
 | --- | --- | --- |
-| B 类 JSON 测试 | 当前项目登记的正式 JSON、适配层案例身份、测试运行器结果、实际 finding | 编辑／校验／保存 JSON；查看规则范围与结果；启动完整门禁或局部诊断 |
-| IFX 专用测试 | 原生运行器发现／执行的工程、类、方法及实际 Theory 案例；原断言消息和可取得的 Violation | 查看清单和结果，按完整／subset 入口运行；不能像 JSON 一样编辑专用语义 |
-| 原 ArchSift 检查／A 类未迁入项 | 已登记旧规则与责任清单、原工具入口、明确来源的独立报告 | 查看政策归属和未纳入原因，打开原工具／报告；本次未运行则不生成本次 pass |
+| B JSON | Registered formal JSON, adapter/native identities/findings | Edit/validate/save/scope/results/full/subset |
+| Dedicated IFX | Actual native project/class/method/Theory, assertions/Violation | View/full/subset, no JSON-like semantic editing |
+| Original ArchSift / excluded A | Registered policy/responsibilities/old entries/independent reports | View ownership/exclusions/open original, no unexecuted current pass |
 
-每项统一显示：来源、执行方、规则或测试身份、适用范围、是否属于本次门禁、发现／执行状态、实际结果和原因；有数据时补充耗时、断言消息、源／目标类型及真实位置。IFX 测试可按工程→类→方法／Theory 案例展开，三种原测试类均须可见，JSON 新增案例单独标识，不能把专用测试伪装成 JSON 规则。
+Each item shows source/executor/identity/scope/requiredness/discovered-executed/result/reason, optional actual duration/assertion/types/location. Expand project→class→method/Theory, all three original classes visible, JSON separate; never disguise C# as JSON.
 
-测试清单通过运行器发现／结果获取，不自行编写完整 C# 测试解析器。发现可能需要正常测试工程构建／加载，必须来自显式操作或本次正常测试流程，沿用其输出，不能打开页面就隐式运行目标构建、每条规则重复构建或另起取证。尚未发现时显示“尚未发现／无清单”；旧发现记录标明时间和上下文，不声称本次已执行。实际案例身份以运行器／适配层记录为准，显示名称不承担覆盖证明。
+Use native discovery/results, not a full C# parser. Build/load only explicit discovery or normal current flow; reuse output, never page-open builds/per-rule rebuild/evidence jobs. Undiscovered shows none; old lists carry time/context, not current execution. Runner/adapter identities govern coverage, not names.
 
-一条 IFX Fact 可能检查多种政策：UI 保留实际测试结果及消息，责任清单可以说明关联，但没有结构化明细时不得虚构细分规则结果、执行数量或逐行定位。首版不承诺自动理解 C# 规则语义；只读源码定位仅在真实位置可得时提供，完整源码浏览不是新增必交付能力，修改专用测试仍走代码审查。
+A Fact may check multiple policies. Preserve actual result/messages; responsibility metadata explains relations without fabricated subresults/counts/lines. No automatic C# understanding; source links only with real locations, no mandatory source browser; code review still governs dedicated tests.
 
-未迁入 A 类、未启用候选、未执行测试、仅已发现案例、过滤／跳过项及材料不可用项必须使用明确的非 pass 标签。`not-applicable` 只适用于规则在真实求值后得到的不适用结论，不能拿来掩盖“没有接入”。这些清单状态与规则原始五状态分开，不扩改旧规则 schema。
+Excluded A/disabled candidates/unexecuted/discovered-only/filtered/skipped/missing materials get explicit nonpass inventory labels. not-applicable requires actual rule evaluation, never disguises absent integration. Separate inventory states from five rule states; old schema unchanged.
 
-完整门禁 allow 只表示本次定义的日常范围通过；UI 和导出报告必须同时显示该范围及未纳入的 A 类增量，不能命名为“全部 A＋B＋IFX 架构合规”。原工具历史 pass 不与本次结果混合，统计通过数量只计本次实际通过案例，查看／编辑／发现均不增加通过数量。未迁入项若本就不属于首版必检，不凭空使本次门禁失败；若必检的 IFX 测试或启用 JSON 漏执行，仍必须 block，不能通过改成“未纳入”绕过。
+Allow means defined daily scope only; UI/exports show scope/excluded A, never all A+B+IFX compliance. Old passes never merged; counts only current actual passes, no view-edit-discovery increments. Nonrequired excluded items do not invent failure; required missing cases must block, never recategorized to bypass.
 
-| 条件 | 规则／测试原始状态 | 完整日常门禁 |
+| Condition | Raw rule/test state | Complete daily gate |
 | --- | --- | --- |
-| 快照更新已禁用、原 IFX 全工程与所需 JSON 案例完整执行且通过 | 保留 pass 和显式允许的局部 not-applicable | allow；不要求历史新鲜度证明 |
-| 检测到规则违规／专用断言失败 | violation／测试 Failed | block |
-| JSON 无效、未知启用规则、目标／运行器配置无效、无法禁用快照更新 | invalid-input，保留诊断 | block |
-| restore／build／测试进程异常、结果损坏或权威报告无法保存 | execution-error | block |
-| 零发现、漏执行、过滤、必检跳过、重复／缺失案例、默认零源匹配 | inconclusive／subset | block；不冒充完整通过 |
-| 全部规则禁用或全部不适用 | not-applicable／无有效检查 | block |
-| 取消、失联、已知运行中输入变化 | cancelled／failed／inconclusive | block；历史结果不覆盖 |
-| 有效运行终结后，历史适用性 unknown 或因后续编辑 stale | 原执行／测试结果不变，另记 historyFreshness | 不改写原 runGate，不取得新的当前放行结论 |
+| Updates disabled; original project and required JSON fully executed/passed | Preserve pass and explicitly permitted local not-applicable | allow, no history-proof requirement |
+| Rule violation / dedicated assertion failure | violation / Failed | block |
+| Invalid JSON/type/target/runner or unenforceable snapshot isolation | invalid-input with diagnostics | block |
+| Restore/build/test-process/corrupt results/report save failure | execution-error | block |
+| Zero discovery, missing/filtered/skipped/duplicate cases, default zero matches | inconclusive/subset | block, never full pass |
+| All disabled/all inapplicable | not-applicable/no effective checks | block |
+| Cancellation/disconnection/known run-time input changes | cancelled/failed/inconclusive | block, no old-result replacement |
+| Completed valid run later unknown/stale applicability | Original states unchanged, separate historyFreshness | Keep original gate, no new current allowance |
 
-原生运行器退出码原样记录。协调入口拟定：0 本次通过，2 违规，3 执行／报告错误，4 本次覆盖无法判定或已知运行中相关输入变化，5 配置／不支持输入，130 取消；历史新鲜度 unknown／运行结束后的 stale 不改变原退出码。这些只属于新入口，不改变旧 ArchSift 的退出码。普通 Failed 不能无依据推断为已定位的类型违规。存在多种问题时保留全部原因，最终码按取消、无效输入、执行错误、本次无法判定、违规、通过归约。
+Record native exits unchanged. New entry: 0 complete pass, 2 violation, 3 execution/report error, 4 uncertain coverage/known run-time changes, 5 invalid/unsupported, 130 cancel. Later unknown/stale does not change exits. Legacy exits unchanged. Failed alone does not identify a type violation. Preserve every cause; priority cancel→invalid→execution→inconclusive→violation→pass.
 
-首版只接受显式允许为空的局部不适用；必检 skip 不等价于规则不适用。severity 只展示，不改变必检集合。全局放宽 allowEmpty、禁用全部规则或测试过滤不能成为通过路径。
+Only explicit local allowEmpty inapplicability accepted. Required skips are not inapplicability; severity does not shrink required scope. Global allowEmpty/all-disabled/filtering never bypasses the gate.
 
-## 9. 完整取证沿用方式
+## 9. Existing full evidence
 
-- 既有 ArchSift evidence 预览／构建／材料审查／capture／seal／validate、完整报告与归档策略继续按原契约工作；参见 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md) 和 [取证指南](../external-build-evidence.md)。
-- 新工作台提供明确的“完整取证”独立入口，选择既有配置并预览实际目标／路径；不自动执行、不自动导入日常材料或修改已有安装。
-- 现有完整取证验证其自身覆盖的构建材料及 ArchSift 规则，不据此声称已经执行新增 JSON 测试或 IFX 全套专用测试。首版不扩建为“封存新测试全部因果材料”的系统。
-- 日常门禁、完整取证有不同 run ID、报告类型、覆盖和保证。跨入口可提供实际材料链接，但不合并为一个模糊绿色状态，也不把一方失败覆盖另一方历史记录。
-- 若以后要求 full 也封存／复核全部项目测试，另立增量范围，复用同一测试实现并验证快照目标解析；不是本首版的隐含交付。
+- Existing preview/build/material review/capture/seal/validate/reports/archive contracts remain: [0.8 plan](20261013-archsift-0.8.0-evidence-ui-plan.md), [guide](../external-build-evidence.md).
+- Explicit independent entry previews actual config/target/paths, no automatic execution/daily import/install changes.
+- Full evidence proves its own materials/rules, not new JSON or all dedicated tests. No initial system sealing every new test's causal materials.
+- Separate run IDs/report types/coverage/guarantees. Actual cross-links allowed, never merged green states or one failure overwriting another history.
+- Future full test sealing needs separately authorized scope/shared tests/snapshot resolution verification, not implicit initial delivery.
 
-## 10. 对照 InProject 的保留／调整／移除清单
+## 10. InProject design comparison
 
-本表是新工作流的设计取舍，不是对旧分支实施修改或删除的指令。
+Design choices only, not instructions to modify/delete the old branch.
 
-| 旧环节 | 新工作流处理 | 验收关注 |
+| Old mechanism | New workflow | Gate |
 | --- | --- | --- |
-| JSON 校验、选择器、例外、稳定 finding | 保留可复用语义 | 新旧支持范围内相同输入得相同原始 finding |
-| UI／CLI 共用服务、worktree 隔离、owned 取消 | 保留并适配 | 双入口一致、跨 worktree 不串用、取消不误杀 |
-| 失败／取消历史、最近运行与历史适用性 | 简化保留 | 原 runGate 不改写，unknown 不重新引入绑定证明，新失败不回退旧成功 |
-| 每次新源码快照与独立业务构建 | 从 daily 移除 | 无 snapshot 阶段／业务源码复制；正常构建参与测试 |
-| 逐项目预处理、完整 csc／引用／生成器材料捕获 | 从 daily 移除，完整取证沿旧能力 | daily 不依赖 capture／seal 文件或大材料目录 |
-| 独立 BindingVerifier／SourceBound 放行条件 | 从 daily 移除 | 新报告独立保证；旧验证器行为不变 |
-| Worker 预检测 → 结果材料 → xUnit 断言 | 移除该日常链路 | 测试直接进行真实检测，反例真正导致失败 |
-| envelope／receipt 与结果交叉摘要核验 | 从 daily 移除 | 原生案例结果＋同次规则明细足以核对执行 |
-| 独立 VSTest 工程与工具 runner 隔离 | 调整为 IFX 测试工程／MTP | IFX global.json 不改，旧工具测试栈不升级 |
-| IFX 原专用测试接入 | 改为原全工程强制保留＋JSON 增量 | 三个原测试类及后续新增类均执行；快照更新子进程禁用，过滤只作 subset |
-| A 类 Core 求值与 IFX 同义断言双跑 | 调整为单一责任清单 | 不重复计算同一政策，不丢掉专用断言 |
-| 逐规则发现／完成审计 | 简化保留 | 必检覆盖仍核对；无额外显示名解析或证明链 |
-| full 封存、复验与归档 | 沿用既有 ArchSift 独立能力 | 无新封存实现，不把 daily 改标签升级 |
-| 工具载荷／初始化／维护安装器 | 新首版不复刻 | 轻量测试依赖接入，无 InProject runtime 布局 |
-| 自动轮转、固定／引用保护与存储预算 | 从新首版移除 | 独立目录＋基本状态＋只读列表，无自动清理、归档或材料引用图 |
+| Validation/selectors/exceptions/stable findings | Reuse semantics | Same supported inputs/findings |
+| Shared services/worktree isolation/owned cancellation | Adapt | Parity/no cross-worktree reuse or accidental kills |
+| Failure/cancel/latest/history | Simplify | Immutable gates/unknown without binding/no stale fallback |
+| Fresh source snapshot/independent business build | Remove from daily | Normal build, no source copying |
+| Per-project/csc/reference/generator capture | Full evidence only | No daily capture/seal/material prerequisite |
+| BindingVerifier/SourceBound gate | Remove from daily | Separate guarantees, old validator unchanged |
+| Worker precheck/material/xUnit playback | Remove | Actual direct tests fail on negatives |
+| Envelope/receipt cross-hashes | Remove from daily | Native identities/current details suffice |
+| Separate VSTest/tool runner | IFX project/MTP | IFX global.json/old test stack unchanged |
+| IFX integration | Whole originals plus JSON | Original/future classes, child updates off, filters subset |
+| Equivalent A/Core and IFX double-run | Single responsibility inventory | No duplicated policy or lost assertions |
+| Per-rule coverage audit | Simplify | Required execution checked without names/proof chain |
+| Full sealing/validation/archive | Existing separate capability | No relabeled daily guarantee |
+| Runtime/init/maintenance installer | Not reproduced | Lightweight dependencies, no InProject layout |
+| Rotation/pinning/references/capacity | Excluded initially | Directories/states/read-only list, no automatic cleanup |
 
-## 11. 阶段交付与进入条件
+## 11. Stages and prerequisites
 
-本计划没有授予后续阶段执行权限。得到新实施授权后，按依赖推进；真实目标写入／运行和独立人工验收仍分别满足条件，不承接 InProject 的历史授权。
+Original plan itself grants no later execution authority. Follow dependencies under subsequent authorization; target operations/human acceptance separately scoped, no inherited InProject authority.
 
-| 阶段 | 交付物 | 进入条件 | 完成／验收标准 | 当前状态 |
+| Stage | Deliverables | Entry | Acceptance | Status |
 | --- | --- | --- | --- | --- |
-| LT00 范围与契约 | 组件／支持矩阵、A／B／IFX 责任与未迁入清单、IFX 原全工程基线、独立报告 schema、来源／案例身份／退出码、快照开关隔离、布局与测量方案 | 用户审阅本计划并明确实施范围 | 不依赖 InProject；不改旧 schema；完整与 subset 不可混同；A 类增量未纳入明确；runGate 与 historyFreshness 分离；无首版历史生命周期系统 | DESIGN COMPLETE；静态证据见 [LT00 验收](../acceptance/20261015-lightweight-lt00-contracts.md)，产品实现未开始 |
-| LT01 测试直连最小闭环 | JSON 解释与测试适配层、薄参数化入口、合成 net10.0／v3／MTP 夹具 | LT00 完成且获得实施授权 | 无 UI／Worker 预计算／绑定文件即可运行；合法通过、真实违规失败；稳定案例与明细；零匹配／无效配置／泛型／例外负例通过 | SYNTHETIC COMPLETE；见 [LT01 验收](../acceptance/20261015-lightweight-lt01-synthetic.md) |
-| LT02 日常运行与门禁 | 无界面协调入口、正常增量构建、原生测试清单／结果及来源适配、全工程覆盖核对、子进程环境隔离、取消与日志 | LT01 闭环 | 子进程更新开关为 0；IFX 与 JSON 案例可识别；发现不算执行；漏执行／过滤／skip／异常／取消阻断；历史 unknown 不阻断；无取证链 | SYNTHETIC COMPLETE；见 [LT02 验收](../acceptance/20261015-lightweight-lt02-synthetic-gate.md)，真实 IFX 待 LT02A |
-| LT02A IFX 早期接入门槛 | 获授权的外置 IFX 副本／worktree，原生基线与接入后案例对照，MTP／RepoLayout／输出与快照开关验证，初步冷热记录 | LT02 通过；另获具体目标／操作授权；未授权则该阶段等待，不进入 LT03 | 三个原类、所有原案例／Theory 数据及断言保留；原工程全量执行；快照开关父 1 子 0、API 不匹配失败且基准不变；根目录／项目引用正确；并行负载不使原五秒断言失效且不放宽阈值 | COMPLETE；见 [LT02A 验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md) |
-| LT03 报告与基本历史 | 新 schema、JSON／HTML、来源／责任／测试清单与结果投影、未纳入项、专用测试明细适配、独立目录与基本列表；SARIF 可选 | LT02A 真实接入门槛通过 | 不伪造 SourceBound／案例数／行号；runGate 与历史分开；原 A 类报告独立；未执行不显示 pass；失败不回退旧成功；无生命周期系统 | COMPLETE；见 [LT03 验收](../acceptance/20261015-lightweight-lt03-reports-history.md) |
-| LT04 UI 接入 | 复用编辑器、三种检查来源、IFX 工程／类／案例清单与结果、未迁入 A 类展示、完整／subset 模式、保存、启动取消、基本历史／下载、full 入口 | LT03 通过 | 同输入 UI／CLI 同门禁；JSON 可编辑、IFX C# 语义不可编辑；发现不算执行；未覆盖不变绿；完整模式不可过滤原测试；历史 unknown 不触发补取证 | UI/MACHINE COMPLETE；独立人工 UI 验收留待 LT06 |
-| LT05 IFX 回归与测量 | 已授权目标的 UI／CLI／CI 对照、原测试保留、三种来源与未覆盖显示负例、增量 JSON 负例、冷热与磁盘记录 | LT04 通过；核对 LT02A 授权仍覆盖本阶段具体操作，否则另行取得 | 首次接入已在 LT02A；原全工程无减损；双入口一致；A 未迁入、原工具旧 pass、IFX 失败、JSON 违规均不混淆；环境与原目标／安装不变；不自动采用政策 | MACHINE COMPLETE；见 [LT05 验收](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md) |
-| LT06 首版验收与交付 | 固定候选、使用／限制说明、独立人工清单、测试依赖与 UI 分发方案；可选发布门槛 | LT05 机器验收；人工操作由用户完成 | 机器标准全部满足；人工独立确认；旧 ArchSift 回归通过；InProject 未变；发布／PR／合并另获授权后才执行 | COMPLETE / LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS；见 [修订机器记录](../acceptance/20261016-lightweight-lt06-ui-revision.md)和[人工清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md) |
+|LT00|Components/support/responsibilities/exclusions/original baseline/schema/identities/exits/isolation/layout/measurement|User scope approval|No InProject/old-schema changes; full-subset/gate-history separate; excluded A visible; no lifecycle system|DESIGN COMPLETE, [static](../acceptance/20261015-lightweight-lt00-contracts.md), product unstarted then|
+|LT01|Shared JSON/adapter/thin synthetic net 10-v3-MTP|LT00+authority|No UI/Worker playback/binder; actual positive/negative, stable IDs, zeros/invalid/generic/exceptions|SYNTHETIC COMPLETE, [record](../acceptance/20261015-lightweight-lt01-synthetic.md)|
+|LT02|Headless/incremental/native identities/results/coverage/isolation/cancel/logs|LT01|Child 0, originals/JSON identified, discovery not execution, coverage failures/cancel block, unknown history does not, no evidence chain|SYNTHETIC COMPLETE, [record](../acceptance/20261015-lightweight-lt02-synthetic-gate.md); real LT02A pending then|
+|LT02A|Authorized external IFX, native before-after, MTP/layout/outputs/isolation/preliminary costs|LT02+specific target/run authority, otherwise wait before LT03|All original classes/cases/Theory/assertions/refs/five-second limit preserved; parent 1-child 0/API mismatch failure/unchanged baseline, no load-induced threshold relaxation|COMPLETE, [record](../acceptance/20261015-lightweight-lt02a-ifx-gate.md)|
+|LT03|Separate reports/provenance/inventory/exclusions/actual details/basic history/optional SARIF|LT02A|No fake binding/counts/lines; gate-history separate, legacy A separate, no unexecuted pass/stale fallback/lifecycle system|COMPLETE, [record](../acceptance/20261015-lightweight-lt03-reports-history.md)|
+|LT04|Reused editor/three sources/native inventory/excluded A/full-subset/run-cancel/history/download/full entry|LT03|CLI parity, JSON editable/C# not, no discovery-as-pass/filter-full/unknown-triggered evidence|UI/MACHINE COMPLETE, independent review LT06|
+|LT05|Authorized CLI-Web-CI parity/original retention/provenance negatives/JSON negatives/cold-warm-disk|LT04+confirm target authorization covers operations|No coverage loss/source confusion/persistent drift/adoption, original install untouched|MACHINE COMPLETE, [record](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md)|
+|LT06|Fixed candidate/guides/limits/human checklist/dependencies/distribution/optional release gates|LT05/user human review|Machine+independent human+legacy regression, InProject unchanged, PR-merge-release separately authorized|COMPLETE/LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS, [machine](../acceptance/20261016-lightweight-lt06-ui-revision.md)/[human](../acceptance/20261016-lightweight-lt06-human-ui-review.md)|
 
-阶段记录至少列实际提交、目标、SDK／运行器／TFM／配置、规则身份、结果与限制。LT01 正反例是新适配层证据；旧 0.8、IP08 的测试数量／结果不能代替。
+Each record gives actual commit/target/SDK-runner-TFM-config/rules/results/limits. LT01 direct positives/negatives prove adapter; old 0.8/IP08 counts do not.
 
-## 12. 验收矩阵
+## 12. Acceptance matrix
 
-| ID | 必验场景 | 通过判据／限制 | 阶段 |
+| ID | Scenario | Criterion / limit | Stage |
 | --- | --- | --- | --- |
-| LA01 | 分支与旧产品保护 | 新实现以核对后的 main 开始；InProject 文件、历史与分支未改；未合并旧运行时 | LT00、LT06 |
-| LA02 | 真实类型依赖正反例 | 单条及多条 JSON 真正调用 ArchUnitNET，合法 pass、违规有准确源／目标并使测试失败 | LT01 |
-| LA03 | 泛型、字段与签名、B02／B03／B05 | 明确覆盖已有引擎可识别依赖；独立正反例证明预期，不用 policy pass 代替夹具验证 | LT01、LT02A、LT05 |
-| LA04 | 配置、重复 ID、例外、零匹配／全禁用 | 无效／不支持明确拒绝；例外保留理由和 finding；默认空匹配及无有效检查不放行 | LT01、LT02 |
-| LA05 | 实际程序集与选择器范围 | 明确生产／测试／外部程序集；漏载必检程序集阻断；错 namespace 类型不能被声称已覆盖，结合保留的 IFX 归属检查记录限制 | LT01、LT02A、LT05 |
-| LA06 | IFX 全部原专用测试不减损 | 三个原测试类及后续新增类全工程执行；案例／Theory 数据／断言／项目引用／五秒阈值无减损；不能删原案例后用同数量 JSON 替代；适配器行为测试不排除 | LT00、LT02A、LT05 |
-| LA07 | 运行器、目录与缓存兼容 | IFX v3／MTP 无 VSTest 覆盖；RepoLayout、src／Catalog／权限／API 基准定位正确；增量输出明确；新增 JSON 并行负载不破坏原五秒断言 | LT01、LT02A、LT05 |
-| LA08 | 完整覆盖／局部运行 | 完整要求原全工程＋JSON；单类、案例或测试组过滤即 subset；漏执行／skip／重复／缺失不全量通过；可配置缩小范围不能绕过基线 | LT02、LT02A、LT03 |
-| LA09 | 失败／取消／失联／并发 | 当前终态正确；owned 进程退出；其他 worktree 不受影响；旧成功只留历史 | LT02、LT04 |
-| LA10 | UI 编辑与双入口一致 | 保存校验／冲突／规则冻结成立；同输入同结果；CI 无 UI 可运行 | LT04、LT05 |
-| LA11 | 本次门禁和历史新鲜度 | 有效运行可 allow＋historyFreshness unknown；运行后编辑只使历史 stale、不改原 gate／退出码；已知运行中变化仍阻断；unknown 不触发全树哈希／绑定／补构建 | LT02、LT03、LT04 |
-| LA12 | 路径／宿主与数据保留 | 目标写入已授权；无持久环境／Profile 变化；首版不自动清理；旧 IFX／证据／InProject 材料不变 | 全阶段适用 |
-| LA13 | 完整取证分离 | 日常无快照／capture／seal／BindingVerifier／receipt；旧 full 入口及报告保持原义；daily 不能升级 full | LT02、LT02A、LT04、LT06 |
-| LA14 | 旧产品兼容 | 共享组件抽取后旧 schema、报告、退出码、规则与 evidence 场景回归通过 | 触及共享组件阶段、LT06 |
-| LA15 | 轻量化实测与人工 | LT02A 先完成接入与初测，再于 LT05 同条件测冷热耗时、阶段、磁盘增长与峰值资源；独立人工观察不由 Agent 填写 | LT02A、LT05、LT06 |
-| LA16 | API 快照更新开关隔离 | 受控父进程值 1 保持不变，门禁子进程强制 0；不匹配 API 测试失败、匹配通过，基准字节均不被更新；无法隔离拒绝运行；UI／CLI／CI 同约束 | LT02、LT02A、LT04、LT05 |
-| LA17 | 首版基本历史 | 独立目录、基本终态、只读列表足够；无轮转／固定保护／引用图／归档恢复／任务续跑；丢失材料标 unavailable，失联不显示成功 | LT03、LT04、LT06 |
-| LA18 | A／B／IFX 责任归属 | 逐项区分实际等价／部分重叠／未迁入；A 类 TFM／图／包闭集增量未纳入可见；旧 JSON／报告保留；B 候选不自动批准；不得声称新门禁是三者并集 | LT00、LT02A、LT03、LT05 |
-| LA19 | UI 统一清单与未覆盖显示 | 三种来源及责任方可辨；IFX 三个原类、Theory 实际案例与结果可见；JSON 可编辑；发现／查看／编辑／旧 pass／未纳入／skip 不算本次通过；IFX 漏执行仍 block；无伪造细分结果或 C# 解释器 | LT02、LT03、LT04、LT05 |
+|LA01|Branch/legacy|Verified main, unchanged InProject/history, no old runtime merge|LT00/06|
+|LA02|Actual type positives/negatives|Single/multiple JSON call ArchUnitNET, pass/accurate failing types|LT01|
+|LA03|Generics/fields/signatures/B02-03-05|Engine-recognized dependencies, actual fixtures not policy passes|LT01/02 A/05|
+|LA04|Invalid/duplicate/exception/zero/disabled|Explicit rejection, exception identity/reason, no empty allowance|LT01/02|
+|LA05|Assembly/selector scope|Production-test-external explicit, missing required assemblies block, wrong namespaces not covered, IFX ownership limits|LT01/02 A/05|
+|LA06|Original retention|All classes/future classes/cases/Theory/assertions/refs/five-second limit, no equal-count replacement or excluded behavior tests|LT00/02 A/05|
+|LA07|Runner/layout/cache|Native MTP, correct source-Catalog-permissions-snapshots, incremental outputs, added load preserves threshold|LT01/02 A/05|
+|LA08|Full/subset|Original whole+JSON, every filter subset, missing-skip-duplicate no pass, config cannot bypass baseline|LT02/02 A/03|
+|LA09|Failure/cancel/disconnect/concurrency|Actual current terminal/owned exit/other worktrees safe/old success history only|LT02/04|
+|LA10|UI/parity|Validated saves/conflicts/frozen rules/same input-result/headless CI|LT04/05|
+|LA11|Gate/freshness|Allow+unknown possible, later edits stale only, run changes block, no unknown-triggered proof/build|LT02/03/04|
+|LA12|Paths/host/retention|Authorized writes/no persisted drift/no auto cleanup/legacy materials unchanged|All|
+|LA13|Full separation|No daily snapshot-capture-seal-binder-receipt, old full semantics, no relabeling|LT02/02 A/04/06|
+|LA14|Legacy compatibility|Shared changes preserve schemas/reports/exits/rules/evidence|Affected stages/LT06|
+|LA15|Measurements/human|LT02A integration first, LT05 matched stage-cost-disk-peak, user observations|LT02A/05/06|
+|LA16|Snapshot isolation|Parent 1 unchanged/child 0/mismatch fails/match passes/bytes unchanged/reject unenforceable/shared entry logic|LT02/02 A/04/05|
+|LA17|Basic history|Directories/states/list, no rotation-pinning-reference graph-recovery-replay, unavailable/interrupted not success|LT03/04/06|
+|LA18|Responsibilities|Verified equivalent/overlap/excluded; A increments visible, old JSON retained, B not auto-approved, no union claim|LT00/02 A/03/05|
+|LA19|Unified inventory|Three sources/native originals-Theory/results/JSON editable; view-edit-discovery-old pass-excluded-skip not current passes; required missing blocks, no fake C# subresults|LT02/03/04/05|
 
-LT00 先冻结测量口径，LT02A 在开发报告历史与 UI 前完成首次 IFX 原生／新入口对照和初步冷热记录；这是前置门槛，不以合成夹具代替。LT05 再同条件冷／热各至少三次，比较原生 IFX 架构测试、新无界面入口和新 UI 启动。InProject 既有材料只作非等价历史参照，不为比较擅自运行旧产品。重建比例、包缓存与规则集合不同必须说明；不提前承诺提速或沿用旧包预算。无明显成本改善时记录原因并裁剪范围，不引入新的材料生命周期系统。
+LT00 freezes measurement definitions; LT02A compares real native/new IFX and preliminary costs before reports/UI, never substitutes synthetics. LT05 >=3 matched cold/warm runs for native/headless/UI. InProject history is nonequivalent reference, no unauthorized old execution. Explain rebuild/cache/rule differences; no promised speedup/old budget borrowing. If no material improvement, record causes/trim scope without inventing lifecycle infrastructure.
 
-## 13. 风险、决策点和收尾边界
+## 13. Risks and closure
 
-1. 共享检测逻辑与旧 SourceBound 判定耦合：优先抽取纯计算层，双入口回归，禁止在旧 Core 全局放宽来源要求。
-2. 仅有 TRX／普通测试失败文本不足以表达完整架构明细：保留原结果，小型结构化适配逐步补齐，不能重写整套 IFX 检查。
-3. 必检清单与测试变动漂移：JSON 期望集合从冻结配置产生，专用测试以原全工程基线核对；不能配置排除原测试或用数量抵消删除；过滤只作 subset。
-4. UI 路径与规则库双权威：正式路径显式登记；草稿／导出／政策改动与本次有效规则区别展示。
-5. .NET 装载／测试兼容和旧工具依赖过重：LT01 做最小原型，LT02A 完成获授权的真实 IFX 接入后才进入报告／UI；测试进程不引用整套 Web／CLI／安装器，不升级旧产品全部 xUnit。
-6. 完整取证入口范围容易被误解：保留其原保证，首版不声称已有 full 运行了 IFX 专用测试；需要扩展时再授权。
-7. 新功能的分发与生命周期：优先作为 ArchSift 测试工作流能力和轻量测试依赖，不复制整套 Setup；包名／版本与维护责任在 LT00 明确，首版交付不自动等于公开发布。
-8. 原测试存在快照更新模式：所有工作台执行入口仅对子进程强制关闭，不修改原测试或父环境；更新基准始终为独立开发操作。
-9. 新鲜度与历史管理反向膨胀：runGate 不依赖历史 unknown 的证明；首版只有报告目录、基本状态和只读列表，不恢复轮转／保护引用图或任务重放。
-10. 来源与覆盖混淆：责任清单只作说明，不成为另一套可执行政策；发现不是执行，旧 A 类 pass 不填充新日常未覆盖；UI 明示范围，不自动解析 C# 或合并多种断言结果。
+1. Binding coupling: extract pure computation, old/new regressions, no global provenance weakening.
+2. TRX/failure text insufficient for detailed findings: preserve originals/add small structured adapters, no rewritten IFX suite.
+3. Required inventory drift: frozen JSON expected set/original baseline; no configurable exclusions/equal-count offsets, filters subset.
+4. Dual policy paths: explicitly registered formal inputs, distinguish drafts/exports/changes/effective bytes.
+5. Load/runner/heavy dependencies: minimal LT01, actual LT02A before UI, no whole Web/CLI/installer dependency or wholesale xUnit upgrade.
+6. Full-evidence misunderstanding: old guarantees only, no IFX-all-tests claim; extensions separately authorized.
+7. Distribution/lifecycle: existing workflow/light dependencies, no full Setup clone; LT00 identity/maintenance, delivery not automatic publication.
+8. Snapshot update mode: child-only forced off, original tests/parent unchanged; updates separate development.
+9. Freshness expansion: gate does not require proof for unknown history; basic storage only, no restored rotation/reference graphs/replay.
+10. Provenance/coverage confusion: descriptive inventory not executable policy; discovery not execution, no old A gap filling, clear UI scope/no C# inference/merged assertions.
 
-以上为首次计划编写轮的交付记录：当时只交付本计划和总计划入口，没有创建新产品代码、schema、配置、测试工程或新分支，没有执行 dotnet、IFX 测试、产品安装或取证。此后的开发分支、首提交及 LT00 契约进度以上方执行更新和验收记录为准；后续实施、真实接入与发布各按授权推进。
+Original planning round delivered this plan/master index only, no product/schema/config/testproject/branch/dotnet/IFX tests/install/evidence. Subsequent branch/first commit/LT00 and implementation follow execution updates/acceptance/actual authority.

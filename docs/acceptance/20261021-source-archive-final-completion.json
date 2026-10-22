@@ -1,0 +1,1542 @@
+{
+  "evidence": {
+    "review": "D:\\ArchSift-lab\\runs\\source-archive-final-closeout-20261021-01\\review.json",
+    "finalIndex": "D:\\ArchSift-lab\\runs\\source-archive-final-closeout-20261021-01\\evidence-index.json",
+    "reviewSha256": "036b6b12c091478f4c0e87b2dd5e949cca9a6c76bd0bf58bc9f8d112c6b7c340",
+    "sealedEntries": 3292,
+    "evidenceRoot": "D:\\ArchSift-lab\\runs\\source-archive-final-closeout-20261021-01",
+    "sealedRuns": [
+      {
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-verify01-20261021-01",
+        "files": 136,
+        "indexSha256": "5736dd3c7a1c337f6d1abb34ae68ccb9611b6d7dfe417cbdad2b194d7c824196"
+      },
+      {
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-pr-ci-20261021-01",
+        "files": 333,
+        "indexSha256": "2adc738a524e14825620d1fa19be6ffb5b23b73220b6b030c11707b43c89f739"
+      },
+      {
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-ci01-fix-20261021-01",
+        "files": 450,
+        "indexSha256": "3e8bcb485e6b00d05038d634f3378940149270888c6c6065e7bcb1984c82d580"
+      },
+      {
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-main-ci-20261021-01",
+        "files": 422,
+        "indexSha256": "5f604f3792afa5c7c2360e7557c580b2e97c80d5b1a32a15331a4d0e0c93d600"
+      },
+      {
+        "root": "D:\\ArchSift-lab\\runs\\source-archive-local-main-update-20261021-01",
+        "files": 1951,
+        "indexSha256": "3714f4f2165e8afadeb655bed27da6ab1b1a5dd94def27345943297082676333"
+      }
+    ]
+  },
+  "history": {
+    "historicalPaths": 18,
+    "all5478IgnoredFilesRetained": true,
+    "historicalAcceptanceFilesRetainedUntracked": 16,
+    "bundle": {
+      "heads": "044b67a684dcc6037169658ff9dfc5efbafad487 refs/heads/main",
+      "bundle": "D:\\ArchSift-lab\\runs\\source-archive-local-main-update-20261021-01\\backup\\history-main-044b67a.bundle",
+      "sha256": "2de4fa94c37b69d3ebfdbe467efb2571814ec5d3d7fd3a7359c59e125d46032b",
+      "allWorkspaceBackups": 1916,
+      "head": "044b67a684dcc6037169658ff9dfc5efbafad487",
+      "historical18": [
+        "M\t.gitattributes",
+        "A\tdocs/acceptance/20261019-r3-ci-qualification.json",
+        "A\tdocs/acceptance/20261019-r3-ci-qualification.md",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-complete-review.json",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-complete-review.md",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-trial.json",
+        "A\tdocs/acceptance/20261019-r3-crmapplication-trial.md",
+        "A\tdocs/acceptance/20261019-r3-formal-adoption.json",
+        "A\tdocs/acceptance/20261019-r3-formal-adoption.md",
+        "A\tdocs/acceptance/20261019-r3-human-ui.json",
+        "A\tdocs/acceptance/20261019-r3-human-ui.md",
+        "A\tdocs/acceptance/20261019-r3-main-ci.json",
+        "A\tdocs/acceptance/20261019-r3-main-ci.md",
+        "A\tdocs/acceptance/20261019-r3-title-ui.json",
+        "A\tdocs/acceptance/20261019-r3-title-ui.md",
+        "A\tdocs/acceptance/20261019-r3-web-resume.json",
+        "A\tdocs/acceptance/20261019-r3-web-resume.md",
+        "M\tdocs/plans/20261006-archsift-implementation-plan.md"
+      ]
+    },
+    "all1916OriginalWorkspaceBackupsReverified": true,
+    "backupRef": "refs/heads/codex/archsift-before-main-3f61be0-20261021-01",
+    "priorGuardStopsAndIndexRecoveryRetained": true,
+    "oldHead": "044b67a684dcc6037169658ff9dfc5efbafad487",
+    "originalCommitNotRewritten": true
+  },
+  "sourceArchiveClosed": true,
+  "operations": {
+    "registry4Enabled": false,
+    "readOnlyRemoteMetadata": true,
+    "commit": false,
+    "gitFetchOrCheckoutUpdate": false,
+    "realIfx": false,
+    "cleanup": false,
+    "push": false,
+    "dotnetBuildOrTest": false,
+    "ciDispatchOrRerun": false,
+    "release": false
+  },
+  "authorizedWorkComplete": true,
+  "schemaVersion": 1,
+  "scope": {
+    "verificationIntegration": 5,
+    "allCurrentHashesAndBlobsMatched": true,
+    "deletions": 74,
+    "added": 24,
+    "directVerification": 8,
+    "manifestSha256": "daf4e1b455ae40b1acebcbce629085bbeac4e350107ae15e606dcae8af43dc1c",
+    "insertions": 2301,
+    "supplementalRegression": 1,
+    "manifest": "D:\\ArchSift-lab\\runs\\source-archive-ci01-fix-20261021-01\\current43-source-manifest.json",
+    "mergedFiles": 43,
+    "modified": 19,
+    "productFiles": 29
+  },
+  "sourceAndPackageDistinction": {
+    "frozenCandidate": {
+      "product29StillFrozen": true,
+      "inputs": 250,
+      "currentMatches": 247,
+      "approvedSuccessors": [
+        "samples/portable-ifx/README.md",
+        "tests/ArchSift.Testing.Tests/PortableReplayTests.cs",
+        "tests/ArchSift.Testing.Tests/PortableRunFailureTests.cs"
+      ],
+      "manifest": {
+        "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\source-inputs.json",
+        "sha256": "8571023e7da12c7933d95433f50ec43bcf810099f9fe973f64aba1629c1bddd4"
+      }
+    },
+    "mergedProductSource": "43-path source archive delivered on ArchSift main3f61be0",
+    "exactCompilerInputClosureOrReproducibleBuildClaimed": false,
+    "existingIfxAdoption": "Clean IFX mainf58205b and current0.10.0-cl03.1 retained",
+    "existingPackages": "0.10.0-cl03.1 retained without rebuild or publication",
+    "web": "Existing local validated candidate; no new publication or adoption"
+  },
+  "date": "2026-10-21",
+  "actualMainAcceptance": {
+    "noTestsOrCiRerun": true,
+    "branch": "main",
+    "officialArtifacts": [
+      {
+        "files": 196,
+        "directory": "D:\\ArchSift-lab\\runs\\source-archive-main-ci-20261021-01\\collect-final\\regression-ubuntu-latest",
+        "sha256": "2693546492ccb7d59871019da4ef6225ecdab93efde8cf77e7c00d753ff556e5",
+        "id": 12335045420,
+        "officialDigest": "sha256:2693546492ccb7d59871019da4ef6225ecdab93efde8cf77e7c00d753ff556e5",
+        "name": "regression-ubuntu-latest"
+      },
+      {
+        "files": 196,
+        "directory": "D:\\ArchSift-lab\\runs\\source-archive-main-ci-20261021-01\\collect-final\\regression-windows-latest",
+        "sha256": "ca5276e6750ed3faae7451c2f7217056ec9e1716b6334ce3b9ea3688bb7f239c",
+        "id": 12334324316,
+        "officialDigest": "sha256:ca5276e6750ed3faae7451c2f7217056ec9e1716b6334ce3b9ea3688bb7f239c",
+        "name": "regression-windows-latest"
+      }
+    ],
+    "reverifiedExistingEvidenceOnly": true,
+    "nativeChecks": [
+      {
+        "id": 119143840756,
+        "name": "regression (ubuntu-latest)",
+        "node_id": "CR_kwDOU94uAc8AAAAbvYa79A",
+        "head_sha": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+        "external_id": "2d454159-7d2a-528c-8731-a81351c62284",
+        "url": "https://api.github.com/repos/von12549/ArchSift/check-runs/119143840756",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/39576690093/job/119143840756",
+        "details_url": "https://github.com/von12549/ArchSift/actions/runs/39576690093/job/119143840756",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-21T09:24:21Z",
+        "completed_at": "2026-10-21T09:28:04Z",
+        "output": {
+          "title": null,
+          "summary": null,
+          "text": null,
+          "annotations_count": 2,
+          "annotations_url": "https://api.github.com/repos/von12549/ArchSift/check-runs/119143840756/annotations"
+        },
+        "check_suite": {
+          "id": 107249733387
+        },
+        "app": {
+          "id": 15368,
+          "client_id": "Iv1.05c79e9ad1f6bdfa",
+          "slug": "github-actions",
+          "node_id": "MDM6QXBwMTUzNjg=",
+          "owner": {
+            "login": "github",
+            "id": 9919,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/github",
+            "html_url": "https://github.com/github",
+            "followers_url": "https://api.github.com/users/github/followers",
+            "following_url": "https://api.github.com/users/github/following{/other_user}",
+            "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+            "organizations_url": "https://api.github.com/users/github/orgs",
+            "repos_url": "https://api.github.com/users/github/repos",
+            "events_url": "https://api.github.com/users/github/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/github/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "GitHub Actions",
+          "description": "Automate your workflow from idea to production",
+          "external_url": "https://help.github.com/en/actions",
+          "html_url": "https://github.com/apps/github-actions",
+          "created_at": "2018-07-30T09:30:17Z",
+          "updated_at": "2026-06-18T16:17:48Z",
+          "permissions": {
+            "actions": "write",
+            "administration": "read",
+            "artifact_metadata": "write",
+            "attestations": "write",
+            "checks": "write",
+            "code_quality": "write",
+            "contents": "write",
+            "copilot_requests": "write",
+            "deployments": "write",
+            "discussions": "write",
+            "drives": "write",
+            "issues": "write",
+            "merge_queues": "write",
+            "metadata": "read",
+            "models": "read",
+            "packages": "write",
+            "pages": "write",
+            "pull_requests": "write",
+            "repository_hooks": "write",
+            "repository_projects": "write",
+            "security_events": "write",
+            "statuses": "write",
+            "vulnerability_alerts": "read"
+          },
+          "events": [
+            "branch_protection_rule",
+            "check_run",
+            "check_suite",
+            "create",
+            "delete",
+            "deployment",
+            "deployment_status",
+            "discussion",
+            "discussion_comment",
+            "fork",
+            "gollum",
+            "issues",
+            "issue_comment",
+            "label",
+            "merge_group",
+            "milestone",
+            "page_build",
+            "public",
+            "pull_request",
+            "pull_request_review",
+            "pull_request_review_comment",
+            "push",
+            "registry_package",
+            "release",
+            "repository",
+            "repository_dispatch",
+            "status",
+            "watch",
+            "workflow_dispatch",
+            "workflow_run"
+          ]
+        },
+        "pull_requests": []
+      },
+      {
+        "id": 119143840264,
+        "name": "regression (windows-latest)",
+        "node_id": "CR_kwDOU94uAc8AAAAbvYa6CA",
+        "head_sha": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+        "external_id": "3924ca46-b4b7-545c-b272-01387724ed15",
+        "url": "https://api.github.com/repos/von12549/ArchSift/check-runs/119143840264",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/39576690093/job/119143840264",
+        "details_url": "https://github.com/von12549/ArchSift/actions/runs/39576690093/job/119143840264",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-21T09:24:21Z",
+        "completed_at": "2026-10-21T09:29:46Z",
+        "output": {
+          "title": null,
+          "summary": null,
+          "text": null,
+          "annotations_count": 1,
+          "annotations_url": "https://api.github.com/repos/von12549/ArchSift/check-runs/119143840264/annotations"
+        },
+        "check_suite": {
+          "id": 107249733387
+        },
+        "app": {
+          "id": 15368,
+          "client_id": "Iv1.05c79e9ad1f6bdfa",
+          "slug": "github-actions",
+          "node_id": "MDM6QXBwMTUzNjg=",
+          "owner": {
+            "login": "github",
+            "id": 9919,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/github",
+            "html_url": "https://github.com/github",
+            "followers_url": "https://api.github.com/users/github/followers",
+            "following_url": "https://api.github.com/users/github/following{/other_user}",
+            "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+            "organizations_url": "https://api.github.com/users/github/orgs",
+            "repos_url": "https://api.github.com/users/github/repos",
+            "events_url": "https://api.github.com/users/github/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/github/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "GitHub Actions",
+          "description": "Automate your workflow from idea to production",
+          "external_url": "https://help.github.com/en/actions",
+          "html_url": "https://github.com/apps/github-actions",
+          "created_at": "2018-07-30T09:30:17Z",
+          "updated_at": "2026-06-18T16:17:48Z",
+          "permissions": {
+            "actions": "write",
+            "administration": "read",
+            "artifact_metadata": "write",
+            "attestations": "write",
+            "checks": "write",
+            "code_quality": "write",
+            "contents": "write",
+            "copilot_requests": "write",
+            "deployments": "write",
+            "discussions": "write",
+            "drives": "write",
+            "issues": "write",
+            "merge_queues": "write",
+            "metadata": "read",
+            "models": "read",
+            "packages": "write",
+            "pages": "write",
+            "pull_requests": "write",
+            "repository_hooks": "write",
+            "repository_projects": "write",
+            "security_events": "write",
+            "statuses": "write",
+            "vulnerability_alerts": "read"
+          },
+          "events": [
+            "branch_protection_rule",
+            "check_run",
+            "check_suite",
+            "create",
+            "delete",
+            "deployment",
+            "deployment_status",
+            "discussion",
+            "discussion_comment",
+            "fork",
+            "gollum",
+            "issues",
+            "issue_comment",
+            "label",
+            "merge_group",
+            "milestone",
+            "page_build",
+            "public",
+            "pull_request",
+            "pull_request_review",
+            "pull_request_review_comment",
+            "push",
+            "registry_package",
+            "release",
+            "repository",
+            "repository_dispatch",
+            "status",
+            "watch",
+            "workflow_dispatch",
+            "workflow_run"
+          ]
+        },
+        "pull_requests": []
+      }
+    ],
+    "status": "completed",
+    "attempt": 1,
+    "ciId": 39576690093,
+    "platforms": [
+      {
+        "sdk": "10.0.401",
+        "actualMainCheckout": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+        "ciFinalHostEqual": true,
+        "nodeWorkbenchLifecyclePassed": true,
+        "configuration": "Release",
+        "conclusion": "success",
+        "synthetic": {
+          "skipped": 0,
+          "failed": 0,
+          "coverageComplete": true,
+          "sdk": "10.0.303",
+          "passed": 3,
+          "reportSha256": "c9db05d021d7fe3b7e1001aa7ef9821fb849f3139ac8ab65a8404e64782276b2"
+        },
+        "mtp": {
+          "allLocal57NamesEqual": true,
+          "skipped": 0,
+          "failed": 0,
+          "logSha256": "8215867ea463c59eb507cad6a36fa9dda8f4d8ffd95e96e578814872c7444fca",
+          "passed": 57,
+          "caseNames": [
+            "ArchSift.Testing.Tests.FormalAdoptionTests.MappingRejectsCollisionsMissingReplacedAndAddedCases",
+            "ArchSift.Testing.Tests.MtpCtrfTests.MtpCtrfCannotTurnFailedOrMalformedRowsIntoPass",
+            "ArchSift.Testing.Tests.MtpCtrfTests.NativeCtrfIdsAndOutputMarkersPermitFullCoverage",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.AuditDefaultsToInheritanceAndCannotInferSecurityFromRestoreSuccess",
+            "ArchSift.Testing.Tests.DiscoveryOutputTests.Utf8UnicodeAndIdsRemainExact",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.TypedTheory",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.TypedTheory",
+            "ArchSift.Testing.Tests.DiscoveryOutputTests.ActualWindowsOemDotsAreDecodedWithoutChangingUid",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.UnsupportedAndEmptyConfigurationAreRejected",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.TypedArgumentsAreLosslessAndOverloadAndCultureIndependent",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.NativePolicyLoadsWithoutEnvironmentAndRejectsWrongOrEmptyOverrides",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"valid\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"wrong-version\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"missing-dependency\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"unknown-dependency\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"changed-content\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"source-project\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"arbitrary-tool-package\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"conditional\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"override\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"cli-version\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"cli-command\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"existing-tool\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"missing-cli\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"duplicate-cli\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"command-collision\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"unapproved-archsift-tool\")",
+            "ArchSift.Testing.Tests.PortableReplayTests.ActualSyntheticOutputRejectsMissingReplacedDuplicateSkippedUnknownAndEmptyCoverage",
+            "ArchSift.Testing.Tests.PortableCasesTests.LogicalCasesIgnoreCurrentRunIdsButRejectReplacedRowsAndAmbiguity",
+            "ArchSift.Testing.Tests.ResponsibilityProjectionTests.ReportHistoryRetainsOldBytesAndRejectsUnknownProjectionAndCancelledPass",
+            "ArchSift.Testing.Tests.OwnedProcessTests.CancellationStopsOwnedChildPromptly",
+            "ArchSift.Testing.Tests.PortableRunFailureTests.CancelledActualPortableConfigPublishesBlockedCurrentRun",
+            "ArchSift.Testing.Tests.InputObserverTests.NewSourceDirectoryIsObservedBeforeItsFirstFile",
+            "ArchSift.Testing.Tests.ResponsibilityProjectionTests.MissingSkippedDuplicateUnknownAndIncompleteNeverAcquirePass",
+            "ArchSift.Testing.Tests.InputObserverTests.WatcherErrorStillFailsClosed",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"create-delete\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"rename\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"delete\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"source-restored\")",
+            "ArchSift.Testing.Tests.ResponsibilityProjectionTests.ApprovedResponsibilityIsSeparateFromJsonSelectionAndCurrentExecution",
+            "ArchSift.Testing.Tests.MtpCoverageTests.NativeIdsAndTerminalEventsPermitFullGate",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"source-to-ignored\")",
+            "ArchSift.Testing.Tests.MtpCoverageTests.SkipDuplicateSubsetAndWrongRulesetBytesBlock",
+            "ArchSift.Testing.Tests.MtpCoverageTests.AssertionFailureIsDistinctFromMissingTerminalAndProcessError",
+            "ArchSift.Testing.Tests.MtpCoverageTests.MissingOriginalRowCannotBeOffsetByAnExtraJsonCase",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"ignored-to-source\")",
+            "ArchSift.Testing.Tests.PortableRunFailureTests.ReportWriteErrorCannotPublishAuthoritativeSuccess",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.RealDependencyFailsWithStableFinding(source: \"ForbiddenSource\", target: \"Infrastructure.ForbiddenTarget\")",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.RealDependencyFailsWithStableFinding(source: \"GenericSource\", target: \"Infrastructure.ForbiddenTarget\")",
+            "ArchSift.Testing.Tests.InputObserverTests.ColdOutputsOnlyChangeExistingDirectoryMetadata",
+            "ArchSift.Testing.Tests.InputObserverTests.SourceEditIsKnownWhileBuildOutputIsIgnored",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.RealDependencyFailsWithStableFinding(source: \"SignatureSource\", target: \"Infrastructure.ForbiddenTarget\")",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.ZeroMatchIsInconclusiveByDefault",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.AuthoritativeReportCollisionFixture",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.JsonRuleIsAnActualTest(caseId: \"archsift-json:allowed-source\")",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.DocumentedExceptionRetainsFindingAndPasses",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.GateChildCannotUpdateSnapshots"
+          ]
+        },
+        "tfm": "net10.0",
+        "contracts": {
+          "checks": 16,
+          "schemaAndRendererTemplates": 8,
+          "success": true
+        },
+        "platform": "ubuntu",
+        "nodeLauncherClosePassed": true,
+        "checks": [
+          {
+            "name": "sdk",
+            "arguments": [
+              "--version"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 96,
+            "peakWorkingSetBytes": 44703744
+          },
+          {
+            "name": "restore",
+            "arguments": [
+              "restore",
+              "ArchSift.slnx",
+              "--configfile",
+              "NuGet.Config",
+              "--source",
+              "/home/runner/work/_temp/archsift-ci-feed",
+              "--packages",
+              "/home/runner/work/ArchSift/ArchSift/artifacts/development/packages",
+              "--disable-parallel",
+              "--disable-build-servers",
+              "-p:NuGetAudit=false",
+              "--verbosity",
+              "minimal",
+              "--locked-mode"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 3134,
+            "peakWorkingSetBytes": 212787200
+          },
+          {
+            "name": "build",
+            "arguments": [
+              "build",
+              "ArchSift.slnx",
+              "--no-restore",
+              "--disable-build-servers",
+              "-p:UseSharedCompilation=false",
+              "-c",
+              "Release",
+              "--verbosity",
+              "minimal"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 26381,
+            "peakWorkingSetBytes": 217583616
+          },
+          {
+            "name": "test-architecture",
+            "arguments": [
+              "test",
+              "tests/ArchSift.ArchitectureTests/ArchSift.ArchitectureTests.csproj",
+              "--no-build",
+              "--no-restore",
+              "--disable-build-servers",
+              "-c",
+              "Release",
+              "--logger",
+              "trx",
+              "--results-directory",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/test-results/architecture"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 1526,
+            "peakWorkingSetBytes": 119742464
+          },
+          {
+            "name": "test-unit",
+            "arguments": [
+              "test",
+              "tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj",
+              "--no-build",
+              "--no-restore",
+              "--disable-build-servers",
+              "-c",
+              "Release",
+              "--logger",
+              "trx",
+              "--results-directory",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/test-results/unit"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 12118,
+            "peakWorkingSetBytes": 119230464
+          },
+          {
+            "name": "test-integration",
+            "arguments": [
+              "test",
+              "tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj",
+              "--no-build",
+              "--no-restore",
+              "--disable-build-servers",
+              "-c",
+              "Release",
+              "--logger",
+              "trx",
+              "--results-directory",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/test-results/integration"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 97223,
+            "peakWorkingSetBytes": 119513088
+          },
+          {
+            "name": "test-mtp",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/tests/ArchSift.Testing.Tests/bin/Release/net10.0/ArchSift.Testing.Tests.dll",
+              "-reporter",
+              "json",
+              "-noLogo"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 1882,
+            "peakWorkingSetBytes": 176541696
+          },
+          {
+            "name": "validate-graph-integrity",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/graph-integrity.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 92,
+            "peakWorkingSetBytes": 42336256
+          },
+          {
+            "name": "render-graph-integrity",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/graph-integrity.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/graph-integrity.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 92,
+            "peakWorkingSetBytes": 43425792
+          },
+          {
+            "name": "validate-naming",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/naming.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 88,
+            "peakWorkingSetBytes": 43810816
+          },
+          {
+            "name": "render-naming",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/naming.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/naming.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 89,
+            "peakWorkingSetBytes": 43634688
+          },
+          {
+            "name": "validate-nuget-allowlist",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/nuget-allowlist.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 86,
+            "peakWorkingSetBytes": 43991040
+          },
+          {
+            "name": "render-nuget-allowlist",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/nuget-allowlist.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/nuget-allowlist.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 109,
+            "peakWorkingSetBytes": 53338112
+          },
+          {
+            "name": "validate-nuget-denylist",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/nuget-denylist.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 94,
+            "peakWorkingSetBytes": 41828352
+          },
+          {
+            "name": "render-nuget-denylist",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/nuget-denylist.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/nuget-denylist.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 99,
+            "peakWorkingSetBytes": 41553920
+          },
+          {
+            "name": "validate-project-reference-allowlist",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/project-reference-allowlist.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 89,
+            "peakWorkingSetBytes": 43712512
+          },
+          {
+            "name": "render-project-reference-allowlist",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/project-reference-allowlist.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/project-reference-allowlist.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 92,
+            "peakWorkingSetBytes": 43593728
+          },
+          {
+            "name": "validate-project-reference",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/project-reference.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 95,
+            "peakWorkingSetBytes": 42385408
+          },
+          {
+            "name": "render-project-reference",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/project-reference.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/project-reference.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 105,
+            "peakWorkingSetBytes": 54476800
+          },
+          {
+            "name": "validate-target-framework",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/target-framework.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 87,
+            "peakWorkingSetBytes": 43765760
+          },
+          {
+            "name": "render-target-framework",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/target-framework.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/target-framework.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 92,
+            "peakWorkingSetBytes": 42328064
+          },
+          {
+            "name": "validate-type-dependency",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/type-dependency.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 97,
+            "peakWorkingSetBytes": 41738240
+          },
+          {
+            "name": "render-type-dependency",
+            "arguments": [
+              "/home/runner/work/ArchSift/ArchSift/src/ArchSift.Cli/bin/Release/net10.0/archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "/home/runner/work/ArchSift/ArchSift/templates/rules/type-dependency.json",
+              "--output",
+              "/home/runner/work/_temp/archsift-evidence/runs/development-e83775806c534db0b10303c7155c4a8d/type-dependency.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 98,
+            "peakWorkingSetBytes": 42475520
+          }
+        ],
+        "artifact": {
+          "files": 196,
+          "directory": "D:\\ArchSift-lab\\runs\\source-archive-main-ci-20261021-01\\collect-final\\regression-ubuntu-latest",
+          "sha256": "2693546492ccb7d59871019da4ef6225ecdab93efde8cf77e7c00d753ff556e5",
+          "id": 12335045420,
+          "officialDigest": "sha256:2693546492ccb7d59871019da4ef6225ecdab93efde8cf77e7c00d753ff556e5",
+          "name": "regression-ubuntu-latest"
+        },
+        "trx": [
+          {
+            "skipped": 0,
+            "passed": 2,
+            "failed": 0,
+            "suite": "architecture",
+            "sha256": "fa1009ee8cced2b84e63d696b823d55f4ba8c3b41d6f24981ce53a4be47b0d20"
+          },
+          {
+            "skipped": 0,
+            "passed": 95,
+            "failed": 0,
+            "suite": "integration",
+            "sha256": "3f43aa60380a7ac14db83a34454281761667e5e1af5b66d8f8719b79ee6d1d48"
+          },
+          {
+            "skipped": 0,
+            "passed": 157,
+            "failed": 0,
+            "suite": "unit",
+            "sha256": "8f626c8e6e95f109ae82d88d697d11da6d1d617f0e5a5518ec98128d5c106478"
+          }
+        ],
+        "jobId": 119143840756,
+        "allDevelopmentChecksPassed": true
+      },
+      {
+        "sdk": "10.0.401",
+        "actualMainCheckout": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+        "ciFinalHostEqual": true,
+        "nodeWorkbenchLifecyclePassed": true,
+        "configuration": "Release",
+        "conclusion": "success",
+        "synthetic": {
+          "skipped": 0,
+          "failed": 0,
+          "coverageComplete": true,
+          "sdk": "10.0.303",
+          "passed": 3,
+          "reportSha256": "d26ba9502341e440ef02d2cbb9f3c4af7e486eeec7d3216eaf774decd3eb17bb"
+        },
+        "mtp": {
+          "allLocal57NamesEqual": true,
+          "skipped": 0,
+          "failed": 0,
+          "logSha256": "66aa88a6b13cc33412d72d24b41252c330a921f68aa63beae7c0204ee02f72ff",
+          "passed": 57,
+          "caseNames": [
+            "ArchSift.Testing.Tests.FormalAdoptionTests.TypedTheory",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.AuthoritativeReportCollisionFixture",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.TypedTheory",
+            "ArchSift.Testing.Tests.PortableCasesTests.LogicalCasesIgnoreCurrentRunIdsButRejectReplacedRowsAndAmbiguity",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"valid\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"wrong-version\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"missing-dependency\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"unknown-dependency\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"changed-content\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"source-project\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"arbitrary-tool-package\")",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.NativePolicyLoadsWithoutEnvironmentAndRejectsWrongOrEmptyOverrides",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"conditional\")",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.AuditDefaultsToInheritanceAndCannotInferSecurityFromRestoreSuccess",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"override\")",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.MappingRejectsCollisionsMissingReplacedAndAddedCases",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"cli-version\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"cli-command\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"existing-tool\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"missing-cli\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"duplicate-cli\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"command-collision\")",
+            "ArchSift.Testing.Tests.PackageToolApprovalTests.ExactToolApprovalRetainsClosedBoundary(scenario: \"unapproved-archsift-tool\")",
+            "ArchSift.Testing.Tests.DiscoveryOutputTests.Utf8UnicodeAndIdsRemainExact",
+            "ArchSift.Testing.Tests.DiscoveryOutputTests.ActualWindowsOemDotsAreDecodedWithoutChangingUid",
+            "ArchSift.Testing.Tests.FormalAdoptionTests.TypedArgumentsAreLosslessAndOverloadAndCultureIndependent",
+            "ArchSift.Testing.Tests.MtpCtrfTests.MtpCtrfCannotTurnFailedOrMalformedRowsIntoPass",
+            "ArchSift.Testing.Tests.InputObserverTests.WatcherErrorStillFailsClosed",
+            "ArchSift.Testing.Tests.MtpCtrfTests.NativeCtrfIdsAndOutputMarkersPermitFullCoverage",
+            "ArchSift.Testing.Tests.MtpCoverageTests.MissingOriginalRowCannotBeOffsetByAnExtraJsonCase",
+            "ArchSift.Testing.Tests.MtpCoverageTests.NativeIdsAndTerminalEventsPermitFullGate",
+            "ArchSift.Testing.Tests.MtpCoverageTests.SkipDuplicateSubsetAndWrongRulesetBytesBlock",
+            "ArchSift.Testing.Tests.MtpCoverageTests.AssertionFailureIsDistinctFromMissingTerminalAndProcessError",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"create-delete\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"rename\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"delete\")",
+            "ArchSift.Testing.Tests.OwnedProcessTests.CancellationStopsOwnedChildPromptly",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"source-restored\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"source-to-ignored\")",
+            "ArchSift.Testing.Tests.InputObserverTests.TopologyAndTransientSourceChangesRemainBlocking(scenario: \"ignored-to-source\")",
+            "ArchSift.Testing.Tests.InputObserverTests.NewSourceDirectoryIsObservedBeforeItsFirstFile",
+            "ArchSift.Testing.Tests.PortableRunFailureTests.CancelledActualPortableConfigPublishesBlockedCurrentRun",
+            "ArchSift.Testing.Tests.InputObserverTests.SourceEditIsKnownWhileBuildOutputIsIgnored",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.JsonRuleIsAnActualTest(caseId: \"archsift-json:allowed-source\")",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.GateChildCannotUpdateSnapshots",
+            "ArchSift.Testing.Tests.ResponsibilityProjectionTests.MissingSkippedDuplicateUnknownAndIncompleteNeverAcquirePass",
+            "ArchSift.Testing.Tests.PortableRunFailureTests.ReportWriteErrorCannotPublishAuthoritativeSuccess",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.DocumentedExceptionRetainsFindingAndPasses",
+            "ArchSift.Testing.Tests.ResponsibilityProjectionTests.ApprovedResponsibilityIsSeparateFromJsonSelectionAndCurrentExecution",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.ZeroMatchIsInconclusiveByDefault",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.UnsupportedAndEmptyConfigurationAreRejected",
+            "ArchSift.Testing.Tests.PortableReplayTests.ActualSyntheticOutputRejectsMissingReplacedDuplicateSkippedUnknownAndEmptyCoverage",
+            "ArchSift.Testing.Tests.InputObserverTests.ColdOutputsOnlyChangeExistingDirectoryMetadata",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.RealDependencyFailsWithStableFinding(source: \"ForbiddenSource\", target: \"Infrastructure.ForbiddenTarget\")",
+            "ArchSift.Testing.Tests.ResponsibilityProjectionTests.ReportHistoryRetainsOldBytesAndRejectsUnknownProjectionAndCancelledPass",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.RealDependencyFailsWithStableFinding(source: \"GenericSource\", target: \"Infrastructure.ForbiddenTarget\")",
+            "ArchSift.Testing.Tests.ArchitectureRuleTests.RealDependencyFailsWithStableFinding(source: \"SignatureSource\", target: \"Infrastructure.ForbiddenTarget\")"
+          ]
+        },
+        "tfm": "net10.0",
+        "contracts": {
+          "checks": 16,
+          "schemaAndRendererTemplates": 8,
+          "success": true
+        },
+        "platform": "windows",
+        "nodeLauncherClosePassed": true,
+        "checks": [
+          {
+            "name": "sdk",
+            "arguments": [
+              "--version"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 163,
+            "peakWorkingSetBytes": 36438016
+          },
+          {
+            "name": "restore",
+            "arguments": [
+              "restore",
+              "ArchSift.slnx",
+              "--configfile",
+              "NuGet.Config",
+              "--source",
+              "D:\\a\\_temp\\archsift-ci-feed",
+              "--packages",
+              "D:\\a\\ArchSift\\ArchSift\\artifacts\\development\\packages",
+              "--disable-parallel",
+              "--disable-build-servers",
+              "-p:NuGetAudit=false",
+              "--verbosity",
+              "minimal",
+              "--locked-mode"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 4881,
+            "peakWorkingSetBytes": 192413696
+          },
+          {
+            "name": "build",
+            "arguments": [
+              "build",
+              "ArchSift.slnx",
+              "--no-restore",
+              "--disable-build-servers",
+              "-p:UseSharedCompilation=false",
+              "-c",
+              "Release",
+              "--verbosity",
+              "minimal"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 33795,
+            "peakWorkingSetBytes": 223350784
+          },
+          {
+            "name": "test-architecture",
+            "arguments": [
+              "test",
+              "tests/ArchSift.ArchitectureTests/ArchSift.ArchitectureTests.csproj",
+              "--no-build",
+              "--no-restore",
+              "--disable-build-servers",
+              "-c",
+              "Release",
+              "--logger",
+              "trx",
+              "--results-directory",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\test-results\\architecture"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 2866,
+            "peakWorkingSetBytes": 92954624
+          },
+          {
+            "name": "test-unit",
+            "arguments": [
+              "test",
+              "tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj",
+              "--no-build",
+              "--no-restore",
+              "--disable-build-servers",
+              "-c",
+              "Release",
+              "--logger",
+              "trx",
+              "--results-directory",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\test-results\\unit"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 17193,
+            "peakWorkingSetBytes": 93196288
+          },
+          {
+            "name": "test-integration",
+            "arguments": [
+              "test",
+              "tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj",
+              "--no-build",
+              "--no-restore",
+              "--disable-build-servers",
+              "-c",
+              "Release",
+              "--logger",
+              "trx",
+              "--results-directory",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\test-results\\integration"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 130354,
+            "peakWorkingSetBytes": 93450240
+          },
+          {
+            "name": "test-mtp",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\tests\\ArchSift.Testing.Tests\\bin\\Release\\net10.0\\ArchSift.Testing.Tests.dll",
+              "-reporter",
+              "json",
+              "-noLogo"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 2433,
+            "peakWorkingSetBytes": 208162816
+          },
+          {
+            "name": "validate-graph-integrity",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\graph-integrity.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 141,
+            "peakWorkingSetBytes": 30892032
+          },
+          {
+            "name": "render-graph-integrity",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\graph-integrity.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\graph-integrity.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 139,
+            "peakWorkingSetBytes": 31903744
+          },
+          {
+            "name": "validate-naming",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\naming.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 134,
+            "peakWorkingSetBytes": 31109120
+          },
+          {
+            "name": "render-naming",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\naming.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\naming.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 141,
+            "peakWorkingSetBytes": 31940608
+          },
+          {
+            "name": "validate-nuget-allowlist",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\nuget-allowlist.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 162,
+            "peakWorkingSetBytes": 29601792
+          },
+          {
+            "name": "render-nuget-allowlist",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\nuget-allowlist.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\nuget-allowlist.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 150,
+            "peakWorkingSetBytes": 30887936
+          },
+          {
+            "name": "validate-nuget-denylist",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\nuget-denylist.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 145,
+            "peakWorkingSetBytes": 32612352
+          },
+          {
+            "name": "render-nuget-denylist",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\nuget-denylist.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\nuget-denylist.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 159,
+            "peakWorkingSetBytes": 30937088
+          },
+          {
+            "name": "validate-project-reference-allowlist",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\project-reference-allowlist.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 135,
+            "peakWorkingSetBytes": 32641024
+          },
+          {
+            "name": "render-project-reference-allowlist",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\project-reference-allowlist.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\project-reference-allowlist.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 139,
+            "peakWorkingSetBytes": 31080448
+          },
+          {
+            "name": "validate-project-reference",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\project-reference.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 143,
+            "peakWorkingSetBytes": 30875648
+          },
+          {
+            "name": "render-project-reference",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\project-reference.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\project-reference.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 161,
+            "peakWorkingSetBytes": 30752768
+          },
+          {
+            "name": "validate-target-framework",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\target-framework.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 133,
+            "peakWorkingSetBytes": 32612352
+          },
+          {
+            "name": "render-target-framework",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\target-framework.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\target-framework.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 137,
+            "peakWorkingSetBytes": 31752192
+          },
+          {
+            "name": "validate-type-dependency",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "validate",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\type-dependency.json"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 140,
+            "peakWorkingSetBytes": 30994432
+          },
+          {
+            "name": "render-type-dependency",
+            "arguments": [
+              "D:\\a\\ArchSift\\ArchSift\\src\\ArchSift.Cli\\bin\\Release\\net10.0\\archsift.dll",
+              "rules",
+              "render",
+              "--file",
+              "D:\\a\\ArchSift\\ArchSift\\templates\\rules\\type-dependency.json",
+              "--output",
+              "D:\\a\\_temp\\archsift-evidence\\runs\\development-08eed0b78aff44e28521013a148dffba\\type-dependency.md"
+            ],
+            "exitCode": 0,
+            "timedOut": false,
+            "hostStateEqual": true,
+            "elapsedMilliseconds": 148,
+            "peakWorkingSetBytes": 30994432
+          }
+        ],
+        "artifact": {
+          "files": 196,
+          "directory": "D:\\ArchSift-lab\\runs\\source-archive-main-ci-20261021-01\\collect-final\\regression-windows-latest",
+          "sha256": "ca5276e6750ed3faae7451c2f7217056ec9e1716b6334ce3b9ea3688bb7f239c",
+          "id": 12334324316,
+          "officialDigest": "sha256:ca5276e6750ed3faae7451c2f7217056ec9e1716b6334ce3b9ea3688bb7f239c",
+          "name": "regression-windows-latest"
+        },
+        "trx": [
+          {
+            "skipped": 0,
+            "passed": 2,
+            "failed": 0,
+            "suite": "architecture",
+            "sha256": "4e956b2e35d82291a50b13fe1dacbb7717d1b8ee5718362dc7c81ebefb538d4d"
+          },
+          {
+            "skipped": 0,
+            "passed": 95,
+            "failed": 0,
+            "suite": "integration",
+            "sha256": "7f509bf28ec1642556f7458edee16b167fc00385cde99290f4626090b0f57b58"
+          },
+          {
+            "skipped": 0,
+            "passed": 157,
+            "failed": 0,
+            "suite": "unit",
+            "sha256": "8ab6ae3f9438f1d048a5530b0b2bab8c2d8379728b6115279cdfac9211dff7f4"
+          }
+        ],
+        "jobId": 119143840264,
+        "allDevelopmentChecksPassed": true
+      }
+    ],
+    "conclusion": "success",
+    "protectionUnchanged": {
+      "protection": {
+        "message": "Branch not protected",
+        "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+        "status": "404"
+      },
+      "protected": false,
+      "rulesets": []
+    },
+    "head": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+    "url": "https://github.com/von12549/ArchSift/actions/runs/39576690093",
+    "event": "push"
+  },
+  "closeout": {
+    "closedIssues": [
+      "SOURCE-ARCHIVE-VERIFY-01",
+      "SOURCE-ARCHIVE-CI-01"
+    ],
+    "otherMaterialsRemainExcluded": true,
+    "remainingCountInAuthorizedArchiveScope": 0,
+    "futureWorkNeedsItsOwnAuthorization": [
+      "Any remaining-material submission",
+      "Documentation edits beyond this completion record and plan",
+      "Package or Web publication",
+      "Policy expansion or Registry4 activation",
+      "Cleanup or retention disposal"
+    ],
+    "CL05ClosedStateRetained": true,
+    "wholeProjectClosed": false,
+    "openItemsInAuthorizedArchiveScope": []
+  },
+  "status": "AUTHORIZED PRODUCT SOURCE ARCHIVE CLOSEOUT COMPLETE / SOURCE ARCHIVE CLOSED / REMAINING LOCAL MATERIALS RETAINED / NO NEW RUN OR RELEASE",
+  "remainingLocalMaterials": {
+    "noUntrackedRuntimeSourceOrTests": true,
+    "currentFormalStateAuthoritativeInThisRecord": true,
+    "notIncludedInMerged43": true,
+    "untrackedBeforeThisCloseout": 1267,
+    "totalBeforeThisCloseout": 1272,
+    "trackedModified": 5,
+    "manifestSha256": "08057924eb780a5cc1fbb26786255562df875cd5f4a8e0893bd71395ba24eb48",
+    "manifest": "D:\\ArchSift-lab\\runs\\source-archive-final-closeout-20261021-01\\remaining-materials.json",
+    "phaseProseInReadmeReportsAndPrBodyRetained": true,
+    "trackedModifiedPaths": [
+      ".gitattributes",
+      "README.md",
+      "docs/plans/20261006-archsift-implementation-plan.md",
+      "docs/reports.md",
+      "scripts/Verify-Lt02Synthetic.ps1"
+    ],
+    "rawBytesRetained": true,
+    "groups": [
+      {
+        "group": "acceptance-and-closeout-records",
+        "files": 401
+      },
+      {
+        "group": "documentation-and-planning-material",
+        "files": 9
+      },
+      {
+        "group": "existing-synthetic-validation-driver",
+        "files": 1
+      },
+      {
+        "group": "historical-044b67a-acceptance",
+        "files": 16
+      },
+      {
+        "group": "historical-text-attributes",
+        "files": 1
+      },
+      {
+        "group": "integration-and-synthetic-samples",
+        "files": 49
+      },
+      {
+        "group": "local-operator-and-validation-material",
+        "files": 792
+      },
+      {
+        "group": "maintained-plan-and-local-records",
+        "files": 1
+      },
+      {
+        "group": "uncommitted-documentation",
+        "files": 2
+      }
+    ]
+  },
+  "authorization": "Only final source archive review and records: PR9 formal delivery, actual main acceptance, local3f61be0 and044 history backups; preserve all changes/history/IFX/policies/packages/backups; no real IFX/CI/commit/push/release/cleanup/Registry4.",
+  "preservation": {
+    "independentCheckout": {
+      "head": "84abd6f97e5bc5b85a398505085c51478e8f3739",
+      "branch": "codex/source-archive-cl03-20261021-01",
+      "indexSha256": "51e783055d002aad95af79e48e3a5fbcba46fa96655d884b57b27682590fc1d1",
+      "refs": "refs/heads/codex/source-archive-cl03-20261021-01 84abd6f97e5bc5b85a398505085c51478e8f3739 \nrefs/heads/main 044b67a684dcc6037169658ff9dfc5efbafad487 \nrefs/remotes/origin/HEAD 044b67a684dcc6037169658ff9dfc5efbafad487 refs/remotes/origin/main\nrefs/remotes/origin/codex/archsift-0.4.0 8665c96988cc9948352baf14df0af7940a138063 \nrefs/remotes/origin/codex/archsift-0.5.0 22bb60c1aef09b83a1573595381cb59e86395c88 \nrefs/remotes/origin/codex/archsift-0.6.0 d638b553669e317069574934315434957509c732 \nrefs/remotes/origin/codex/archsift-0.7.0 b1030c424447e9d0874f1a50bd584ce32f0db112 \nrefs/remotes/origin/codex/archsift-0.8.0 92cab6f9175ea5bc34315f7dd871c4d24cc0941d \nrefs/remotes/origin/codex/archsift-inproject-0.1.0 2877974fb38a12e856a6045ba223615c200841ee \nrefs/remotes/origin/codex/archsift-lightweight-workbench 12dc001d6d3bb79150ad5309a05d1398ffe52cd0 \nrefs/remotes/origin/codex/source-archive-cl03-20261021-01 84abd6f97e5bc5b85a398505085c51478e8f3739 \nrefs/remotes/origin/main 044b67a684dcc6037169658ff9dfc5efbafad487 \nrefs/tags/v0.2.0 528ebb1237256018e3ca556919d25908c9b5c92d \nrefs/tags/v0.3.0 d1b1d7c325f02c1f1b81abda376e9463de71ea78 \nrefs/tags/v0.4.0 bb599bd87aaa3322229c049442e135f3c091b72a \nrefs/tags/v0.5.0 c4010d8c45eecadb3c51272334ceb4169e27b6ce \nrefs/tags/v0.6.0 de222c2462e182191b2f71499421bfe086ea7bab \nrefs/tags/v0.7.0 ff9a7d1e6c7973b07de08f03583d3aa605496865 ",
+      "status": ""
+    },
+    "newLocalHistoryAndWorkspaceBackupsRetained": true,
+    "currentIfxVersion": "0.10.0-cl03.1",
+    "rootHeadIndexOrdinaryRefsRetained": true,
+    "existingProtectedMaterials": 568,
+    "currentFeedPackages": 251,
+    "existingBackups": 6,
+    "ifx": {
+      "backups": 6,
+      "protected": 568,
+      "inputs": 908,
+      "ifx": {
+        "head": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+        "refs": "refs/codex/turn-diffs/checkpoints/40f95e4faf12c57d72e43daefa0f81b0/1e1a0251e793d7753943bbace55f017a/1790683751070/d9872ed3-4737-4e13-a034-99d999106a35 328bdbbd8b66e1346bd877e1f00864f85b8875f5 \nrefs/codex/turn-diffs/checkpoints/6d40cfe3cce5dc07475f1d29f0ec4360/22d8a4f434b17881e2b64e8eda627944/1791027265061/8454b3d8-5941-46a7-940d-9aa31900ea95 79558d7bf8d9a983b61fcbd6fa73f376d29664c9 \nrefs/codex/turn-diffs/checkpoints/b437f7e799486dab5f27e1d6df18d804/cbc53007d9d657d4009a71b9e78f6014/1791026301855/48726da3-87f4-46c2-9e1f-a47c62d581b7 79558d7bf8d9a983b61fcbd6fa73f376d29664c9 \nrefs/codex/turn-diffs/checkpoints/dae68a97cfa6d47d44d056da7e40cdcb/23168539bc4ecb6e255b3d1ade528714/1790939599561/ac27a016-eef2-40fa-aeed-dcb2e69c1c4c cb33bc1a1a132a7e7b72ca39807fcb5ce1ba693c \nrefs/heads/codex/cl01-portable-documentation-20261021-01 8a241b92239ca37fecb73876b0be97b6ee9bfdfb \nrefs/heads/codex/cl05-doc01-portable-guidance-20261021-01 7b372d586430d32044d3684ec4c912e0f52d5c95 \nrefs/heads/codex/ifx-before-5861f5a-20261020 cc06528ab17052baafa496df2a89f6cde9207384 \nrefs/heads/main f58205b2c1edd4887811d4feed553d61ebddd69a \nrefs/remotes/origin/HEAD f58205b2c1edd4887811d4feed553d61ebddd69a refs/remotes/origin/main\nrefs/remotes/origin/codex/cl01-portable-documentation-20261021-01 8a241b92239ca37fecb73876b0be97b6ee9bfdfb \nrefs/remotes/origin/codex/cl05-doc01-portable-guidance-20261021-01 7b372d586430d32044d3684ec4c912e0f52d5c95 \nrefs/remotes/origin/main f58205b2c1edd4887811d4feed553d61ebddd69a ",
+        "branch": "main",
+        "status": "",
+        "indexSha256": "f2538ac5ce15c77862830dd72afe6cc6d57c6d2a8c27ffd49319438123f940db"
+      }
+    },
+    "allOtherVisibleAndIgnoredInputsRetained": true,
+    "hostHash": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+    "previousFeedPackages": 251,
+    "codexCheckpointRefsRecordedSeparately": true
+  },
+  "recordedUtc": "2026-10-21T10:04:26.1553890+00:00",
+  "formalDelivery": {
+    "tree": "531dde6267978219d99c75f7db82cd9500c13c9b",
+    "originalTwoCommitsAndAttributionPreserved": true,
+    "pr": 9,
+    "localOriginMain": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+    "base": "4f066b50e5d5383bc2f8b2b2c2b946a02cd2c646",
+    "actualMain": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+    "url": "https://github.com/von12549/ArchSift/pull/9",
+    "localMain": "3f61be0d4fa3b6c681cbdc5e223c68048126364d",
+    "merged": true,
+    "head": "84abd6f97e5bc5b85a398505085c51478e8f3739"
+  }
+}

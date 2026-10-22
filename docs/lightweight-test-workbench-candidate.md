@@ -1,39 +1,39 @@
-# 轻量架构测试工作台：本地候选使用与分发边界
+# Lightweight architecture-test workbench: historical local-candidate use and distribution boundaries
 
-2026-10-16 **LT06 已验收的本地 UI 修订候选**：首轮人工复核提出的 UID、语言、结果位置和全局导航问题已修订。新载荷位于 `D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a`，清单 SHA-256 为 `34147699cb67d5f24d68e48de93152208ca75519fefbea38df66dc2376443c41`，机器记录见[LT06 UI 修订](acceptance/20261016-lightweight-lt06-ui-revision.md)。它在封装时基于 `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0` 加上清单所列未提交源码文件；用户随后对同一载荷完成[独立人工复核](acceptance/20261016-lightweight-lt06-human-ui-review.md)，五项均通过。清单中的 `sourceState` 是封装时点身份，不表示当前 Git 阶段状态。下文保留首轮固定候选的来源记录。
+2026-10-16 **accepted LT06 local UI revision candidate**: UID lookup, language, result placement and global-navigation issues from the first human review were corrected. The new payload was `D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a`, manifest SHA-256 `34147699cb67d5f24d68e48de93152208ca75519fefbea38df66dc2376443c41`; see [LT06 UI revision](acceptance/20261016-lightweight-lt06-ui-revision.md). At packaging it used `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0` plus the manifest-listed uncommitted source files. The user subsequently completed [independent human review](acceptance/20261016-lightweight-lt06-human-ui-review.md) of the same payload, passing all five items. Manifest `sourceState` is the packaging-time identity, not current Git-stage status. The initial fixed-candidate provenance below remains historical.
 
-如需重新打开修订候选，在 `pwsh -NoProfile` 中运行以下命令；只在本机打开其打印的 loopback 会话 URL，勿公开令牌。若当前代理已启动新候选并在 Codex 右侧打开浏览器，可直接继续该会话，避免重复启动相同端口。新候选的运行、规则复制和历史均在独立的 `lt06-ui-revision-20261016-a` 运行根下，不改动首轮候选或 IFX 原 checkout。
+To reopen that historical revised candidate, run the command below under `pwsh -NoProfile` and open only its printed loopback URL locally; do not publish its token. If an agent has already launched the candidate and opened the browser beside Codex, continue that session rather than launching the same port twice. Its runs, rule copies and history use the independent `lt06-ui-revision-20261016-a` run root without changing the first candidate or original IFX checkout.
 
 ```powershell
 & 'D:/ArchSift-lab/packages/lt06-ui-revision-20261016-a/web/ArchSift.Web.exe' --config 'D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a/web-config.json'
 ```
 
-在“架构测试”选择 `D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a/test-gate-config.json`。当前独立运行根已保存一份 80＋1 完整通过报告：可在全局“结果 → 架构测试结果”查看，或在“历史 → 架构测试历史”打开。切换 English／中文检查文案；在“局部”模式按案例名称搜索，点击候选条目即可填入发现 UID。只读检视无需重复执行真实门禁。
+In Architecture tests, select `D:/ArchSift-lab/runs/lt06-ui-revision-20261016-a/test-gate-config.json`. At this historical stage, the independent run root held a complete 80+1 pass report under global Results -> Architecture test results or History -> Architecture test history. Switch English/Chinese to inspect localization. In Subset mode, search by case name and select a result to fill its discovery UID. Read-only review does not require repeating the real gate.
 
-2026-10-16 固定的**本地评审候选**产品源码提交为 `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0`，开发版本 `0.9.0-dev`。候选载荷在 `D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd`，逐文件清单 `manifest.json` 的 SHA-256 为 `4a19cfd8ae57464d4b6a010dec9a2b923ab1e5b5aa5bf287b3b308fc2d768212`。它用于本机独立评审；尚未完成[人工 UI 验收](acceptance/20261016-lightweight-lt06-human-ui-review.md)，也未获公开发布、安装、IFX 政策采纳或 PR／合并授权。[机器候选记录](acceptance/20261016-lightweight-lt06-candidate.md)列出实际门禁与限制。
+The **initial local-review candidate** fixed on 2026-10-16 used product commit `e0b3bddabefd4561ca9ddfc13ed68e7d91a4f5b0` and development version `0.9.0-dev`. Its payload was `D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd`, with per-file `manifest.json` SHA-256 `4a19cfd8ae57464d4b6a010dec9a2b923ab1e5b5aa5bf287b3b308fc2d768212`. At that initial stage it was for independent local review, before [human UI acceptance](acceptance/20261016-lightweight-lt06-human-ui-review.md) or authorization for public publication, installation, IFX policy adoption or PR/merge. The [machine-candidate record](acceptance/20261016-lightweight-lt06-candidate.md) lists actual gates and limitations.
 
-## 在已授权的外置 IFX 工作树使用
+## Use in the authorized external IFX worktree
 
-本机演示目标固定为 `D:/ArchSift-lab/fixtures/lt05-shared-cc06528`，IFX 源提交 `cc06528ab17052baafa496df2a89f6cde9207384`，规则 SHA-256 `abd6a7d94e3655b4255b2a280e8fa58c6c50e64ce91dce6848121d24d20a92aa`。它是带 LT02A 接入文件的独立 worktree；`D:/IFX-10-Root/IFX-New` 原 checkout 与安装只读。案例 ID 基准取自**该固定路径**的 `D:/ArchSift-lab/runs/lt05-metrics-20261015/worktree-original-case-ids.json`，SHA-256 `74a1d63dabbb0be14e139134661fed6bf0af77fe3ba00f13fc69959de66ca72b`。移动工作树后须重做原生 80 项核对与显式基准，不能直接沿用此 ID 文件。
+The local demonstration target was fixed at `D:/ArchSift-lab/fixtures/lt05-shared-cc06528`, IFX source `cc06528ab17052baafa496df2a89f6cde9207384`, rule SHA-256 `abd6a7d94e3655b4255b2a280e8fa58c6c50e64ce91dce6848121d24d20a92aa`. This was an independent worktree with LT02A integration files; original `D:/IFX-10-Root/IFX-New` checkout/installation remained read-only. The execution-ID baseline came from **that fixed path** at `D:/ArchSift-lab/runs/lt05-metrics-20261015/worktree-original-case-ids.json`, SHA-256 `74a1d63dabbb0be14e139134661fed6bf0af77fe3ba00f13fc69959de66ca72b`. Moving the worktree requires another native 80-case review and explicit baseline; that ID file cannot simply be reused.
 
-运行环境为 Windows x64、.NET 10 SDK（本机验证 `10.0.303`）、net10.0/Release、IFX xUnit v3/Microsoft.Testing.Platform；候选 Web/CLI 是依赖本机 .NET 10 运行时的 publish 输出。测试工程继续通过已审查的项目引用使用本仓库 `ArchSift.Testing`，同时使用原有 IFX 锁定依赖与显式离线 NuGet 源、外置包缓存。载荷并未将 IFX 测试工程、原测试、NuGet 包或测试适配源码安装到其他目标。
+The environment was Windows x64, .NET 10 SDK (locally verified 10.0.303), net10.0/Release and IFX xUnit v3/Microsoft.Testing.Platform. Candidate Web/CLI publish outputs depended on the installed .NET 10 runtime. The test project continued to use this repository's `ArchSift.Testing` through its reviewed project reference, original locked IFX dependencies, explicit offline NuGet sources and external package cache. The payload did not install IFX's test project, original tests, NuGet packages or adapter source into other targets.
 
-在 `pwsh -NoProfile` 中，可用以下固定输入启动 UI。命令会打印一次性 loopback 会话 URL；只在本机浏览器打开该地址，勿公开其中的会话令牌。关闭终端前按 Ctrl+C，并等待受控任务退出。
+The following fixed-input UI invocation runs under `pwsh -NoProfile`. It prints a one-time loopback session URL; open it locally only and do not expose the session token. Before closing the terminal, press Ctrl+C and wait for controlled tasks to exit.
 
 ```powershell
 & 'D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd/web/ArchSift.Web.exe' --config 'D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/web-config.json'
 ```
 
-在“架构测试”标签选择外置配置 `D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/test-gate-config.json`。读取配置只显示基准／JSON／未纳入清单；选择“完整”并启动后，才可依据本次权威报告判断结果。UI 的规则复制会写入 `D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/web-rules`，运行与历史保存在同一外置运行根的 `web-output/test-runs`；不编辑原 IFX 规则。若只复核 CLI，在当前已保存的 `cli-gate` 之外新建一个未使用的外置运行目录，并把配置副本的 `runDirectory` 指向它，然后运行：
+Select external configuration `D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/test-gate-config.json` in Architecture tests. Reading it only displays baseline/JSON/not-included lists. Only after starting Full mode can the current authoritative report establish its result. UI rule copies go to `D:/ArchSift-lab/runs/lt06-candidate-e0b3bdd/web-rules`; runs/history use `web-output/test-runs` under the same external run root, without editing original IFX rules. For CLI-only review, create a new unused external run directory distinct from the saved `cli-gate`, point a configuration copy's `runDirectory` there, then run:
 
 ```powershell
-& 'D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd/cli/archsift.exe' test-gate --config '<外置配置副本绝对路径>'
+& 'D:/ArchSift-lab/packages/lt06-candidate-e0b3bdd/cli/archsift.exe' test-gate --config '<absolute-external-config-copy>'
 ```
 
-门禁强制测试子进程 `IFX_UPDATE_SNAPSHOTS=0`；`0` 是完整通过，`2` 是实际违规，`3` 是执行／报告错误，`4` 是覆盖不确定或 subset，`5` 是配置错误，`130` 是取消。完整取证继续使用原 ArchSift evidence 入口，本日常门禁的 `allow` 不提供源码绑定证明。报告以 `architecture-test-run.json` 为权威，HTML 与 UI 是投影；未迁入 A 类 182 项和未启用 B 候选 406 项仍是未纳入，不计入本次通过。历史 `unknown` 不代表当前源码合规。当前仅有基本独立运行目录和只读历史，无自动轮转、归档恢复或续跑。
+The gate forces `IFX_UPDATE_SNAPSHOTS=0` in test children. Exit 0 is complete pass, 2 actual violation, 3 execution/report error, 4 inconclusive/subset coverage, 5 invalid configuration and 130 cancellation. Full evidence continues through the original ArchSift evidence entry; daily allow does not prove source binding. `architecture-test-run.json` is authoritative, with HTML/UI projections. At this historical stage, 182 unmigrated Class A and 406 disabled Class B candidates remained not included and did not count as passed. Unknown history does not prove current-source compliance. Only basic independent run directories and read-only history existed, without automatic rotation, archive recovery or run resumption.
 
-## 测试依赖与 UI 分发方案
+## Historical test-dependency and UI distribution plan
 
-首版随 ArchSift 仓库交付 `ArchSift.Testing` 与 `ArchSift.TestGate` 源码和锁文件：目标测试项目由显式 `ProjectReference` 接入前者；CLI/Web publish 输出包含执行协调所需程序集，均使用同一 TestGate 服务。受控目标必须独立审查新增引用、适配器、规则、离线源与原测试基准；不能把 LT02A 样例当作 IFX 正式政策。首版不发布单独 NuGet 包，也不复制 InProject runtime 或修改旧 Setup／安装选择。跨机器交付前须另行解决可移植的测试依赖路径、目标授权、锁定包源与案例 ID 基准；本地候选清单不能冒充通用安装包。
+The first version delivered `ArchSift.Testing`/`ArchSift.TestGate` source and locks in the ArchSift repository. The target test project explicitly referenced the former; CLI/Web publish outputs contained coordination assemblies and used the same TestGate service. Each controlled target needed independent review of new references, adapters, rules, offline sources and original-case baseline. The LT02A example was not formal IFX policy. That first version published no separate NuGet package, copied no InProject runtime and changed no old Setup/installation selection. Cross-machine delivery still needed portable dependency paths, target authorization, locked sources and case-ID baselines. A local candidate manifest was not a general installer.
 
-UI 采用已有 Web 的 loopback 会话、安全令牌和规则编辑器，候选只包含 `dotnet publish` 的 CLI/Web 目录与 SHA 清单；它没有新安装器、后台服务或公开站点。后续若获发布授权，再从冻结源码与已确认的依赖布局构建、审核包和发布门槛。LT05 的同条件冷运行约 118 秒，由目标重建主导，没有可证明的明显提速；不据此增加材料生命周期系统。
+The UI reused Web loopback sessions, safety tokens and rule editor. The candidate included only published CLI/Web directories and a SHA manifest, without a new installer, background service or public site. Any later authorized release would build from frozen source and confirmed dependency layout, with reviewed packages/release gates. LT05 comparable cold runs were approximately 118 seconds, dominated by target rebuild, with no proven substantial speedup. That result did not justify adding a materials-lifecycle system.

@@ -1,0 +1,507 @@
+{
+  "schemaVersion": 1,
+  "stage": "CL05",
+  "date": "2026-10-21",
+  "timezone": "Australia/Sydney",
+  "recordedUtc": "2026-10-21T06:11:58.7650942+00:00",
+  "status": "CL00–CL05 AUTHORIZED PORTABLE CLOSEOUT COMPLETE / CL05 CLOSED / NO REAL RUN OR CI",
+  "CL05Closed": true,
+  "closeoutFullyClosed": true,
+  "reviewComplete": true,
+  "scope": {
+    "kind": "authorized-portable-closeout-only",
+    "plan": "docs/plans/20261021-archsift-portable-closeout-plan.md",
+    "otherPlansAndInProjectUnchanged": true,
+    "allArchsiftRoadmapWorkClosed": false
+  },
+  "openCloseoutItems": [],
+  "stages": [
+    {
+      "status": "complete",
+      "record": "docs/acceptance/20261021-cl00-scope.md",
+      "id": "CL00",
+      "scope": "frozen scope and identity"
+    },
+    {
+      "status": "complete",
+      "record": "docs/acceptance/20261021-cl01-document-main-ci.json",
+      "id": "CL01",
+      "scope": "original IFX document formal delivery and local ArchSift guidance"
+    },
+    {
+      "status": "complete-with-recorded-provenance-limits",
+      "record": "docs/acceptance/20261021-cl02-source-projection.json",
+      "id": "CL02",
+      "scope": "reviewable source materials and separately verified projection change; not a product source release"
+    },
+    {
+      "status": "complete",
+      "record": "docs/acceptance/20261021-cl03-candidate-packaging.json",
+      "id": "CL03",
+      "scope": "independent-version packaging, cold synthetic recovery, compatibility and license validation"
+    },
+    {
+      "status": "complete",
+      "record": "docs/acceptance/20261021-cl04-main-ci.json",
+      "id": "CL04",
+      "scope": "0.10.0-cl03.1 adopted by IFX after actual-main normal CI"
+    },
+    {
+      "status": "resolved",
+      "record": "docs/acceptance/20261021-cl05-doc01-main-ci.json",
+      "id": "CL05-DOC-01",
+      "localRecord": "docs/acceptance/20261021-cl05-doc01-local-ifx-update.json",
+      "scope": "five guidance files locally corrected, IFX correction formally delivered and local checkout safely updated"
+    },
+    {
+      "status": "closed",
+      "scope": "final review, closure record and follow-up routing",
+      "id": "CL05"
+    }
+  ],
+  "currentIfx": {
+    "clean": true,
+    "sha": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+    "branch": "main",
+    "workingInputsVerified": 908,
+    "root": "D:\\IFX-10-Root\\IFX-New",
+    "tree": "27736c04997e04204b49603ee4ef3da1cb50a6b2",
+    "documentBlob": "f71c2f806b0a3c7e13da02c88647d5822ddb418f",
+    "documentSha256": "5f11f5fddf8ed965bb6852beb5024d0846be1b4f4fe755cded7bc560ad4c6e7c",
+    "updatedThisStage": false,
+    "jsonRules": 20,
+    "policySha256": "a64f37771c93d6b0c1c6230d4e8c823cbdceb99821e3853c9aed718bb9b06598",
+    "feedPackages": 251,
+    "csharpCases": 92,
+    "policySources": 23,
+    "caseManifestSha256": "2ed047884a542c29a744b1edfee6a3e8c8ef10ddc5330adaae37b02e1e0ef89e",
+    "feed": "D:\\ArchSift-lab\\packages\\cl04-ifx-offline-20261021-01",
+    "version": "0.10.0-cl03.1"
+  },
+  "provenance": {
+    "productSourceRelease": "not-performed",
+    "archsiftHead": "044b67a684dcc6037169658ff9dfc5efbafad487",
+    "ifxAdoptionHead": "113533c0c952593b974c7de923e8c722d80c9db0",
+    "exactCompilerInputClosureClaimed": false,
+    "sourceManifest": {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\source-inputs.json",
+      "sha256": "8571023e7da12c7933d95433f50ec43bcf810099f9fe973f64aba1629c1bddd4"
+    },
+    "sourceSnapshot": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\source",
+    "originalDocumentHead": "8a241b92239ca37fecb73876b0be97b6ee9bfdfb",
+    "originalManifestSourceBytesAvailable": 159,
+    "candidateFrozenInputs": 250,
+    "productSourceCommit": "not-created",
+    "finalMain": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+    "reproducibleBuildClaimed": false,
+    "correctedDocumentHead": "7b372d586430d32044d3684ec4c912e0f52d5c95",
+    "headIsContextOnly": true
+  },
+  "deliveryStates": {
+    "newPublicReleasePerformed": false,
+    "previousPortableVersion": "0.10.0-sp03.1",
+    "webZip": {
+      "path": "D:\\ArchSift-lab\\packages\\cl03-20261021-01\\ArchSift.Web.0.10.0-cl03.1.framework-dependent.zip",
+      "sha256": "581c280b3910471d91ef803c06f6ee049ee83884b9f869a95b3cc8a5546f02f1"
+    },
+    "candidate28PackageDirectory": "D:\\ArchSift-lab\\packages\\cl03-20261021-01",
+    "previousFeedPackages": 251,
+    "ifxLibrariesAndCli": "formally-adopted0.10.0-cl03.1",
+    "webStatus": "local-synthetic-validated-candidate; not-IFX-consumed-or-publicly-published",
+    "archsiftFourGuides": "local-corrections-retained; excluded-from-IFX-commit",
+    "previousPortableFeed": "D:\\ArchSift-lab\\packages\\sp03-ifx-offline-20261020-02",
+    "ifxCorrectedDocument": "formally-delivered-through-PR15-and-actual-main-CI",
+    "candidateDeliveryManifest": {
+      "path": "D:\\ArchSift-lab\\runs\\cl03-20261021-01\\artifact-review-03\\delivery-manifest.json",
+      "sha256": "c4998fb4501c16ef69d5e8b008644fa76988350d76a498f1f115e09f71cd24ae"
+    }
+  },
+  "actualMainAcceptance": {
+    "currentRemoteMetadata": {
+      "protectionSha256": "672e46e124f8bfaa21860b4929bac3e04053bef8bf93f5226c18f782405dbc95",
+      "admins": true,
+      "pr": 15,
+      "merged": true,
+      "strict": true,
+      "attempt": 1,
+      "main": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+      "ciRerun": false,
+      "checks": 3,
+      "nativeAppId": 15368,
+      "run": 39550973000
+    },
+    "officialArchivesRehashed": 3,
+    "indexedFilesRehashed": 1079.0,
+    "event": "push",
+    "architecture": {
+      "tfm": "net10.0",
+      "pendingNotRun": 4,
+      "total": 112,
+      "sdk": "10.0.303",
+      "policySha256": "a64f37771c93d6b0c1c6230d4e8c823cbdceb99821e3853c9aed718bb9b06598",
+      "caseManifestSha256": "2ed047884a542c29a744b1edfee6a3e8c8ef10ddc5330adaae37b02e1e0ef89e",
+      "notIncluded": 568,
+      "passed": 112,
+      "coverageComplete": true,
+      "csharp": 92,
+      "runId": "8d0c6d48a3444c9184e77b39ecdd9874",
+      "sourceCommit": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+      "projectedCSharpPass": 3,
+      "json": 20,
+      "sourceClean": true,
+      "reportSha256": "654bab40fe333a6434fd57301592b2f3ce430c243ab1d89381fb436185b62ad3",
+      "configuration": "Release",
+      "policySources": 23
+    },
+    "rerun": false,
+    "checks": [
+      {
+        "id": 119060921546,
+        "name": "IFX architecture acceptance",
+        "head_sha": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 119060694594,
+        "name": "IFX dependency audit",
+        "head_sha": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 119059846518,
+        "name": "IFX Windows architecture",
+        "head_sha": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "conclusion": "success",
+    "indexesRehashed": [
+      {
+        "sha256": "4400bab307bdee9dc734e55a660341c9bd35c9ea5f5904c840f3b806d6d8e34f",
+        "files": 281,
+        "path": "D:\\ArchSift-lab\\runs\\cl01-main-acceptance-20261021-01\\evidence-index.json"
+      },
+      {
+        "sha256": "0a03f641648f8119e345da71a83a72b031a638440c05258fd34f4d695b28fa50",
+        "files": 270,
+        "path": "D:\\ArchSift-lab\\runs\\cl04-main-acceptance-20261021-01\\evidence-index.json"
+      },
+      {
+        "sha256": "59e05d426ae5999de01f8a6c05ca46ac3aba6467f0f88f79374ff4f304355682",
+        "files": 386,
+        "path": "D:\\ArchSift-lab\\runs\\cl05-doc01-main-acceptance-20261021-01\\evidence-index.json"
+      },
+      {
+        "sha256": "40d798ac137a75ffc547f13f54fe4df0a3563583e1296a7f8c2959cd8d235e09",
+        "files": 142,
+        "path": "D:\\ArchSift-lab\\runs\\cl05-doc01-local-ifx-update-20261021-01\\evidence-index.json"
+      }
+    ],
+    "workflow": ".github/workflows/fa05-candidate.yml",
+    "sourceRecordSha256": "f1478ada5e0613eea92f03a8a22069828c0ebd75eb05328c214bb18d302b3849",
+    "sourceRecord": "docs/acceptance/20261021-cl05-doc01-main-ci.json",
+    "sha": "f58205b2c1edd4887811d4feed553d61ebddd69a",
+    "attempt": 1,
+    "run": 39550973000,
+    "historicalExecution": true,
+    "independentAudit": {
+      "mode": "all",
+      "skipped": 0,
+      "cliRuntimePackages": 5,
+      "cliOriginSha256": "aa8062e622a9d96d28b7c7619722200c8ed641a17e39effcdcbc566c20e57d2e",
+      "actual": 105,
+      "networkPackageFallback": false,
+      "expected": 105,
+      "cliMetadataPackages": 6,
+      "warningsAsErrors": true,
+      "architectureAudit": "not-run",
+      "freshOfficialData": true,
+      "level": "moderate"
+    }
+  },
+  "resolvedCloseoutItems": [
+    {
+      "status": "resolved",
+      "id": "CL05-DOC-01",
+      "evidence": [
+        "20261021-cl05-doc01-correction.json",
+        "20261021-cl05-doc01-pr-ci.json",
+        "20261021-cl05-doc01-main-ci.json",
+        "20261021-cl05-doc01-local-ifx-update.json"
+      ],
+      "result": "Approved five-file correction retained; IFX document delivered on f58205b and local checkout clean."
+    },
+    {
+      "status": "resolved-with-explicit-limits",
+      "id": "SOURCE-TRACE",
+      "result": "All159 original source bytes and250 candidate source bytes available; no committed-source or reproducible-build claim."
+    },
+    {
+      "status": "registered",
+      "id": "RETENTION",
+      "result": "Maintainer/operator owns retained artifacts; no automatic expiry, cleanup or rollback execution."
+    }
+  ],
+  "phaseNarrativeInterpretation": {
+    "currentDeliveryAuthority": [
+      "docs/acceptance/20261021-cl05-doc01-main-ci.json",
+      "docs/acceptance/20261021-cl05-doc01-local-ifx-update.json",
+      "docs/acceptance/20261021-cl05-final-completion.json"
+    ],
+    "authoringStageTextRetained": true,
+    "rewriteHistoricalFiles": false,
+    "examples": [
+      "a2adb87 is the CL04 adoption baseline",
+      "local/awaiting-authorization/not-yet-submitted language belongs to CL05-DOC-01 authoring-stage snapshot"
+    ],
+    "currentDeliveryIsPending": false
+  },
+  "responsibility": {
+    "registry4Policy": "adopted-pending-activation",
+    "newRunPassClaimed": false,
+    "notIncludedMeaning": "not-executed-as-JSON",
+    "remainingA": 179,
+    "notIncluded": 568,
+    "registry4Execution": "not-run",
+    "otherPendingOrDeferred": 561,
+    "projectedCSharp": 3,
+    "registry4Count": 4,
+    "remainingAfterCSharp": 565,
+    "registry4Enabled": false,
+    "remainingB": 386
+  },
+  "preservation": {
+    "historicalRecordsAndFailuresPreserved": true,
+    "archsiftHeadIndexAndRefsUnchanged": true,
+    "newestBackupsRehashed": 6,
+    "htmlAndImportantIgnoredPreserved": true,
+    "ifxHeadIndexAndRefsUnchanged": true,
+    "allPoliciesAndCasesUnchanged": true,
+    "hostStable": "59c686803d67d98b70de45b00e7dbe3b7376d40c01d12f6565ad553a8503bd20",
+    "protectedReferencesRehashed": 568,
+    "candidateDeliveryFilesRehashed": 42,
+    "hostEqual": true,
+    "processEqual": true,
+    "inProjectUntouched": true,
+    "fiveCorrectedGuidanceDigestsVerified": true,
+    "otherWorkspaceBytesUnchanged": true
+  },
+  "retention": {
+    "owner": "Project operator / repository maintainer",
+    "maintenanceSha256": "0952d10d2c561b33897c188c944412955465a68fba02b800867ea059e42dc458",
+    "until": "Explicit object-specific disposition authorization; no automatic expiry",
+    "maintenanceReference": "docs/distribution/20261021-cl03-candidate-maintenance.md",
+    "keep": [
+      "Current0.10.0-cl03.1 complete portable combination and251-package feed",
+      "Previous verified0.10.0-sp03.1 complete portable rollback combination and251-package feed; preserve all parallel adopted policies and current three checks",
+      "Earlier fixed-source/props/external-mapping/profile migration fallback; separately authorized restoration",
+      "Original28-package candidate, Web ZIP,159/250 source byte materials, manifests and licenses",
+      "All direct acceptance references, original/new backups, exact27 generated-artifact exception record",
+      "Historical failed/cancelled/stopped evidence, refs/branches, InProject and unrelated existing work"
+    ]
+  },
+  "separatelyAuthorizedFollowUps": [
+    {
+      "authorization": "separate",
+      "id": "PRODUCT-SOURCE-SUBMISSION",
+      "blocksThisCloseout": false,
+      "state": "not-performed"
+    },
+    {
+      "authorization": "separate",
+      "id": "PUBLIC-RELEASE",
+      "blocksThisCloseout": false,
+      "state": "not-performed"
+    },
+    {
+      "authorization": "separate",
+      "id": "WEB-CANDIDATE-ADOPTION-OR-RELEASE",
+      "blocksThisCloseout": false,
+      "state": "candidate-retained"
+    },
+    {
+      "authorization": "separate",
+      "id": "REGISTRY4-OR-OTHER-RULE-EXPANSION",
+      "blocksThisCloseout": false,
+      "state": "not-enabled"
+    },
+    {
+      "authorization": "separate",
+      "id": "ROLLBACK-OR-MIGRATION-FALLBACK-EXECUTION",
+      "blocksThisCloseout": false,
+      "state": "materials-retained; not-executed"
+    },
+    {
+      "authorization": "separate-specific-objects",
+      "id": "RETENTION-EXPIRY-AND-CLEANUP",
+      "blocksThisCloseout": false,
+      "state": "no-auto-expiry-or-cleanup"
+    }
+  ],
+  "operations": {
+    "independentAuditRun": 0,
+    "merge": 0,
+    "publication": 0,
+    "fetch": 0,
+    "registry4Enablement": 0,
+    "dotnet": 0,
+    "push": 0,
+    "checkoutUpdate": 0,
+    "rollback": 0,
+    "ci": 0,
+    "realIfx": 0,
+    "commit": 0,
+    "pr": 0,
+    "cleanup": 0,
+    "ifxWrite": 0
+  },
+  "supersedesStatusOnly": [
+    "docs/acceptance/20261021-cl05-completion.json",
+    "docs/acceptance/20261021-cl05-doc01-correction.json",
+    "docs/acceptance/20261021-cl05-doc01-pr-ci.json",
+    "docs/acceptance/20261021-cl05-doc01-main-ci.json",
+    "docs/acceptance/20261021-cl05-doc01-local-ifx-update.json"
+  ],
+  "priorRecordsPreserved": [
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl00-scope.md",
+      "sha256": "3108b9b5c730190ec484c474dd624a3ac963d3149673cae4e1917534df1a9a06"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-document-drafts.md",
+      "sha256": "f1820ecc5d3c25fb5b533786fc5bc1891432289041ce8441bad6ec4dcd538435"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-document-main-ci.json",
+      "sha256": "5b72d499659e584b7ed9e3187a58584e0158a2d48c3d0c765cc338e4bf7a182d"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-document-main-ci.md",
+      "sha256": "a6c8b8423d83769147db6cf0418c2ac3b9adfccc4c5e9c6cb8f2d25f9f07e6b8"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-document-pr-ci.json",
+      "sha256": "40a79d3449a7edf523b07a0c2eca9aef890b90c4dad9fb200a286f26265e6d3a"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-document-pr-ci.md",
+      "sha256": "787c3af66f4774d1d6f6b3a186b1c25f233f2fcef913ff012015f83213d410d8"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-local-document-write.json",
+      "sha256": "074c25130dfd50f81c1fdcf1a28df08ab307afad49ac310a5df707ebce493ae7"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-local-document-write.md",
+      "sha256": "a9345038b7157964d96ecd564642e8893b0cf7274d3ef4c62056781fc9f91a9e"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-local-ifx-update.json",
+      "sha256": "daf9a66e3ee0c9f8191f81e296eaff2289f754a33ae7bd00d3e2da3e1f41915f"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl01-local-ifx-update.md",
+      "sha256": "12607feff32ea0f859ea733cc504bbe6a1b289907d15ae27af234811a5908288"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl02-source-projection.json",
+      "sha256": "5a35e94d7b9b95cdea8f07618a9250de29e68177bcc0f7c7e9918d2f5e79eb5d"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl02-source-projection.md",
+      "sha256": "a084ec89eb26e2ff82caefbc620e13192452828f09570d06ec640ddeea3d2305"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl03-candidate-packaging.json",
+      "sha256": "21c33d5b037359a83a5abfe99457885d0f7e736809acb244202cb1f5eccdfc40"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl03-candidate-packaging.md",
+      "sha256": "99d97d7a27c7fcf8636fb0385054e1e00608a0ba2d0bb4b55e763b96d3d82507"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-local-candidate.json",
+      "sha256": "067b4dea2a692a90362fb1fc02c78f22aedabf47efaeaee54b2eda716a9bc344"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-local-candidate.md",
+      "sha256": "df10eeb7fd2da933d4b22fb55e1e3dc863335ffd471f9625851473912f224ef9"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-local-ifx-update.json",
+      "sha256": "f632f12b407e1815fa2cffe724bc3c45ae3bb8f4d4e97f2d239e5e2e2756b9f8"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-local-ifx-update.md",
+      "sha256": "032a6d60893b9073ec465563983a932f800ef080404efdd3a3f85b2bf56e90d7"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-main-ci.json",
+      "sha256": "18ef6e1a2482102a1ad1342c600f828c64339f73ee4f53cab7ffd5fba605afe1"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-main-ci.md",
+      "sha256": "30d47ed814e1b0bc5b74e04baaacae0469dc37709e154ed0dc43159dd5c7209b"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-pr-ci.json",
+      "sha256": "0c97c78f40ec94289e03fb71800b1df1e97c5461ceb5847bfe1dbc73ca4d12b8"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl04-pr-ci.md",
+      "sha256": "afcc77a515fd3141589564526dfb989938c710c0cfd3aeb6291d86136944f0a4"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-completion.json",
+      "sha256": "5380aeb045f913d17975a8e41d4700d00b95d53d635d49d6a83ec6825b6f385d"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-completion.md",
+      "sha256": "5a01231322208fc324781b17c54321572d9ae377c2f288ffb7e8e73b7a505995"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-correction.json",
+      "sha256": "25431019e949538728dec0d8a7eccfa9308f05d10967a1ee5f60d043a88c2510"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-correction.md",
+      "sha256": "6e7543b47ac095cc51fa5bf8e5d28846ae8764264e906c84025092340d915b10"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-local-ifx-update.json",
+      "sha256": "5fa7a2a3269ea7fca7a2822743437939119488b760a2b1786f31e16e8c42934c"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-local-ifx-update.md",
+      "sha256": "092755c188f6a82823b450aa2544e274c1d94c468ca70b61c14a6bd72a5d1d21"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-main-ci.json",
+      "sha256": "f1478ada5e0613eea92f03a8a22069828c0ebd75eb05328c214bb18d302b3849"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-main-ci.md",
+      "sha256": "fbfa6adb3b7abf11653a84ec519063c298f20ccf314bcb6f8f931269647afdb7"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-pr-ci.json",
+      "sha256": "cd45819134d12ffbced5f8f16f876e910fd1dc5f747d987acea4b9e890653875"
+    },
+    {
+      "path": "D:\\ArchSift\\docs\\acceptance\\20261021-cl05-doc01-pr-ci.md",
+      "sha256": "66670960c61dbe4329f40a979d05a31c3b3e75b68ce1a9783b0442f5ea2b51e2"
+    }
+  ],
+  "evidenceRoot": "D:\\ArchSift-lab\\runs\\cl05-final-closeout-20261021-01",
+  "limitations": [
+    "This closes only the authorized CL00–CL05 portable closeout scope. Deferred source submission, release, rule activation and cleanup are not marked performed.",
+    "Current remote metadata and preserved evidence were checked; no new SDK build, real IFX test, CI or vulnerability audit was run.",
+    "Source byte materials are available, but no exact compiler-input closure, committed candidate source tree or byte-reproducible build is claimed.",
+    "Web candidate evidence is synthetic; no new independent human review or public Web delivery is claimed.",
+    "Generated bin/obj and unrelated SDK/history trees were not rebuilt, recursively archived or newly validated.",
+    "Earlier stage records and authoring-phase prose retain their original timing; final delivery status is determined by the linked PR15/main/local-update evidence and this closure record."
+  ]
+}

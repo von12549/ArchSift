@@ -1,6 +1,6 @@
-# Windows installation and configuration — 0.7.0 candidate
+# Windows installation and configuration — ArchSift Workbench 0.10.0
 
-**0.7.0 is a candidate, not accepted or published.** This guide retains the 0.6 launcher/default configuration behavior and adds 0.7 shutdown feedback. The current verified release is 0.6.0: use its [publication record](releases/0.6.0-publication.md) for exact assets and accepted limitations. Earlier [0.5.0 installation](installation-0.5.md), [Setup](setup-0.5.md) and [0.4.0 manual](installation-0.4.md) guides remain historical.
+0.10.0 is in release preparation; exact assets, support and acceptance remain governed by [release status](releases/0.10.0/release-status.json). These instructions describe the intended verified Windows delivery and retain the established profile/ownership model. They do not claim new package qualification. Start with [getting started](getting-started.md) and [project integration](project-integration.md). Earlier [0.5.0 installation](installation-0.5.md), [Setup](setup-0.5.md) and [0.4.0 manual](installation-0.4.md) guides remain historical.
 
 ## Requirements
 
@@ -19,11 +19,11 @@ Windows ARM64 and minimum Windows release are not established support guarantees
 
 ## Package and configuration
 
-Obtain version-specific ZIP, separate ArchSift.Setup.exe, SHA256SUMS.txt and acceptance.json. Compare every asset's length/hash with that release's publication record before execution. Never reuse 0.4.0 hashes for 0.5.0. The immutable manifest's candidate status records packaging time; final acceptance binds exact ZIP/Setup identities. Hash agreement is integrity evidence, not an independent publisher signature.
+Obtain the version-specific Workbench ZIP, separate ArchSift.Setup.exe, SHA256SUMS.txt, artifact-manifest.json and acceptance.json. Compare every asset's length/hash with that release's publication record before execution. Never reuse an older version's hashes. The immutable manifest records packaging-time candidate state; final acceptance binds exact ZIP/Setup identities. Hash agreement proves byte integrity, not an independent publisher signature.
 
-New 0.6.0 installations use config/default.json. Existing installations retain their registered config filename. The root holds versions/<version>, config, rules, reports, downloads, operations/<id> and install.json. Preserve the complete payload and its licenses. Setup retains one ConfigPath/library state; config/profiles.json and config/selection.json are separate launcher metadata, preserved but excluded from receipt backup/rollback state. Only the registered config inside config is protected; putting another JSON there does not enroll it. Config outside config receives no 0.6.0 protection, and legacy managed paths outside config require a separate relocation review before upgrade.
+Managed installations use config/default.json; existing installations retain their registered configuration filename. The root holds versions/<version>, config, rules, reports, downloads, operations/<id> and install.json. Preserve the complete payload and licenses. Setup protects one registered ConfigPath/library state. Launcher config/profiles.json and config/selection.json are retained separately and excluded from receipt backup/rollback state. Another file under config is not automatically enrolled. External configurations receive no Setup protection; legacy managed paths outside config require separate relocation review before upgrade.
 
-## 0.6.0 profile launcher
+## Profile launcher
 
 Use the selected version's verified executable by absolute path: `archsift.exe launch --root <install-root>`. The launcher opens a loopback selection page independently of the target JSON. Register an existing file by its full path, or review normalized JSON before creating an unused file inside config. It lists names, paths, targets, output/library directories, health and resource protection. The default/recent item is only preselected; click Open selected workbench explicitly. No discovery/build/restore happens on selection.
 

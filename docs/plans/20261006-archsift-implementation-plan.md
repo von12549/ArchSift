@@ -1,228 +1,228 @@
-# ArchSift .NET 架构与依赖分析工具正式实施计划
+# ArchSift .NET architecture and dependency analyzer implementation plan
 
-2026-10-22 文档状态同步（本地编辑阶段记录）：按用户要求统一Rules HTML、可移植接入／包源维护说明及IFX相关README和使用说明为现役0.10.0-cl03.1、493＝92 C#＋401 JSON、404责任来源，Registry4计入B03全部100条；A179与B07五条暂缓、A三项C#责任保持。历史112项、旧候选／发行／安装记录及原规则定义保留并注明时点。本次只更新文档，未改规则、包、源码、运行配置或工作流，未运行.NET／真实IFX／集成测试，未提交推送或触发CI；引用b591b9f既有验收，不把文档同步写成新验收。以下保留历史时点。
+Release execution update, 2026-10-23: the user authorized the complete ArchSift Workbench release plan, including fixes, commits/pushes, PRs, CI, merges and publication. WB01 contract freeze is complete; English documentation and generic consumer guides are prepared, with final artifact-language review still required. WB03 source/version/tooling work is active. The central candidate is 0.10.0-rc.1, with stable 0.10.0 built separately. Four historical Release bodies were translated to English with original bodies retained and asset/tag identity unchanged. Local Release source tests, synthetic gate, Node/documentation checks and five package metadata probes passed; see the [source regression](../acceptance/20261023-workbench-source-regression.md). PR/main CI, qualified RC/stable packages and final independent human UI acceptance remain pending. Live IFX remains unchanged. Earlier entries below retain their historical scope and timing.
 
-2026-10-22 退役后剩余材料归档：1289项原始工作区材料已独立ZIP归档并逐项复核，原件保留；现役／前一组合及548、568保护清单并集580项保持。见[归档与保留索引](../distribution/20261022-materials-retention.md)及[机器JSON](../distribution/20261022-materials-retention.json)。本次登记不宣称全仓干净、外部对象全部分类或磁盘已回收；先前CL00–CL05、源码／说明交付及IR01–IR05保持关闭，执行终检与正常CI另记。以下原有记录保持历史时点。
+Archive update, 2026-10-22: 1,289 raw worktree materials were independently ZIP-archived and verified, with originals retained at that stage. Active/previous combinations and the 580-item union of the 548/568 protection inventories remained protected. See [retention](../distribution/20261022-materials-retention.md) and [JSON](../distribution/20261022-materials-retention.json). This does not claim a clean repository, complete classification or reclaimed space. CL00–CL05, source/document delivery and IR01–IR05 remain closed; final checks and normal CI are recorded separately.
 
-2026-10-22 原 ArchSift.InProject 0.1.0 路线正式被现有包化项目内接入替代，停止未来开发、人工验收与发布推进；旧 IP08 机器完成、人工部分完成、暂停／未正式验收／未发布历史保持。固定2877974完整历史已独立归档并恢复核验（191提交／2929对象／12关键blob），80份Git外关键原件保存；本地与远端旧分支、A/B worktree、现役和前一完整组合及全部政策／共享能力保留。详见[废止决定](../decisions/20261022-inproject-retirement.md)及[机器JSON](../decisions/20261022-inproject-retirement.json)。物理处置按精确外置清单记录，不以清空目录或删除分支作为废止条件；不补记旧人工验收通过。以下原有段落保留历史时点。
+Route retirement, 2026-10-22: packaged project integration formally supersedes separate ArchSift.InProject 0.1.0. Stop future development, human acceptance and publication of that route. Preserve IP08 as machine complete, human partial, paused, unaccepted and unreleased. The fixed 2877974 history was independently archived and restored: 191 commits, 2,929 objects and 12 key blobs; 80 external originals were preserved. Retain old local/remote branches, A/B worktrees, active/previous feeds, policies and shared capabilities at this decision point. See [decision](../decisions/20261022-inproject-retirement.md) and [JSON](../decisions/20261022-inproject-retirement.json). Physical handling follows exact external receipts; retirement requires neither empty roots nor deleted branches and never retroactively passes human acceptance.
 
 
-2026-10-16 轻量工作台发布完成：[PR #8](https://github.com/von12549/ArchSift/pull/8) 合并提交 `0c2d9f1` 的 main Windows／Ubuntu CI 均通过，标签 [v0.9.0-dev](https://github.com/von12549/ArchSift/releases/tag/v0.9.0-dev) 直接指向该提交，公开源码 ZIP 无凭据下载并通过内容核对。见[预发布回验](../releases/0.9.0-dev-publication.md)。状态 **LT00–LT06 ACCEPTED WITH LIMITATIONS / 0.9.0-dev SOURCE PRERELEASE PUBLISHED / IFX FORMAL POLICY PENDING**。下文先前状态保留形成时点。
+Published, 2026-10-16: [PR #8](https://github.com/von12549/ArchSift/pull/8) merged as 0c2d9f1. Windows/Ubuntu main CI passed; [v0.9.0-dev](https://github.com/von12549/ArchSift/releases/tag/v0.9.0-dev) points directly to that commit. The public source ZIP was anonymously downloaded and content-verified. See [publication](../releases/0.9.0-dev-publication.md). Status: LT00–LT06 ACCEPTED WITH LIMITATIONS / SOURCE PRERELEASE PUBLISHED / IFX FORMAL POLICY PENDING. Earlier statuses remain historical.
 
-2026-10-16 轻量工作台预发布回归：PR [#8](https://github.com/von12549/ArchSift/pull/8) 的 `d112340` 在 Windows／Ubuntu CI 均通过；递归观察器新目录漏报修复的本机 18 项 MTP 与旧 248 项测试通过，新封装载荷对外置 IFX 的 80＋1 完整门禁为 `allow/0`，Web 30 个静态资源哈希与用户复核载荷一致。见[预发布源码回归](../acceptance/20261016-lightweight-lt06-release-regression.md)。状态 **0.9.0-dev SOURCE PR READY / NOT MERGED / NOT RELEASED**；正式 IFX 政策待发布后处理。下文先前状态保留形成时点。
+Prerelease regression, 2026-10-16: [PR #8](https://github.com/von12549/ArchSift/pull/8), d112340, passed Windows/Ubuntu CI. The recursive-watcher new-directory fix passed 18 native MTP and 248 legacy tests. A fresh packaged external IFX full gate passed 80+1, allow/0. All 30 static Web hashes matched the user-reviewed payload. See [regression](../acceptance/20261016-lightweight-lt06-release-regression.md). At that point: SOURCE PR READY / UNMERGED / UNRELEASED; formal IFX policy remained later work.
 
-2026-10-16 轻量工作台后续授权：用户同意 PR、合并及发布，选择 `0.9.0-dev` 预发布；IFX 正式政策待发布完成后处理。预发布仅提供标签源码归档，本地路径绑定载荷不作为通用安装包。PR／CI／合并／发布结果须以执行后的证据更新，不预记成功。见[轻量工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)及[预发布说明](../releases/0.9.0-dev-notes.md)。
+Authorization, 2026-10-16: user approved PR, merge and publication as 0.9.0-dev, with formal IFX policy after publication. Public delivery is tagged source archives only; local path-bound payloads are not generic installers. Record actual PR/CI/merge/release evidence before claiming success. See [plan](20261015-archsift-lightweight-test-workbench-plan.md) and [notes](../releases/0.9.0-dev-notes.md).
 
-2026-10-16 轻量工作台 LT06 完成：[UI 修订机器记录](../acceptance/20261016-lightweight-lt06-ui-revision.md)的固定本地载荷通过 IFX 原 80＋JSON 1 的完整 Web 门禁，用户又在[独立人工清单](../acceptance/20261016-lightweight-lt06-human-ui-review.md)确认 UID 查找、中英切换、Results／History 整合、旧分析入口及窄窗口／键盘可用。状态 **LT00–LT06 COMPLETE / 0.9.0-dev LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED**；PR、合并、公开发布、安装与 IFX 正式政策采纳另行决定。下文先前状态保留形成时点。
+LT06 complete, 2026-10-16: the [revised fixed payload](../acceptance/20261016-lightweight-lt06-ui-revision.md) passed a full Web IFX gate, 80+1 allow/0. The [independent user](../acceptance/20261016-lightweight-lt06-human-ui-review.md) confirmed UID search, languages, global Results/History, existing analysis access, narrow layout and keyboard use. At that point: LOCAL CANDIDATE ACCEPTED WITH LIMITATIONS / NOT RELEASED. PR, merge, publication, installation and formal IFX adoption required their own decisions.
 
-2026-10-16 轻量工作台 LT06 机器候选更新：[LT06 本地候选](../acceptance/20261016-lightweight-lt06-candidate.md)固定 `0.9.0-dev` 产品源码 `e0b3bdd` 与外置 CLI/Web 逐文件哈希载荷；离线锁定恢复、265 项旧／新测试、封装 CLI 真实 IFX `allow/0`、Web loopback 冒烟及宿主保护通过。使用／分发边界和独立人工 UI 清单已备好。状态 **LT06 MACHINE CANDIDATE READY / HUMAN UI REVIEW PENDING / PRODUCT NOT ACCEPTED / NOT RELEASED**；需用户独立填验收，PR／合并／发布另行授权。下文先前状态保留形成时点。
+Earlier LT06 candidate: [record](../acceptance/20261016-lightweight-lt06-candidate.md) fixes 0.9.0-dev source e0b3bdd and external CLI/Web per-file hashes. Offline locked restore, 265 old/new tests, packaged real IFX CLI allow/0, Web loopback smoke and host protection passed. Guides and independent checklist were ready. At that point: MACHINE READY / HUMAN PENDING / NOT ACCEPTED / NOT RELEASED; user answers and publication authority remained separate.
 
-2026-10-15 轻量工作台 LT05 更新：[IFX 回归与测量验收](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md)完成固定外置 IFX 工作树的原生／CLI／Web 各三次冷／热全工程运行、无 UI 本地 CI 对照、原测试与 A/B 未纳入核对、IFX 与 JSON 各自真实 `block/2` 负例、报告 schema 与旧产品回归。状态 **LT05 MACHINE COMPLETE / LT06 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；最终独立人工 UI 验收仍由用户完成。下文先前状态保留形成时点。
+LT05, 2026-10-15: [acceptance](../acceptance/20261015-lightweight-lt05-ifx-regression-measurement.md) records native/CLI/Web full-project tests, three cold and three warm runs per entry on one external IFX worktree, local headless CI parity, original-test retention, excluded A/B items, real API and JSON block/2 negatives, schema checks and legacy regression. At that point: MACHINE COMPLETE / LT06 NOT STARTED / NOT ACCEPTED / NOT RELEASED. Final independent UI remained user-owned.
 
-2026-10-15 轻量工作台 LT04 更新：[Web 接入与机器验收](../acceptance/20261015-lightweight-lt04-web-workbench.md)完成规则编辑复用、三来源清单、完整／subset／取消、基本历史／下载和完整证据入口。外置 IFX 副本的 Web 完整运行 80＋1 `allow/0`，JSON 实际违规 `block/2`，subset `block/4`，取消 `block/130`；保存的同输入 CLI 完整运行 `allow/0` 且案例结果一致。状态 **LT04 UI/MACHINE COMPLETE / LT05 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；同条件性能测量与最终独立人工 UI 验收仍待执行。下文先前状态保留形成时点。
+LT04, 2026-10-15: [acceptance](../acceptance/20261015-lightweight-lt04-web-workbench.md) covers editor reuse, three source groups, full/subset/cancel, history/downloads and full-evidence access. External IFX Web passed 80+1 allow/0; actual JSON violation block/2, subset block/4 and cancellation block/130. Matched CLI full execution also allowed with identical cases. At that point: UI/MACHINE COMPLETE / LT05 NOT STARTED / NOT ACCEPTED / NOT RELEASED; measurements and human review remained.
 
-2026-10-15 轻量工作台 LT03 更新：[报告与基本历史验收](../acceptance/20261015-lightweight-lt03-reports-history.md)完成独立 `architecture-test-run` JSON/HTML、来源与未纳入清单、实际 JSON finding、原 IFX 断言消息、基本运行状态与只读历史；真实 IFX 正反例及合成报告保存失败／历史负例通过，旧产品 248 项回归通过。状态 **LT03 REPORT/HISTORY COMPLETE / LT04 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；后续 UI、同条件性能与独立人工验收尚待执行。下文先前状态保留形成时点。
+LT03, 2026-10-15: [acceptance](../acceptance/20261015-lightweight-lt03-reports-history.md) delivers separate architecture-test-run JSON/HTML, provenance/exclusions, actual JSON findings, original IFX assertions, state markers and read-only history. Real positives/negatives, synthetic save/history failures and 248 legacy tests passed. At that point: REPORT/HISTORY COMPLETE / LT04 NOT STARTED / NOT ACCEPTED / NOT RELEASED.
 
-2026-10-15 轻量工作台 LT02A 更新：[真实 IFX 门禁验收](../acceptance/20261015-lightweight-lt02a-ifx-gate.md)在获授权的独立副本上建立原生 80 项执行 ID 基线，接入后原 80 项及 JSON 1 项完整通过；API 快照和 JSON 依赖真实负例均正确阻断，原测试源码、快照、原 checkout 与宿主状态未减损。状态 **LT02A REAL IFX COMPLETE / LT03 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；正式 B 政策、报告历史、UI 与最终独立人工验收仍待后续阶段。下文先前状态保留形成时点。
+LT02A, 2026-10-15: [acceptance](../acceptance/20261015-lightweight-lt02a-ifx-gate.md) established 80 native execution IDs on an authorized copy. Integration retained all 80 and added one JSON case; the full gate passed. API/JSON negatives blocked correctly; original sources, snapshots, checkout and host remained intact. At that point: REAL IFX COMPLETE / LT03 NOT STARTED / NOT ACCEPTED / NOT RELEASED. Formal B policy, reports, UI and independent review remained later stages.
 
-2026-10-15 轻量工作台 LT02 更新：[合成门禁验收](../acceptance/20261015-lightweight-lt02-synthetic-gate.md)记录代码提交 `3ddd0dc`，无界面离线 restore／增量 build／MTP 全工程案例与 JSON 规则身份核对、子进程快照开关、取消／日志／运行中变化检测及合成阻断结果通过；旧产品 248 项回归通过。状态 **LT02 SYNTHETIC COMPLETE / LT02A REAL IFX NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**。真实 IFX 外置副本操作已另获用户具体授权，须按计划通过 LT02A 后再实施报告历史与 UI。下文先前状态保留形成时点。
+LT02, 2026-10-15: [synthetic acceptance](../acceptance/20261015-lightweight-lt02-synthetic-gate.md), code 3ddd0dc, passed headless offline restore/incremental build/MTP case and rule identity checks, child snapshot isolation, cancellation/logging/source-change detection and blocking scenarios; 248 legacy tests passed. At that point: SYNTHETIC COMPLETE / LT02A NOT STARTED / NOT ACCEPTED / NOT RELEASED. Specific external IFX authority existed, but LT02A had to pass before reports/UI.
 
-2026-10-15 轻量工作台 LT01 更新：用户授权后续开发、验收和每阶段提交推送，并具体授权 LT02A／LT05 在 `D:/ArchSift-lab` 的独立 IFX 副本执行审查过的离线操作；原目标／安装只读，最终独立人工 UI 验收仍由用户完成。[LT01 合成验收](../acceptance/20261015-lightweight-lt01-synthetic.md)记录代码提交 `082d0ec`：JSON 规则经共享校验后成为 xUnit v3／MTP 参数化案例，真实 ArchUnitNET 合成正反例、7 项 MTP 与旧产品 248 项回归通过。状态 **LT01 SYNTHETIC COMPLETE / LT02 NOT STARTED / PRODUCT NOT ACCEPTED / NOT RELEASED**；真实 IFX 全工程接入仍待 LT02A。下文先前未授权状态保留形成时点。
+LT01, 2026-10-15: user authorized later development, acceptance, stage commits/pushes and specific reviewed offline LT02A/LT05 operations on external IFX copies. Originals stayed read-only; final UI remained user-owned. [Synthetic acceptance](../acceptance/20261015-lightweight-lt01-synthetic.md), code 082d0ec, covers shared validated JSON/xUnit v3/MTP, actual ArchUnitNET positive/negative cases, seven MTP and 248 legacy passes. At that point: LT01 COMPLETE / LT02 NOT STARTED / NOT ACCEPTED / NOT RELEASED; real integration awaited LT02A.
 
-2026-10-15 轻量工作台 LT00 更新：用户授权从 `main` 的 `acbcff1` 创建 `codex/archsift-lightweight-workbench`，将此前两份计划文档作为首提交 `d1b089d` 推送，然后开始 LT00。[LT00 范围与契约](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md)、[静态验收](../acceptance/20261015-lightweight-lt00-contracts.md)、IFX 原测试源码基线、A/B 逐项归属清单和独立报告 schema 已完成；用户随后另行授权提交并推送这些 LT00 成果。状态 **LT00 DESIGN COMPLETE / LT01 NOT STARTED / NOT ACCEPTED / NOT RELEASED**；80 个原案例为源码推导数，尚非运行器实测。真实 IFX 接入、后续包、PR／合并／发布未获本次授权。以下“未创建分支／未提交计划／实施未授权”文字均保留原形成时点。
+LT00, 2026-10-15: user authorized codex/archsift-lightweight-workbench from main acbcff1 and plan-first d1b089d push, then LT00. [Contracts](../decisions/20261015-lightweight-test-workbench-lt00-contracts.md), [static acceptance](../acceptance/20261015-lightweight-lt00-contracts.md), source baseline, responsibilities and report schema completed; subsequent LT00 commit/push was separately authorized. At that point: DESIGN COMPLETE / LT01 NOT STARTED / NOT ACCEPTED / NOT RELEASED. The 80 cases were statically derived, not runtime measurements; later packages/real runs/PR/merge/release were not yet authorized.
 
-2026-10-15 轻量计划规则归属与 UI 补充（仅文档）：更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)的 A／B／IFX 责任清单与 UI 契约。首版日常范围为 IFX 原专用测试全工程＋经审查启用的 B 类 JSON 类型依赖测试；A 类实际重复项由 IFX 原断言承担，TFM／solution 成员／部分包闭集等未迁入增量继续由原 ArchSift 执行并明示未纳入，不能宣称三者并集合规。UI 统一显示 JSON、IFX 专用测试、原 ArchSift 检查的来源／责任方、测试清单／实际结果、未覆盖原因；发现、查看、编辑、旧工具 pass 均不算本次通过，IFX C# 逻辑不转为 UI 可编辑规则。阶段与 LA01–LA19 验收同步；保持先 LT02A 再报告／UI、轻量历史、无日常取证链。仍仅计划与索引修改，IMPLEMENTATION NOT AUTHORIZED／NOT STARTED，代码、InProject 与真实目标不变，未运行构建／测试，未提交／推送。
+Documentation-only responsibility/UI supplement: the [plan](20261015-archsift-lightweight-test-workbench-plan.md) defines full original IFX plus reviewed B tests. Proven equivalent A responsibilities stay in C#; unmigrated TFM, solution and package increments stay with original ArchSift and are explicitly excluded. No combined all-policy compliance claim. UI distinguishes source, executor, inventory, execution and exclusions; viewing/editing/discovery/old passes never count as current passes. C# semantics remain outside UI editing. LA01–LA19, LT02A-before-UI and basic history/no daily evidence chain remain. Implementation was unauthorized/unstarted, with plans/index only.
 
-2026-10-15 轻量计划审查修订（仅文档）：按五项审查意见更新[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)：完整门禁固定保留 IFX 原架构测试全工程（含 ArchitectureTests、FixtureTests、ApplicationPortAdapterTests、原 Theory 数据及断言），过滤只作 subset；受控子进程强制 `IFX_UPDATE_SNAPSHOTS=0`，快照更新为独立操作；本次 `runGate` 与 `historyFreshness` 分离，历史 unknown／后续 stale 不改原门禁或引入取证；新增 LT02A 真实 IFX 早期接入门槛，报告历史／UI 阶段必须等待其通过；首版历史仅独立报告目录、基本状态和只读列表，轮转／固定保护／归档恢复延期。阶段依赖与 LA01–LA17 验收同步修订，仍 PLAN DRAFTED／IMPLEMENTATION NOT AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED。只修改计划与本索引，代码、InProject 和真实目标保持原状，未运行构建／测试，未提交或推送。
+Documentation-only review: the [plan](20261015-archsift-lightweight-test-workbench-plan.md) preserves the entire original project, classes, Theory data and assertions; filters are subset. Force child IFX_UPDATE_SNAPSHOTS=0, keep completed runGate separate from history unknown/stale, add early real LT02A before reports/UI, and limit history to directories/basic states/read-only lists. Rotation, pinning and archive recovery are deferred. LA01–LA17/dependencies updated; no code, InProject, target, build/test or Git changes at that stage.
 
-2026-10-15 新轻量化方向（仅计划）：按用户要求先将旧分支既有修改提交为 `2877974` 并推送至 `codex/archsift-inproject-0.1.0`，再返回与远端一致的 main `acbcff1`，编写独立的[轻量架构测试工作台计划](20261015-archsift-lightweight-test-workbench-plan.md)。首版保留 IFX 专用 C# 测试、JSON 驱动 ArchUnitNET 参数化测试，UI 负责规则编辑／启动／报告，日常采用正常构建与测试，完整取证沿用既有 ArchSift 独立能力。InProject 分支、规格、实现和 IP08 暂停／未接受／未发布历史保持原状，不合并至 main。状态 PLAN DRAFTED／IMPLEMENTATION NOT AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；本轮只编写计划与索引，不修改产品代码，不运行构建或真实目标测试，新计划尚未提交或推送。
+New direction, 2026-10-15: existing changes were saved/pushed as 2877974 on codex/archsift-inproject-0.1.0, then returned to clean remote-matching main acbcff1 for the [new plan](20261015-archsift-lightweight-test-workbench-plan.md). Preserve dedicated C#, direct JSON/ArchUnitNET tests, UI editing/start/report, normal daily builds/tests and separate existing full evidence. InProject code/spec/branch and IP08 paused/unaccepted/unreleased history stayed intact and unmerged. This round wrote plans only; no new code, builds, target tests or plan commit/push yet.
 
-2026-10-13 0.8.0 已由 [PR #6](https://github.com/von12549/ArchSift/pull/6) 合并，并以固定产品提交 `ab3d2ea` 发布 [v0.8.0](https://github.com/von12549/ArchSift/releases/tag/v0.8.0)。最终 PR 与合并后 main 的 Windows/Ubuntu CI 均通过；四项公开资产独立匿名下载的摘要/大小、ZIP 内 manifest、最终只读原件/宿主/进程审计通过。见 [发布回验](../releases/0.8.0-publication.md)；状态 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。下文未发布状态保留形成时点。
+Published, 2026-10-13: [PR #6](https://github.com/von12549/ArchSift/pull/6) merged and [v0.8.0](https://github.com/von12549/ArchSift/releases/tag/v0.8.0) targets fixed source ab3d2ea. Final PR/main Windows and Ubuntu CI, four anonymous downloads, digest/size checks, the ZIP manifest and original-source/host/process audit passed. See [publication](../releases/0.8.0-publication.md). ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED; earlier pending states remain historical.
 
-2026-10-13 0.8.0 最终验收：修订固定候选 `ab3d2ea` 的 248 项、ZIP17、Setup20、两平台 CI、真实 IFX 只读重验及 Class B406/A182 机器门禁通过。用户独立 UI 反馈符合预期、4/5、L0、无未测；Safe shutdown 确认后页面冻结、CLI 返回命令行。人工后只读终审通过，人工会话退出码/监听未独立取证。详见 [最终验收](../acceptance/20261013-0.8-final-acceptance.md)；0.8-5 COMPLETE／ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED／NOT YET PUBLISHED。下文旧进度保留历史时点。
+Final 0.8.0 acceptance: ab3d2ea passed 248 tests, 17 ZIP checks, 20 Setup checks, both CI platforms and read-only real IFX checks with B406/A182. The user reported expected behavior, 4/5 usability, L0 and no untested items; shutdown froze the page and returned the CLI prompt. Post-human audit passed, although session exit/port evidence was not independently captured. See [final acceptance](../acceptance/20261013-0.8-final-acceptance.md). Stage 0.8-5 was complete, accepted with limitations and authorized for release, but not yet published at that point.
 
-2026-10-13 0.8.0 第五阶段机器资格进度：固定 c10ceb9 候选 ZIP17／Setup13、245 项/八模板、Windows/Ubuntu CI、10 组机器浏览器通过；用户委托的单次真实 IFX 外置 105 项构建已实际材料审查、seal v3、独立 sourceBound 校验，Class B 406／Class A 182 与 schema 门禁通过，最终只读预检和宿主相等，见 [第五阶段机器记录](../acceptance/20261013-0.8-5-machine-qualification.md)。S4 版本清理/卸载无 Setup 命令而未执行，用户独立人工 UI 未执行；0.8-5 仍 IN PROGRESS，整体 NOT ACCEPTED／NOT RELEASED。
+Earlier 0.8.0 machine candidate c10ceb9 passed 17 ZIP checks, 13 Setup checks, 245 tests, eight templates, both CI platforms and 10 browser groups. The delegated single IFX build covered 105 projects; review, sealed v3 binding, B406/A182, schema, preflight and host checks passed. See [record](../acceptance/20261013-0.8-5-machine-qualification.md). S4 removal/uninstall was not run and no command was issued. Human review was unstarted; the stage remained active, unaccepted and unreleased.
 
-2026-10-13 0.8-3 MACHINE COMPLETE／4 IN PROGRESS：实际review scope/责任与理由、分页材料预览、create-new review/seal v3、独立validate/配置规则库副本接CLI/Web，244项/八模板及9组机器浏览器8截图、宿主通过，见 [第三阶段记录](../acceptance/20261013-0.8-3-review-seal.md)。空SDK库缺TFM属性拒绝保留；仅合成实际封存，不是当前IFX或独立人工验证。第四阶段开始，尚未固定包/验收/发布。
+0.8.0 stage 3 machine work completed and stage 4 became active: actual scope/review rationale, paginated preview, create-new v3 sealing, validation and configuration-library copies passed, alongside 244 tests, eight templates, nine browser groups, eight screenshots and host checks. See [record](../acceptance/20261013-0.8-3-review-seal.md). Rejections for a missing TFM or empty SDK were retained. Synthetic sealing did not count as real IFX or human acceptance; a new package was still pending.
 
-2026-10-13 0.8-2 MACHINE COMPLETE／3 IN PROGRESS：CLI/Web共享持久证据任务、具体预览/执行审查、同字节快照、离线恢复/捕获/逐项目编译/ResolveReferences、Csc输入audit与Windows owned tree取消实现；244项/八模板/8组机器浏览器7截图、源码与宿主通过，见 [第二阶段记录](../acceptance/20261013-0.8-2-evidence-jobs.md)。只到未批准review-required，未生成manifest或宣称源码合规。第三阶段开始，固定包/真实IFX/独立人工和后续PR发布尚未关闭。
+0.8.0 stage 2 machine work completed and stage 3 became active: shared persistent jobs, preview/execution review, snapshots, offline capture/restore, project build/evaluation, Csc audit and cancellation of owned work passed. Validation covered 244 tests, eight templates, eight browser groups, seven screenshots and unchanged source/host. See [record](../acceptance/20261013-0.8-2-evidence-jobs.md). Evidence was still unapproved and required review; there was no sealed manifest or current-source compliance claim. Final packaging, real integration, human review and release remained pending.
 
-2026-10-13 0.8第一阶段 MACHINE COMPLETE／HUMAN PENDING／第二阶段 IN PROGRESS：240项Release/八模板、7组机器浏览器/6截图、8浏览器checkpoint及最终宿主通过，A/B旧报告原字节投影182/406和105、History重启/分页/目录登记/时区/下载/失败清除通过，见 [1E记录](../acceptance/20261013-0.8-1e-workbench.md)。两轮脚本导航失败保留；这些不是独立人工或当前IFX新鲜度验证。用户已授权全计划开发，正式候选独立UI待用户，整体不验收或发布。
+0.8.0 stage 1 machine work completed, human review remained pending and stage 2 became active. Validation passed 240 Release tests, eight templates, seven browser groups, six screenshots, eight checkpoints and final host checks. The historical A182/B406 projection covered 105 projects. History restart, pagination, roots, time, downloads and failure clearing were checked. See [1E](../acceptance/20261013-0.8-1e-workbench.md). Two navigation failures were retained. These checks were not independent UI acceptance or current IFX proof. The full plan was authorized; human acceptance of the formal package remained pending.
 
-2026-10-13 0.8-1D COMPLETE／1E IN PROGRESS：证据只读详情/目录预览/共享Core独立validate及逐块哈希取消实现，实际三context正例和陈旧负例、239项Release/八模板/宿主通过，见 [1D验收](../acceptance/20261013-0.8-1d-evidence.md)。1E机器浏览器检查开始；最终人工仍用户完成，后续任务与发布门禁未关闭。
+0.8.0 stage 1D completed and 1E became active: read-only evidence details, storage preview, shared validation, chunked hashing/cancellation and actual three-context positive/stale-negative cases passed, with 239 tests, eight templates and host checks. See [1D](../acceptance/20261013-0.8-1d-evidence.md). Browser work began; human review and later release gates remained open.
 
-2026-10-13 0.8-1C COMPLETE／1D IN PROGRESS：0.8.0-dev 实现跨会话UI/CLI报告History、分页/目录登记/live去重/旧schema与未知时间、真实时区/耗时、失败及未知终态持久记录；233项/八模板/宿主通过，见 [1C验收](../acceptance/20261013-0.8-1c-history.md)。完整浏览器/人工与证据编排未完成，整体不验收或发布。
+0.8.0 stage 1C completed and 1D became active: persistent UI/CLI History in 0.8.0-dev, pagination, registration, live identity, unknown time for old schemas, time zones, duration and terminal failure records passed, with 233 tests, eight templates and host checks. See [1C](../acceptance/20261013-0.8-1c-history.md). Browser checks, human review and evidence orchestration remained pending.
 
-2026-10-13 0.8-1B COMPLETE／1C IN PROGRESS：共享确定性 Chain 汇总已接 Core/CLI/Web/HTML，五状态/多 finding/条目终态分开、105 唯一上下文与旧 partial/退出保留；229 项 Release 和八模板、宿主通过，见 [1B 验收](../acceptance/20261013-0.8-1b-aggregate.md)。History 接入和后续证据编排/UI门禁仍待实施。
+0.8.0 stage 1B completed and 1C became active: Core, CLI, Web and HTML shared the aggregate model, five result states, findings and entry states. The 105-project count was unique and partial exit behavior was retained. Validation passed 229 Release tests, eight templates and host checks. See [1B](../acceptance/20261013-0.8-1b-aggregate.md). History, evidence and UI work remained pending.
 
-2026-10-13 0.8-1A COMPLETE／1B IN PROGRESS：计划首提交 d07fba9 已推送到 codex/archsift-0.8.0；History/时间/共享汇总/证据路径与 validate DTO、请求边界及 [契约设计](../decisions/20261013-0.8-workbench-contracts.md) 已完成，SDK10.0.303/net10.0/Release 离线 build 零警告错误、226 项与八模板通过、宿主相等。见 [1A 验收](../acceptance/20261013-0.8-1a-contracts.md)。整体仍 IN PROGRESS／NOT ACCEPTED／NOT RELEASED，UI 功能与独立人工门禁未通过。
+0.8.0 stage 1A completed and 1B became active. Plan-first commit d07fba9 was pushed to codex/archsift-0.8.0. History/time, aggregation, storage and validation DTOs/bounds followed the [contracts](../decisions/20261013-0.8-workbench-contracts.md). Offline Release validation used SDK 10.0.303/net10, with zero warnings/errors, 226 tests, eight templates and equal host state. See [1A](../acceptance/20261013-0.8-1a-contracts.md). Overall work remained active, unaccepted and unreleased; UI/human review was pending.
 
-2026-10-13 0.8.0 执行授权：用户要求创建 `codex/archsift-0.8.0`，以计划为第一条提交，随后实施完整 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，每阶段完成后提交/推送，并授权 PR、合并与发布。独立人工 UI 由用户完成，机器门禁与宿主/原件保护继续生效。当前 IMPLEMENTATION AUTHORIZED／NOT STARTED／NOT ACCEPTED／NOT RELEASED；下文此前未授权文字为历史。原 IFX 安装升级、原 profile 政策采纳和无关 Guard 操作不在授权范围。
+0.8.0 authority covered a plan-first codex/archsift-0.8.0 branch, the full [implementation](20261013-archsift-0.8.0-evidence-ui-plan.md), stage commits/pushes, PR, merge and release; the user retained human review. Machine and safety gates still applied. At the initial authorization point, implementation was unstarted, unaccepted and unreleased. Earlier unauthorized states remain historical. Original-installation upgrades, policy adoption and unrelated Guard work were excluded.
 
-2026-10-13 0.8.0 存储决议补充（仅计划更新）：用户指定默认 `ArchSift\evidence\<项目标识>\<运行标识>\` 保存整套证据，manifest 为运行目录下 `assembly-manifest-v3.json`；ArchSift 指源根外明确选定的安装/数据根，支持自定义证据根并预览实际绝对路径，不落在版本载荷中。项目/运行身份、create-new、材料依赖索引和路径保护纳入 1A/2；升级/回退/卸载及普通清理默认保留全部证据、失败/取消历史和登记元数据，只有用户明确选择的整套 owned 运行可在引用/lease/路径核对及具体预览后归档/清理。存储/保留验收 S1–S5 见 [0.8.0 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)。产品仍 NOT STARTED，本次未创建目录、迁移、实施或执行清理。
+0.8.0 storage planning selected explicit external data at ArchSift\evidence\<projectId>\<runId>\assembly-manifest-v3.json or a custom root, with absolute preview paths outside version directories. Stages 1A–2 covered identity, create-new behavior, indexing and paths. Default retention included successful, failed and cancelled evidence plus metadata. Cleanup required explicit selection, ownership and reference/lease/path checks with a preview. See S1–S5 in the [plan](20261013-archsift-0.8.0-evidence-ui-plan.md). Implementation was unstarted; no directories, migration or cleanup had been performed.
 
-2026-10-13 0.8.0 计划接手 COMPLETE／产品 NOT STARTED：已在 Local Project ArchSift 核对干净 main `43a7b1e62699bc6ca64ed512763eb93a74746ace`、项目指令和当前 0.7 验收/发布记录，校验 IFX 来源计划 SHA-256 后接入 [0.8.0 证据 UI 计划](20261013-archsift-0.8.0-evidence-ui-plan.md)，来源相对证据链接已改为可访问的绝对引用。最新 2026-10-13 IFX 的 [收尾结果](D:/IFX-10-Root/validation/20261013-ifx-v3-7e9c2a1b/ui-closeout-20261013-02/final-result.json) 已包含用户 A/B 与正常 Safe shutdown 确认，仍 partial/compliant/exit 4；旧 machine humanUiStatus=not-run 保留历史。核对限制见 [接手记录](../acceptance/20261013-0.8-plan-handoff.md)。当前仅授权计划衔接，0.8.0 实施、真实构建/安装、政策采纳、提交/推送/发布尚未授权，0.7 旧委托不延伸。
+0.8.0 handoff completed before product implementation: main was clean at `43a7b1e62699bc6ca64ed512763eb93a74746ace`; AGENTS, 0.7.0 records, source hashes, the [plan](20261013-archsift-0.8.0-evidence-ui-plan.md) and absolute evidence links were checked. The latest [IFX final result](D:/IFX-10-Root/validation/20261013-ifx-v3-7e9c2a1b/ui-closeout-20261013-02/final-result.json) recorded user A/B review, shutdown and partial exit 4. Earlier not-run states remained historical. See [handoff limits](../acceptance/20261013-0.8-plan-handoff.md). This was planning only; 0.7.0 implementation, real-run, adoption or Git authority did not carry forward automatically.
 
-0.8.0 范围与依赖：第一阶段 1A 契约 → 1B 共享 Chain 汇总、1C 跨会话 History/实际时间、1D 只读证据详情与显式独立 validate → 1E 一致性/机器与独立人工入口；均 NOT STARTED，详细可执行标准 F1-01–10 见新计划。随后按阶段推进持久 evidence job、输入清点/capture、同字节源根外快照、offline restore/build/逐项目求值，实际 review v2/unknowns、create-new seal v3/validate/配置副本、失败取消/owned tree/metadata lease 回收与恢复，最终真实 IFX 和独立人工验收。每阶段依对应授权执行。Q01–Q14、W00–W10 历史依赖及未重启延期范围保持，0.7.0 继续 ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED。
+0.8.0 dependencies were 1A contracts, then 1B aggregation / 1C History and time / 1D details and explicit validation, then 1E parity and machine/human entry checks. Implementation was unstarted; F1-01–F1-10 belonged to the new plan. Later work covered persistent jobs, input capture, identical snapshots, offline build/evaluation, review of unknowns, sealing/validation/copying, recovery/cancellation, owned leases and final real/human acceptance. Matching authority, frozen Q01–Q14/W00–W10 and deferred scope remained required. 0.7.0 was accepted, published and verified.
 
-2026-10-12 0.7.0 COMPLETE／ACCEPTED WITH LIMITATIONS／PUBLISHED／VERIFIED：用户直接“正式授权”后，最新PR与合并后main两平台各222项CI通过，PR5合并，v0.7.0正式发布；四公开资产独立下载摘要／字节、ZIP17／Setup13／冻结预算／SARIF和最终原件／宿主／进程审计通过，见[发布回验](../releases/0.7.0-publication.md)。独立人工Workbench／Launcher符合预期，可用性5/5；原IFX安装保持0.6、B策略未采用。下文待批准／pending／失败是原形成时点。
+0.7.0 final, 2026-10-12: direct user authorization, latest PR/main CI with 222 tests each, PR #5 merge, v0.7.0 publication, four downloads, 17 ZIP checks, 13 Setup checks, performance budgets, SARIF and final audit all completed. See [publication](../releases/0.7.0-publication.md). Independent Workbench/Launcher usability was 5/5. The original 0.6.0 installation was unchanged and B policies were unadopted. Earlier pending states and failures remain historical.
 
-2026-10-12 0.7.0合并／发布准备完成：用户独立UI5/5、人工后终审、最终a2c9f27两平台各222项CI、四项草稿服务器digest／独立下载／ZIP17／Setup13与新安全终审全部通过，见[准备记录](../releases/0.7.0-readiness.md)。PR5 ready未合并，release为draft。自动审批拒绝合并，要求当前可信用户明确授权；等待明确批准合并及公开发布，不绕过拒绝。技术验收完成，版本尚未公开，原IFX安装／B策略保持。
+0.7.0 readiness: human usability was 5/5 and post-human audit passed. Final a2c9f27 CI passed 222 tests per platform; four draft digests/downloads, 17 ZIP checks, 13 Setup checks and a new audit passed. See [readiness](../releases/0.7.0-readiness.md). PR #5 was ready but unmerged and the release remained a draft. Automatic approval review had rejected merging pending trusted user authorization; no bypass occurred. Technical work was complete, publication pending, and the original installation/B policies unchanged.
 
-2026-10-12 0.7.0最终验收 COMPLETE：固定ff9a7d1全部机器门禁通过后，用户确认Workbench／Launcher符合预期、可用性5/5；人工会话exit0、owned进程／端点退出、原件／宿主和完整终审通过，见[最终验收](../acceptance/20261012-0.7-final-acceptance.md)。0.7-0–0.7-4与P0–P3完成，ACCEPTED WITH LIMITATIONS／RELEASE AUTHORIZED；提交推送后推进已授权合并／发布及公开下载回验，原IFX安装未升级、B策略未采用。以下pending／失败保留历史时点。
+0.7.0 final acceptance: ff9a7d1 machine checks, independent Workbench/Launcher review at 5/5, session exit with zero owned processes and full original/host audit passed. See [final](../acceptance/20261012-0.7-final-acceptance.md). Stages 0–4 and P0–P3 completed with acceptance limitations. Release was authorized, followed by authorization to merge, publish and verify downloads. The original installation was not upgraded and B policies were not adopted.
 
-2026-10-12 人工问题最终修复候选 ff9a7d1：文件名必填／错误分类与父进程metadata lease回收均已实施、提交推送；本地及双平台222项、ZIP17／Setup13／原预算／SARIF、105 source-bound contexts／406B＋182A、完整browser7组／6截图、Launcher4组／10截图、外置生命周期和653新载荷／647原载荷／14历史状态／782tracked＋783capture／宿主／进程终审全部通过，见[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)。两轮占用与一次关闭超时保留。先前用户Workbench其他观察符合；新包提示确认／Launcher／评分待用户，PR5 draft、未合并发布。
+0.7.0 ff9a7d1 included filename validation, error classification and parent-lease fixes. Validation passed 222 local tests and both CI platforms, 17 ZIP checks, 13 Setup checks, performance budgets/SARIF, 105 bound contexts with B406/A182, seven browser groups/six screenshots, four Launcher groups/10 screenshots and lifecycle checks. Audit matched 653 new payloads, 647 old payloads, 14 history files, 782 tracked and 783 captured inputs, with equal host state and no owned process remnants. See [candidate](../acceptance/20261012-0.7-candidate-readiness.md). Two lock failures and one shutdown timeout were retained. Other earlier human checks were good; new-fix/Launcher review and ratings remained pending at this draft stage.
 
-2026-10-12 人工反馈修复的 59cde17 中间候选：空文件名双语／CI各222项／ZIP17／Setup13通过，但完整 B 浏览器两轮在工具副本清理出现句柄占用，保持inconclusive失败。已改父进程在Worker退出后回收唯一受控lease，真实子进程成功／失败／取消与邻接保护、222项／八模板及宿主通过，见[清理记录](../acceptance/20261012-0.7-worker-cleanup.md)。重新冻结产品和全部适用机器门禁后继续人工修复确认／Launcher／评分；旧反馈与失败保留，未合并发布。
+0.7.0 intermediate 59cde17 passed localized blank-name checks, 222 CI tests, 17 ZIP checks and 13 Setup checks. Two real B browser cleanup-handle failures remained inconclusive. The parent-owned lease fix after Worker exit passed actual success/failure/cancellation/neighbor-process cases, 222 tests, eight templates and host checks. See [cleanup](../acceptance/20261012-0.7-worker-cleanup.md). Refreezing, complete rechecks and human review of the fix/Launcher with a rating remained; old failures were retained.
 
-2026-10-12 独立人工 Workbench 回传已记录：bc936cb 的 Rulesets／Chains 复制、B 结果、排序／历史／中英文宽窄布局符合预期；空文件名误报会话不可用需要修复。会话安全关闭、原件／宿主一致，[实际反馈](../acceptance/20261012-0.7-human-workbench-bc936cb.md)保留来源与报告。已补提交前双语必填校验和非认证 HTTP 错误分类，前端回归通过；开发／替代固定候选复验进行，Launcher／整体评分未提供，未合并发布。
+0.7.0 [human review of bc936cb](../acceptance/20261012-0.7-human-workbench-bc936cb.md) confirmed copying, B rules, sorting/history, languages and layout. A blank filename caused a false session-error message and required a fix. Safe shutdown and original/host equality passed. Localized presubmit validation, HTTP error classification and frontend tests were added. The replacement was active; Launcher review/rating, merge and publication remained pending.
 
-2026-10-12 用户开始独立人工 UI：固定 bc936cb 的 Workbench 已启动，全新外置库／报告会话 human-ui-0.7-a409b4d22ecb4f01b8d736dbce513286，固定载荷／原件／宿主启动前后一致。用户操作和评分尚未完成，Launcher 及关闭后审计待继续；机器门禁保持通过，PR draft、未合并发布。
+0.7.0 human review started on bc936cb in fresh library/report session human-ui-0.7-a409b4d22ecb4f01b8d736dbce513286. Payload, original inputs and host were validated before and after startup. User rating, Launcher review and post-human audit remained pending. Machine checks had passed; the release was still a draft.
 
-2026-10-12 0.7 收尾机器门禁 COMPLETE：冻结产品 `bc936cb` 的两平台实际 SDK 10.0.401 各222项、本地SDK10.0.303／222项／八模板、17ZIP／13Setup／原预算／SARIF、真实 source-bound 105 contexts／406B＋182A、真实库6组／6截图、Launcher4组／10截图、外置生命周期及最终653新载荷／647原载荷／14状态历史／782tracked＋783capture／宿主和进程审计全部通过。[最新候选](../acceptance/20261012-0.7-candidate-readiness.md)与机器JSON保留精确身份；partial／compliant／exit4和外部审查边界不变。P2 COMPLETE／P3 MACHINE COMPLETE／HUMAN UI PENDING；更新记录后提交推送，PR5保留draft，人工用户完成及后审计前不合并发布、不采用B策略。后文尚未答复／不能绑定／待机器复验为历史。
+0.7.0 bc936cb machine checks completed: actual CI SDK 10.0.401 passed 222 tests per platform; local SDK 10.0.303 also passed 222 tests. Eight templates, 17 ZIP checks, 13 Setup checks, budgets/SARIF, 105 bound contexts with B406/A182, six browser groups/six screenshots, four Launcher groups/10 screenshots and lifecycle checks passed. Audit matched 653 new payloads, 647 old payloads, 14 state files, 782 tracked and 783 captured inputs, with equal host/process state. See [candidate](../acceptance/20261012-0.7-candidate-readiness.md) and its JSON identities. Partial/compliant exit 4 and external-review limitations remained. P2 was complete and P3 machine-ready; human review was pending. Stage commits/pushes and draft preparation could proceed, but final acceptance awaited human/post-human checks. No B policy was adopted; earlier unbound/unanswered states remain historical.
 
-2026-10-12 P3 首候选 b56d652 的 CI／包／原生真实 A/B／外置生命周期通过，但真实库浏览器发现 chain 编辑器内容不可见，候选不关闭；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保留各失败。已改显式编辑面板并加入未保存关闭保护，222 项／八模板和真实库四组针对性浏览器开发检查通过、原件／宿主一致。修复阶段提交推送后重建替代固定候选，P3／独立人工 UI 仍未完成，未合并／发布。
+0.7.0 b56d652 passed CI, packaging, native A/B and lifecycle checks, but an invisible chain editor blocked acceptance. [Closeout](../acceptance/20261012-0.7-context-closure.md) retains the failures. An explicit panel and unsaved-close fix passed 222 tests, eight templates, four targeted real-browser checks and original/host equality. Rebuilding after commit and new P3/human review remained pending; the PR was unmerged.
 
-2026-10-12 P2 真实上下文绑定与本轮 A/B 复验 COMPLETE：105 contexts／sourceBound=true，406 B＋182 A 全部 pass、零 finding／execution error，仍 partial／compliant／exit 4；[收尾记录](../acceptance/20261012-0.7-context-closure.md)保存精确材料与报告身份。审查补强后 222 项 Release／八模板通过、原件与宿主一致。阶段修复和记录提交／推送后进入 P3 新固定候选；人工 UI 未执行，未合并／发布。
+0.7.0 P2 completed: 105 bound contexts, B406/A182 passes, zero findings/errors and partial/compliant exit 4, with identities in [closeout](../acceptance/20261012-0.7-context-closure.md). Hardening passed 222 Release tests, eight templates and original/host equality. The next steps were a stage commit and a fixed P3 candidate. Human review was unstarted and the PR unmerged.
 
-2026-10-12 中断后接手收尾：用户再次授权更新记录、审查剩余修改、逐阶段提交／推送及所有机器验收，最终 UI 自行完成。[分区收尾](../acceptance/20261012-0.7-context-closure.md)已复验完整快照的 105 项目 source-bound／B 406 pass，审查补强后 Release 222 项与八模板通过、宿主相等。本轮 A 顺序复验进行；P2 提交与 P3 新固定候选／机器门禁未完成。后文“分区尚未答复”“B 仍无法绑定”为历史阶段，未合并／发布。
+0.7.0 resumed after the user reauthorized records, review, stage commits/pushes and all machine checks, retaining final independent UI review. [Closure](../acceptance/20261012-0.7-context-closure.md) recorded 105 bound contexts, B406 passes, 222 tests, eight schemas and equal host state. A work was active; the P2 commit and P3 were pending. Earlier unanswered/unbound records remained historical.
 
-2026-10-12 分区闭包 P1 实现验收通过：新 v3／review v2、实际解析证明、唯一第一方 owner／跨上下文结果聚合及 JSON／HTML／SARIF／chain／双语 UI；220 项 Release／八模板、零警告错误与宿主一致，见[实现验收](../acceptance/20261012-0.7-context-implementation.md)。P2 继续真实 IFX 新快照取证；新固定包和最后人工 UI 尚未完成，未合并／发布。
+0.7.0 P1 was accepted: manifest v3/review v2, actual dependency selections, unique owners, context aggregation and JSON/HTML/SARIF/chain localization passed, with 220 Release tests, eight templates, zero warnings/errors and equal host state. See [acceptance](../acceptance/20261012-0.7-context-implementation.md). Fresh P2 IFX, packaging and human review remained pending; the PR was unmerged.
 
-2026-10-12 用户已明确将项目／加载上下文分区闭包纳入 0.7，并要求完成 IFX 源码绑定、各阶段提交／推送、最后 UI 自行验收。[新增设计](../decisions/20261012-0.7-project-context-closure.md)冻结 v3／review v2、实际解析选择证明、第一方所属源聚合与兼容／安全边界；P0 COMPLETE，P1 产品实现开始。旧单闭包拒绝记录保持原状态，未合并／发布。
+0.7.0 context-partition authority covered project contexts, real IFX binding and stage commits/pushes; the user retained UI review. The [design](../decisions/20261012-0.7-project-context-closure.md) specified manifest v3/review v2, actual references, owner aggregation and compatibility/safety. P0 completed and P1 started. Earlier single-context closure failures were preserved.
 
-2026-10-12 最新固定候选 `27c993a` 的两平台 CI、214 项 Release、原生 ZIP／Setup、真实 IFX 外置生命周期、真实库／Launcher 机器浏览器与最终宿主／原件／进程审计通过，见最新 0.7 候选记录。当前 B 源码绑定仍因三组多版本闭包 inconclusive；产品分区范围选择尚未答复，最终人工 UI 未执行。整体0.7-4未关闭，PR保持draft，未合并／发布。
+0.7.0 candidate 27c993a passed CI with 214 Release tests, ZIP/Setup, real lifecycle, library/Launcher browser checks and final audit. B evidence remained inconclusive for multiple dependency versions; the scope question was unanswered and human review unstarted. Stage 4 was open, the release a draft and the PR unmerged.
 
-2026-10-12 真实 406 规则库浏览器回归发现并修复短时 registry 锁争用 500 和长标识窄屏溢出；214 项 Release／八模板及真实库五组／六截图开发检查通过，原件／宿主一致。最终固定源码原生复验继续进行；可信 B 结论仍受多版本上下文限制，人工 UI 不由 Agent 代填。
+0.7.0 real 406-rule library fixes addressed registry-lock HTTP 500 and narrow-layout overflow. Validation passed 214 Release tests, eight templates, five browser groups/six screenshots and original/host equality. Fixed-package rechecks were active; B-context limitations and independent human review remained.
 
-2026-10-12 真实 IFX 已完成外置离线 Debug 构建（零警告错误）与全部 105 项目求值核对；[取证审查](../acceptance/20261012-0.7-ifx-external-evidence.md)发现三组同名不同版本依赖，保持未批准并验证 seal 拒绝。B 的当前 105 DLL／406 条源类型均匹配，但 sourceBound=false、全部 inconclusive；A 的 182 声明规则 pass，partial／exit 4 不变。机器证据已由 Agent 执行，可信 B 结论与最终人工 UI 尚未完成；0.7-4 不关闭，PR 保持 draft。
+0.7.0 real offline Debug build completed with zero warnings/errors and 105 evaluations. [Review](../acceptance/20261012-0.7-ifx-external-evidence.md) found three multiple-version conflicts; evidence stayed unapproved and sealing was rejected. B covered 105 DLLs and 406 matches but was unbound, so all B results were inconclusive. A passed 182 cases with partial exit 4. Machine operations ran, while trusted B evidence and human acceptance remained open at the draft stage.
 
-2026-10-12 真实 IFX 离线快照恢复已通过；构建输入审查发现隐式编译配置缺口，补齐 `.editorconfig`／`.globalconfig`／`.ruleset` 的源码身份及五项变更失效测试。213 项 Release 回归、八模板、构建零警告错误与宿主一致已记录在 0.7 计划；旧 e5147a5 候选保留为历史通过材料，当前修复须重新冻结候选。真实构建取证进行中，最终人工 UI 待用户完成。
+0.7.0 offline snapshot restore passed. Implicit .editorconfig/.globalconfig/.ruleset identities and five invalidation tests were added; 213 Release tests, eight templates, zero warnings/errors and host checks passed. Old e5147a5 evidence remained historical and a new candidate was required after the fix. Real evidence work was active; human review remained pending.
 
-2026-10-12 0.7.0 执行分工更新：用户将最后 UI 视觉／实际操作之外的全部剩余验收委托 Agent，包括真实 IFX 预检、外置构建取证、机器集成与生命周期门禁。按审查过的命令逐块执行并保存结果，宿主漂移即停，目标源码保持只读；独立人工 UI 仍待用户完成。下文“等待操作员首块”的段落保留此前形成时点；当前 0.7-4 机器门禁恢复进行，未完成／未发布。
+0.7.0 delegation covered all remaining machine-verifiable work, including preflight, external build, integration and lifecycle, except final independent UI review. Commands/results had to be reviewed sequentially; drift required stopping and source inputs remained read-only. Earlier operator-waiting states were historical. Stage 4 was active and unreleased.
 
-2026-10-12 0.7.0：用户授权实施、逐阶段提交／推送和后续 PR／合并／发布。[计划](20261012-archsift-0.7.0-improvement-plan.md)的 0.7-0／1／2／3 完成，0.7-4 自动候选门禁通过：[e5147a5 候选](../acceptance/20261012-0.7-candidate-readiness.md)的两平台 CI、208 项 Release 回归、17 ZIP／13 Setup 原生检查、冻结预算／SARIF 与原生双语浏览器门禁通过，宿主／目标／状态一致。真实 IFX 取证与独立人工 UI 等待操作员首个审查命令结果，原安装未升级，B 类未证明通过；PR #5 保持 draft，未合并／发布。真实 IFX 操作与候选策略采用边界不变；以下历史阶段记录保持原状态。
+0.7.0 authority covered implementation, stage commits/pushes, PR, merge and release. The [plan](20261012-archsift-0.7.0-improvement-plan.md) had stages 0–3 complete and stage 4 machine checks active. Candidate [e5147a5](../acceptance/20261012-0.7-candidate-readiness.md) passed CI with 208 Release tests, 17 ZIP checks, 13 Setup checks, budgets/SARIF, native bilingual checks and equal host/target/state. Real evidence and human review still awaited the first operator result. No original installation was upgraded or B compliance accepted; publication remained a draft.
 
-2026-10-11 0.6.0 最新状态：替代候选的真实 IFX 机器门禁、用户独立 UI 验收及人工后审计通过；[PR #3](https://github.com/von12549/ArchSift/pull/3) 合并后，`v0.6.0` 已[正式发布并完成四资产独立下载、原生 ZIP/Setup smoke 与发布后审计](../releases/0.6.0-publication.md)。原 IFX 目标、原安装和宿主状态相等。当前 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；下面旧段落保留形成时的历史状态。
+0.6.0 final, 2026-10-11: replacement real IFX machine checks, independent user UI and post-human audit passed. [PR #3](https://github.com/von12549/ArchSift/pull/3) merged, then [public downloads, ZIP/Setup and post-publication audit](../releases/0.6.0-publication.md) passed. Original IFX, installation and host remained equal. ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED; earlier states remain historical.
 
-日期：2026-10-06（Australia/Sydney）
+Date: 2026-10-06 (Australia/Sydney)
 
-计划 ID：20261006-archsift-implementation
+Plan ID: 20261006-archsift-implementation
 
-2026-10-11 0.6.0 最新进展：原候选真实 IFX 块 04 已由独立操作员完成，六项 yes、信心 4/5、最高 L2，目标／原安装／宿主／受管配置／策略相等且进程和监听关闭。其[截图和问题记录](../acceptance/20261011-0.6-ifx-step04-human-usability.md)指出工作台 profile 区域大量留白、创建外部 profile 缺少 JSON 模板；用户要求两项均在发布前修复。原候选 a05c44e 和测量只保留历史身份；替代产品 de222c2 的 Windows/Ubuntu CI、200 项、本地 ZIP17/Setup13、原生合成浏览器及草稿独立下载回验已通过，见[替代候选记录](../acceptance/20261011-0.6-replacement-candidate.md)；真实 IFX 新包、独立人工、旧版副本生命周期与最终审计仍待操作员逐块复验。当前 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`。
+Historical 0.6 update: independent original-IFX step 04 recorded six yes answers, confidence 4/5 and maximum issue L2. Originals, host, configuration and policy remained equal; processes closed. [Findings](../acceptance/20261011-0.6-ifx-step04-human-usability.md) required fixes for excessive profile whitespace and the missing external JSON template. Original a05c44e measurements remained historical. Replacement de222c2 passed CI with 200 tests, 17 ZIP checks, 13 Setup checks, browser checks and draft downloads; see [replacement](../acceptance/20261011-0.6-replacement-candidate.md). Real replacement checks, human review, legacy lifecycle and audit were pending: IN PROGRESS / NOT ACCEPTED / NOT RELEASED at that point.
 
-状态：FORMAL — W00–W11 已完成；0.2.0 及发布后验收保持冻结，W11 已作为 0.3.0 正式发布并完成下载回验。0.3.0 Windows/Ubuntu 各 130/130 CI、固定 ZIP/SARIF、真实 IFX、独立人工 UI 和最终安全门禁均有证据；历史 CI、验证器、人工流程和发布 smoke 失败均保留。当前 `W11 COMPLETE / 0.3.0 PUBLISHED`。2026-10-09 已登记 [0.4.0 改进计划](20261009-archsift-0.4.0-improvement-plan.md)，历史起点状态为 `IN PROGRESS / NOT ACCEPTED / NOT RELEASED`；同日用户授权在该计划范围内合理设计 UI 逻辑和布局，要求功能分区明确、信息简洁明要、颜色区分明显，已纳入 0.4-A 设计约束及后续视觉验收；用户已授权在新分支 `codex/archsift-0.4.0` 执行全部 0.4.0 开发计划及后续提交、推送、PR、合并、发布；当前 0.4-A 已冻结，0.4-B–E 代码与自动检查完成（Windows 142 项、前端逻辑/语言检查、合成桌面/窄屏与 SARIF），0.4-F 候选自动门禁已通过：固定 061a53d 的 Windows/Ubuntu 各 142 项、两次 17 项原生包 smoke、仓库草稿独立下载字节一致；Draft PR #1 与未公开 release 草稿已准备，真实 IFX 首步发现已核对（105 项目、0 程序集、105 条限制、exit 4，目标/宿主不变），第二步 182 条候选规则验证已核对（全部 pass、0 findings、partial/compliant/exit 4，563 源码记录与发现一致，规则/包/配置/目标/宿主不变），第三步规则库与规则链 API/CLI 首次停止证据已保留，修正后八项全部通过且目标/宿主不变，第四步真实 IFX 浏览器操作员虽回答六项 yes、可用性 4/5，但结果写入脚本语法错误，且截图发现语言/安全关闭按钮错位与规则集卡片展开过长，故第四步未通过；旧会话已由操作员恢复安全结果并确认目标/宿主不变；UI 修复、结果写入修复及替代包 a561e7d 的 Windows/Ubuntu 各 142 项 CI、两次 17 项 smoke、草稿资产独立下载回验已完成，替代包第四步复测六项 yes、评分 4/5，但操作员新发现 182 条规则在编辑器中全部展开；此段为阶段历史；最新状态见下段，尚未合并/公开发布/通知 IFX 项目，仍遵守各项验收门禁与人工真实集成流程。
+Historical FORMAL status: W00–W11 completed; 0.2.0 was frozen and W11 published/verified 0.3.0, with 130 CI tests per platform, ZIP/SARIF, real IFX, human and safety checks. Failures were retained. The [0.4 plan](20261009-archsift-0.4.0-improvement-plan.md) was active and unaccepted on 2026-10-09. User authority covered clear functional UI sections, concise information, distinct colors and the full codex/archsift-0.4.0 implementation/Git/PR/merge/release. A was frozen; B–E passed 142 Windows tests, frontend, desktop/narrow layout and SARIF. F candidate 061a53d passed 142 CI tests per platform, two 17-check ZIP runs and downloads, with draft PR #1/private release. IFX discovery recorded 105 projects, zero assemblies, 105 limitations and exit 4; verification had 182 passes, zero findings and partial/compliant exit 4. All 563 sources, inputs and host stayed unchanged. The initial step-3 API/CLI stop was retained; eight checks passed after the fix. Step 4 had six yes answers and 4/5 usability, but result-writer syntax, button layout and long cards blocked acceptance; operator recovery preserved originals/host. Revised a561e7d passed 142 CI tests per platform, two 17-check ZIP runs, downloads and step-4 six yes answers/4 of 5, before an expanded-editor problem with 182 rules. At that historical point, merge, publication and notification were pending and gates still applied.
 
-当前更新：0.4.0 精确产品提交 `bb599bd` 的真实 IFX 浏览器复测六项均为 yes，可用性 5/5；显式两次提交取消契约测试和最终只读 IFX/宿主/进程审计均通过。见 [最终验收](../acceptance/20261009-0.4-final-acceptance.md)。`v0.4.0` 已 [正式发布并下载回验](../releases/0.4.0-publication.md)，状态为 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；声明层 105 项目、零程序集、105 条限制及 IFX 候选策略未采纳的边界保留。上段长记录保留此前阶段和停止证据。
+Later 0.4.0 candidate bb599bd passed real-browser review with six yes answers and 5/5 usability, two explicit cancellation-contract tests and final read-only audit. See [final acceptance](../acceptance/20261009-0.4-final-acceptance.md) and [publication](../releases/0.4.0-publication.md): ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED. Limits remained 105 declaration projects, zero assemblies, 105 coverage limitations and no policy adoption. Prior failures were preserved.
 
-后续交接：2026-10-09 用户授权在 0.4.0 验收完成后通知 Codex Local Project `IFX-Guard-Test-Project`，由该项目编写 ArchSift–IFX 的 Agent 自动测试计划；已追加到 0.4.0 改进计划末尾。当前 `PUBLISHED / HANDOFF PENDING`，合并、发布及下载回验已完成；本项授权为测试计划编写，尚未启动测试执行。
+Handoff, 2026-10-09: the user authorized notifying IFX-Guard-Test-Project for Agent planning of ArchSift–IFX integration; this was added to the 0.4 plan. At that point: PUBLISHED / HANDOFF PENDING. Merge, release and download verification were complete. The handoff authorized planning rather than target tests.
 
-2026-10-10 后续工作：用户授权完善 ArchSift 安装配置与环境文档，并设计 installer／upgrade；见 [安装指南](../installation.md) 与 [安装升级设计](20261010-installation-upgrade-design.md)。文档已补充发布状态、自包含包的实际需求、UI 静默启动与遗留进程问题、直接 Web 临时入口和手工升级边界；installer/upgrade 处于设计阶段，未实现或执行。IFX 已有安装的配置读取、直接 Web UI 启动及安全关闭得到操作者确认，标准 CLI UI 启动契约仍待修复。规则方向见 [IFX 0.4.0 备选](../../../IFX-10-Root/docs/plans/20261010-archsift-0.4.0-ifx-rule-candidates.md)，尚未生成或采纳正式策略。既有 0.4.0 发布与验收身份保持冻结；本次不选择新版本、不运行安装/升级或真实分析。
+2026-10-10: the user authorized installation/environment guides and installer/upgrade design; see [guide](../installation.md) and [design](20261010-installation-upgrade-design.md). Documents described actual prerequisites, silent CLI/orphan-process behavior, temporary direct-Web use and manual-upgrade limits. This was design only. The operator confirmed existing configuration, direct Web and shutdown; the standard CLI fix remained pending. [IFX candidates](../../../IFX-10-Root/docs/plans/20261010-archsift-0.4.0-ifx-rule-candidates.md) were not formal policy. 0.4.0 identity stayed frozen; no new version, installation, upgrade or analysis was performed.
 
-来源：[Draft 计划](20261006-dotnet-architecture-analyzer-draft.md)。用户于 2026-10-06 统一采用 Q01 至 Q14 默认值。所有产品决策项已关闭；下列实施前检查和阶段内测量是执行任务，不是未决产品问题。
+Source: [draft](20261006-dotnet-architecture-analyzer-draft.md). User adopted Q01–Q14 defaults 2026-10-06. All product questions closed; preflight/measurements below are execution tasks.
 
-2026-10-10 0.5.0 执行授权：用户指定 0.5.0，授权新分支中执行 CLI 启动修复及 installer/upgrade/rollback 计划，以及对应提交、推送、PR、合并、验证和发布。已创建 `codex/archsift-0.5.0`；详见 [0.5.0 计划](20261010-archsift-0.5.0-plan.md)。当前 IN PROGRESS / NOT ACCEPTED / NOT RELEASED；真实 IFX 人工操作及安全门禁不变。上文 HANDOFF PENDING 是旧阶段记录；0.4.0 改进计划已记录通知送达，仅证明测试计划请求已发送。
+0.5.0 authority, 2026-10-10: the user fixed version 0.5.0 and authorized the CLI startup fix, installer/upgrade/rollback, stage Git work, PR, merge, verification and release. Branch codex/archsift-0.5.0 was created; see [plan](20261010-archsift-0.5.0-plan.md). Work was active, unaccepted and unreleased; real/human/safety gates remained. The earlier handoff-pending state was superseded by delivery of a planning-only 0.4.0 notification.
 
-0.5.0 开发进度：新 CLI 转发与私有父生命周期通道已复现并修复静默启动；独立 Setup、schema/兼容性、所有权、包核验、安全解压、配置、备份、并存升级、回退和中断恢复已实现。Release 178 项、八模板及 Node 检查通过，宿主哈希相等；真实包、固定源码 CI、独立下载、人工终端与真实 IFX 门禁尚待关闭。版本文档更新为 0.5.0 开发态，0.4.0 指南另存且旧资产/验收不改。详见 [开发验收](../acceptance/20261010-0.5-setup-development.md)。
+0.5.0 development reproduced and fixed the silent CLI using stream forwarding and a private parent channel. Setup implemented schema compatibility, ownership, safe package extraction, configuration backup, side-by-side versions, rollback and recovery. Validation passed 178 Release tests, eight templates, Node checks and host checks. Exact-package CI, download, human and real integration checks remained pending. Development guides were updated while the 0.4.0 guide was preserved. See [development](../acceptance/20261010-0.5-setup-development.md).
 
-0.5.0 自动门禁关闭：精确产品 `c4010d8` 的 Windows/Ubuntu 各 179 项（含运行中父进程退出取消 audit）、两次 17 项标准原生 CLI UI/Worker/chain/SARIF/performance ZIP smoke、两次 13 项独立 Setup/旧包接管/升级回退、四项草稿资产 digest 与独立下载 bytes、宿主 equality 全通过。版本化当前/0.4.0 安装指南已随 ZIP 保留。见 [候选就绪](../acceptance/20261010-0.5-candidate-readiness.md)。Draft PR #2 与未公开 release `408066486` 已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED；真实 IFX/人工终端/最终审计和合并发布尚待关闭，用户授权持续有效。
+0.5.0 automated candidate c4010d8 passed 179 CI tests per platform, parent-exit audit, two 17-check ZIP runs, two 13-check Setup runs, four draft digests/download-byte comparisons and host checks. Versioned guides were bundled. See [candidate](../acceptance/20261010-0.5-candidate-readiness.md), draft PR #2 and private release 408066486. At that point: AUTO PASSED / OPERATOR PENDING / NOT ACCEPTED / NOT PUBLISHED. User execution authority continued.
 
-## 目标与交付边界
+## Goals and delivery boundaries
 
-2026-10-10 0.5.0 发布更新：`v0.5.0` 已从已合并的 [PR #2](https://github.com/von12549/ArchSift/pull/2) 正式发布，tag 直接指向冻结产品 `c4010d8`；四项公开资产独立下载、17 项 ZIP smoke、13 项 Setup smoke、宿主哈希回验均通过。当前状态 `ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED`；见[发布记录](../releases/0.5.0-publication.md)。以下曾标记未合并、未发布或人工门禁待完成的段落为阶段历史。
+0.5.0 was published after [PR #2](https://github.com/von12549/ArchSift/pull/2) merged. Tag c4010d8, four public downloads, 17 ZIP checks, 13 Setup checks and host checks passed; see [publication](../releases/0.5.0-publication.md). ACCEPTED WITH LIMITATIONS / PUBLISHED / VERIFIED; earlier pending states remain historical.
 
-2026-10-11 后续改进登记：用户提出 0.6.0 的 chain 进度展示、独立 ruleset 的受控并行验证、UI 显示当前 ArchSift 产品版本，以及启动器中的配置 profile 选择；暂不包含条目间依赖编排。启动器须先解决 0.5.0 启动前必须加载 JSON、Setup 单配置路径与多 profile 升级保护之间的契约。范围与验收入口见 [0.6.0 改进项](20261011-archsift-0.6.0-improvements.md)。目前仅登记，不标记为已设计、实现或发布。
+0.6.0 improvements were registered: chain progress, bounded parallelism, actual UI version and Launcher profiles, without dependency orchestration. Configuration preloading, a single Setup state and protection contracts had to be resolved first. See [register](20261011-archsift-0.6.0-improvements.md). Design, implementation and publication had not started at that point.
 
-2026-10-11 0.6.0 正式计划冻结：用户确认一份受管配置＋多份外部 profile；清单／选择记录均在安装根 config 目录，新安装 default.json，目录外 profile 不受保护；并发度整数 1–4、默认串行，收益先测量，数值门禁测量后冻结。见 [正式实施计划](20261011-archsift-0.6.0-plan.md)，状态 `FORMAL / SCOPE AND DESIGN FROZEN / IMPLEMENTATION NOT AUTHORIZED / NOT STARTED`，0.6-A–F 全部未开始。本轮仅完成计划文档，未实现／构建／测试／测量／安装／真实集成／提交／推送／发布；0.5.0 发布与历史验收保持冻结。
+0.6.0 plan freeze specified one managed profile plus external profiles, configuration metadata, default.json, no Setup protection for external profiles, concurrency 1–4 with serial default, and measurements before performance budgets. See [plan](20261011-archsift-0.6.0-plan.md): FORMAL / FROZEN / UNAUTHORIZED / UNSTARTED; A–F were unstarted. This was documentation only, with no code, builds, tests, measurements, installation, real integration, Git or release operations. 0.5.0 remained frozen.
 
-2026-10-11 0.6.0 Git 授权：用户要求创建新分支用于 0.6.0 实施，并在新分支提交／推送；已从 main 创建 `codex/archsift-0.6.0`，本次提交范围为三份计划文档。产品实现、构建／测量／现场安装／真实 IFX 集成仍未授权开始，0.6-A–F 维持 `NOT STARTED`；没有 PR／合并／发布授权。
+0.6.0 Git-only authority covered creating codex/archsift-0.6.0 and committing/pushing three plans. It did not cover implementation, builds, measurements, real integration, PR, merge or release. A–F remained unstarted.
 
-2026-10-11 0.6.0 执行授权：用户授权开始全部正式实施计划、每阶段提交／推送，以及后续 PR、合并、文档更新和发布；继续在 `codex/archsift-0.6.0` 工作。当前 `IMPLEMENTATION AUTHORIZED / IN PROGRESS / NOT ACCEPTED / NOT RELEASED`，0.6-A 已启动；此前仅文档／Git 授权为历史阶段。真实 IFX 操作员逐块、独立可用性及最终宿主／进程门禁保持有效，未通过不得合并发布。
+0.6.0 full authority then covered the entire plan, stage commits/pushes, PR, merge, documentation and release on the current branch. A started; overall work was active, unaccepted and unreleased. Real/human UI and final host/process gates remained required.
 
-0.6-A 完成：执行／进度／profile DTO 与 schema、独立 chain-summary v2 及宿主边界决议已冻结；SDK 10.0.303/net10.0 Release、locked 离线 restore/build、189 项与八模板全通过，宿主相等。见 [A 验收](../acceptance/20261011-0.6-a-contracts.md)。版本仍在开发中，不代表运行时进度／启动器／并行或发布门禁通过。
+0.6.0 A completed DTO/schema, v2 summary and host contracts. Offline locked Release checks used SDK 10.0.303/net10 and passed 189 tests, eight templates and host checks. See [A](../acceptance/20261011-0.6-a-contracts.md). This was development validation, without runtime, Launcher, parallelism or release acceptance.
 
-0.6-B 完成：当前程序 0.6.0 身份、可取消准备、共享 CLI/Web 串行进度、子报告写出／汇总终态时序和最终漂移复核实现；191 项、八模板、Node 中英文状态回归通过，宿主相等。见 [B 验收](../acceptance/20261011-0.6-b-progress.md)。并行、启动器、测量及固定候选视觉／现场门禁仍待后续阶段。
+0.6.0 B completed actual-version display, cancellable preparation, shared serial progress, report/summary timing and final drift checks. Validation passed 191 tests, eight templates, Node bilingual-state checks and host checks. See [B](../acceptance/20261011-0.6-b-progress.md). Parallelism, Launcher, measurements and final real/visual review remained later work.
 
-0.6-C 完成：v2 阶段计时和外置合成 CLI/UI 串行测量，191 项回归与宿主相等。各六轮测得 CLI 647–668ms、UI job 616–657ms、采样峰值约 62MiB，输入复核约 250ms；首轮缓存内存样本保留且由 Refresh 重测替代。见 [C 验收](../acceptance/20261011-0.6-c-serial-baseline.md)。此为有实际源码 hash 的开发基线，非固定发布预算；不宣称 IFX／程序集性能或并行收益。
+0.6.0 C completed v2 timings and external synthetic serial CLI/Web measurement, with 191 tests and host equality. Six runs per entry measured CLI 647–668 ms, Web job 616–657 ms, peak 62 MiB and rechecks 250 ms. The cached memory sample was retained and superseded by a Refresh-based remeasurement. See [C](../acceptance/20261011-0.6-c-serial-baseline.md). Source hashes fixed a development baseline, without a release budget or IFX assembly/parallel performance claim.
 
-0.6-D 完成：独立选择页、config 元数据／规范化预览／受管与外部区分、default.json 新安装、旧路径／单配置升级回退保护、私有父生命周期和原生 owned PID／端口退出实现。195 项与八模板、Node 通过，宿主相等；所有失败与修复记录保留。见 [D 验收](../acceptance/20261011-0.6-d-launcher.md)。旧 0.5 指南保留，仍未进行真实 IFX 或 0.6 发布；下一阶段 E 受控并行。
+0.6.0 D completed profile selection, configuration metadata, normalized preview, protection/default behavior, legacy single-configuration lifecycle, private parent channel and native owned-process exit. Validation passed 195 tests, eight templates, Node and host checks; failures were retained. See [D](../acceptance/20261011-0.6-d-launcher.md). The old 0.5.0 guide, real IFX and release gates remained; E was next.
 
-0.6-E 实现候选：有界 1–4 调度、默认串行、统一漂移／取消、按原顺序汇总、CLI/API/UI 参数实现；200 项、八模板及 Node 通过，真实合成 chain 共享一次 isolated build 并使用两个 ArchUnitNET Worker、目标未执行。检查根 development-4fe9696c6cd3445e9a2fd28aa1a02e5e，宿主相等。先提交固定测量源码，再测 1/2/4 并冻结预算；E 尚未验收完成，未发布。
+0.6.0 E implementation candidate added bounded concurrency 1–4, serial default, global drift/cancellation, stable order and CLI/API/UI support. Validation passed 200 tests, eight templates and Node checks, using one shared isolated build and two actual ArchUnitNET Workers without executing target entry points. Run development-4fe9696c6cd3445e9a2fd28aa1a02e5e preserved host equality. Measurement code had to be committed before concurrency 1/2/4 measurements and budget freeze. E was not yet accepted.
 
-0.6-E 完成：固定实现4975dbb测量后，7918f7c先冻结预算，新候选200项／八模板、54次CLI/UI声明及真实合成程序集性能样本、30次声明／实际Worker PID取消资格通过，宿主相等。见 [E验收](../acceptance/20261011-0.6-e-parallel-performance.md)。默认串行不变；合成二／四路收益约11–22%，不承诺真实IFX。Draft PR #3已创建；首次Ubuntu CI两项Windows manifest fixture错误已修正，待F新提交回验；未合并／发布。
+0.6.0 E completed: 4975dbb measurements and 7918f7c budget freeze preceded the candidate. Validation passed 200 tests, eight schemas, 54 CLI/Web performance runs, 30 actual cancellations and host checks. See [E](../acceptance/20261011-0.6-e-parallel-performance.md). Serial remained default; synthetic concurrency 2/4 improved performance by 11–22%, without an IFX promise. PR #3 was a draft; the Ubuntu Windows-fixture failure was fixed and F rechecks remained pending.
 
-0.6-F 自动门禁就绪：固定a05c44e Windows/Ubuntu各200项CI、八模板/Node、实际ZIP17/Setup13、原生二/四路一致、官方SARIF/冻结性能、九张合成原生浏览器截图与交互、草稿四资产服务器digest及独立下载完整ZIP/Setup回验通过，宿主相等；历史Ubuntu／fixture／浏览器基础设施停止均保留。见 [候选记录](../acceptance/20261011-0.6-candidate-readiness.md)。Draft PR #3与未公开v0.6.0 release已准备，状态 AUTO GATES PASSED / OPERATOR GATES PENDING / NOT ACCEPTED / NOT PUBLISHED。真实IFX块01只读plan、块02新根安装/private UI、块03a六份策略复制与冻结均已审核，原安装/目标/宿主相等、未分析/build；块03a首次在复制前因无序哈希跨进程比较停止的[证据](../acceptance/20261011-0.6-ifx-step03a-stop.md)继续保留，成功重试见[03a验收](../acceptance/20261011-0.6-ifx-step03a-policy-freeze.md)。当时下一块为03b单次串行真实CLI试运行；当前进展见下段及[操作员门禁](../acceptance/20261011-0.6-operator-gates.md)。
+0.6.0 F automated candidate a05c44e passed 200 CI tests per platform, eight templates, Node, 17 ZIP checks, 13 Setup checks, native parallelism, SARIF/budgets, nine browser groups, four digests/download rechecks and host checks. Failures were retained. See [candidate](../acceptance/20261011-0.6-candidate-readiness.md). PR #3 and private 0.6.0 remained drafts, awaiting the operator. Real steps 01, 02 and 03a reviewed planning, installation and a six-policy freeze; original target/host stayed equal, without analysis/build. The [initial 03a stop](../acceptance/20261011-0.6-ifx-step03a-stop.md) occurred before copying due to unordered hashing and was retained; see [retry](../acceptance/20261011-0.6-ifx-step03a-policy-freeze.md). Step 03b was next under the [gates](../acceptance/20261011-0.6-operator-gates.md).
 
-0.6-F 真实 IFX 进展：块03b操作员串行 CLI 试运行已[审阅](../acceptance/20261011-0.6-ifx-step03b-serial-canary.md)：固定包、四组规则和同一输入，105 项目／585 输入、182 条规则结果为 pass，但每组 105 条未求值构建上下文限制使整体为 `partial/compliant/exit 4`、`sourceBound=false`；不称当前源码完整合规。原安装／目标／宿主／配置／策略相等，owned 进程退出，无 build 或目标入口。当时下一块为03c CLI 1/2/4 各首进程与五轮热运行；当前进展见下段，仍未验收／合并／公开发布。
+0.6.0 F [03b](../acceptance/20261011-0.6-ifx-step03b-serial-canary.md) used a fixed package, four rule groups and fixed inputs: 105 projects, 585 inputs, 182 passes and 105 unevaluated limitations per group. Evidence was unbound with partial/compliant exit 4, without complete source compliance. Originals, host, configuration and policy remained equal; owned processes exited and no target build/entry point ran. Step 03c was next; acceptance/publication were pending.
 
-0.6-F 真实 IFX 测量：操作员块03c CLI 和块03d Web UI 已[分别](../acceptance/20261011-0.6-ifx-step03c-cli-measurements.md)[审阅](../acceptance/20261011-0.6-ifx-step03d-ui-measurements.md)，固定输入各 18/18 次、同一语义；五轮热新进程 CLI wall 中位数 1638/1236/1054ms，Web job 1576/1195/1022ms、Web total 2094/1703/1546ms。03d 首次端口探针[停止证据](../acceptance/20261011-0.6-ifx-step03d-first-stop.md)保留且未计入有效样本。该 workload 仅含声明规则，仍为 `partial/compliant/exit 4`，不能证明完整源码合规；原安装、目标、配置、策略、宿主相等，owned 进程／监听退出。基于两种入口实测冻结的[独立真实 IFX 参考预算](../performance/0.6-ifx-budget.json)已由预算冻结后的块03e CLI [18 次](../acceptance/20261011-0.6-ifx-step03e-cli-qualification.md)和块03f Web [18 次](../acceptance/20261011-0.6-ifx-step03f-ui-qualification.md)新样本分别通过。默认串行不变；独立人工体验、旧版副本生命周期与最终审计仍待关闭。
+0.6.0 F [CLI](../acceptance/20261011-0.6-ifx-step03c-cli-measurements.md) and [Web](../acceptance/20261011-0.6-ifx-step03d-ui-measurements.md) each measured 18 runs with identical inputs/semantics. Warm CLI timings were 1638/1236/1054 ms; Web job timings 1576/1195/1022 ms and total 2094/1703/1546 ms. The [initial port stop](../acceptance/20261011-0.6-ifx-step03d-first-stop.md) was excluded. These were declaration-only partial exit-4 results; originals, host, configuration and policy stayed equal and owned processes exited. Fresh [18 CLI](../acceptance/20261011-0.6-ifx-step03e-cli-qualification.md) and [18 Web](../acceptance/20261011-0.6-ifx-step03f-ui-qualification.md) runs passed the [frozen IFX budget](../performance/0.6-ifx-budget.json). Serial remained default; human, lifecycle and audit gates were pending.
 
-2026-10-10 0.5.0 最终验收更新：精确产品 `c4010d8` 的自动门禁及真实 IFX 操作员逐块门禁均通过；最终只读审计确认冻结源码/四项候选资产、IFX 源/原 0.4.0 安装与报告、新安装、外置升级回退副本与备份、操作记录、进程/监听及宿主状态。状态改为 `ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED`；PR 合并、正式 release 与公共下载回验仍待执行。见[最终验收](../acceptance/20261010-0.5-final-acceptance.md)。前述开发中和门禁待完成文字保留阶段历史，不代表当前状态。
+0.5.0 final: c4010d8 passed automated and real operator checks. Audit covered complete source, four assets, original IFX 0.4.0 reports, the new installation, external-copy versions/backups, operations, processes/listeners and host. At that point: ACCEPTED WITH LIMITATIONS / RELEASE AUTHORIZED / NOT YET PUBLISHED. See [final](../acceptance/20261010-0.5-final-acceptance.md). Historical pending states are not current status.
 
-0.5.0 操作员第一步停止：误用旧安装根读取 manifest，实际包根为 `D:/IFX-10-Root/ArchSift/versions/0.4.0`。已修正操作员脚本及初始化证据，五项合成布局回归通过且宿主相等；真实步骤未通过，等待重试。产品源码/资产保持 c4010d8，未合并或发布；见 [候选记录](../acceptance/20261010-0.5-candidate-readiness.md)。
+0.5.0 first planning stop confused the installation root with D:/IFX-10-Root/ArchSift/versions/0.4.0. The script/baseline were fixed and five synthetic layouts plus host checks passed. A real retry was pending; c4010d8 stayed unchanged. See [candidate](../acceptance/20261010-0.5-candidate-readiness.md).
 
-0.5.0 操作员第一步重试：真实 plan 输出、文件和 before/after 审计已读取，目标/原 0.4.0/宿主均相等；新根、配置和包身份审查通过，未 apply 或分析/build。见 [step01 记录](../acceptance/20261010-0.5-ifx-step01-plan.md)。下一块为操作者执行新根安装、private UI smoke 和 inspect；其包装脚本合成回归已通过。产品/候选资产 c4010d8 保持冻结，合并/发布仍受剩余人工门禁限制。
+0.5.0 [step 01](../acceptance/20261010-0.5-ifx-step01-plan.md) retry read and reviewed plan/files, before/after states, original/target/host equality and the new-root configuration/package. No apply, analysis or build ran. Installation, private UI and inspection were next; the wrapper was tested, c4010d8 frozen and gates pending.
 
-0.5.0 操作员新根安装通过：真实 receipt/inspect 已核对，`ArchSift-0.5-review` 选中 0.5.0、config/manifest/state 与审查计划一致，private UI smoke 成功，目标/原 0.4.0/宿主相等，无分析/build。见 [step02](../acceptance/20261010-0.5-ifx-step02-install.md)。标准 CLI 可见终端与键盘等人工门禁尚待执行；产品 c4010d8 和资产不变，尚未合并或正式发布。
+0.5.0 [step 02](../acceptance/20261010-0.5-ifx-step02-install.md) inspected the receipt, selected 0.5.0, matched configuration/manifest/state to the plan and checked private UI plus original/host equality. No build or analysis ran. Terminal/human checks were next; c4010d8 was unmerged at that point.
 
-0.5.0 操作员标准 CLI Safe shutdown 已通过：可见 URL/PID/waiting 与本地配置确认、CLI exit 0、Web PID 退出；宿主/IFX/原 0.4.0/新 config 与 626 payload 均相等，未分析/build。见 [step03a](../acceptance/20261010-0.5-ifx-step03-safe-shutdown.md)。Ctrl+C、pipe/file、外置副本升级回退及最终审计仍待人工逐块执行；产品候选保持冻结，未合并/正式发布。
+0.5.0 [03a](../acceptance/20261010-0.5-ifx-step03-safe-shutdown.md) confirmed visible URL/PID/waiting status and configuration. CLI exited 0, Web exited, and host, IFX, original configuration and 626 payloads remained equal; no build ran. Ctrl+C, redirection, lifecycle and audit were next.
 
-0.5.0 操作员 Ctrl+C 已通过：独立可见控制台的 CLI exit 130，Web PID 40888 已退出且不再监听，宿主/IFX/原安装/新配置与包相等。见 [step03b](../acceptance/20261010-0.5-ifx-step03-ctrl-c.md)。下一步为管道与文件重定向验收；合成空目标测试通过。外置副本升级回退、最终审计及合并发布仍待完成。
+0.5.0 [03b](../acceptance/20261010-0.5-ifx-step03-ctrl-c.md) confirmed Ctrl+C, CLI exit 130, Web/listener exit on port 40888 and unchanged protected states. Redirection was next and its synthetic checks had passed; lifecycle, audit and release remained pending.
 
-0.5.0 操作员管道/文件输出已通过：新安装 CLI 管道就绪且安全关闭 exit 0、Web/监听退出；文件 stdout/stderr 的无 token 验收、宿主/IFX/原安装/新配置与包相等。见 [step03c](../acceptance/20261010-0.5-ifx-step03-pipe-file.md)。下一步先建立外置的真实保存状态副本和只读 adopt 计划；随后逐块升级回退、最终审计，尚未合并/发布。
+0.5.0 [03c](../acceptance/20261010-0.5-ifx-step03-pipe-file.md) confirmed piped readiness, shutdown exit 0, Web/listener exit, token-free files and unchanged protected states. An external state copy and read-only adoption planning were next, followed by lifecycle/audit.
 
-0.5.0 操作员外置副本与只读 adopt 计划已通过：原 0.4.0 的 621 个 payload、2 个规则库文件（含墓碑）及 6 份报告复制并核对，副本配置仅将 rules/reports 重定位至外置根。plan ID `09ab270957afd8f66908da4132df1f293677580cdb5b2b077dd6946ba4d9b47a`，文件 SHA-256 `9921ac788fe415556b3bf3919d70517365d2dc47391b6fc6ec009824801ef7e5`；宿主/IFX/原安装/报告相等，未 adopt/upgrade/分析/build。见 [step04a](../acceptance/20261010-0.5-ifx-step04a-copy-plan.md)。下一块只在该外置副本 apply 已审阅 adopt 计划、inspect，并生成只读 upgrade 计划；其后再逐块升级/回退和最终审计。未合并/发布。
+0.5.0 [04a](../acceptance/20261010-0.5-ifx-step04a-copy-plan.md) copied 621 payloads, two library files including a tombstone and six reports, verifying bytes and changing configuration paths only. Plan `09ab270957afd8f66908da4132df1f293677580cdb5b2b077dd6946ba4d9b47a`, SHA-256 `9921ac788fe415556b3bf3919d70517365d2dc47391b6fc6ec009824801ef7e5`. Originals and host remained equal; no adoption, upgrade, analysis or build ran. Only the copy would be adopted/inspected and its upgrade previewed next.
 
-0.5.0 操作员外置副本 adopt 已通过：receipt `77534c6576a1405d93fffb69031f3893`，副本选中 0.4.0，inspect verified/pending=0；保存状态、宿主/IFX/原安装/报告均相等。只读 0.5.0 upgrade 计划 ID `b66f8bb972f168bbfea6cac91da4b7e47b794d0bbd4cdc458c05b2afe5b620bf`、文件 SHA-256 `69bc2c984d3d1849713b3795b1c990dc6d76de11bf8d5a72177735aa0fe06332` 已审阅，smoke=true，尚未 apply/分析/build。见 [step04b](../acceptance/20261010-0.5-ifx-step04b-adopt-upgrade-plan.md)。下一块只在副本 apply 升级并核对备份、并存版本及状态；回退和最终审计仍待逐块执行，未合并/发布。
+0.5.0 [04b](../acceptance/20261010-0.5-ifx-step04b-adopt-upgrade-plan.md) produced receipt `77534c6576a1405d93fffb69031f3893`, selected/verified 0.4.0 and confirmed zero pending operations with state/original/host equality. Reviewed upgrade ID `b66f8bb972f168bbfea6cac91da4b7e47b794d0bbd4cdc458c05b2afe5b620bf`, SHA-256 `69bc2c984d3d1849713b3795b1c990dc6d76de11bf8d5a72177735aa0fe06332`. Smoke checks ran without apply, analysis or build. Upgrading the copy and checking backup were next, then rollback/audit.
 
-0.5.0 操作员外置副本升级已通过：upgrade receipt `6efbaf703da244aa8ee24f175fa6952e`，选中 0.5.0 且原 0.4.0 并存；private UI smoke、完整 config/库备份及 inspect/pending=0 均通过。保存状态、六份报告、宿主/IFX/原安装及原报告相等，未分析/build。见 [step04c](../acceptance/20261010-0.5-ifx-step04c-upgrade.md)。下一块只对外置副本使用上述 receipt 和当前 selection 哈希执行回退，随后单独做最终审计；未合并/发布。
+0.5.0 [04c](../acceptance/20261010-0.5-ifx-step04c-upgrade.md) produced receipt `6efbaf703da244aa8ee24f175fa6952e`, selected 0.5.0, retained 0.4.0 and verified private UI/full backup with zero pending operations. State, six reports, originals and host stayed equal; no build ran. Rollback selection/hash checks on the copy and then audit were next.
 
-0.5.0 操作员外置副本回退已通过：rollback receipt `8d04aec04cf043d1acd9468b45b901a2`，重新选中 0.4.0，0.5.0 继续并存，inspect/pending=0；保存状态、完整升级备份、六份报告、宿主/IFX/原安装及原报告相等，未分析/build。见 [step04d](../acceptance/20261010-0.5-ifx-step04d-rollback.md)。下一块为最终只读 source/host/process/listener 及新安装/副本/资产审计；其结果审阅前仍未合并/发布。
+0.5.0 [04d](../acceptance/20261010-0.5-ifx-step04d-rollback.md) produced receipt `8d04aec04cf043d1acd9468b45b901a2`, selected 0.4.0, retained 0.5.0 and confirmed zero pending operations. State, backup, six reports, originals and host stayed equal; no build ran. Final read-only audit was required before release.
 
-ArchSift 是独立的本地 .NET 架构与依赖分析工具。用户可以发现项目图、编写规则、验证项目并生成报告；后续增加变更前后验证与 CI 报告接入。CLI、配置文件和本机 UI 使用同一分析服务与契约。
+ArchSift is an independent local .NET architecture and dependency analyzer. It discovers graphs, supports rule authoring, verifies projects and generates reports; change verification and CI integration follow. CLI, configuration and local UI share services and contracts.
 
-首个完整版本为 0.1.0，覆盖六类规则、项目分析、项目验证、ArchUnitNET 程序集依赖检查、CLI、本机 Web UI、JSON/HTML 报告和本地 Windows x64 ZIP。后续 0.2.0 覆盖变更验证、SARIF、Linux CLI 验证与非阻断 CI 样例；各版本均以验收结果交付，不预设日期。
+The first complete 0.1.0 covers six rule types, discovery/verification, real ArchUnitNET, CLI/loopback Web, JSON/HTML reports and a Windows x64 local ZIP. 0.2.0 adds changes, SARIF, Linux CLI and nonblocking CI examples. Releases depend on evidence rather than preset dates.
 
-最初授权交付为正式计划文档，随后用户已授权完成 W00、本地提交 W00 并开始 W01。后续工作按对应执行请求开展；远程仓库创建、推送、发布包、修改旧 Guard 或消费项目 CI 仍按相应授权执行。
+Initial authority covered a formal plan only, followed later by W00 completion, a local commit and W01. Subsequent user requests authorize the corresponding work package; remote changes, pushes, releases, Guard work and consumer CI require matching authority.
 
-## 已冻结的产品决议
+## Frozen product decisions
 
-| 问题 | 最终决议 | 状态 |
+| Question | Final decision | State |
 | --- | --- | --- |
-| Q01 名称 | 产品 ArchSift；CLI/仓库 archsift；命名空间 ArchSift；独立语义化版本 | CLOSED |
-| Q02 仓库 | 本地 `D:\ArchSift`；用户已创建独立 ArchSift 空 Git 仓库及 Codex Local Project `ArchSift`，实施在该 Project 中开展；远程归属沿用用户个人账号 von12549 | CLOSED |
-| Q03 工具平台 | .NET 10；Windows x64 CLI/UI 首发；Linux CLI 随后验证 | CLOSED |
-| Q04 目标 | SDK 风格 C#；.sln/.slnx/.csproj；目标 net8.0/net9.0/net10.0；多 TFM 显式选择分别运行；旧式 .NET Framework、F#/VB defer | CLOSED |
-| Q05 图范围 | 显式 TargetRoot；solution 为入口并清点范围内未加入 solution 的项目；外部引用未覆盖；首期声明模型，求值模型后续 | CLOSED |
-| Q06 规则 | 项目引用、图完整性、TFM、直接 NuGet 禁止列表、类型依赖、命名；精确值和 glob；正则、自定义代码 defer | CLOSED |
-| Q07 NuGet | 直接声明及可解析中央版本；包 ID 大小写不敏感；首期包 ID 检查；版本范围与传递依赖随后；不自动联网 | CLOSED |
-| Q08 产物 | 默认使用已有产物；无法绑定源码则仅作程序集分析；显式隔离构建，restore 默认离线；网络由配置启用；默认 Debug；可删除本地缓存 | CLOSED |
-| Q09 UI | loopback Web UI、.NET 后端、模板表单编辑 JSON、导出只读 Markdown；MVP 无账号与远程服务 | CLOSED |
-| Q10 变更 | 默认 HEAD 对当前工作区，含暂存、未暂存与选定未跟踪源码；支持明确 base..head，比较最终状态；无自动 fetch 与逐 commit 验证 | CLOSED |
-| Q11 规则边界 | 例外指定规则 ID、范围和理由；历史问题用结果比较，不自动豁免；零匹配默认无法判定；显式允许为空才不适用；重复 ID/冲突报错 | CLOSED |
-| Q12 报告 | JSON/HTML 首发，SARIF 第二阶段；英文机器字段、中文 UI/可读说明优先；违规默认 exit 0，配置/运行错误非零，无法判定单独代码；fail-on defer | CLOSED |
-| Q13 验收 | IFX 和独立 fixture；现场人工操作，一次一块命令；独立操作员信心至少 4/5、最高 L2；性能先测量后冻结预算 | CLOSED |
-| Q14 分发维护 | 0.1.0 本地 ZIP；NuGet tool 发布随后；迁移前核对许可证；旧 Guard 暂停新功能，旧 UI 缺陷单列维护 | CLOSED |
+| Q01 identity | ArchSift product/namespace, archsift CLI/repository and independent SemVer | CLOSED |
+|Q02 repository|Existing user-created D:\ArchSift Git/Local Project ArchSift, personal remote von12549|CLOSED|
+|Q03 platform|.NET 10, Windows x64 CLI-UI first, Linux CLI later|CLOSED|
+| Q04 targets | SDK-style C#, sln/slnx/csproj, net8/net9/net10 and explicit TFM runs; older .NET Framework, F# and VB deferred | CLOSED |
+|Q05 scope|Explicit root/solution plus unlisted projects, external uncovered, declarations first, evaluation later|CLOSED|
+|Q06 rules|References/integrity/TFM/direct NuGet deny/type dependency/naming, exact-glob, regex-code deferred|CLOSED|
+| Q07 NuGet | Direct references, resolvable central versions and case-insensitive IDs; version/transitive checks deferred; no automatic network access | CLOSED |
+| Q08 artifacts | Existing artifacts by default; assembly-only evidence is unbound. Explicit isolated builds use offline restore unless network is configured, Debug and a disposable cache | CLOSED |
+| Q09 UI | Loopback .NET service, JSON forms and read-only Markdown; no accounts or remote service | CLOSED |
+|Q10 changes|HEAD-worktree/index-unstaged-selected untracked/base..head/final states, no fetch-per commit|CLOSED|
+|Q11 rules|Scoped reasoned exceptions, history comparison not exemption, zero inconclusive/explicit allowEmpty NA, duplicates-conflicts error|CLOSED|
+|Q12 reports|JSON-HTML first/SARIF later, English machine fields, Chinese UI-readable preferred originally; violations 0/errors nonzero/separate inconclusive/fail-on deferred|CLOSED|
+|Q13 acceptance|IFX/independent fixtures/sequential human commands/confidence>=4 of 5/max L2/measure then budget|CLOSED|
+|Q14 distribution|Local ZIP first/NuGet tool later/licenses before migration/Guard new features paused/old UI maintenance separate|CLOSED|
 
-## 实施基准与现有目录
+## Implementation references
 
-| 对象 | 2026-10-06 只读核对结果 | 实施处理 |
+| Object | Read-only 2026-10-06 result | Treatment |
 | --- | --- | --- |
-| Guard 源 | `C:\Users\von12\OneDrive\Desktop\Guard`；HEAD `40539d4610889483b4aed4637f8f3457098b1ff0`；版本 1.2.2；ordinary status 为空 | 以此作为选择性迁移参考，执行时复核并记录文件哈希 |
-| Guard SDK | `build/global.json` 为 10.0.100、rollForward latestFeature、禁用 prerelease | 新项目使用独立 global.json，基准 10.0.100，记录实际 SDK |
-| ArchUnitNET | Guard lock 指定 TngTech.ArchUnitNET 0.13.4 | 首期迁移基准固定 0.13.4，锁定实际 NuGet 依赖闭包；兼容故障通过计划变更处理 |
-| IFX 样例 | `D:\IFX-10-Root\IFX-New`；HEAD `64ef2674c57e6cf9031481d6d4410cca55b0dad5`；入口 IFX.sln；中央 props 声明 net10.0 | 记录样例基准；在外置快照/测试目录完成构建与违规样例 |
-| 新项目目录 | 只读观察到 `D:\ArchSift` 的 .git 与 README；用户随后确认这是其新建的 ArchSift 空仓库，并已创建同目录的 Codex Local Project `ArchSift` | 在目标 Project 中检查适用指令、status、remote 与是否已有初始提交；直接使用现有仓库 |
+|Guard|C:\Users\von12\OneDrive\Desktop\Guard, HEAD `40539d4610889483b4aed4637f8f3457098b1ff0`, 1.2.2, ordinary clean|Selective reference, recheck file hashes|
+| SDK | Guard build/global.json selects 10.0.100/latestFeature without prerelease | Independent global.json with the same baseline; record actual SDK |
+| ArchUnitNET | Guard lock pins 0.13.4 | Pin the initial engine and actual dependency closure; compatibility failures require plan changes |
+|IFX|D:\IFX-10-Root\IFX-New, HEAD `64ef2674c57e6cf9031481d6d4410cca55b0dad5`, IFX.sln, central net 10|Record baseline, external build/violation fixtures|
+| New project | D:\ArchSift has .git/README; user confirmed an empty repository and Local Project | Check AGENTS, status, remote and initial commit; reuse the existing repository |
 
-用户确认建立了目标仓库及 Local Project；本对话此前的 Git 读取受沙箱限制，不作为目标 Project 无法实施的结论。实施在 `ArchSift` Project 的 `D:\ArchSift` 工作目录中开始，保留已有 README 与 .git。空仓库可能没有 HEAD，检查时按新仓库处理，不将缺少初始提交误判为损坏。远程建议身份为 von12549/archsift，实际 URL、存在性及大小写在目标 Project 核对，用户确认本地 Git 仓库不等于确认远程已经创建。
+The user confirmed the repository and Local Project. Earlier sandbox Git denials do not prove that execution is unavailable. Begin there and preserve README/.git. An empty repository can legitimately lack HEAD. Proposed remote von12549/archsift still requires an actual URL, existence and case check; local confirmation does not authorize remote creation.
 
-本文件是目标 Project 的正式计划来源。实施入口先将本计划复制到 `D:\ArchSift\docs\plans\20261006-archsift-implementation-plan.md`，目标不存在时创建；若已存在则核对内容与本次决议，保留目标新增记录。后续实施状态、验证证据及计划变更在目标 Project 的计划文件中维护，此处保留为移交基准。
+Formal handoff destination: D:\ArchSift\docs\plans\20261006-archsift-implementation-plan.md. Create it only if absent; otherwise compare and preserve added records. Maintain subsequent status, evidence and changes in the target Local Project; retain the source handoff baseline.
 
-Guard 当前未检索到根 LICENSE 文件。迁移前记录源权属、文件来源与第三方许可证；来源检查未完成的文件不复制。此项是既定迁移检查，不改变已批准的独立项目方向。
+No root Guard LICENSE found then. Before copying record ownership/provenance/third party licenses; unchecked files not copied. Existing migration task, not reopened product direction.
 
-## 仓库结构与依赖方向
+## Repository and dependency direction
 
-采用 .NET 核心类库与多个入口，先集中规则和模型，避免为首期六类规则建立动态插件平台。
+Use .NET core libraries and multiple entries, central models/rules, no dynamic plugin platform for six initial types.
 
 ```text
 D:\ArchSift\
@@ -233,18 +233,18 @@ D:\ArchSift\
   AGENTS.md
   README.md
   src/
-    ArchSift.Contracts/              规则、配置、报告及产物 DTO
-    ArchSift.Core/                   输入身份、项目模型、规则、服务与比较
-    ArchSift.ArchUnit/               程序集模型与 ArchUnitNET 适配
-    ArchSift.Cli/                    命令行与 Worker 入口
-    ArchSift.Web/                    本机 ASP.NET Core 服务及静态 UI
+    ArchSift.Contracts/              Rule/config/report/artifact DTOs
+    ArchSift.Core/                   Input identities, project model, rules, services, comparisons
+    ArchSift.ArchUnit/               Assembly model / ArchUnitNET adapter
+    ArchSift.Cli/                    CLI and Worker entry
+    ArchSift.Web/                    Local ASP.NET Core and static UI
   schemas/
     ruleset.schema.json
     config.schema.json
     report.schema.json
     assembly-manifest.schema.json
     comparison.schema.json          P4
-  templates/rules/                  六类 JSON 模板及生成的 Markdown
+  templates/rules/                  Six JSON templates / generated Markdown
   tests/
     ArchSift.UnitTests/
     ArchSift.IntegrationTests/
@@ -267,91 +267,91 @@ D:\ArchSift\
     migration/third-party-notices.md
     performance/budget.json
     acceptance/
-  samples/                         配置与规则，无真实运行缓存
+  samples/                         Configuration/rules, no real-run caches
 ```
 
-依赖方向：CLI/Web → Core；Core → Contracts 与分析接口；ArchUnit → Contracts/Core 的接口，入口通过组合注册实现。Core 不引用 CLI/Web，不依赖 Guard 安装、V4_STAGE_INPUT_JSON 或 Profile/Stage 生命周期。ArchSift 自身的架构测试验证这些方向。
+Dependencies: CLI/Web→Core; Core→Contracts/analysis interfaces; ArchUnit implements Contracts/Core interfaces, composed by entries. Core never references CLI/Web, Guard install, V4_STAGE_INPUT_JSON or Profile/Stage. Product architecture tests enforce direction.
 
-Web 首期使用 ASP.NET Core 与 HTML/CSS/JavaScript 模板表单。服务器使用同一 Core 服务和报告序列化器，页面展示服务结果。CLI 与 UI 均显示最终生效配置，优先级为显式入口参数 → 配置文件 → 文档化默认值。
+Initial Web uses ASP.NET Core/HTML/CSS/JavaScript forms and shared services/serializers. Display effective configuration: explicit entry options→config→documented defaults.
 
-实现第三方依赖优先使用 .NET 内置 API；对 schema 校验、测试框架或源码解析确需外部包时，P1 记录选择理由、版本、许可证和 lock 文件，不要求用户逐包定案。版本必须显式固定，升级属于后续变更。
+Prefer built-in .NET APIs. Necessary external schema/test/source packages get rationale/version/license/lock in P1 without per-package user decisions. Explicit pins; upgrades are later changes.
 
-## 规则契约
+## Rule contracts
 
-规则 JSON 是唯一可执行定义。schemaVersion 首期为 1；JSON Schema 使用 draft-07，schema 校验与业务语义校验分别运行。未知类型、未知字段、缺失参数或不支持选择器均为 configuration-error。
+JSON is sole executable authority. Initial schemaVersion 1/draft-07, separate schema/semantic validation. Unknown type/field, missing parameter or unsupported selector is configuration-error.
 
-规则集含 schemaVersion、id、version、description、rules、exceptions。规则含 id、type、enabled、scope、parameters、severity、reason；severity 限定 info/warning/error。每个选择器显式指定 kind、match（exact/glob）与 value。
+Ruleset: schemaVersion/id/version/description/rules/exceptions. Rule: id/type/enabled/scope/parameters/severity/reason. Severity info/warning/error. Selectors explicitly kind/match(exact-glob)/value.
 
-多个规则集按配置给出的顺序加载，记录每个规则集身份和原始文件哈希。有效规则 ID 全局唯一；重复 ID 或相互矛盾定义不采用最后写入覆盖。允许一个规则集含一个规则，支持多规则文件组合。
+Load configured order and record each identity/raw hash. Effective IDs globally unique; no last-wins for duplicates/conflicts. Single-rule sets and multi-file composition supported.
 
-glob 明确支持 `*`、`?`，路径额外支持 `**`；所有路径使用根内相对路径和 `/`，不得隐式转为正则。项目 ID 使用相对 csproj 路径；命名空间、类型和普通名称按 Ordinal 比较，NuGet ID 按 OrdinalIgnoreCase 比较。Windows 上大小写碰撞的项目身份报错；Linux 阶段验证同一规范。
+Glob supports * and ?, paths additionally **. Root-relative / paths, never implicit regex. Project ID relative csproj; names/types/namespaces Ordinal, NuGet OrdinalIgnoreCase. Case-colliding project IDs reject on Windows and follow same normalization on Linux.
 
-| 类型 ID | 首期参数与语义 | 输入及边界 |
+| Type | Initial semantics | Inputs/boundary |
 | --- | --- | --- |
-| project-reference | source/target 项目选择器，禁止 source → target 边 | 原始声明图；条件或表达式涉及的边无法判定 |
-| graph-integrity | check 为 resolved-references 或 solution-membership；分别检查引用解析和范围内项目入 solution | 已发现项目清单；外部引用显式显示未覆盖，不假造内部缺失项目 |
-| target-framework | 项目范围与 allowedFrameworks | 项目直接值或根内最近祖先 unconditional literal Directory.Build.props |
-| nuget-denylist | forbiddenPackageIds | 所选项目的直接 PackageReference；大小写不敏感；不承诺传递依赖 |
-| type-dependency | source/forbiddenTarget 类型或命名空间选择器，禁止对应类型依赖 | ArchUnitNET，记录相关程序集与构建上下文 |
-| naming | subjectKind 为 project/assembly/type/source-file；requiredName 为 exact/glob | 对应模型；type 使用程序集模型，source-file 仅检查相对文件名/路径 |
+|project-reference|source/target selectors prohibit edge|Declarations; conditional/expression edges inconclusive|
+|graph-integrity|resolved-references or solution-membership|Inventory; external explicitly uncovered, no invented missing internal project|
+|target-framework|Project scope/allowedFrameworks|Direct literals or nearest root-contained unconditional literal Directory.Build.props|
+|nuget-denylist|forbiddenPackageIds|Direct PackageReference/case-insensitive/no transitive promise|
+|type-dependency|source/forbiddenTarget type-namespace selectors|ArchUnitNET/assembly-build context|
+|naming|project/assembly/type/source-file, exact-glob requiredName|Corresponding models; source files only relative names/paths|
 
-interface 实现位置规则不进入 0.1.0；不因 Guard 已有对应算法就增加首期范围。类型源选择器零匹配默认 inconclusive；显式 allowEmpty=true 才为 not-applicable。禁止目标未出现且模型覆盖充分时可以通过，避免把“禁止对象确实不存在”误算零覆盖。
+Implementation-location excluded from 0.1.0 despite Guard algorithms. Zero type-source matches inconclusive unless explicit allowEmpty=true→not-applicable. Absent forbidden targets may pass with adequate coverage, distinct from missing sources.
 
-exceptions 项必须具备 ruleId、稳定相对范围或主体选择器与 reason。报告保留原 finding 和对应例外关联；不删除证据。被明确豁免的 finding 不计入有效违规，并报告 exemption 数量。历史基线报告不自动转为例外。
+Exceptions require ruleId/stable scope-or-selector/reason. Retain original finding/association; exempt findings do not count effective violations and exemptions are counted. Historical baselines never automatically exempt.
 
-Markdown 从 JSON 生成，包含来源、版本、哈希、规则解释与字段说明。只读表示阅读投影，不将文件权限作为安全机制；编辑 Markdown 不影响执行。生成文件输出到明确目录，不自动写入目标仓库。
+Generate Markdown with provenance/version/hash/explanations/fields. Read-only means projection, not file-permission security. Edits never change execution. Explicit outputs, no automatic target writes.
 
-draft-rules 将 observedFacts、candidateRules 和 unresolvedDecisions 分别输出。仅提供需要人类选择的建议；已经存在的依赖不会自动成为允许策略。
+Draft-rules separates observedFacts/candidateRules/unresolvedDecisions. Suggestions require human choices; existing dependencies never auto-approved.
 
-## 项目发现与扫描范围
+## Discovery and scope
 
-TargetRoot 必填；入口为根内显式 solution/project，或在无入口时清点根内支持项目。solution 入口同时报告 includedProjects、unlistedProjects、externalReferences、unresolvedReferences 与 unsupportedConstructs。项目引用图不依赖规则集。
+Required TargetRoot, explicit root-contained solution/project or inventory of supported projects without entry. Report included/unlisted/external/unresolved/unsupported. Graph discovery independent of rules.
 
-首期支持 SDK 风格 C#、.sln/.slnx/.csproj。工具运行于 .NET 10，目标框架限定 net8.0/net9.0/net10.0；工具运行 SDK 和目标项目 TFM 分别记录。项目构建需要的 targeting pack 未安装或离线不可用时准确返回无法判定。
+SDK C#/sln-slnx-csproj, tool .NET 10/targets net 8-9-10, separately record SDK and target TFM. Missing/offline targeting packs yield accurate inconclusive.
 
-多 TFM 必须选择，分别生成结果；禁止将一个 TFM 的通过外推到其他 TFM。缺少选择时返回明确配置错误及候选值。未编译声明发现可以列出所有 literal TFM，但仍标为 declared 模型。
+Explicit per-TFM selection, no extrapolation across frameworks. Missing selection config error lists choices. Declaration discovery may list literal TFMs but labels declared model.
 
-解析项目 XML 不执行 MSBuild。复杂 Condition、Import、属性表达式或不支持的中央配置，针对受影响事实标记无法判定。读取直接 PackageReference，并记录根内可解析 Directory.Packages.props 的 literal PackageVersion；版本范围与传递 NuGet 检查延期。未知或条件声明不能当作无引用。
+XML reading executes no MSBuild. Complex conditions/imports/expressions/central configuration mark affected facts inconclusive. Read direct packages/root-contained literal central versions; version/transitive checks deferred. Unknown declarations never mean no references.
 
-项目越出 TargetRoot 时记录 external/uncovered；工具不自动递归外部目录。链接和 reparse point 不跨越；请求范围内的链接输入显示具体限制或路径错误，不 silently pass。源范围始终是报告的一部分。
+Outside-root projects external/uncovered, no recursive external scan. Never cross links/reparse. Requested linked input gets explicit limit/path error, no silent pass. Scope always reported.
 
-## 输入身份与构建产物
+## Input identity and artifacts
 
-定义统一 InputManifest，并区分 analysisInputs、buildInputs 与 evidenceInputs。analysisInputs 包含相关源码、项目/solution、props/targets 和规则；buildInputs 包含实际构建使用的 imports、资源、生成器与上下文。相同范围判定逻辑供 discovery、验证、构建快照和比较使用。
+Unified InputManifest distinguishes analysisInputs/buildInputs/evidenceInputs. Analysis includes relevant source/projects/solutions/props-targets/rules; build includes actual imports/resources/generators/context. Shared scope selection across discovery/verification/snapshots/comparison.
 
-排除 IDE 缓存 `.vs/.idea`、VCS `.git`、普通 `bin/obj` 与工具输出目录，但不能忽略被项目显式引用的资源或生成源码。根外 imports、依赖或生成步骤不能可靠复现时保留限制，不能生成完整源码合规结论。
+Exclude .vs/.idea/.git/ordinary bin-obj/tool outputs, but retain explicitly referenced resources/generated source. Unsupported external imports/dependencies/generation keep limits, not full-source compliance.
 
-输入身份使用相对路径、内容哈希、规则及引擎版本、TFM、Configuration、相关 SDK/构建参数与程序集哈希。可选 Git commit/tree 提供版本来源，绝对路径只用于定位。核心 findings 排序和身份确定；运行时间、耗时、本机路径独立为 runMetadata。
+Identity includes relative paths/hashes/rule-engine versions/TFM/config/SDK-build arguments/assemblies. Optional Git provenance, absolute paths only locators. Stable finding ordering/IDs, separate runMetadata time/duration/paths.
 
-运行前后校验输入，相关输入变化返回 source-changed-during-analysis 并使该次当前源码合规结论 inconclusive。IDE 正常开启或创建排除缓存不触发失效；取消结果不能借用上次成功。
+Verify before/after. Relevant changes produce source-changed-during-analysis/current-source inconclusive. Open IDE/excluded caches alone do not invalidate; cancellation never reuses old success.
 
-已有产物模式为默认。assembly-manifest 包含 schemaVersion、源码/构建输入哈希、项目与程序集映射、SDK、TFM、Configuration、生成方式与程序集 SHA-256。普通 DLL 无来源绑定时可作 assemblies-only 报告；选中需要验证当前源码的规则则 inconclusive，并说明无法证明对应关系。时间戳不能替代输入绑定。
+Existing artifacts default. Manifest records schema/source-build hashes/project mapping/SDK/TFM/config/generation/assembly SHA. Unbound DLLs allow assemblies-only; current-source rules inconclusive with reason. Timestamps not binding.
 
-显式 build.mode=isolated 时生成根外快照及构建产物；默认 Debug。生成清单绑定本次构建的保守根内输入快照与最终分析 assembly，记录 SDK/TFM/Configuration/生成方式和程序集闭包；不宣称精确 MSBuild 文件访问轨迹。首期标准 SDK 的安全隔离不包含未审查自定义任务、Import、输出路径、条件/表达式和包构建脚本/生成器，遇到这些情况拒绝或标明无法绑定当前源，完整求值继续 defer。分析程序集通过独立 Worker 进程运行，避免不同版本程序集加载相互污染；不调用目标入口和业务方法。
+Explicit isolated mode creates external snapshot/artifacts, default Debug. Manifest binds conservative captured root inputs/final assemblies/context/closure, not exact MSBuild access trace. Initial SDK isolation excludes unreviewed custom tasks/imports/output paths/conditions/package scripts/generators: reject or disclose unbound, full evaluation deferred. Separate Worker avoids assembly-version contamination, never calls target entry/business methods.
 
-restore 默认 offline，只使用明确缓存和本地 feed。配置 allowNetwork=true 后才使用显式 NuGet sources；不能把忽略源失败或过期产物当作构建成功。缓存可删除、非权威；缓存命中仍需校验输入身份和字节哈希。
+Offline restore uses explicit caches/local feeds. Network only configured allowNetwork=true with explicit sources. Ignored restore failures/stale outputs never successful builds. Disposable cache not authority; hits still verify input/bytes.
 
-在隔离子进程设置 DOTNET_CLI_HOME 时必须同时设置 DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0；不回写父进程与 User/Machine 环境。隔离目录不等同完整沙箱，MSBuild 自定义 targets 可能执行命令，UI/CLI 应在用户启用 build 时准确说明该行为。源目标保持只读契约，实际构建与产物写在外置目录。
+Child DOTNET_CLI_HOME pairs DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0, no parent/User/Machine writes. Isolation not full sandbox; disclose possible MSBuild custom execution when build enabled. Original source read-only, builds external.
 
-构建失败仍输出已完成的项目规则结果；程序集规则 inconclusive，另记录执行错误。缺失依赖、编译失败、配置不同或产物哈希变化不得得到当前源码合规结论。
+Build failure preserves completed project checks; assembly rules inconclusive plus execution error. Missing dependencies/failure/config mismatch/hash changes never current-source compliance.
 
-## CLI 与配置接口
+## CLI/configuration
 
-以下是实现后的公开命令目标，当前文档不是可执行程序。
+These were implementation command targets, not executable behavior at original planning time.
 
-| 命令 | 行为 | 阶段 |
+| Command | Behavior | Stage |
 | --- | --- | --- |
-| archsift analyze --config <file> | 无规则集发现目标并输出项目图/报告 | P2 |
-| archsift verify --config <file> | 读取目标与 rulesets 执行规则 | P2 |
-| archsift rules validate --file <rules.json> | schema 与规则语义检查 | P1/P2 |
-| archsift rules render --file <rules.json> --output <file.md> | 生成 Markdown 阅读投影 | P1/P2 |
-| archsift rules draft --config <file> --output <directory> | 发现事实并生成未接受的规则建议 | P2 |
-| archsift ui --config <file> | loopback UI，复用同一运行配置 | P3 |
-| archsift changes --config <file> [--base <ref> --head <ref>] | 默认 HEAD 对工作区，或显式两端比较 | P4 |
+|archsift analyze --config <file>|Rule-free discovery/graph/report|P2|
+|archsift verify --config <file>|Target/rules execution|P2|
+|archsift rules validate --file <rules.json>|Schema/semantics|P1/P2|
+|archsift rules render --file <rules.json> --output <file.md>|Markdown projection|P1/P2|
+|archsift rules draft --config <file> --output <directory>|Unaccepted suggestions|P2|
+|archsift ui --config <file>|Shared-config loopback UI|P3|
+|archsift changes --config <file> [--base <ref> --head <ref>]|HEAD/worktree default or explicit states|P4|
 
-入口支持显式 --target、--entry、--rules、--output、--tfm、--configuration 覆盖配置；参数类型由同一配置模型验证。相对配置路径以配置文件目录为基准，CLI 显式路径以 invocation cwd 为基准，解析后显示绝对位置。分析不依赖隐藏 cwd 或 PATH 中的 Guard。
+Explicit target/entry/rules/output/tfm/configuration override shared validated config. Config-relative paths use config directory; CLI paths invocation cwd. Show resolved absolute locations, no hidden cwd/Guard PATH dependency.
 
-示例配置的结构由 schemas/config.schema.json 实现：
+Example structure implemented by schemas/config.schema.json:
 
 ```json
 {
@@ -369,221 +369,221 @@ restore 默认 offline，只使用明确缓存和本地 feed。配置 allowNetwo
 }
 ```
 
-assemblyManifest 仅在已绑定产物存在时提供；项目级 analyze 不要求它。build.mode=isolated 时由工具生成产物清单，existing 模式可以显式列出未绑定程序集。两种报告身份必须可见。
+assemblyManifest optional for project discovery, supplied for bound artifacts. Isolated generates manifest; existing may explicitly list unbound assemblies. Distinguish report identities.
 
-## 报告与退出语义
+## Reports and exits
 
-report.schema.json 固定 schemaVersion=1，包含 operation、toolVersion、inputIdentity、rulesetIdentities、scope、buildContext、engineVersions、execution、compliance、ruleResults、findings、coverage、limitations、runMetadata。
+report.schema.json schemaVersion 1:operation/toolVersion/inputIdentity/rulesetIdentities/scope/buildContext/engineVersions/execution/compliance/ruleResults/findings/coverage/limitations/runMetadata.
 
-逐规则 status 为 pass/violation/inconclusive/not-applicable/error。execution 为 completed/partial/failed/cancelled；compliance 为 compliant/noncompliant/inconclusive/not-applicable；无规则的 analyze 使用 null。若存在有效违规，compliance 为 noncompliant，同时完整保留 partial coverage；无违规但覆盖不足时为 inconclusive；全部规则不适用时不能显示 compliant。
+Rule states pass/violation/inconclusive/not-applicable/error; execution completed/partial/failed/cancelled; compliance compliant/noncompliant/inconclusive/not-applicable, null for rule-free analysis. Effective violations noncompliant with partial coverage retained. No violation+insufficient coverage inconclusive; all inapplicable never compliant.
 
-finding 包含稳定 ID、规则 ID、主体、依赖 source/target 或名称证据、相对位置（可得时）、severity、解释、例外关联。没有源码映射时显示程序集和类型，而不虚构行号。JSON 为权威运行报告，HTML 为其投影，显示覆盖与限制并转义所有用户输入。
+Finding: stable ID/rule/subject/source-target-or-name/evidence/available relative location/severity/explanation/exception. Without source mapping show assembly/type, never invented lines. JSON authority, escaped HTML projection with coverage/limits.
 
-| Exit code | 定义 |
+| Exit | Meaning |
 | --- | --- |
-| 0 | 运行完成，检查可判定；可以有违规，默认不阻断 |
-| 2 | 参数、JSON schema 或规则语义配置错误 |
-| 3 | 工具、依赖、构建或报告写入执行失败 |
-| 4 | 运行完成或部分完成但存在无法判定检查、输入变化或产物来源不足 |
-| 130 | 用户取消 |
+|0|Completed/determinate, may contain nonblocking violations|
+|2|Argument/schema/semantic configuration error|
+|3|Tool/dependency/build/report execution failure|
+|4|Completed/partial with inconclusive checks, input change or insufficient provenance|
+|130|User cancellation|
 
-配置/执行错误、取消、无法判定存在时，优先返回对应非零状态；报告仍可保存已完成结果。CI 非阻断指规则违规不触发失败，不隐藏工具失败。未来 fail-on 策略延期，届时另行定义违规失败代码。
+Errors/cancellation/inconclusive select corresponding nonzero exits while preserving completed results. Nonblocking means violations alone do not fail, never hidden tool errors. Future fail-on/code deferred.
 
-## 本机 UI
+## Local UI
 
-默认随机可用 loopback 端口，浏览器地址仅绑定 127.0.0.1/localhost。入口提供目标/solution、规则文件及模板表单、构建模式、TFM/Configuration、输出目录和运行按钮；显示项目图、逐规则结果与报告下载。
+Random free loopback port, only 127.0.0.1/localhost. Target/solution/rules/templates/build/TFM-config/output/run, graph/results/downloads.
 
-配置路径由本机服务校验，所有运行和写入边界统一规范化。写操作限制为明确规则编辑目录、输出目录与临时运行目录；目标分析不得修改源码。禁止原始 shell/任意命令输入；服务启动会话 token、Origin 校验和请求限制覆盖配置与运行接口。
+Server validates canonical paths/shared boundaries. Writes only explicit editor/output/temp roots; no target-source edits or arbitrary shell/command input. Session token/Origin/request limits protect configuration/execution APIs.
 
-报告和错误来自当前运行 ID。运行中修改配置需明确下一次运行；旧结果保留为历史且标出输入身份。失败、取消、源变化及产物失效时当前状态不能残留 success。支持取消，不提供远程账号或长期控制面。
+Current runID owns results/errors. Editing config during run applies next time. Old results historical/input-labeled; fail/cancel/drift/stale artifacts clear current success. Cancellation supported, no remote accounts/control plane.
 
-UI 引导用户回答三件事：本次检查了什么、哪些规则违规、哪些规则尚无法判断。技术哈希与诊断默认折叠，不要求手工 hash 或八步 onboarding。
+UI answers what was checked, which rules violated and which inconclusive. Hashes/diagnostics collapsed, no manual hash/eight-step onboarding.
 
-## 变更验证与 CI 报告
+## Change verification and CI
 
-P4 默认基线为 HEAD 的完整内容，目标为工作区最终状态，包含暂存、未暂存与符合输入选择规则的未跟踪源码。报告列出实际包含/排除的文件；同一文件同时有暂存和未暂存修改时以当前磁盘最终状态为目标，不冒称只验证暂存区。
+P4 defaults to full HEAD versus final worktree, including index, unstaged and selected untracked source. Report included/excluded files. Mixed staged/unstaged uses final disk content, not index-only claim.
 
-显式 --base/--head 用两端可解析本地 Git commit 比较，不自动 fetch 或猜测 upstream。Git ref 通过参数数组传递并校验为 commit，不拼接 shell。记录 base/head SHA；这表示两端状态，非逐 commit 过程验证。
+Explicit base/head are local resolvable commits, no fetch/upstream guessing. Validate refs and pass argument arrays without shell concatenation. Record SHAs; final states, not each intermediate commit.
 
-先全量分析两端再比较 findings，覆盖跨项目引用与接口影响。源码/规则相同的稳定 finding ID 用于新增、既有、已解决匹配；没有规则变更或身份可比证据时不能把消失问题归为已解决。规则删除、例外变化、范围缩小另列 policyChanges。
+Analyze both fully, compare stable findings across projects/interfaces. New/existing/resolved require comparable identity/policy; disappearing results without comparability not resolved. Rule deletion/exceptions/scope reductions separate policyChanges.
 
-基线构建或分析失败时保留目标结果，comparison 为 inconclusive；缺失基线证据不推断新增。删除、重命名、多项目影响和不同构建上下文均有 fixture。临时两端快照不通过反复 git checkout 修改用户工作区。
+Failed baseline retains target, comparison inconclusive, no inferred new findings. Fixtures cover delete/rename/cross-project/context. Temporary snapshots never repeatedly checkout user worktree.
 
-P5 添加 Linux CLI 验证、SARIF 与 opt-in CI 样例，上传报告 artifact。消费项目的工作流由用户选择应用，ArchSift 不注册 required checks 或修改仓库策略。自身 CI 检查源码、契约、fixture、包和回归。
+P5 Linux CLI/SARIF/opt-in CI artifacts. Consumer chooses workflow, no automatic required checks/policies. Own CI verifies source/contracts/fixtures/packages/regression.
 
-## 工作包与实施顺序
+## Work packages
 
-| 包 | 依赖 | 具体任务与路径 | 完成证据 |
+| Package | Depends | Tasks | Evidence |
 | --- | --- | --- | --- |
-| W00 实施入口 | 本计划 | 在用户已创建的 ArchSift Local Project 中使用现有 D:\ArchSift 仓库；核对指令/Git/remote/初始提交，导入正式计划；记录迁移基准与许可证，创建 docs/migration 清单 | 目标计划、基准记录、源文件 hash、许可清单、保留已有仓库内容 |
-| W01 基础项目 | W00 | solution、src 项目、global.json、Directory.*、锁定依赖、测试项目、AGENTS/README | Windows 构建和核心依赖方向测试 |
-| W02 契约与模板 | W01 | Contracts、schemas、六类 templates、规则加载/语义/例外/Markdown、CLI rules 入口 | 六类有效/无效/重复/零匹配契约结果与可读模板 |
-| W03 输入和项目图 | W01/W02 | Core 输入清单、project discovery、.sln/.slnx、中央 literal props/packages、框架和引用图 | 根边界、范围未覆盖、条件/表达式、编辑器产物及 source-change fixtures |
-| W04 项目规则 | W02/W03 | 项目引用、完整性、TFM、直接 NuGet、项目/文件命名与 draft-rules | 每类 clean/violation/missing/unsupported 正负证据 |
-| W05 程序集与构建 | W03 | ArchUnit 适配、Worker、manifest、existing/isolated、离线 restore、类型依赖/类型命名、缓存 | 真正 ArchUnitNET 正负例；旧产物、闭包缺失、TFM/config 不匹配和构建失败结果 |
-| W06 报告和 CLI | W04/W05 | Core 服务、JSON/HTML、CLI analyze/verify/draft、退出代码、取消 | CLI 集成、输出转义、稳定 findings、部分报告和 errors |
-| W07 UI | W02/W06 | Web loopback 服务和表单、规则 JSON 保存/MD 导出、项目图、运行/取消/历史与结果 | UI/CLI parity、当前运行错误清理、回路与路径边界 |
-| W08 0.1.0 验收 | W07 | scripts smoke/safety/performance/ZIP；IFX 现场运行；人工任务和归档 | 首个完整版本 A01–A12 全部有证据 |
-| W09 变更比较 | W08 | Core comparison、schemas/comparison、CLI changes、UI 比较 | 两端与工作区、跨项目、基线失败、删除/重命名、规则变化 fixtures |
-| W10 0.2.0 报告接入 | W09 | SARIF exporter、Linux CLI 验证、samples/ci、文档和包验证 | 非阻断违规、可观察错误、跨平台核心结果一致 |
-| W11 允许策略与大范围 UI | W10、0.2.0 发布后验收 | 项目/NuGet allowlist、稳定例外归因、目标上下文、结果信息层级和 UI 生命周期 | 130 项回归、八模板、真实 IFX CLI/UI、独立操作员及最终安全审计 |
+|W00|Plan|Reuse D:\ArchSift/Project, check instructions/Git/remote/initial commit/import/provenance/licenses|Plan/baselines/hashes/license inventory/existing files preserved|
+|W01|W00|Solution/projects/global/Directory files/locks/tests/AGENTS-README|Windows build/dependency tests|
+|W02|W01|Contracts/schemas/six templates/load-semantics-exceptions-Markdown/CLI|Valid-invalid-duplicate-zero/template contracts|
+|W03|W01-02|Input manifest/discovery/sln-slnx/literal props-packages/graph|Roots/uncovered/conditions/IDE/source change fixtures|
+|W04|W02-03|References/integrity/TFM/packages/naming/drafts|Clean/violation/missing/unsupported|
+|W05|W03|ArchUnit/Worker/manifest/existing-isolated/offline/type checks/cache|Actual positive-negative/stale-closure-context-build failures|
+|W06|W04-05|Services/JSON-HTML/CLI/exits/cancel|Integration/escaping/stable findings/partial-errors|
+|W07|W02-06|Loopback/forms/JSON save-Markdown/graph/run-cancel-history|Parity/stale clear/loopback-paths|
+|W08|W07|Smoke/safety/budget/ZIP/real IFX/human/archive|A01–12 proof|
+|W09|W08|Comparison/schema/changes/UI|States/cross project/baseline failure/delete-rename/policy fixtures|
+|W10|W09|SARIF/Linux CLI/CI examples/docs/package|Nonblocking violations/visible errors/core parity|
+|W11|W10/post release 0.2.0|Allowlists/stable exceptions/context-hierarchy/lifecycle|130/eight templates/real CLI-UI/independent operator/audit|
 
-W03 与模板文档等互不冲突任务可在工程允许时并行；本计划不要求开启子代理。W05 的真实 ArchUnitNET 检查必须在 0.1.0 内完成，不得用空壳或只有声明图代替。
+Independent discovery/template work may parallelize, no subagent requirement. Actual W05 ArchUnitNET required inside 0.1.0, no shell/declaration-only substitute.
 
-Guard 迁移仅涉及分析算法、fixture、发现/框架解析与环境隔离经验。实现位置规则、源码语义扩展可留在迁移清单，不自动成为已交付能力。旧 Guard stale UI 缺陷记录为独立维护项，不作为新产品构建前置，也不在本实施计划中修改旧源。
+Guard reuse limited to analysis/fixtures/discovery/framework/isolation. Implementation-location/source semantics may stay inventory, not automatic delivery. Old stale UI maintenance separate, not prerequisite or old-source edits here.
 
-### W11 发布后工作包
+### W11 post-release package
 
-以下内容最初登记为发布后候选 `W11`，不改变 W09/W10 历史范围。W09、W10、正式发布和 [0.2.0 发布后验收](../acceptance/20261007-0.2.0-post-release-verification.md) 已完成，用户于 2026-10-07 明确授权启动；设计、实现、自动门禁、真实 IFX CLI/UI 与最终安全审计现已完成，状态为 `W11 COMPLETE`，见 [W11 完成记录](../acceptance/20261007-w11-allowlists-ui.md)。输入来自 [W08 完成报告](../acceptance/20261007-w08-completion.md) 的操作员反馈及随后规则复核，组合语义和兼容性先冻结在 [W11 允许策略决议](../decisions/20261007-w11-policy-composition.md)。
+Originally future W11, unchanged W09-W10 scope. Both 0.2.0 release/[post verification](../acceptance/20261007-0.2.0-post-release-verification.md) complete/user authorized 2026-10-07; design/code/auto/real CLI-UI/audit COMPLETE, [record](../acceptance/20261007-w11-allowlists-ui.md). [W08feedback](../acceptance/20261007-w08-completion.md)/review informed [frozen composition](../decisions/20261007-w11-policy-composition.md).
 
-| 方向 | 后续目标 | 最低验收要求 |
+| Direction | Goal | Minimum gate |
 | --- | --- | --- |
-| 项目引用允许策略 | 在现有禁止规则之外，支持“所选源项目只能引用允许目标”的封闭策略；新项目或新层不得因未列入 denylist 而静默通过 | schema、模板、CLI/UI、JSON/HTML/SARIF 投影一致；clean/violation/零匹配/不完整引用、exact/glob、多规则集 fixtures；真实 IFX 只读复核 |
-| NuGet 允许策略 | 支持按项目范围约束允许的直接 `PackageReference` ID，同时保留全局/局部 denylist；首轮不冒称覆盖传递依赖、版本范围或在线漏洞数据 | 包 ID OrdinalIgnoreCase；中央版本与声明不完整状态准确；允许项、未知项、禁止项和例外均有正负证据 |
-| 冲突与组合语义 | 在实现允许规则前冻结并记录完整冲突矩阵。规则不采用“最后定义获胜”或文件顺序优先；所有适用约束同时成立，多条 allowlist 取交集，任何适用 deny 命中仍违规，真正放行只能通过有 ID、范围和理由的显式 exception | 规则文件及加载顺序置换得到相同核心结果；重复 ID、明显不可兼容约束和悬空例外仍为配置错误；广域允许加窄域禁止、多个允许集合、allow/deny 重叠、severity 和 exception 重叠均有确定结果与文档 |
-| 例外确定性 | 消除多个 exception 同时匹配同一 finding 时依赖首个匹配项进行审计归因的隐含顺序；选择拒绝重叠或冻结稳定的唯一选择规则 | 例外排列顺序不改变合规和审计身份；报告明确被哪一条例外豁免及原因 |
-| 目标上下文 UX | 页面醒目且持续显示产品身份与实际 target root、entry、rules、output；fixture/示例与真实目标使用不同标签，运行确认区避免把 ArchSift 示例误认成 IFX | 真实 IFX 与 fixture 的独立操作任务均能在执行前正确复述目标；错误根不会被静默接受为预期任务 |
-| 大范围与术语 UX | 105 项目等大范围结果提供摘要、筛选和折叠；中文 UI 与英文任务/机器字段提供一致术语映射 | 桌面/窄屏复核通过；不隐藏 limitation、inconclusive、not-applicable 或真实项目计数 |
-| UI 启停与证据 | 启动时说明 URL、当前等待状态、最终 JSON 产生条件及安全退出方式；服务退出、PID/端口跟踪和清理可审计，避免已完成复核后遗留候选进程 | 正常完成、取消、浏览器关闭、异常中断和重复启动 fixtures；最终无记录端口监听或候选进程，且不自动终止未经身份核对的进程 |
+|Project allows|Closed selected-source targets, unlisted deny is not a loophole|All formats/templates/parity/clean-violation-zero-incomplete/exact-glob/multi file/real read only|
+|NuGet allows|Scoped direct IDs/retained deny, no transitive-version-vulnerability claim|Case insensitive/central-incomplete facts/allow-unknown-deny-exception positive-negative|
+|Composition|Freeze full matrix first, independent constraints/intersection/deny retained/explicit exceptions only|Order-permutation invariant/duplicate-incompatible-dangling errors/broad allow-narrow deny/multi allow/severity-overlap|
+|Exceptions|Replace first match attribution with rejection or stable choice|Permutation invariant/result identity/reason|
+|Target UX|Persistent product/root-entry-rules-output/real-fixture distinctions|Independent tasks correctly identify target before execution/no silent wrong root|
+|Large UX|Summary/filter/collapse/translated terminology|Desktop-narrow/no hidden limits-status-counts|
+|Lifecycle|URL/waiting/final JSON/shutdown/PID-port audit|Normal-cancel-tab close-interrupt-duplicate/no residue/no unknown termination|
 
-W11 设计阶段必须先产出规则组合决议记录和兼容性方案，再修改 schema。新增 allowlist 不得把“被某条规则允许”解释成绕过其他规则的授权，也不得从当前依赖图自动生成并默认为已批准策略。现有规则集须保持可读取，任何 schema/version 迁移必须显式、可验证且不静默改变旧报告结论。
+Freeze composition/compatibility before schema. One allow never exempts other constraints; no automatically approved graph-derived policy. Old rules readable; explicit verified migrations, no silent old-conclusion changes.
 
-### W00 完成状态
+### W00 closure
 
-2026-10-06 的目标 Project 复核结果记录在 [W00 接手复核与交接报告](../acceptance/20261006-w00-takeover-review.md)。正式计划导入基准、Git/remote、SDK/reference packs、Guard/IFX HEAD、候选迁移文件哈希、P05 失败与清理证据以及 NuGet 缓存元数据均已重新核对。
+[Takeover](../acceptance/20261006-w00-takeover-review.md) rechecked plan/Git/remote/SDK-packs/Guard-IFX heads/provenance/P05 failures-cleanup/cache metadata.
 
-后续 W00 完成记录见 [W00 完成报告](../acceptance/20261006-w00-completion.md)。用户明确确认 Guard 所有权与资产复用/分发权利，授权 `GUARD-OWNER-20261006` 已写入 [逐文件来源清单](../migration/source-inventory.json)。14 个候选源、测试及 fixture 已记录来源 commit/hash、迁移方式、选取范围、目标目录和验证入口；旧模块 fixture 的四个 JSON 仅为历史覆盖元数据，不直接迁移。项目 AGENTS.md 与 [第三方许可/notice 清单](../migration/third-party-notices.md) 已创建，完整许可文本、ArchUnitNET NOTICE 和候选包 nuspec 已归档。
+[Completion](../acceptance/20261006-w00-completion.md):user Guard ownership/reuse-distribution recorded GUARD-OWNER-20261006 in [inventory](../migration/source-inventory.json).14 assets commit-hash-method-scope-destination-checks, four old fixture JSON reference only.AGENTS/[notices](../migration/third-party-notices.md)/full licenses-NOTICE-nuspec archived.
 
-当前结论为 `W00 COMPLETE / W01 NOT STARTED`。本轮只读核对 7 个候选缓存包及其 33 个 DLL 与本地 nupkg 字节均一致；不把它等同于新项目 restore/build、完整 NuGet 解析闭包或发布验收。来源清单标记 migrationExecuted=false，代码适配时再次复核并补实际目标哈希；W01 固定真实 lock/新增包，W08 核对实际分发资产与 runtime notices。未运行 Guard 安装或 IFX 集成，未创建 W01–W10 产品代码，也未提交、推送或修改远程。
+W00 COMPLETE/W01 NOT STARTED then.Seven packages/33DLLs byte consistent, not solution restore/full closure/release proof.All migrationExecuted=false, recheck before code/record actual hashes.W01 locks/new deps, W08 actual notices.No Guard-IFX/product W01–10/Git remote operations.
 
-以上为 W00 关闭时点记录。W00 随后已提交为 `5c378153abde38540dd81184706f92306091c53c`，历史 artifact manifest 继续保持该阶段快照。
+Later W00 commit `5c378153abde38540dd81184706f92306091c53c`; historical manifest retains stage identity.
 
-### W01 完成状态
+### W01 closure
 
-2026-10-06 已创建 solution、五个产品项目、三个测试项目、独立 SDK/中央包/显式离线源配置、八份 lock、开发检查脚本及 README。Windows x64 / SDK 10.0.303 / net10.0 / Debug 的离线首次恢复与 locked restore、八项目编译通过，零警告/错误；版本、CLI/Web 基础进程入口、项目和编译依赖方向共 9 项测试通过。每次命令后及最终 User/Machine environment、Process PATH、四个 Profile 哈希一致。
+2026-10-06:solution/five products/three tests/SDK-central packages-offline sources/eight locks/check script/README.Windows x64 SDK 10.0.303/net 10 Debug/initial-locked restores/eight builds 0 warnings-errors/nine identity-entry-direction tests.Host environment-PATH-four Profiles equal each step/final.
 
-验收及修复历史见 [W01 基础项目验收](../acceptance/20261006-w01-foundation.md)，真实已解析包与新增许可见 [W01 依赖记录](../dependencies/w01/README.md)。当前 `W01 COMPLETE / W02 NOT STARTED`；W01 工作区尚未另行提交，未推送。引擎包身份与 DLL 身份已区分，真实 ArchUnitNET 架构规则仍由 W05 验收；没有开始 W02–W10 功能。
+[Acceptance](../acceptance/20261006-w01-foundation.md)/[dependencies](../dependencies/w01/README.md).W01 COMPLETE/W02 UNSTARTED, W01 uncommitted-unpushed then.Engine package-versus DLL distinct, actual rules W05, no W02–10 features started.
 
-## 验证入口与完成条件
+## Verification and completion
 
-以下入口属于 W01–W08 要创建并实现的验证命令，现在不宣称其已存在或运行通过。新项目内部 fixture 回归可自动化；Guard × IFX 或本工作区真实现场集成继续采用人工一次一块已审查命令流程。
+Originally planned W01–08 commands, not then-existing passes. Synthetic internal regressions automated; real Guard-IFX sequential reviewed operator blocks.
 
-| 检查 | 计划入口 | 完成条件 |
+| Check | Entry | Gate |
 | --- | --- | --- |
-| 构建与单元/集成/架构测试 | dotnet build ArchSift.slnx；dotnet test ArchSift.slnx | 在记录的 SDK/平台通过，不引用 Guard 安装 |
-| schema 和模板 | pwsh -NoProfile -File scripts/Verify-Contracts.ps1 | 全部有效/无效例按预期；MD 与 JSON 一致 |
-| 功能正负例 | pwsh -NoProfile -File scripts/Verify-Fixtures.ps1 | 六类规则均验证行为、覆盖和失败状态 |
-| 安全回归 | pwsh -NoProfile -File scripts/Test-HostSafety.ps1 | 无 User/Machine 环境/Profile 修改；隔离 .NET 子进程不能向 User PATH 注册工具 |
-| 性能测量 | pwsh -NoProfile -File scripts/Measure-Performance.ps1 | 记录硬件、SDK、输入规模、冷/热缓存、耗时、内存和取消表现 |
-| 包与 CLI/UI | pwsh -NoProfile -File scripts/Test-PackageSmoke.ps1 | 解压新目录、迁移路径、无 Guard 前置、按报告语义返回代码 |
-| 本地打包 | pwsh -NoProfile -File scripts/Publish-LocalZip.ps1 | win-x64 自包含包、版本一致、依赖/许可清单、SHA-256，离线启动 UI |
-| IFX 与人工可用性 | docs/acceptance/ifx-local-analysis.md 中逐步命令及 UI 任务 | 已记录输入、报告、用户评分和清理证据 |
+|Build/tests|dotnet build/test ArchSift.slnx|Recorded SDK/platform, no Guard install|
+|Contracts|pwsh -NoProfile -File scripts/Verify-Contracts.ps1|Valid-invalid/JSON-Markdown parity|
+|Fixtures|pwsh -NoProfile -File scripts/Verify-Fixtures.ps1|Six rules/coverage/failures|
+|Host|pwsh -NoProfile -File scripts/Test-HostSafety.ps1|No persisted mutation/child tools registration|
+|Performance|pwsh -NoProfile -File scripts/Measure-Performance.ps1|Hardware SDK scale/cold warm/time-memory-cancel|
+|Package|pwsh -NoProfile -File scripts/Test-PackageSmoke.ps1|Fresh relocation/no Guard/correct exits|
+|Build ZIP|pwsh -NoProfile -File scripts/Publish-LocalZip.ps1|Self-contained win-x 64/version-deps-licenses-hashes/offline UI|
+|Real/human|docs/acceptance/ifx-local-analysis.md|Inputs/reports/scores/cleanup|
 
-新产品 self-contained 包不代表目标构建无需 SDK/targeting packs。只有项目声明分析的用户无需安装用于编译的 SDK；启用构建的用户需满足目标 prerequisites，工具准确报告缺失。
+Self-contained tool does not remove target SDK/packs prerequisites. Declaration-only needs no compiler SDK; explicit builds require target prerequisites with accurate diagnostics.
 
-0.1.0 的验收项：
+0.1.0 criteria:
 
-| ID | 标准 |
+| ID | Criterion |
 | --- | --- |
-| A01 | 无规则时能发现支持的项目图，含 unlisted/external/unresolved/unsupported 及上下文。 |
-| A02 | 六类规则模板、schema、JSON/MD 和配置覆盖语义一致，错误配置拒绝。 |
-| A03 | 每类规则都有有效正例、违规反例、无法判定及边界案例；真实 ArchUnitNET 类型依赖证据成立。 |
-| A04 | 多 TFM、中央 props/packages、条件/表达式、不支持项目均得到准确范围与状态。 |
-| A05 | 缺失/过期/无源码绑定 DLL、闭包缺失、配置变化及编译失败不能产生当前源码合规。 |
-| A06 | IDE 开启和普通生成产物不造成无关失效；保存相关输入时提示变化。 |
-| A07 | 同一输入与规则的核心报告一致；CLI/UI 一致；输出无伪造路径/行号，HTML 转义正确。 |
-| A08 | findings 默认 exit 0；错误、无法判定与取消准确非零；失败/取消后的 UI 无旧成功残留。 |
-| A09 | 目标分析只读、根边界有效、子进程环境隔离；原环境/Profile 和 Guard/IFX checkout 按测试基准不变。 |
-| A10 | IFX 与构造违规样例形成真实报告；至少一名未参与实现的操作者独立运行并理解结果，信心 ≥4/5，最高 L2。 |
-| A11 | 性能测量后，W08 先提交 docs/performance/budget.json 冻结参考输入/配置和阈值，再验证候选包；超预算需优化或明确调整依据。 |
-| A12 | ZIP 独立解压启动 CLI/UI，版本、哈希、运行限制与第三方清单齐全；无持久 PATH/Profile 修改。 |
+|A01|Rule-free graph/scope/unlisted-external-unresolved-unsupported/context|
+|A02|Six templates/schema/JSON-Markdown/overrides agree, invalid rejects|
+|A03|Every rule valid-violation-inconclusive-boundaries/actual ArchUnitNET|
+|A04|Accurate multi TFM/central config/conditions/unsupported scope|
+|A05|Missing-stale-unbound DLL/closure/context/build fail no current source pass|
+|A06|IDE/cache no irrelevant invalidations/relevant save detected|
+|A07|Stable core/CLI-UI parity/no invented locations/safe HTML|
+|A08|Violations 0/errors-inconclusive-cancel correct/no stale success|
+|A09|Read only target/root boundaries/child isolation/host-original checkout unchanged|
+|A10|Real IFX+fixture/reviewable/independent operator>=4 of 5, max L2|
+|A11|Measure then commit budget/reference-config/qualify the candidate/justified changes|
+|A12|Fresh ZIP CLI-UI/version-hash-limits-notices/no PATH-Profile writes|
 
-L0 为独立完成，L1 为一般提示，L2 为定位到文档或解释一次错误，L3 为逐步点击/字段指导，L4 为代操作。记录操作者真实分数与辅助等级，不能由实现者代填。若无独立操作者可用，代码验证可继续，但 A10 保持未通过。
+Help: L0 independent, L1 general, L2 document location/one error, L3 step-field guidance, L4 proxy.Record actual human scores, never implementer filled.Without operator continue code but A10 unpassed.
 
-性能预算作为 W08 的工程测量产物自动推进，不重新打开 Q13。归档原始结果和多次代表性运行，记录选择阈值的依据；不将 build/restore 时间混入单纯解析耗时，也不依靠单次最佳值证明达标。
+W08 performance engineering does not reopen Q13. Archive raw representative runs/rationale, separate restore-build from analysis, no single best proof.
 
-## 运行目录与安全回归
+## Run roots and safety
 
-代码仓库为 `D:\ArchSift`。本地真实测试产物统一置于外部 `D:\ArchSift-lab` 下的 runs、fixtures、packages、evidence、archives 子目录，避免污染目标或新仓库。开发构建 bin/obj 由 Git 忽略；现场 Target 构建用外置快照。进入这些路径时使用执行环境允许的正常审批机制，不通过别的工具绕过权限。
+Source D:\ArchSift; real outputs D:\ArchSift-lab\runs/fixtures/packages/evidence/archives. Own bin-obj ignored, target builds external snapshots.Normal approval, no tool-based permission bypass.
 
-真实现场测试前记录原 User/Machine 环境、Process PATH 与四个 PowerShell Profile 的哈希/存在性，只输出 equality 与哈希。安装、可能启动 dotnet 的操作、清理以及测试结束后分别比较；任何持久变化立即停止并保留证据，不自动修复。
+Before real tests hash User/Machine environment/Process PATH/four Profiles/existence, only hash-equality output.Recheck install/.NET/cleanup/end.Persistent drift stop/preserve, no repair.
 
-回归覆盖拒绝持久环境 mutation API、isolated DOTNET_CLI_HOME 与 DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0、父进程环境不变、输出路径越界、符号链接、构建失败与取消。产品默认流程不要求用户手工维护短期 proof。
+Regression rejects persisted APIs/paired child CLI home/parent unchanged/escaped outputs/links/build failure/cancel.No manual short proof maintenance.
 
-清理只处理精确记录的工具临时产物，不对源码根、仓库根或宽泛路径递归删除。若测试使用 worktree，通过 Git 正常移除，并确认注册项与磁盘目录同时消失；沙箱拒绝记录为基础设施结果，不归为产品违规。
+Clean only recorded temporary artifacts, no recursive source-repo-broad roots.Worktrees normal Git removal/registration-disk check.Sandbox denials infrastructure, not product violations.
 
-## 延期项目与重启条件
+## Deferrals and revisit conditions
 
-| 功能 | 当前限制 | 重新评估条件 |
+| Feature | Limit | Revisit |
 | --- | --- | --- |
-| 自然语言/Agent Plan 验证 | 不提供 Plan 合规承诺 | 核心及变更验证稳定，有明确结构化预期变更契约或单独 LLM 工作流设计 |
-| 数据库 schema/SQL/迁移验证 | 不连接数据库或运行迁移 | 独立数据库规则需求与只读输入范围已定义 |
-| 旧 .NET Framework、F#、VB | 报告不支持，未承诺编译/语义覆盖 | 对应解析器、toolchain 和 fixtures 就绪 |
-| MSBuild 完整求值 | 声明模型标明不支持的条件与表达式 | 明确隔离执行、配置维度和跨机器求值证据 |
-| NuGet 版本范围、传递依赖 | 首期只做直接包 ID | 依赖解析与离线数据来源契约就绪 |
-| 正则、自定义脚本/插件 | 只支持标准模板 exact/glob | 模板不足的真实需求且扩展边界已验证 |
-| 接口实现位置与更多源码语义规则 | 不包含在 0.1.0 六类清单 | 核心规则准确且有独立正负 fixtures |
-| NuGet tool 分发 | 本地 ZIP | 0.1.0 验收完成，包名/许可证/发布流程核对 |
-| fail-on、强制 CI 与远程治理 | 消费 CI 默认仅报告 | 显式新需求及独立策略设计；不自动恢复旧完整门禁 |
-| 逐 commit 检查与增量优化 | 两端完整状态比较 | 两端模型稳定，性能测量证明需要优化 |
+|Natural-language/Agent plans|No compliance promise|Stable core-changes/structured contract/separate LLM design|
+|Database SQL-migrations|No connections/execution|Scoped read only rules defined|
+|Old Framework/F#/VB|Unsupported|Parsers/toolchain/fixtures|
+|Full MSBuild|Declaration conditions limited|Explicit isolated dimensions/cross machine proof|
+|NuGet versions-transitives|Direct IDs|Offline closure contract|
+|Regex/scripts/plugins|Standard exact-glob|Real need/verified boundary|
+|Implementation-location/source semantics|Outside initial six|Accurate core/independent fixtures|
+|NuGet tool|Local ZIP initial|0.1.0 accepted/identity-license-process checked|
+|Fail-on/enforced CI/governance|Report only default|Explicit needs/separate policy design|
+|Per commit/incremental|Full final states|Stable models/measured need|
 
-## 风险与计划变更
+## Risks and changes
 
-主要工程风险为 declaration 与实际构建差异、程序集来源不足、离线包缺失、IDE/生成输入选取不一致、误用零匹配与缓存，以及 JSON/HTML/UI 的结果漂移。通过范围标识、统一输入清单、真实 ArchUnitNET 正负例、逐规则 coverage 和共享报告处理。
+Risks: declaration/build mismatch, insufficient provenance/offline packages, IDE/generated selection, false zero/cache passes, projection drift. Address explicit scope/shared inputs/actual ArchUnitNET/coverage/shared reports.
 
-来源许可证不足、现有仓库包含未归属改动、不可复现构建输入或主机安全漂移时，在对应任务停止并记录，其他独立工作可继续。普通实现选择如类拆分、内部算法与包选择在已批准范围内由实施者决定并留记录。
+Stop affected work for inadequate rights/unowned changes/unreproducible inputs/hostdrift, continue independent tasks. Ordinary classes-algorithms-package choices within scope belong implementer, record decisions.
 
-改变首期规则、默认网络、目标写入权限、强制 CI、平台承诺或延期范围时更新本计划并说明影响；不能以“已有 Guard 功能”为理由扩大范围。未通过验收不得将阶段或版本标为完成。
+Changes to initial rules/network/target writes/enforced CI/platform/deferrals update plan/impact.No Guard availability scope expansion or premature completion.
 
-## 决议与交付记录
+## Decisions and delivery log
 
-| 日期 | 事项 | 状态 |
+| Date | Event | Status |
 | --- | --- | --- |
-| 2026-10-06 | D01 至 D15 的产品方向与独立项目 | 已认可 |
-| 2026-10-06 | Q01 至 Q14 全部默认值 | 用户统一采纳，全部 CLOSED |
-| 2026-10-06 | 正式计划与 draft 归档 | 文档交付；代码实施未开始 |
-| 2026-10-06 | 用户确认 D:\ArchSift 为其新建的空 Git 仓库，并已创建 Codex Local Project ArchSift | 实施入口确定为目标 Project；计划在目标 Project 导入并持续维护 |
-| 2026-10-06 | W00 接手复核 | 计划/Git/工具链/来源访问条件已复核；READY TO COMPLETE W00；迁移权利、逐文件来源与 notices 尚未关闭；W01 未开始 |
-| 2026-10-06 | W00 实施入口关闭 | 用户 Guard 权属/复用/分发授权已记录；14 项来源清单、7 项第三方许可清单/归档、项目 AGENTS 与交付验证完成；W00 COMPLETE，W01 NOT STARTED |
-| 2026-10-06 | W00 本地提交与 W01 授权 | 用户要求“提交，然后开始W01”；W00 commit `5c378153abde38540dd81184706f92306091c53c`，保留人类主作者并附 Codex trailer；W01 IN PROGRESS |
-| 2026-10-06 | W01 基础项目验收 | 八项目离线恢复/locked restore/Debug 编译及 9 项测试通过；主机哈希不变；W01 COMPLETE，W02 NOT STARTED；W01 修改未提交 |
-| 2026-10-06 | W01 提交及后续执行授权 | W01 commit `62bace39cf6acad76c79327ec2ec91ea1c19772d`；用户授权继续后续计划，每阶段完成后提交；推送仍未授权 |
-| 2026-10-06 | W02 契约与模板 | 四份 schema、DTO、六类模板/Markdown、组合/例外/冲突校验、CLI rules 入口；56 项测试与独立 Test-Json/CLI 验证通过；见 [W02 验收](../acceptance/20261006-w02-contracts.md)；W02 COMPLETE |
-| 2026-10-06 | W02 本地提交 | `424ed1945fbc77cabd82fff8f0198d94b816a1a4`，附 Codex trailer |
-| 2026-10-06 | W03 输入与项目图 | 声明发现/根边界/来源身份与编辑器变化 fixtures；64 项测试通过，主机哈希不变；见 [W03 验收](../acceptance/20261006-w03-discovery.md)；W03 COMPLETE |
-| 2026-10-06 | W03 本地提交 | `31a3fdede0c93cdc6a235468516a3dea45816d24`，附 Codex trailer |
-| 2026-10-06 | W04 项目规则 | 项目规则/命名/例外/规则建议正负与缺失 fixtures，79 项测试通过；见 [W04 验收](../acceptance/20261006-w04-project-rules.md)；W04 COMPLETE |
-| 2026-10-06 | W04 本地提交 | `b86c326e497e0d6ea680d3fbb4b8d0025f3c82ea`，附 Codex trailer |
-| 2026-10-06 | W05 程序集与构建 | 真实 ArchUnitNET 正负及 module initializer 未执行、isolated/manifest/Worker/闭包负例，83 项回归通过；保守 snapshot/unsupported build 范围明确；见 [W05 验收](../acceptance/20261006-w05-assemblies.md)；W05 COMPLETE |
-| 2026-10-06 | W05 本地提交 | `304e1623468c610a2c98d1eae8aa1cc70cc674cc`，附 Codex trailer |
-| 2026-10-06 | W06 报告和 CLI | 共享服务/JSON/HTML/CLI/取消/部分结果，89 项测试通过；见 [W06 验收](../acceptance/20261006-w06-reports-cli.md)；W06 COMPLETE |
-| 2026-10-06 | W06 本地提交 | `9f7c24dcf0c9d33301e68212b7bd22a187708ee0`，附 Codex trailer |
-| 2026-10-07 | W07 本机 UI | 90 项回归、真实 HTTP 安全/parity、浏览器模板/违规/失败旧状态清理与桌面/窄屏验证；见 [W07 验收](../acceptance/20261007-w07-workbench.md)；W07 COMPLETE；独立操作员 A10 尚未执行 |
-| 2026-10-07 | W07 本地提交 | `a9f17338a253289ad3d55dac3b35618617426800`，附 Codex trailer |
-| 2026-10-07 | W08 性能冻结 | `64b6e238513a94d98f0f04d78cfd3dc47c1eb9f3` 先提交实测参考与预算，再测候选包 |
-| 2026-10-07 | W08 自动验收/人工入口 | 92 项回归、host safety、五次候选性能、self-contained CLI/Worker/UI 无 SDK 路径 smoke 通过；候选 ZIP/hash/许可已归档；见 [W08 准备](../acceptance/20261007-w08-readiness.md) |
-| 2026-10-07 | W08 真实 IFX/A10/最终清理 | 105 项目声明发现、已知引用违规、fixture 与真实 IFX UI、独立操作员 confidence 4/5（最高 L2）及最终零残留审计通过；见 [W08 完成报告](../acceptance/20261007-w08-completion.md)；W08 COMPLETE，W09/W10 依赖已满足但尚未开始 |
-| 2026-10-07 | 发布后下一目标登记 | 用户要求将 W08 的目标上下文、操作等待/JSON 时机、残留 UI 进程、大范围展示与术语反馈，以及项目引用/NuGet 允许列表、冲突和例外确定性纳入后续；登记为 W11 候选，仅在 W09/W10、发布和发布后验证完成后另行启动 |
-| 2026-10-07 | 0.2.0 发布后验收 | 正式三资产、发布包行为、固定源码 Windows/Linux、最终托管 CI、合成 UI、真实 IFX 已知违规与人工 UI、三格式报告及最终零残留审计通过；验证器失败与 CI/partial 限制保留；见 [0.2.0 发布后验收](../acceptance/20261007-0.2.0-post-release-verification.md)；发布后验收 PASS，W11 仍未启动 |
-| 2026-10-07 | W11 启动与设计门禁 | 用户在发布后验收提交并推送后授权启动 W11；先冻结新增项目引用/NuGet allowlist、交集与 deny 优先、稳定例外归因、旧 schemaVersion 1 兼容及完整测试矩阵；见 [W11 允许策略决议](../decisions/20261007-w11-policy-composition.md) |
-| 2026-10-07 | W11 自动实现门禁 | schemaVersion 1 增加两个兼容分支及 JSON/Markdown/UI 模板；Core 支持封闭项目/NuGet 直接依赖策略和稳定例外归因；HTML/UI 显示例外 ID/理由；UI 固定每个 job 的目标快照并增加大范围筛选/折叠与安全关闭；首次 IFX UI 复核准确指出项目卡片已折叠但 105 条 coverage limitation 仍展开，保留为 NEEDS FIX 后改为可见计数/影响说明加按需展开；操作员随后要求进一步区分项目、规则结果、违规证据和覆盖限制，现已拆为四个结果语义区及独立项目清单区，桌面/480px 合成视觉验证通过且窄屏无横向溢出；SDK 10.0.303、Debug、离线 restore/build 0 警告错误，97 unit + 31 integration + 2 architecture 全通过，8 个模板独立校验/渲染通过，主机状态一致；最终自动证据 `D:\ArchSift-lab\runs\development-53b4733726dc4624a6a46b063d9f4997`；真实 IFX CLI 已通过，W11 等待新的短 UI 复核与最终安全审计 |
-| 2026-10-07 | W11 人工 UI 与最终关闭 | 真实 IFX 最终 UI 显示 105 项目、0 程序集、`partial / noncompliant / exit 4`、两条规则/两条 finding 与默认折叠的 105 条 limitation；信息区分、项目筛选、窄屏和三格式入口由独立操作员以 L1、confidence 4/5 通过。最终审计精确清理一个弃用会话残留 PID/端口后，自动/CLI/UI/report/SARIF、产品与 IFX 工作树、宿主环境、进程/端口/容器及 24 份关键证据全部通过；见 [W11 完成记录](../acceptance/20261007-w11-allowlists-ui.md)；W11 COMPLETE，未提交、推送或发布 |
-| 2026-10-07 | 0.3.0 正式发布 | tag `v0.3.0` 固定源码 `d1b1d7c`；Windows/Ubuntu 各 130/130 CI；88,917,483-byte Windows x64 ZIP SHA-256 `0202e9734ec990474c415d4152274db93337a768e51837ef968fc4b539e44c79`，三项远程资产 digest/下载字节一致，实际下载包完整 smoke、官方 SARIF schema、性能及宿主状态通过；见 [0.3.0 发布记录](../releases/0.3.0-publication.md)；PUBLISHED / VERIFIED |
+|2026-10-06|D01–15 independent product|Accepted|
+|2026-10-06|Q01–14 defaults|All adopted/CLOSED|
+|2026-10-06|Formal plan/archived draft|Docs only/code not started|
+|2026-10-06|User created D:\ArchSift/Local Project|Reuse/import/maintain there|
+|2026-10-06|Takeover|Plan-Git-tools-provenance access checked/ready W00/rights-notices pending/W01 unstarted|
+|2026-10-06|W00 closed|Guard rights/14 assets/7 licenses/AGENTS/delivery checked/W01 unstarted|
+|2026-10-06|W00 commit/W01 authority|`5c378153abde38540dd81184706f92306091c53c`, human primary/Codex trailer, W01 active|
+|2026-10-06|W01|Eight offline builds/nine tests/host equal/complete/W02 unstarted/uncommitted then|
+|2026-10-06|W01 commit/later authority|`62bace39cf6acad76c79327ec2ec91ea1c19772d`, stage commits authorized, push not yet|
+|2026-10-06|W02|Four schemas/six templates/composition/CLI/56 tests/independent Test-Json-CLI, [acceptance](../acceptance/20261006-w02-contracts.md), COMPLETE|
+|2026-10-06|W02 commit|`424ed1945fbc77cabd82fff8f0198d94b816a1a4`, Codex trailer|
+|2026-10-06|W03|Discovery/boundaries/identity/IDE 64 tests/host, [acceptance](../acceptance/20261006-w03-discovery.md), COMPLETE|
+|2026-10-06|W03 commit|`31a3fdede0c93cdc6a235468516a3dea45816d24`, Codex trailer|
+|2026-10-06|W04|Rules-naming-exceptions-drafts/79 tests, [acceptance](../acceptance/20261006-w04-project-rules.md), COMPLETE|
+|2026-10-06|W04 commit|`b86c326e497e0d6ea680d3fbb4b8d0025f3c82ea`, Codex trailer|
+|2026-10-06|W05|Real ArchUnitNET/no initializer/isolated-manifest-Worker-closure/83 tests/limits, [acceptance](../acceptance/20261006-w05-assemblies.md), COMPLETE|
+|2026-10-06|W05 commit|`304e1623468c610a2c98d1eae8aa1cc70cc674cc`, Codex trailer|
+|2026-10-06|W06|Shared JSON-HTML-CLI/cancel-partial/89 tests, [acceptance](../acceptance/20261006-w06-reports-cli.md), COMPLETE|
+|2026-10-06|W06 commit|`9f7c24dcf0c9d33301e68212b7bd22a187708ee0`, Codex trailer|
+|2026-10-07|W07|90 tests/HTTP safety-parity/browser positive-negative-stale clear/layout, [acceptance](../acceptance/20261007-w07-workbench.md), COMPLETE/A10 not run then|
+|2026-10-07|W07 commit|`a9f17338a253289ad3d55dac3b35618617426800`, Codex trailer|
+|2026-10-07|W08 budget|`64b6e238513a94d98f0f04d78cfd3dc47c1eb9f3` frozen before candidate|
+|2026-10-07|W08 auto|92/host/five budgets/self-contained no SDK path/identity-licenses, [readiness](../acceptance/20261007-w08-readiness.md)|
+|2026-10-07|W08 real-human-audit|105 projects/known violation/fixture-real UI/4 of 5-max L2/zero residue, [completion](../acceptance/20261007-w08-completion.md), COMPLETE/W09-10 not started then|
+|2026-10-07|Future W11|User context/wait JSON/orphans/large UX/terms/allowlists/composition-exceptions, after W09-10-release-post verification|
+|2026-10-07|0.2.0 post verify|Assets/package/Windows-Linux/CI/UI-IFX/formats/audit passed, failures-limits retained, [record](../acceptance/20261007-0.2.0-post-release-verification.md), W11 not started then|
+|2026-10-07|W11 authority/design|After post verify commit-push, user authorized; freeze allows/intersection-deny/exceptions/schema 1/matrix, [decision](../decisions/20261007-w11-policy-composition.md)|
+|2026-10-07|W11 auto|Two additive schema 1 types/templates/Core closed policies/stable exceptions/projections/context/filter/shutdown.Initial human 105 expanded limits NEEDS FIX, then visible counts/collapse/four sections+project inventory/Desktop 480px/no overflow.SDK 10.0.303 Debug offline 0 warnings-errors/97+31+2/eight validate-render/host; D:\ArchSift-lab\runs\development-53b4733726dc4624a6a46b063d9f4997.Real CLI passed/new UI-audit pending then|
+|2026-10-07|W11 human-close|105 projects/0 assemblies/partial-noncompliant 4/two rules-findings/105 collapsed limitations/filter/layout/formats, independent L1-confidence 4 of 5.Audit precisely reclaimed abandoned PID-port, all checks/24 materials/host-process-container passed, [completion](../acceptance/20261007-w11-allowlists-ui.md), COMPLETE/uncommitted then|
+|2026-10-07|0.3.0 published|v0.3.0d1b1d7c/CI 130 each/88,917,483 byte ZIP SHA-256 `0202e9734ec990474c415d4152274db93337a768e51837ef968fc4b539e44c79`/three downloads/smoke-SARIF-budget-host, [publication](../releases/0.3.0-publication.md), VERIFIED|
 
-## 参考资料
+## References
 
-2026-10-09 0.4.0 后续：替代包 `a561e7d` 的真实 IFX 浏览器验收六项均为 yes、操作员可用性 4/5，先前的语言/安全关闭对齐和规则集卡片过长问题已修复，目标与宿主状态保持不变；见 [第二次 step 04 记录](../acceptance/20261009-0.4-ifx-step04-browser-retest.json)。操作员随后发现 182 条规则在编辑器中全部展开，已纳入逐规则默认折叠、ID/类型筛选及新候选定向复测。0.4-F 最终门禁尚未关闭，不声明版本验收或发布完成。
+Historical 0.4.0 a561e7d real browser, six yes answers/4 of 5, earlier button-card fix/original-host safe, [second04](../acceptance/20261009-0.4-ifx-step04-browser-retest.json). New 182 expanded editor finding added collapse-ID-type filter/new targeted candidate; Fopen/not final accepted.
 
-编辑器修复已提交为 `bb599bd`，新候选在 Windows/Ubuntu CI 各通过 142 项，本地 Debug/Release、两次原生包 smoke、未公开草稿资产独立下载回验和 IFX 只读预检均通过；见 [新候选准备记录](../acceptance/20261009-0.4-editor-candidate-readiness.md)。等待原操作员对新包进行定向浏览器复测，随后才可推进剩余验收门禁。
+Editor fix bb599bd/CI 142 each/local Debug-Release/two native smoke checks/draft downloads/real preflight passed, [candidate](../acceptance/20261009-0.4-editor-candidate-readiness.md). User targeted retest remaining.
 
-2026-10-07：[0.2.0 发布记录](../releases/0.2.0-publication.md)已关闭：GitHub tag `v0.2.0` 指向 `528ebb1`；ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`，三资产 uploaded、digest/下载字节一致，发布后 native smoke 通过。W09 `0286b75`、W10 初始 `8dc363e`、补充修复 `26498f4` / `eb52640` / `528ebb1`、固定验收 `27a5719` 均保留原历史并附 Codex trailer。发布关闭时 W11 尚未授权；随后发布后验收通过，用户另行授权并完成独立 W11 范围。W11 当前尚未提交、推送或发布。
+0.2.0 [publication](../releases/0.2.0-publication.md) closed: v0.2.0→528ebb1/ZIP SHA-256 `ee2d27b4d7689ce3eef75c0d3402c684ad1c9a8cb492ae7c8e915510038699d8`/three assets-downloads/native smoke.W090286b75/W108dc363e/fixes 26498f4-eb52640-528ebb1/acceptance 27a5719 history/Codex trailers retained.W11 not authorized at release, later post verify/authority/completion, separate scope, uncommitted-unpublished then.
 
-2026-10-07：用户授权开始 W09/W10、继续逐阶段完成后提交，并授权后续发布；明确选择 MIT 许可证。W09 完成提交 `0286b75`，106 项回归通过；W10 预算先冻结为 `63419d4`。[W10 验收](../acceptance/20261007-w10-report-integration.md)记录 Windows 109 项、Linux 107 项、核心 parity、SARIF 官方 schema、真实包/浏览器与 CI 样例。正式包独立构建/校验后才能发布，不上传未提交源码原型；W08 候选及历史验收不改写。
+W09-W10 authority 2026-10-07:stage commits/later release/MIT license.W090286b75/106 passed, W10 budget 63419d4 before qualification.[W10](../acceptance/20261007-w10-report-integration.md) Windows 109/Linux 107/parity/official SARIF/package-browser-CI examples.Build verify committed source before release, never prototype; W08 unchanged.
 
-- [Draft 历史](20261006-dotnet-architecture-analyzer-draft.md)。
-- [Guard 项目发现](C:/Users/von12/OneDrive/Desktop/Guard/core/host/V4.Guards.Host/ProfileRuntime.cs)。
-- [Guard 架构分析适配器](C:/Users/von12/OneDrive/Desktop/Guard/modules/architecture-conformance/adapter.ps1)。
-- [Guard 构建证据](C:/Users/von12/OneDrive/Desktop/Guard/modules/build-evidence-provider/adapter.ps1)。
-- [P05 最终验证](D:/IFX-10-Root/guard-lab/archives/p05-20261006-final-verification.json)。
-- [P05 最终安全审计](D:/IFX-10-Root/guard-lab/archives/p05-20261006/cleanup/h4-final-safety-and-cleanup-audit.json)。
-- [ArchUnitNET 官方说明](https://github.com/TNG/ArchUnitNET/blob/main/README.md)及[构建配置限制](https://archunitnet.readthedocs.io/en/latest/limitations/debug_artifacts/)。
+- [Historical draft](20261006-dotnet-architecture-analyzer-draft.md).
+- [Guard discovery](C:/Users/von12/OneDrive/Desktop/Guard/core/host/V4.Guards.Host/ProfileRuntime.cs).
+- [Guard architecture adapter](C:/Users/von12/OneDrive/Desktop/Guard/modules/architecture-conformance/adapter.ps1).
+- [Guard build evidence](C:/Users/von12/OneDrive/Desktop/Guard/modules/build-evidence-provider/adapter.ps1).
+- [P05 final verification](D:/IFX-10-Root/guard-lab/archives/p05-20261006-final-verification.json).
+- [P05 safety audit](D:/IFX-10-Root/guard-lab/archives/p05-20261006/cleanup/h4-final-safety-and-cleanup-audit.json).
+- [ArchUnitNET](https://github.com/TNG/ArchUnitNET/blob/main/README.md), [build limitations](https://archunitnet.readthedocs.io/en/latest/limitations/debug_artifacts/).

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "root": "D:/source/MyProject",
+    "entry": "MyProject.slnx"
+  },
+  "rulesets": [],
+  "build": {
+    "mode": "existing",
+    "targetFramework": "net10.0",
+    "configuration": "Release",
+    "allowNetwork": false
+  },
+  "output": {
+    "directory": "D:/ArchSift-state/MyProject/reports",
+    "formats": [
+      "json",
+      "html",
+      "sarif"
+    ]
+  },
+  "rulesDirectory": "D:/ArchSift-state/MyProject/rules"
+}
