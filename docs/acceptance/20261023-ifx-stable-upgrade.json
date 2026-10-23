@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "machine-qualified-live-upgrade-human-acceptance-pending",
+  "version": "0.10.0",
+  "releaseSource": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
+  "ifxSource": "30cca60467e737ba794e98cde608c713e7f17ff9",
+  "ifxTree": "c8a94069130b0a16606319c6ab656a32632c903f",
+  "ifxPullRequest": "https://github.com/von12549/IFX-New/pull/27",
+  "ifxPrCi": "https://github.com/von12549/IFX-New/actions/runs/39888414050",
+  "ifxActualMainCi": "https://github.com/von12549/IFX-New/actions/runs/39889184641",
+  "runtime": {
+    "sdk": "10.0.303",
+    "frameworksAndHost": "10.0.13",
+    "selection": "child-only-explicit-root",
+    "systemInstallationChanged": false,
+    "selectedRuntimeInputHashesVerified": 8,
+    "originalReleaseRuntimeCodeImagesVerified": 619
+  },
+  "gate": {
+    "total": 493,
+    "csharp": 92,
+    "json": 401,
+    "policyResponsibilitySources": 404,
+    "productionAssemblies": 89,
+    "policyFilesUnchanged": 14,
+    "liveSourceFilesProtected": 932,
+    "failed": 0,
+    "skipped": 0,
+    "typedCliWebIdentitiesEqual": true,
+    "inputsTargetPolicyOutcomeEqual": true,
+    "jsonHtmlDownloadsEqual": true,
+    "historyDiscoveryVerified": true,
+    "independentOfficialAuditProjects": 105,
+    "independentCliDistributionAudit": true
+  },
+  "entries": {
+    "dailyGate": "eng/Test-Architecture.ps1",
+    "launcher": "D:/IFX-10-Root/launcher.ps1",
+    "workbench": "D:/IFX-10-Root/workbench.ps1",
+    "selectedProfile": "IFX 0.10.0",
+    "target": "D:/IFX-10-Root/IFX-New",
+    "safeShutdownAndClosedPortsVerified": true,
+    "setupReceiptId": "78a50f98056f4252a5d911129e541306"
+  },
+  "rollback": {
+    "daily": "complete cl03.1 source/locks/approvals/feed combination; 493-case replay then stable forward validation",
+    "workbench": "real copied installation upgraded, receipt rolled back to 0.8.0, exact original two outer scripts/catalog/selection restored, then upgraded again",
+    "liveDowngradePerformed": false,
+    "oldInstalledVersions": [
+      "0.4.0",
+      "0.5.0",
+      "0.6.0",
+      "0.7.0",
+      "0.8.0"
+    ],
+    "oldFeedFilesRetained": 251,
+    "newFeedFilesApproved": 251,
+    "oldWorkbenchFilesUnchanged": 3750,
+    "oldMainConfigLibraryReportsPreserved": true,
+    "sourceAndConfigArchivesVerified": true
+  },
+  "fixes": [
+    {
+      "scope": "external outer-entry helper",
+      "change": "forward redirected UTF-8 output while draining stderr so the direct entry exposes its ready address",
+      "failedAttemptRetained": "copy-direct-workbench-machine-01",
+      "passedAttempt": "copy-direct-workbench-machine-02"
+    },
+    {
+      "scope": "external outer-entry helper child environment",
+      "change": "GIT_REDIRECT_STDIN=off prevents observed Web Git-context timeouts with inherited stdin control handles",
+      "reference": "https://git-scm.com/docs/git/2.46.0",
+      "failedAttemptsRetained": [
+        "live-web-parity-01",
+        "live-web-parity-02",
+        "live-web-parity-03"
+      ],
+      "passedDiagnosticAttempt": "live-web-parity-04",
+      "passedInstalledHelperAttempt": "live-web-parity-05",
+      "publishedBinariesChanged": false
+    }
+  ],
+  "managedHelperSha256": "ea8cb3570278184df5bc15a01ddf1d5c88cff76d44e33cb75107f73dd4139c81",
+  "host": {
+    "status": "passed",
+    "utc": "2026-10-23T03:27:35.808001+00:00",
+    "ifxProtectionUnchanged": true,
+    "runner": {
+      "id": 22,
+      "status": "online",
+      "busy": false,
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "archsift-ifx"
+      ],
+      "registrationAndExecutableHashesUnchanged": true,
+      "existingListenerAlive": true,
+      "serviceOrAutostartCreated": false
+    },
+    "ownedInstalledCliWebProcessesRemaining": [],
+    "hostSha256": "e50e6009cab1a812f621ef44f2dfa393d6f29b813e4bb24b29fe2bc201fb2e02",
+    "humanAcceptance": "pending-user-only"
+  },
+  "evidenceRoot": "D:/ArchSift-lab/runs/ifx-stable-upgrade-20261023-01",
+  "evidence": [
+    {
+      "path": "candidate-full-01-verification.json",
+      "sha256": "9f76c2799f231f4776153eb67787c490d9fe87ab955f231d6aa90529bebc3704"
+    },
+    {
+      "path": "candidate-audit-01-verification.json",
+      "sha256": "8c3eec65e59786b9094e572b7a1d6af4fcc4def0bf356a7778d2d7f43c04cdd7"
+    },
+    {
+      "path": "rollback-full-01-verification.json",
+      "sha256": "7ac2aedf08bdc0647dfefd67f9253f72139a3b9923d7cd358c6da473dca24949"
+    },
+    {
+      "path": "candidate-forward-02-verification.json",
+      "sha256": "8ceddcadb40eeb50606fd5a6c6a7d095d4933e992cceb554a03c102e0760b49c"
+    },
+    {
+      "path": "ci-pull_request-verification.json",
+      "sha256": "ef129be9e23a112d29d2186934cc728a76db6e7c719864bd08a94205c0c3e7c1"
+    },
+    {
+      "path": "ci-push-verification.json",
+      "sha256": "5baa2b149f51feae770119ba866cba802dfc235e7f6e20fbe181e518f11546d6"
+    },
+    {
+      "path": "workbench-rehearsal-01/qualification.json",
+      "sha256": "ce0436be5b683a55df162ef4d77079aa94d1cf38aa877482ad352f84260385e4"
+    },
+    {
+      "path": "outer-rollback-rehearsal-01/verification.json",
+      "sha256": "3e83fad7306eacf26c8dc4fbff161336ef8cf69c25232d1785a215c83eb2a9d5"
+    },
+    {
+      "path": "live-workbench-upgrade-01/apply-upgrade-receipt.json",
+      "sha256": "8e2fe80823a6b7e3306543f3f148f80970bc0c99f64ca3b6fff5bd863b032910"
+    },
+    {
+      "path": "live-full-01-verification.json",
+      "sha256": "d28ae847858d0d565133fc1b684858da52569228f5ad5f7b841b73278ea385ac"
+    },
+    {
+      "path": "live-web-parity-05/parity-verification.json",
+      "sha256": "2cd824702ea766c14e7b782f7f43d280cc4284c4d4c39d3c4b2aa34cec19b9e0"
+    },
+    {
+      "path": "live-launcher-machine-01/verification.json",
+      "sha256": "9da0afb727e564cf6472f28cc76b92b8ea271e656be61cffa9f2643d06de4aca"
+    },
+    {
+      "path": "git-stdin-isolation-fix-01/receipt.json",
+      "sha256": "f37f269440b0df6b6770e3b82926deae7e3ef000bd5ece08605f71b0f0bd2b24"
+    },
+    {
+      "path": "final-preservation.json",
+      "sha256": "b1d436b380e3cd9cf981db2d54131e69b0bcb1c694aefeddaffea982a28b43d0"
+    },
+    {
+      "path": "final-operational.json",
+      "sha256": "68c9f8a3a6d98770ea74ee85ecdd133319fa169baa189aedd84a92bcebf4aacf"
+    }
+  ],
+  "humanAcceptance": {
+    "status": "pending-user-only",
+    "operator": null,
+    "date": null,
+    "behaviorExpected": null,
+    "usabilityScoreOutOf5": null,
+    "defects": null,
+    "untestedItems": null,
+    "launcherSafeShutdown": null,
+    "directWorkbenchSafeShutdown": null,
+    "priorReleaseHumanAcceptanceIsSeparate": true
+  },
+  "documentationDeliveryCi": "This record binds completed IFX acceptance. Its ArchSift delivery PR and actual-main CI are retained separately to avoid a self-referential commit."
+}

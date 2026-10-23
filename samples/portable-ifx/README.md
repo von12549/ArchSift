@@ -1,4 +1,20 @@
-# Portable integration and current usage
+# Current stable IFX adoption and historical portable integration
+
+Updated: 2026-10-23. IFX daily gate and separate managed Workbench now use **released 0.10.0**, SDK **10.0.303**, child-only Core/ASP.NET/host **10.0.13**, Windows x64, net10.0/Release. [PR #27](https://github.com/von12549/IFX-New/pull/27) / main `30cca604` passed all [normal actual-main checks](https://github.com/von12549/IFX-New/actions/runs/39889184641), 493/493 = 92 C# + 401 JSON, zero skipped, independent 105/105 plus CLI distribution audit, rollback rehearsals and live CLI/Web parity. Existing 404 responsibility sources, three C# A responsibilities, A179 and five deferred B07 items retain their decisions. Final independent human acceptance is **pending**.
+
+Use the [current IFX guide](https://github.com/von12549/IFX-New/blob/30cca60467e737ba794e98cde608c713e7f17ff9/docs/architecture-portable.md), [machine acceptance and rollback boundaries](../../docs/acceptance/20261023-ifx-stable-upgrade.md), [human checklist](../../docs/acceptance/20261023-ifx-stable-upgrade-human-checklist.md) and [execution plan](../../docs/plans/20261023-ifx-stable-upgrade-plan.md). Stable package references use `[0.10.0]`; restore only the new approved 251-package source. Keep the old complete cl03.1 source/locks/approvals/feed and current policy scope together for rollback. Neither an old adjacent template nor changing one version string constitutes an upgrade.
+
+The live outer scripts call the reviewed external [startup helper](Start-ManagedWorkbench.ps1), whose bytes match the machine record. Example invocation after preparing the separately approved installation/runtime/configuration state:
+
+```powershell
+pwsh -NoProfile -File samples/portable-ifx/Start-ManagedWorkbench.ps1 -Mode Launcher -InstallationRoot D:/IFX-10-Root/ArchSift
+```
+
+The helper selects the managed payload, verifies CLI/runtime inputs, uses child-only runtime settings and `GIT_REDIRECT_STDIN=off`, forwards direct-entry output, and writes closeout host hashes. It requires `config/runtime-0.10.0.json` with approved SDK/runtime/root/stateRoot/files and `config/ifx-stable-0.10.0.json`; it does not create those approvals or install software. It is a site-specific integration sample, outside the immutable release package. Current profile **IFX 0.10.0** is external configuration using the managed library; original `config/ifx.json` remains Setup-protected. Run each entrance sequentially and use Safe shutdown.
+
+The remainder below is the preserved **2026-10-22 historical cl03.1 guide**. Its version, source directory, rollback baseline, candidate-Web and outer-0.8 statements describe that date and are superseded by the current record above. Other adjacent old templates keep their original delivery status; only the new startup helper is newly delivered here.
+
+## Historical guide (2026-10-22)
 
 Updated: 2026-10-22. The accepted live combination is `0.10.0-cl03.1`, with **493 full-gate cases = 92 C# + 401 JSON** and **404 policy responsibility sources = 3 C# + 401 JSON**. B01/B02/B03/B04/B05 enable 133/5/100/63/100 rules respectively, with Registry4 included in B03. A179 remains deferred, three A responsibilities remain with C#, and five B07 items remain deferred with the original IFX checks retained. The accepted IFX baseline is `b591b9f2ffca5d0bbbfb1f9352a56870fadf927c` (PR #25). Its three [normal actual-main CI checks](https://github.com/von12549/IFX-New/actions/runs/39733781519) passed; 493/493, zero skipped and independent official audit 105/105 are recorded in [final policy activation](https://github.com/von12549/IFX-New/pull/25). This update synchronizes documentation and references existing acceptance; it is not a new execution.
 
