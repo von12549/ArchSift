@@ -99,7 +99,7 @@
   "items": [
     {
       "id": "NX01",
-      "status": "implemented-rc2-machine-qualified-stable-pending",
+      "status": "implemented-exact-stable-machine-qualified-human-review-pending",
       "packagingDecision": "bundle-matching-complete-web-closure",
       "bootstrapDecision": "explicit-portable-state-root-and-existing-config-no-counterfeit-setup-state",
       "plannedPortableCommand": "archsift launch --root <external-state-root> --config <existing-json>",
@@ -119,7 +119,7 @@
     },
     {
       "id": "NX02",
-      "status": "implemented-rc2-machine-qualified-stable-pending",
+      "status": "implemented-exact-stable-machine-qualified-human-review-pending",
       "surface": "Architecture tests JSON inventory renderInventory",
       "default": "per-ruleset-collapsed",
       "controls": [
@@ -153,21 +153,21 @@
       "dependsOn": [
         "PX00"
       ],
-      "status": "rc2-machine-passed-stable-requalification-pending"
+      "status": "complete-exact-stable-machine-qualified"
     },
     {
       "id": "PX02",
       "dependsOn": [
         "PX01"
       ],
-      "status": "rc2-machine-passed-stable-requalification-pending"
+      "status": "complete-exact-stable-machine-qualified"
     },
     {
       "id": "PX03",
       "dependsOn": [
         "PX00"
       ],
-      "status": "rc2-machine-passed-stable-requalification-pending"
+      "status": "complete-exact-stable-machine-qualified"
     },
     {
       "id": "PX04",
@@ -175,14 +175,14 @@
         "PX02",
         "PX03"
       ],
-      "status": "rc2-machine-passed-stable-requalification-pending"
+      "status": "complete-exact-stable-machine-qualified"
     },
     {
       "id": "PX05",
       "dependsOn": [
         "PX04"
       ],
-      "status": "rc2-machine-passed-stable-requalification-pending"
+      "status": "complete-exact-stable-machine-qualified"
     },
     {
       "id": "PX06",
@@ -190,7 +190,7 @@
         "PX04",
         "PX05"
       ],
-      "status": "complete-rc2-pr22-main-ci39925606616"
+      "status": "complete-pr22-pr23-and-actual-main-ci"
     },
     {
       "id": "PX07",
