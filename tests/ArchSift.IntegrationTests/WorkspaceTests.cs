@@ -8,8 +8,10 @@ namespace ArchSift.IntegrationTests;
 
 public sealed class WorkspaceTests
 {
-    [Fact]
-    public async Task ProjectEntryKeepsNormalDefaultCacheWhenIsolatingSdkHome()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ProjectEntryKeepsNormalDefaultCacheWhenIsolatingSdkHome(bool explicitConfiguration)
     {
         using var fixture = new WorkspaceFixture();
         Directory.CreateDirectory(Path.Combine(fixture.Target, ".config"));
@@ -23,6 +25,13 @@ public sealed class WorkspaceTests
         while (root is not null && !File.Exists(Path.Combine(root.FullName, "ArchSift.slnx"))) root = root.Parent;
         Assert.NotNull(root);
         var callerHome = Path.Combine(fixture.Root, "caller-home");
+        if (explicitConfiguration)
+        {
+            fixture.Edit(node => node["nuget"]!["configFile"] = Path.Combine(fixture.Target, "NuGet.Config"));
+            var userDirectory = Path.Combine(fixture.Root, "appdata", "NuGet"); Directory.CreateDirectory(userDirectory);
+            File.WriteAllText(Path.Combine(userDirectory, "NuGet.Config"), "<configuration><config><add key=\"globalPackagesFolder\" value=\"" +
+                System.Security.SecurityElement.Escape(Path.Combine(fixture.Root, "inherited-cache")) + "\"/></config></configuration>");
+        }
         var start = new ProcessStartInfo("pwsh") { WorkingDirectory = fixture.Root, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
         foreach (var arg in new[] { "-NoProfile", "-NonInteractive", "-File", Path.Combine(root.FullName, "templates", "project", ".archsift", "start.ps1"), "-Config", fixture.Config, "-Action", "Doctor", "-NoBrowser" }) start.ArgumentList.Add(arg);
         start.Environment["DOTNET_CLI_HOME"] = callerHome; start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";

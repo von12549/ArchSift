@@ -189,6 +189,7 @@ try{
   if(-not $offline){$nugetXml=[xml](Get-Content -LiteralPath $nugetConfig -Raw)}
   $cacheSetting=$nugetXml.SelectSingleNode('/configuration/config/add[@key="globalPackagesFolder"]')
   if($null -ne $cacheSetting){$cache=Canonical ([Environment]::ExpandEnvironmentVariables([string]$cacheSetting.value)) (Split-Path $nugetConfig)}
+  else{$cache=Canonical (Join-Path $consumerNuGetHome '.nuget/packages')}
  }
  if(-not $cache){
   $cacheOutput=Child $dotnet @('nuget','locals','global-packages','--list','--force-english-output') 'cache-location';Need ($cacheOutput -match '(?m)^global-packages:\s*(.+)\s*$') 'NuGet did not resolve its global cache.';$cache=Canonical $Matches[1].Trim()

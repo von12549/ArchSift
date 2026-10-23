@@ -184,6 +184,20 @@ public sealed class LauncherTests
             start.Environment["DOTNET_CLI_HOME"] = Path.Combine(Root, "cli-home"); start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
             start.Environment["ARCHSIFT_UI_PARENT_CONTROL"] = "stdin-v1"; return start;
         }
-        public void Dispose() { Assert.True(PathSafety.IsUnder(Root, Path.GetTempPath())); Directory.Delete(Root, true); }
+        public void Dispose()
+        {
+            Assert.True(PathSafety.IsUnder(Root, Path.GetTempPath()));
+            var elapsed = Stopwatch.StartNew();
+            while (true)
+            {
+                try { Directory.Delete(Root, true); return; }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException && elapsed.Elapsed < TimeSpan.FromSeconds(3))
+                {
+                    // A just-exited Windows apphost can briefly retain its mapped DLLs.
+                    // Keep the original assertions and fail cleanup if the bound expires.
+                    Thread.Sleep(50);
+                }
+            }
+        }
     }
 }
