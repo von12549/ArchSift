@@ -26,7 +26,11 @@ public sealed class ProfileStore
         var portable = File.Exists(SetupFiles.Under(Root, PortableState.MarkerName));
         if (managed && (portable || initializingConfig is not null)) throw new ConfigurationException("Ambiguous managed/portable root.");
         if (managed) { Installation = SetupService.LoadInstallation(Root); InitialConfigPath = Installation.ConfigPath; }
-        else InitialConfigPath = initializingConfig ?? PortableState.Read(Root).InitialConfigPath;
+        else
+        {
+            foreach (var protectedRoot in ArchSift.Hosting.WebPayload.ProtectedHostRoots()) PathSafety.EnsureDisjoint(Root, protectedRoot);
+            InitialConfigPath = initializingConfig ?? PortableState.Read(Root).InitialConfigPath;
+        }
         ConfigRoot = SetupFiles.Under(Root, "config");
         CatalogPath = SetupFiles.Under(Root, "config/profiles.json"); SelectionPath = SetupFiles.Under(Root, "config/selection.json");
         if (InitialConfigPath.Equals(CatalogPath, PathSafety.Comparison) || InitialConfigPath.Equals(SelectionPath, PathSafety.Comparison))
@@ -100,8 +104,9 @@ public sealed class ProfileStore
         {
             foreach (var destination in new[] { library, output }.Concat(new[] { config.Build.LocalFeed, config.Build.CacheDirectory }.OfType<string>()))
                 PathSafety.EnsureDisjoint(Root, destination);
-            PathSafety.EnsureDisjoint(AppContext.BaseDirectory, configPath);
-            foreach (var destination in new[] { target, library, output }) PathSafety.EnsureDisjoint(AppContext.BaseDirectory, destination);
+            foreach (var protectedRoot in ArchSift.Hosting.WebPayload.ProtectedHostRoots())
+                foreach (var destination in new[] { configPath, target, library, output }.Concat(new[] { config.Build.CacheDirectory }.OfType<string>()))
+                    PathSafety.EnsureDisjoint(protectedRoot, destination);
         }
         foreach (var destination in new[] { library, output })
             foreach (var reserved in new[] { "versions", "operations", "install.json", ".archsift-setup.lock", "config/profiles.json", "config/selection.json", "config/.archsift-profiles.lock", PortableState.MarkerName, "bootstrap.json", ".archsift-workbench.lock" })

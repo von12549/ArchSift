@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.10.1-rc.1",
+  "version": "0.10.1-rc.2",
   "stableTarget": "0.10.1",
   "status": "candidate-implementation-and-machine-qualification-in-progress",
   "published": false,

@@ -91,6 +91,37 @@ public sealed class PortableWorkbenchTests
         Assert.False(Directory.Exists(f.State));
     }
 
+    [Fact]
+    public void ForgedPortableMarkerInsideManagedParentIsReadOnlyRejected()
+    {
+        using var f = new Fixture();
+        var parent = Path.Combine(f.Root, "managed");
+        var state = Path.Combine(parent, "state"); Directory.CreateDirectory(state);
+        File.WriteAllText(Path.Combine(parent, "install.json"), "{}");
+        var marker = Path.Combine(state, PortableState.MarkerName);
+        File.WriteAllBytes(marker, JsonSerializer.SerializeToUtf8Bytes(new PortableMarker(1, "ArchSift.Workbench.Portable", state, f.ConfigPath), JsonContract.Options));
+        var hash = SetupFiles.FileHash(marker);
+        Assert.Throws<ConfigurationException>(() => new ProfileStore(state));
+        Assert.Equal(hash, SetupFiles.FileHash(marker));
+        Assert.False(File.Exists(Path.Combine(state, ".archsift-workbench.lock")));
+    }
+
+    [Fact]
+    public void ImmutableHostLocatorProtectsSiblingCliGlobalCacheAndStore()
+    {
+        using var f = new Fixture();
+        var cache = Path.Combine(f.Root, "cache");
+        var package = Path.Combine(cache, "archsift.cli", "1.2.3");
+        var host = Path.Combine(package, "tools", "net10.0", "any", "web");
+        Directory.CreateDirectory(host); File.WriteAllText(Path.Combine(package, ".nupkg.metadata"), "{}");
+        File.WriteAllText(Path.Combine(Directory.GetParent(host)!.FullName, "archsift.dll"), "locator fixture only");
+        var roots = WebPayload.ProtectedHostRoots(host);
+        Assert.Contains(cache, roots); Assert.Contains(Directory.GetParent(host)!.FullName, roots);
+        Assert.Contains(host, roots);
+        Assert.Throws<ConfigurationException>(() => PortableState.Initialize(Path.Combine(AppContext.BaseDirectory, "state"), f.ConfigPath));
+        Assert.False(Directory.Exists(Path.Combine(AppContext.BaseDirectory, "state")));
+    }
+
     [Theory]
     [InlineData("changed")]
     [InlineData("missing")]
@@ -98,6 +129,8 @@ public sealed class PortableWorkbenchTests
     [InlineData("version")]
     [InlineData("duplicate")]
     [InlineData("escape")]
+    [InlineData("null-entry")]
+    [InlineData("schema")]
     public void PayloadRejectsChangedMissingExtraMixedAndUnsafeFiles(string scenario)
     {
         using var f = new Fixture();
@@ -113,10 +146,12 @@ public sealed class PortableWorkbenchTests
         if (scenario == "changed") File.AppendAllText(Path.Combine(web, "wwwroot/index.html"), "altered");
         if (scenario == "missing") File.Delete(Path.Combine(web, "ArchSift.Web.deps.json"));
         if (scenario == "extra") File.WriteAllText(Path.Combine(web, "foreign.dll"), "unlisted");
+        if (scenario == "null-entry") inventory = inventory with { Entries = [.. inventory.Entries, null!] };
+        if (scenario == "schema") inventory = inventory with { SchemaVersion = 2 };
         if (scenario == "version") inventory = inventory with { Version = "0.0.0" };
         if (scenario == "duplicate") inventory = inventory with { Entries = [.. inventory.Entries, inventory.Entries[0]] };
         if (scenario == "escape") inventory = inventory with { Entries = [.. inventory.Entries, new("../outside", 0, new string('a', 64))] };
-        if (scenario is "version" or "duplicate" or "escape") File.WriteAllBytes(inventoryPath, JsonSerializer.SerializeToUtf8Bytes(inventory, JsonContract.Options));
+        if (scenario is "version" or "duplicate" or "escape" or "schema" or "null-entry") File.WriteAllBytes(inventoryPath, JsonSerializer.SerializeToUtf8Bytes(inventory, JsonContract.Options));
         Assert.ThrowsAny<IOException>(() => WebPayload.Verify(web, ToolIdentity.Version));
     }
 

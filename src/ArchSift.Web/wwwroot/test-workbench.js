@@ -165,7 +165,7 @@
       const card = make("div", undefined, "test-rule-row");
       const details = make("details"), summary = make("summary");
       const name = rule.path.split(String.fromCharCode(92)).join("/").split("/").pop();
-      summary.append(make("strong", name), make("span", " · " + rule.cases.length + " " + t("JSON cases")),
+      summary.append(make("strong", name), make("span", " · " + rule.cases.length + " " + t("JSON cases") + (rule.cases.length ? "" : " · " + t("No enabled cases"))),
         make("span", rule.path, "path"));
       summary.dataset.inventoryFocus = "summary:" + ruleKey;
       details.append(summary);

@@ -17,8 +17,9 @@ class Element {
 const elements = new Map();
 const el = id => { if (!elements.has(id)) { const node = new Element(); node.connected = true; elements.set(id, node); } return elements.get(id); };
 const document = { getElementById: el, createElement: tag => new Element(tag), addEventListener() {}, get activeElement() { return active; } };
+const requests = [];
 const context = vm.createContext({ document, console, zhTranslations: {}, t: key => key,
-  api: () => new Promise(() => {}), renderResponsibilities() {}, setInterval() {}, clearInterval() {},
+  api: (path, body) => { if (path === "test-workbench/run") requests.push(JSON.stringify(body)); return new Promise(() => {}); }, renderResponsibilities() {}, setInterval() {}, clearInterval() {},
   refreshRules() {}, refreshLibrary() {}, showPanel() {}, localizedMessage: value => value });
 let script = fs.readFileSync(new URL("../src/ArchSift.Web/wwwroot/test-workbench.js", import.meta.url), "utf8");
 script = script.replace(/\}\)\(\);\s*$/, "globalThis.paintInventory=renderInventory;})();");
@@ -39,12 +40,14 @@ const control = key => all().find(node => node.dataset.inventoryFocus === key);
 context.paintInventory(view);
 assert.equal(jsonDetails().length, 13);
 assert.ok(jsonDetails().every(node => !node.open));
+el("test-mode").value="full"; el("test-start").onclick();
 assert.equal(all().filter(node => node.tagName === "li").length, 401);
 assert.ok(all().some(node => node.textContent.includes("JSON cases: 401") && node.textContent.includes("C# cases: 92")));
 assert.ok(jsonDetails().every(node => !walk(node.children[0]).some(child => child.tagName === "button")));
 assert.equal(all().filter(node => node.dataset.inventoryFocus?.startsWith("edit:")).length, 13);
 control("expand-json").focus(); control("expand-json").onclick();
 assert.ok(jsonDetails().every(node => node.open));
+el("test-start").onclick(); assert.equal(requests[0], requests[1], "Closed/open inventory submits identical full execution requests");
 assert.equal(active, control("expand-json"));
 const first = jsonDetails()[0]; first.open = false; first.listeners.toggle();
 control("edit:" + view.rules[0].path.toLowerCase()).focus();

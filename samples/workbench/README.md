@@ -9,6 +9,6 @@ These files are reviewable templates for a new consumer, not an approved product
 - `NuGet.Config.template`: one explicit offline source; replace its example path.
 - `test-gate.template.json`: external portable schemaVersion 2 configuration; provide reviewed policy/required-case manifests and hashes.
 
-The current templates use 0.10.1-rc.1 consistently. Stable qualification must update every product reference and approval identity together. These templates do not establish package availability or acceptance. See [release status](../../docs/releases/0.10.1/release-status.json).
+The current templates use 0.10.1-rc.2 consistently. Stable qualification must update every product reference and approval identity together. These templates do not establish package availability or acceptance. See [release status](../../docs/releases/0.10.1/release-status.json).
 
 For an independent small adapter example, see [portable verification](../portable-verification/README.md). Production JSON rules need the consumer's actual reviewed assembly closure, not that synthetic assembly.

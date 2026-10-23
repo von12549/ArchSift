@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "version": "0.10.1-rc.2",
+  "status": "development-regression-passed-committed-package-qualification-pending",
+  "toolchain": {
+    "sdk": "10.0.303",
+    "runtime": "10.0.13",
+    "tfm": "net10.0",
+    "configuration": "Release",
+    "networkRestore": false
+  },
+  "sourceState": "development worktree; exact committed package build remains required",
+  "run": "development-cbf16c05f39a4a6a84a0517a393abbe6",
+  "passed": {
+    "architecture": 2,
+    "unit": 157,
+    "integration": 123,
+    "mtp": 57
+  },
+  "failed": 0,
+  "skipped": 0,
+  "templates": 8,
+  "hostEqual": true,
+  "codeChanges": [
+    "Protect entire immutable CLI/Web/package cache and source roots from portable state/config/output writes.",
+    "Reject malformed/null/duplicate/oversized payload inventories with bounded traversal.",
+    "Apply child-only GIT_REDIRECT_STDIN=off at actual Core/TestGate Git subprocess boundaries.",
+    "Keep managed installation API object; portable host context remains separate.",
+    "Preserve exact full execution requests across JSON inventory disclosure states."
+  ],
+  "retainedCandidate": {
+    "version": "0.10.1-rc.1",
+    "source": "065832e440e850481b21ce222025ffa4991fbe43",
+    "build": "candidate-build-02",
+    "packagingAndGenericColdUsePassed": true,
+    "releaseAccepted": false,
+    "reasonSuperseded": "Strengthen immutable package/cache boundary and malformed-inventory rejection; original bytes and all failed packaging probes retained."
+  },
+  "ifxPreflight": {
+    "source": "30cca60467e737ba794e98cde608c713e7f17ff9",
+    "trackedRawBlobsArchived": 932,
+    "protectedInstalledAndOuterFiles": 4527,
+    "cases": 493,
+    "readOnly": true,
+    "path": "ifx-preflight-01/preflight.json"
+  },
+  "independentWindows": {
+    "localDockerUnavailable": true,
+    "persistentServiceRepair": false,
+    "hostedWorkflowPrepared": ".github/workflows/qualify-workbench.yml",
+    "dispatched": false
+  },
+  "evidence": [
+    {
+      "path": "development-04.json",
+      "sha256": "ec997fdf117edb4d207fa30a116a9c306b44d926bb94c99cc7619325b498e52a"
+    },
+    {
+      "path": "development-05.json",
+      "sha256": "7e898b5d6dbeaa11ee862ed1abdddf165dcdd06a2307852dd6df509518e860b7"
+    },
+    {
+      "path": "rid-locks-03.json",
+      "sha256": "f806cf710c8dd99c11ae97f91ec46a8eb9a9615214242b7eb224e97a0941df75"
+    },
+    {
+      "path": "ifx-preflight-01/preflight.json",
+      "sha256": "1852abfb6b9cbf1aa1bc6ded7996aef4eb3398f8de6a1ddf1fddbcb0bd0a3b4e"
+    },
+    {
+      "path": "independent-driver-review.json",
+      "sha256": "3b4ce1bd72d5764c26f59940ba3eb7dc12a4e87352b3c9a2931055373e7fcabf"
+    }
+  ],
+  "humanAcceptance": "pending-user-only",
+  "published": false,
+  "liveIfxChanged": false
+}

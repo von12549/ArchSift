@@ -15,7 +15,7 @@
   "dotnetCliHome": "D:/ArchSift-state/MyProject/runs/new-unique-run/cli-home",
   "runnerFormat": "mtp-ctrf",
   "auditMode": "offline-architecture",
-  "toolIdentity": "0.10.1-rc.1",
+  "toolIdentity": "0.10.1-rc.2",
   "policyFile": "architecture/policy.json",
   "policySha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "requiredCases": "architecture/required-cases.json",

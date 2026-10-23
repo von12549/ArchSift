@@ -218,26 +218,30 @@
     {
       "id": "PA01",
       "area": "version-source",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA02",
       "area": "cold-nuget-ui-and-launcher",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA03",
       "area": "negative-integrity-runtime-bootstrap",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA04",
       "area": "folding-accessibility-localization-focus",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA05",
@@ -248,8 +252,9 @@
     {
       "id": "PA06",
       "area": "consumer-managed-compatibility",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA07",
@@ -260,8 +265,9 @@
     {
       "id": "PA08",
       "area": "lifecycle-closeout",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA09",
@@ -272,8 +278,9 @@
     {
       "id": "PA10",
       "area": "fresh-real-snapshot-separate-audit",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "in-progress",
+      "humanOnly": false,
+      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA11",
@@ -348,17 +355,25 @@
     "evidenceRoot": "D:/ArchSift-lab/runs/workbench-0101-20261023-01",
     "humanAcceptance": "pending-user-only",
     "publication": "pending-human-acceptance",
-    "candidateVersion": "0.10.1-rc.1",
+    "candidateVersion": "0.10.1-rc.2",
     "developmentChecks": {
-      "run": "development-7d2067b21ec94ca78eaccb73045478a8",
+      "version": "0.10.1-rc.2",
+      "run": "development-cbf16c05f39a4a6a84a0517a393abbe6",
       "architecture": 2,
       "unit": 157,
-      "integration": 119,
+      "integration": 123,
       "mtp": 57,
       "failed": 0,
       "skipped": 0,
       "hostEqual": true,
       "releaseQualification": false
-    }
+    },
+    "retainedCandidate": {
+      "version": "0.10.1-rc.1",
+      "source": "065832e440e850481b21ce222025ffa4991fbe43",
+      "build": "candidate-build-02",
+      "outcome": "build/cold consumer/native packaging passed; full release gates pending; superseded for stronger immutable-cache boundary and malformed-inventory rejection"
+    },
+    "ifxPreflight": "read-only passed; original source/feed and 4527 installed/outer files protected"
   }
 }

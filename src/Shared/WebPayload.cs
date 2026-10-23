@@ -14,6 +14,22 @@ public sealed record WebPayloadInventory(int SchemaVersion, string Version, stri
 public static class WebPayload
 {
     public const string InventoryName = "web-payload.json";
+    public static string[] ProtectedHostRoots(string? directory = null)
+    {
+        directory = Path.GetFullPath(directory ?? AppContext.BaseDirectory);
+        var roots = new HashSet<string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal) { directory };
+        var parent = Directory.GetParent(Path.TrimEndingDirectorySeparator(directory));
+        if (parent is not null && File.Exists(Path.Combine(parent.FullName, "archsift.dll"))) roots.Add(parent.FullName);
+        for (var cursor = new DirectoryInfo(directory); cursor is not null; cursor = cursor.Parent)
+        {
+            if (File.Exists(Path.Combine(cursor.FullName, "ArchSift.slnx"))) roots.Add(cursor.FullName);
+            if (cursor.Name == ".store") roots.Add(cursor.FullName);
+            if (File.Exists(Path.Combine(cursor.FullName, ".nupkg.metadata")) &&
+                cursor.Parent?.Name.Equals("archsift.cli", StringComparison.OrdinalIgnoreCase) == true && cursor.Parent.Parent is { } cache)
+                roots.Add(cache.FullName);
+        }
+        return roots.ToArray();
+    }
     public static WebHostCommand Resolve(string directory, string expectedVersion, bool requireInventory = true)
     {
         directory = Path.GetFullPath(directory);
@@ -40,7 +56,20 @@ public static class WebPayload
         var path = Path.Combine(directory, InventoryName); PathSafety.EnsureNoLinks(path);
         if (!File.Exists(path) || new FileInfo(path).Length > 4 * 1024 * 1024)
             throw new IOException("Web payload inventory is missing or too large; restore the approved package.");
-        var inventory = JsonSerializer.Deserialize<WebPayloadInventory>(File.ReadAllBytes(path), JsonContract.Options);
+        using var document = JsonDocument.Parse(File.ReadAllBytes(path));
+        void UniqueKeys(JsonElement value)
+        {
+            if (value.ValueKind == JsonValueKind.Object)
+            {
+                var names = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var property in value.EnumerateObject())
+                { if (!names.Add(property.Name)) throw new IOException("Duplicate Web inventory key."); UniqueKeys(property.Value); }
+            }
+            else if (value.ValueKind == JsonValueKind.Array) foreach (var item in value.EnumerateArray()) UniqueKeys(item);
+        }
+        UniqueKeys(document.RootElement);
+        var inventory = document.RootElement.Deserialize<WebPayloadInventory>(new JsonSerializerOptions(JsonContract.Options)
+            { UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow });
         if (inventory is null || inventory.SchemaVersion != 1 || inventory.Version != expectedVersion ||
             inventory.SourceCommit is null || !System.Text.RegularExpressions.Regex.IsMatch(inventory.SourceCommit, "^[a-f0-9]{40}$") ||
             inventory.Entries is null || inventory.Entries.Length is < 1 or > 10000)
@@ -48,9 +77,10 @@ public static class WebPayload
         var entries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var entry in inventory.Entries)
         {
-            if (string.IsNullOrWhiteSpace(entry.Path) || entry.Path.Contains('\\') || entry.Path.Contains(':') ||
+            if (entry is null || string.IsNullOrWhiteSpace(entry.Path) || entry.Path.Contains('\\') || entry.Path.Contains(':') ||
                 entry.Path.Split('/').Any(p => p is "" or "." or ".." || p.EndsWith(' ') || p.EndsWith('.')) ||
-                Path.IsPathRooted(entry.Path) || entry.Path == InventoryName || !entries.Add(entry.Path) || entry.Bytes < 0)
+                Path.IsPathRooted(entry.Path) || entry.Path == InventoryName || !entries.Add(entry.Path) || entry.Bytes is < 0 or > 268435456 || entry.Sha256 is null ||
+                !System.Text.RegularExpressions.Regex.IsMatch(entry.Sha256, "^[a-f0-9]{64}$"))
                 throw new IOException("Unsafe or duplicate Web inventory path.");
             var file = PathSafety.Under(directory, entry.Path); PathSafety.EnsureNoLinks(file);
             if (!File.Exists(file) || new FileInfo(file).Length != entry.Bytes) throw new IOException("Web payload file is missing or changed: " + entry.Path);
@@ -58,12 +88,15 @@ public static class WebPayload
             if (Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant() != entry.Sha256)
                 throw new IOException("Web payload hash differs: " + entry.Path);
         }
-        void Walk(string folder)
+        var observed = 0;
+        void Walk(string folder, int depth = 0)
         {
+            if (depth > 32) throw new IOException("Web payload nesting exceeds its limit.");
             foreach (var item in Directory.EnumerateFileSystemEntries(folder))
             {
                 PathSafety.EnsureNoLinks(item);
-                if (Directory.Exists(item)) Walk(item);
+                if (++observed > 20000) throw new IOException("Web payload entry limit exceeded.");
+                if (Directory.Exists(item)) Walk(item, depth + 1);
                 else
                 {
                     var relative = Path.GetRelativePath(directory, item).Replace('\\', '/');

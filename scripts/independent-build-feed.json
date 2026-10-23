@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "scope": "Explicit frozen third-party build inputs for SDK 10.0.303 and runtime 10.0.13. Product packages are built from the reviewed source; no IFX inputs or registry publication.",
+  "packageCount": 39,
+  "packages": [
+    {
+      "id": "CycleDetection",
+      "version": "2.0.0",
+      "file": "cycledetection.2.0.0.nupkg",
+      "sha256": "475bd389741bb249a1badf7f0386c5383dbb0ad4807978f883dd5229d2e8dcf3",
+      "bytes": 83171,
+      "url": "https://api.nuget.org/v3-flatcontainer/cycledetection/2.0.0/cycledetection.2.0.0.nupkg"
+    },
+    {
+      "id": "JetBrains.Annotations",
+      "version": "2026.2.0",
+      "file": "jetbrains.annotations.2026.2.0.nupkg",
+      "sha256": "e34f42b24add688097529946b3db0da657d325f604965955c08430a0359f7669",
+      "bytes": 230439,
+      "url": "https://api.nuget.org/v3-flatcontainer/jetbrains.annotations/2026.2.0/jetbrains.annotations.2026.2.0.nupkg"
+    },
+    {
+      "id": "Microsoft.ApplicationInsights",
+      "version": "2.23.0",
+      "file": "microsoft.applicationinsights.2.23.0.nupkg",
+      "sha256": "e6c7f76e0ec26598c7b1e2be1777e839c84486655e8a878fc4c655bd2e918dbd",
+      "bytes": 1737910,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.applicationinsights/2.23.0/microsoft.applicationinsights.2.23.0.nupkg"
+    },
+    {
+      "id": "Microsoft.AspNetCore.App.Runtime.win-x64",
+      "version": "10.0.13",
+      "file": "microsoft.aspnetcore.app.runtime.win-x64.10.0.13.nupkg",
+      "sha256": "a0dba5ee37a07a173bc2739f01fee4c530c686e00bf3a3f7508972d6592511f3",
+      "bytes": 12783840,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.app.runtime.win-x64/10.0.13/microsoft.aspnetcore.app.runtime.win-x64.10.0.13.nupkg"
+    },
+    {
+      "id": "Microsoft.Bcl.AsyncInterfaces",
+      "version": "6.0.0",
+      "file": "microsoft.bcl.asyncinterfaces.6.0.0.nupkg",
+      "sha256": "e3df87fe2170a7e01f0880af59caa8f6eb380b3c40a4f282dfb43912aaf0f895",
+      "bytes": 76354,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.bcl.asyncinterfaces/6.0.0/microsoft.bcl.asyncinterfaces.6.0.0.nupkg"
+    },
+    {
+      "id": "Microsoft.CodeCoverage",
+      "version": "17.14.1",
+      "file": "microsoft.codecoverage.17.14.1.nupkg",
+      "sha256": "7fc432b46f06bd1a0fe3baced8a1269c32f1229c9eb1aab6e931630dd5b8d06b",
+      "bytes": 9755080,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.codecoverage/17.14.1/microsoft.codecoverage.17.14.1.nupkg"
+    },
+    {
+      "id": "Microsoft.NET.Test.Sdk",
+      "version": "17.14.1",
+      "file": "microsoft.net.test.sdk.17.14.1.nupkg",
+      "sha256": "9995330c5bc5a7bc759caadc9d17748616cdbb983c11062df122a74607614ff0",
+      "bytes": 39629,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.net.test.sdk/17.14.1/microsoft.net.test.sdk.17.14.1.nupkg"
+    },
+    {
+      "id": "Microsoft.NETCore.App.Runtime.win-x64",
+      "version": "10.0.13",
+      "file": "microsoft.netcore.app.runtime.win-x64.10.0.13.nupkg",
+      "sha256": "c66885d464697be75676b4d1fbca38b8806f3af01d65d27205b3f06add094444",
+      "bytes": 39979592,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.netcore.app.runtime.win-x64/10.0.13/microsoft.netcore.app.runtime.win-x64.10.0.13.nupkg"
+    },
+    {
+      "id": "Microsoft.Testing.Extensions.Telemetry",
+      "version": "2.4.0",
+      "file": "microsoft.testing.extensions.telemetry.2.4.0.nupkg",
+      "sha256": "1829e24f526ceba89e19230759fab928490c97d02fb2df9370ef475ed3d5be9c",
+      "bytes": 515767,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.testing.extensions.telemetry/2.4.0/microsoft.testing.extensions.telemetry.2.4.0.nupkg"
+    },
+    {
+      "id": "Microsoft.Testing.Extensions.TrxReport.Abstractions",
+      "version": "2.4.0",
+      "file": "microsoft.testing.extensions.trxreport.abstractions.2.4.0.nupkg",
+      "sha256": "b9b754ee45f074ce37d1e35fc2995ac4d7e1214c702371ad3b85e01707ceeebf",
+      "bytes": 113416,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.testing.extensions.trxreport.abstractions/2.4.0/microsoft.testing.extensions.trxreport.abstractions.2.4.0.nupkg"
+    },
+    {
+      "id": "Microsoft.Testing.Platform",
+      "version": "2.4.0",
+      "file": "microsoft.testing.platform.2.4.0.nupkg",
+      "sha256": "526f55747072e8fac86f3ee4e8c5ea9d08e07361755fd6773db3eeed52aa69b4",
+      "bytes": 3582539,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.testing.platform/2.4.0/microsoft.testing.platform.2.4.0.nupkg"
+    },
+    {
+      "id": "Microsoft.Testing.Platform.MSBuild",
+      "version": "2.4.0",
+      "file": "microsoft.testing.platform.msbuild.2.4.0.nupkg",
+      "sha256": "29571503000fa1ee0deb2a62613d2c57bc23e5474286813b2f16ec7fe787dc09",
+      "bytes": 2187308,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.testing.platform.msbuild/2.4.0/microsoft.testing.platform.msbuild.2.4.0.nupkg"
+    },
+    {
+      "id": "Microsoft.TestPlatform.ObjectModel",
+      "version": "17.14.1",
+      "file": "microsoft.testplatform.objectmodel.17.14.1.nupkg",
+      "sha256": "40c7fa3bec34213fb5e8caf3a3bc27f8ddb47f72f5fe60e1b3faa3984a35ad8b",
+      "bytes": 1657190,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.testplatform.objectmodel/17.14.1/microsoft.testplatform.objectmodel.17.14.1.nupkg"
+    },
+    {
+      "id": "Microsoft.TestPlatform.TestHost",
+      "version": "17.14.1",
+      "file": "microsoft.testplatform.testhost.17.14.1.nupkg",
+      "sha256": "d5cc4759cbc7443ee8ad0dc41043cfc55184913a71a26d7fce82020bd4889c9b",
+      "bytes": 3167820,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.testplatform.testhost/17.14.1/microsoft.testplatform.testhost.17.14.1.nupkg"
+    },
+    {
+      "id": "Microsoft.Win32.Registry",
+      "version": "5.0.0",
+      "file": "microsoft.win32.registry.5.0.0.nupkg",
+      "sha256": "f64ca53c67ca65ce7cc85a8d29aefbb2da2672836731e1115e8cd62730dc5080",
+      "bytes": 354731,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.win32.registry/5.0.0/microsoft.win32.registry.5.0.0.nupkg"
+    },
+    {
+      "id": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+      "version": "10.0.13",
+      "file": "microsoft.windowsdesktop.app.runtime.win-x64.10.0.13.nupkg",
+      "sha256": "af044758d6bc23eca96b60c9ce13b38f211c3e736eef9458de3cadbbd3e20ff2",
+      "bytes": 39195063,
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.windowsdesktop.app.runtime.win-x64/10.0.13/microsoft.windowsdesktop.app.runtime.win-x64.10.0.13.nupkg"
+    },
+    {
+      "id": "Mono.Cecil",
+      "version": "0.11.6",
+      "file": "mono.cecil.0.11.6.nupkg",
+      "sha256": "d2a23832aaa948ba9a01acc42b5726e34c5f995958f1b30d45c0e7c70b3a72d5",
+      "bytes": 707868,
+      "url": "https://api.nuget.org/v3-flatcontainer/mono.cecil/0.11.6/mono.cecil.0.11.6.nupkg"
+    },
+    {
+      "id": "Newtonsoft.Json",
+      "version": "13.0.4",
+      "file": "newtonsoft.json.13.0.4.nupkg",
+      "sha256": "f09081d457405baf35a973fa0c50d6bf272ed683f2568c5a620a49da952f6529",
+      "bytes": 2484726,
+      "url": "https://api.nuget.org/v3-flatcontainer/newtonsoft.json/13.0.4/newtonsoft.json.13.0.4.nupkg"
+    },
+    {
+      "id": "System.Security.AccessControl",
+      "version": "6.0.1",
+      "file": "system.security.accesscontrol.6.0.1.nupkg",
+      "sha256": "462e26f796417e8a4350655a85bbd4233b94cbd0f7150c1c5e9acfd88e885141",
+      "bytes": 235270,
+      "url": "https://api.nuget.org/v3-flatcontainer/system.security.accesscontrol/6.0.1/system.security.accesscontrol.6.0.1.nupkg"
+    },
+    {
+      "id": "System.ValueTuple",
+      "version": "4.6.2",
+      "file": "system.valuetuple.4.6.2.nupkg",
+      "sha256": "76fd0e366a2b90655fd15d557b0b79504197748358cb578fe3193f6d97bdd9aa",
+      "bytes": 86474,
+      "url": "https://api.nuget.org/v3-flatcontainer/system.valuetuple/4.6.2/system.valuetuple.4.6.2.nupkg"
+    },
+    {
+      "id": "TngTech.ArchUnitNET",
+      "version": "0.13.4",
+      "file": "tngtech.archunitnet.0.13.4.nupkg",
+      "sha256": "1212391b1c3aefb249cb3adb026c2b49ada958db7fa740650c61958127423fa8",
+      "bytes": 386280,
+      "url": "https://api.nuget.org/v3-flatcontainer/tngtech.archunitnet/0.13.4/tngtech.archunitnet.0.13.4.nupkg"
+    },
+    {
+      "id": "xunit",
+      "version": "2.9.3",
+      "file": "xunit.2.9.3.nupkg",
+      "sha256": "04fae949b8e5201ecfa07fa8702baca8c0eb3198114194b3793789cc72bf23d7",
+      "bytes": 31659,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit/2.9.3/xunit.2.9.3.nupkg"
+    },
+    {
+      "id": "xunit.abstractions",
+      "version": "2.0.3",
+      "file": "xunit.abstractions.2.0.3.nupkg",
+      "sha256": "d03d72fc2df8880448f7a81bddb00e1bcb5c18f323c7e7cc69b4cfa727469403",
+      "bytes": 75155,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg"
+    },
+    {
+      "id": "xunit.analyzers",
+      "version": "1.18.0",
+      "file": "xunit.analyzers.1.18.0.nupkg",
+      "sha256": "0ce81a98b9df8bd51ae480e6dc9566f4c68e15b4926e6ab997c8f634f3b7a9dd",
+      "bytes": 269902,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.analyzers/1.18.0/xunit.analyzers.1.18.0.nupkg"
+    },
+    {
+      "id": "xunit.analyzers",
+      "version": "2.1.0",
+      "file": "xunit.analyzers.2.1.0.nupkg",
+      "sha256": "501bc3059cd89a08df5ec6798923dc1bb0c154175a3509597eedbfdf7ec9b6bc",
+      "bytes": 335684,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.analyzers/2.1.0/xunit.analyzers.2.1.0.nupkg"
+    },
+    {
+      "id": "xunit.assert",
+      "version": "2.9.3",
+      "file": "xunit.assert.2.9.3.nupkg",
+      "sha256": "bc760e75ef1b775d293a6afb89301836d3e5a87cec265e31dedd430ee61d0c20",
+      "bytes": 246078,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.assert/2.9.3/xunit.assert.2.9.3.nupkg"
+    },
+    {
+      "id": "xunit.core",
+      "version": "2.9.3",
+      "file": "xunit.core.2.9.3.nupkg",
+      "sha256": "aa4550f09c3f2d95a6c62ae43cec22af2edbbd99f722e691ceefeca761fc6a7c",
+      "bytes": 33553,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.core/2.9.3/xunit.core.2.9.3.nupkg"
+    },
+    {
+      "id": "xunit.extensibility.core",
+      "version": "2.9.3",
+      "file": "xunit.extensibility.core.2.9.3.nupkg",
+      "sha256": "99ca555fe9b447b1747aff426819db6a2f60b6ee0655caa28c4b91a9ef3d0f48",
+      "bytes": 298787,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.extensibility.core/2.9.3/xunit.extensibility.core.2.9.3.nupkg"
+    },
+    {
+      "id": "xunit.extensibility.execution",
+      "version": "2.9.3",
+      "file": "xunit.extensibility.execution.2.9.3.nupkg",
+      "sha256": "dabc4cb360ede1c01c98e14cc0fe587774693f40679a22fc71794acac5d8d23c",
+      "bytes": 379849,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.extensibility.execution/2.9.3/xunit.extensibility.execution.2.9.3.nupkg"
+    },
+    {
+      "id": "xunit.runner.visualstudio",
+      "version": "3.1.4",
+      "file": "xunit.runner.visualstudio.3.1.4.nupkg",
+      "sha256": "5b54674b105a5f2cbd5e6e0e67956a1b67e082d94eaa7fddbc803110e6eff2d4",
+      "bytes": 1325258,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.runner.visualstudio/3.1.4/xunit.runner.visualstudio.3.1.4.nupkg"
+    },
+    {
+      "id": "xunit.runner.visualstudio",
+      "version": "4.0.0",
+      "file": "xunit.runner.visualstudio.4.0.0.nupkg",
+      "sha256": "d42636658ed412731d7931575b8757e311c3d66078556b94d51b1af113877101",
+      "bytes": 1390337,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.runner.visualstudio/4.0.0/xunit.runner.visualstudio.4.0.0.nupkg"
+    },
+    {
+      "id": "xunit.v3",
+      "version": "4.0.1",
+      "file": "xunit.v3.4.0.1.nupkg",
+      "sha256": "6ce3139361bae3e67eb96722fe10e6027eb7a427b6cdd6443c91adeadbd2a5d7",
+      "bytes": 32100,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3/4.0.1/xunit.v3.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.assert",
+      "version": "4.0.1",
+      "file": "xunit.v3.assert.4.0.1.nupkg",
+      "sha256": "7bce4e6a31b023f79482ce84779d25005c06d3bca01cec5eaa4a8c51d7500f80",
+      "bytes": 293854,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.assert/4.0.1/xunit.v3.assert.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.common",
+      "version": "4.0.1",
+      "file": "xunit.v3.common.4.0.1.nupkg",
+      "sha256": "66e8c27cd2262c9caafa8fb0ff54e5fd01485acaf2bfe5bca3e10dd92bd7f9bf",
+      "bytes": 169400,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.common/4.0.1/xunit.v3.common.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.core.mtp-v2",
+      "version": "4.0.1",
+      "file": "xunit.v3.core.mtp-v2.4.0.1.nupkg",
+      "sha256": "20c9d445daf912c64b0263c1ffe254b8e17ef154352bb36df095c090200187b6",
+      "bytes": 432990,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.core.mtp-v2/4.0.1/xunit.v3.core.mtp-v2.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.extensibility.core",
+      "version": "4.0.1",
+      "file": "xunit.v3.extensibility.core.4.0.1.nupkg",
+      "sha256": "2119cc438ca039680dc0baabeaa290695f78bac8b4bd658f03acdca6d3abf31f",
+      "bytes": 381667,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.extensibility.core/4.0.1/xunit.v3.extensibility.core.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.mtp-v2",
+      "version": "4.0.1",
+      "file": "xunit.v3.mtp-v2.4.0.1.nupkg",
+      "sha256": "657dc1afb35fc8e0d0ee0b05e57ab5e2238d38dd908b75d02a02fa7cab6d98bf",
+      "bytes": 32231,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.mtp-v2/4.0.1/xunit.v3.mtp-v2.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.runner.common",
+      "version": "4.0.1",
+      "file": "xunit.v3.runner.common.4.0.1.nupkg",
+      "sha256": "46247800b91bb97f7cdcad26f286c667588f4fdbfbb3e3396d54fe66b4fa51a7",
+      "bytes": 531577,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.runner.common/4.0.1/xunit.v3.runner.common.4.0.1.nupkg"
+    },
+    {
+      "id": "xunit.v3.runner.inproc.console",
+      "version": "4.0.1",
+      "file": "xunit.v3.runner.inproc.console.4.0.1.nupkg",
+      "sha256": "dcce91c8bf89ce13d076baa371605866b63b3629ac663da34826c113e88eeea4",
+      "bytes": 134430,
+      "url": "https://api.nuget.org/v3-flatcontainer/xunit.v3.runner.inproc.console/4.0.1/xunit.v3.runner.inproc.console.4.0.1.nupkg"
+    }
+  ]
+}

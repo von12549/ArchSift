@@ -127,6 +127,11 @@ try{
             [void](Run ($mode+'-install') $dotnetPath @('tool','install','ArchSift.Cli','--version',$release.version,'--tool-path',$tools,'--configfile',$config,'--add-source',$feed,'--no-cache') $modeRoot)
             $file=Join-Path $tools $(if($IsWindows){'archsift.exe'}else{'archsift'});$prefix=@()
         }
+        $manifests=@(Get-ChildItem -LiteralPath $modeRoot -Recurse -File -Filter 'web-payload.json')
+        if($manifests.Count -ne 1){throw 'Cold installed Web inventory is missing or ambiguous.'}
+        $inventory=Get-Content -LiteralPath $manifests[0].FullName -Raw|ConvertFrom-Json
+        if($inventory.version -cne $release.version){throw 'Installed Web inventory version differs.'}
+        $checks.Add(@{name=$mode+'-payload-anchor';sourceCommit=$inventory.sourceCommit;inventorySha256=(Hash $manifests[0].FullName);packageSha256=(Hash (Join-Path $feed ('ArchSift.Cli.'+$release.version+'.nupkg')));payloadFiles=$inventory.entries.Count})
         $actual=(Run ($mode+'-version') $file ($prefix+@('--version')) $modeRoot).Trim()
         if($actual -cne ('archsift '+$release.version)){throw 'Installed tool version differs.'}
         $target=Join-Path $modeRoot 'target';[void][IO.Directory]::CreateDirectory($target)
@@ -160,12 +165,38 @@ try{
             }finally{$childClient.Dispose()}
             [void](Request $launcher '/api/launcher/shutdown' @{} 202)
         }finally{Finish $launcher}
+        # Kill the verified actual CLI parent of Launcher Web, not an unrelated process or whole tree.
+        $lost=Open-Session $file ($prefix+@('launch','--root',$stateRoot,'--no-browser')) $modeRoot
+        $nestedPid=$null;$nestedPort=$null
+        try{
+            $state=Request $lost '/api/launcher/state'
+            $health=$state.profiles[0]
+            $started=Request $lost '/api/launcher/start' @{profileId=$health.entry.profileId;catalogSha256=$state.catalogSha256;configSha256=$health.sha256;selectionSha256=$state.selectionSha256}
+            $nestedAddress=[uri]$started.workbenchUrl;$nestedPort=$nestedAddress.Port
+            $nestedToken=$nestedAddress.Fragment.Substring(9);$tokens.Add($nestedToken)
+            $nestedClient=[Net.Http.HttpClient]::new();$nestedClient.BaseAddress=[uri]$nestedAddress.GetLeftPart([UriPartial]::Authority);$nestedClient.DefaultRequestHeaders.Add('X-ArchSift-Token',$nestedToken)
+            try{$session=Request @{client=$nestedClient} '/api/session';$nestedPid=[int]$session.processId}finally{$nestedClient.Dispose()}
+            if(-not$IsWindows){throw 'Interactive parent-death qualification is scoped to Windows x64.'}
+            $webProcess=Get-CimInstance Win32_Process -Filter ('ProcessId='+$lost.childPid)
+            if($null -eq $webProcess){throw 'Owned Launcher exited before parent identity inspection.'}
+            $cli=[Diagnostics.Process]::GetProcessById([int]$webProcess.ParentProcessId)
+            try{
+                $image=$cli.Path
+                if($image -ine $dotnetPath -and -not $image.StartsWith($modeRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Actual CLI parent image is outside this cold tool/runtime context.'}
+                $identity=Get-CimInstance Win32_Process -Filter ('ProcessId='+$cli.Id)
+                if($identity.CommandLine -notmatch 'archsift' -or $identity.CommandLine.IndexOf($stateRoot,[StringComparison]::OrdinalIgnoreCase) -lt 0 -or $cli.StartTime.ToUniversalTime() -lt $lost.process.StartTime.ToUniversalTime().AddSeconds(-1)){throw 'Actual CLI parent identity differs.'}
+                $cli.Kill();if(-not$cli.WaitForExit(10000)){throw 'Explicitly owned CLI did not exit.'}
+            }finally{$cli.Dispose()}
+        }finally{Finish $lost $true}
+        if($null -eq $nestedPid){throw 'Owned nested Web identity unavailable.'}
+        try{$child=[Diagnostics.Process]::GetProcessById($nestedPid);try{if(-not$child.WaitForExit(15000)){throw 'Nested Workbench remained after actual CLI parent death.'}}finally{$child.Dispose()}}catch [ArgumentException]{}
+        if(@([Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties().GetActiveTcpListeners()|Where-Object Port -eq $nestedPort).Count){throw 'Nested Web listener remained after parent death.'}
         if(Test-Path (Join-Path $stateRoot 'install.json')){throw 'Portable state counterfeited managed ownership.'}
         foreach($json in Get-ChildItem $stateRoot -Recurse -File -Filter '*.json'){
             $bytes=[IO.File]::ReadAllText($json.FullName);foreach($token in $tokens){if($bytes.Contains($token)){throw 'Session token persisted into portable state.'}}
         }
         if((Hash $project)-cne$targetHash -or (Hash $userConfig)-cne$configHash){throw 'Cold Web operation changed input bytes.'}
-        $checks.Add(@{name=$mode+'-ui-and-portable-launcher';status='passed';version=$release.version;directUi=$true;portableLauncher=$true;dirtyRejection=$true;ownedShutdown=$true;targetConfigUnchanged=$true;separateWebSourceOrSetup=$false})
+        $checks.Add(@{name=$mode+'-ui-and-portable-launcher';status='passed';version=$release.version;directUi=$true;portableLauncher=$true;dirtyRejection=$true;ownedShutdown=$true;actualCliParentDeathClosesLauncherAndNestedWeb=$true;targetConfigUnchanged=$true;separateWebSourceOrSetup=$false})
     }
     $passed=$true
 }finally{

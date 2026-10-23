@@ -9,9 +9,17 @@ public sealed record PortableMarker(int SchemaVersion, string Kind, string Root,
 public static class PortableState
 {
     public const string MarkerName = "workbench-state.json";
+    private static void EnsureExternalRoot(string root)
+    {
+        foreach (var protectedRoot in ArchSift.Hosting.WebPayload.ProtectedHostRoots()) PathSafety.EnsureDisjoint(root, protectedRoot);
+        for (var cursor = new DirectoryInfo(root); cursor is not null; cursor = cursor.Parent)
+            if (File.Exists(Path.Combine(cursor.FullName, "install.json")))
+                throw new ConfigurationException("Portable state conflicts with an install.json ancestor; use a disjoint external root.");
+    }
     public static PortableMarker Read(string root)
     {
         root = SetupFiles.Safe(root);
+        EnsureExternalRoot(root);
         if (File.Exists(SetupFiles.Under(root, "install.json")))
             throw new ConfigurationException("Ambiguous managed/portable root; preserve both markers for review.");
         var path = SetupFiles.Under(root, MarkerName);
@@ -33,9 +41,7 @@ public static class PortableState
     public static void Initialize(string root, string configPath)
     {
         root = SetupFiles.Safe(root); configPath = SetupFiles.Safe(configPath);
-        PathSafety.EnsureDisjoint(root, AppContext.BaseDirectory);
-        for (var source = new DirectoryInfo(AppContext.BaseDirectory); source is not null; source = source.Parent)
-            if (File.Exists(Path.Combine(source.FullName, "ArchSift.slnx"))) { PathSafety.EnsureDisjoint(root, source.FullName); break; }
+        EnsureExternalRoot(root);
         if (File.Exists(SetupFiles.Under(root, "install.json"))) throw new ConfigurationException("Explicit portable initialization cannot modify a managed root.");
         if (File.Exists(SetupFiles.Under(root, MarkerName)))
         {

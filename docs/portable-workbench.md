@@ -10,7 +10,7 @@ Create a dedicated working directory outside target/source roots. Use an explici
 
 ~~~powershell
 dotnet new tool-manifest
-dotnet tool install ArchSift.Cli --version 0.10.1-rc.1 --configfile D:/approved/NuGet.Config --add-source D:/approved/offline-feed
+dotnet tool install ArchSift.Cli --version 0.10.1-rc.2 --configfile D:/approved/NuGet.Config --add-source D:/approved/offline-feed
 dotnet tool restore --configfile D:/approved/NuGet.Config --add-source D:/approved/offline-feed
 dotnet tool run archsift -- ui --config D:/configuration/archsift.json
 ~~~

@@ -5,7 +5,7 @@
   "product": "ArchSift",
   "displayName": "ArchSift Workbench",
   "stableVersion": "0.10.1",
-  "candidateVersion": "0.10.1-rc.1",
+  "candidateVersion": "0.10.1-rc.2",
   "sourceBase": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
   "authorization": {
     "implementation": true,
