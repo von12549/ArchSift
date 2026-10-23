@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+    <Compile Include="../Shared/WebPayload.cs" Link="WebPayload.cs" />
     <ProjectReference Include="../ArchSift.Core/ArchSift.Core.csproj" />
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
     <ProjectReference Include="../ArchSift.Setup/ArchSift.Setup.csproj" />

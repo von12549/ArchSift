@@ -1,5 +1,6 @@
 # Integrating ArchSift into a project
 
+Current-source update: 0.10.1 is a candidate under qualification; final human acceptance and publication are pending. See [portable Workbench](portable-workbench.md) for NuGet UI, portable Launcher and rollback. References to published 0.10.0 below retain their historical context.
 Release status: **0.10.0 published and download-verified**. See the [publication record](releases/0.10.0-publication.md) for exact assets, final acceptance and successful public-download usage. The following instructions retain their packaging-stage context; immutable bundled copies are qualified by the matching final acceptance record.
 
 This guide covers the unified 0.10.0 release and its candidates. The separate matching acceptance record binds accepted artifact bytes; source [release status](releases/0.10.0/release-status.json) records its dated preparation progress. The generic templates contain no private IFX inputs. Adopting them is a consumer change requiring review of that project's tests, policy and dependencies.

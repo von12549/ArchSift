@@ -21,6 +21,12 @@
     <None Include="$(ArchSiftPackageReleaseNotes)" Pack="true" PackagePath="RELEASE_NOTES.md" />
     <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="/" />
   </ItemGroup>
+  <ItemGroup Condition="'$(ArchSiftPackageDocumentationRoot)' != '' And ('$(MSBuildProjectName)' == 'ArchSift.Contracts' Or '$(MSBuildProjectName)' == 'ArchSift.Core' Or '$(MSBuildProjectName)' == 'ArchSift.ArchUnit' Or '$(MSBuildProjectName)' == 'ArchSift.Testing' Or '$(MSBuildProjectName)' == 'ArchSift.Cli')">
+    <None Include="$(ArchSiftPackageDocumentationRoot)/docs/**/*" Pack="true" PackagePath="docs/%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="$(ArchSiftPackageDocumentationRoot)/schemas/**/*" Pack="true" PackagePath="schemas/%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="$(ArchSiftPackageDocumentationRoot)/templates/**/*" Pack="true" PackagePath="templates/%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="$(ArchSiftPackageDocumentationRoot)/samples/**/*" Pack="true" PackagePath="samples/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
   <!-- NuGet Pack consumes ProjectVersion as a range; product packages must stay in one release. -->
   <Target Name="PinArchSiftPackageDependencies" AfterTargets="_GetProjectReferenceVersions">
     <ItemGroup>

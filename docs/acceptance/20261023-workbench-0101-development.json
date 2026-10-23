@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "version": "0.10.1-rc.1",
+  "status": "development-regression-passed-release-qualification-pending",
+  "baseCommit": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
+  "sourceState": "uncommitted-development-worktree-at-check-time; committed packaging rebuild remains required",
+  "toolchain": {
+    "sdk": "10.0.303",
+    "tfm": "net10.0",
+    "configuration": "Release",
+    "runtime": "10.0.13",
+    "offline": true
+  },
+  "evidenceRoot": "D:/ArchSift-lab/runs/workbench-0101-20261023-01",
+  "fullRegression": {
+    "run": "development-7d2067b21ec94ca78eaccb73045478a8",
+    "architecture": 2,
+    "unit": 157,
+    "integration": 119,
+    "mtp": 57,
+    "failed": 0,
+    "skipped": 0,
+    "templates": 8,
+    "hostEqual": true
+  },
+  "focusedRegression": {
+    "bootstrapPayloadCliLauncherSetup": 68,
+    "failed": 0,
+    "skipped": 0,
+    "hostEqual": true
+  },
+  "frontend": {
+    "fixtureRulesets": 13,
+    "jsonCases": 401,
+    "csharpCases": 92,
+    "inventoryInputMutation": false,
+    "checks": [
+      "native disclosures",
+      "counts and all IDs",
+      "independent edit action",
+      "bulk controls",
+      "refresh focus/memory",
+      "config reset",
+      "Windows canonical casing",
+      "empty and no-enabled states",
+      "existing lifecycle/locale/sort/copy",
+      "Launcher close feedback"
+    ]
+  },
+  "retainedFailures": [
+    {
+      "run": "development-634bf9ca1ad7477d97883c8369f92f03",
+      "failed": 5,
+      "cause": "Three Release CLI fixtures relied on source fallback; two earlier-TFM cases lacked exact offline ref packs.",
+      "resolution": "Stage actual adjacent payload in fixtures; create new isolated tools with hash-verified 8.0.27/9.0.16 reference packs."
+    },
+    {
+      "run": "development-0b1c5265835e4dfa9599eec7684606d7",
+      "failed": 4,
+      "cause": "Embedded Setup schema did not yet recognize 0.10.1-rc.1.",
+      "resolution": "Add the precise supported patch RC grammar without changing state schema versions/ownership."
+    },
+    {
+      "run": "rid-locks-01",
+      "cause": "Explicit cache source lacked runtime 10.0.13 archives.",
+      "resolution": "Prepare a fresh 39-archive hash-verified feed from preserved approved archives and locked development dependencies; rid-locks-02 passed."
+    }
+  ],
+  "handoffBaseline": {
+    "otherTrackedFiles": 724,
+    "aggregateSha256": "376f01b5e32a70be3d60426f3550f5997e6279ba760795f8d24388cd21fec75c",
+    "independentlyMatched": true
+  },
+  "evidence": [
+    {
+      "path": "development-01.json",
+      "sha256": "d09a707193fb88c5b5df200f83c1e1620dd523aaf0bdbe94701faac05180ffbf"
+    },
+    {
+      "path": "development-02.json",
+      "sha256": "06725399f4ff3ec05b851561fc2179f522249aeaec90e0f78a210436d30a240e"
+    },
+    {
+      "path": "development-03.json",
+      "sha256": "ec2d2ccff2264c5234412842c08d4f243823b992b625b44e0d16e2bec0dc4f5c"
+    },
+    {
+      "path": "focused-03.json",
+      "sha256": "277ecdf582e5cd46149bf4e085b517a19623ebd0dfd290a97d07d753c6e5d640"
+    },
+    {
+      "path": "rid-locks-02.json",
+      "sha256": "96fbf5c140849d05797b211e442c77d93b205853dab7069a23e0f6fe5dd56cf4"
+    },
+    {
+      "path": "build-feed-inputs-complete.json",
+      "sha256": "6591b7bda57954360a38469fe598e00cc6c92d1dfd8f7f98d76c5df3ab786430"
+    },
+    {
+      "path": "toolchain-reference-overlay.json",
+      "sha256": "9bc77bc95d040cccd8cc236fd96d3bd57a85a9c758cc7a258da9f9bae20e163d"
+    }
+  ],
+  "releaseAcceptance": false,
+  "humanAcceptance": "pending-user-only",
+  "published": false,
+  "liveIfxUpgrade": false,
+  "limitations": [
+    "Cold NuGet tool, complete package/native, security/license, copied IFX parity, lifecycle/rollback, official CI and exact stable gates remain pending.",
+    "Frontend VM checks do not establish final visual or hands-on acceptance.",
+    "The prior timing-sensitive ParallelChain RunningCount risk is not claimed fixed."
+  ]
+}

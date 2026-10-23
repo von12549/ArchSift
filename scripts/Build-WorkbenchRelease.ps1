@@ -75,23 +75,34 @@ try{
     Invoke-ReleaseDotnet 'build' (@('build','ArchSift.slnx','--no-restore','-c','Release','--disable-build-servers','-m:1','-v:minimal')+$common)
     $readme=[IO.File]::ReadAllText((Join-Path $repo 'docs/package-readme.md'))
     $readme=[regex]::Replace($readme,'\A#[^\r\n]+',('# ArchSift Workbench '+$release.version))
+    $readme=$readme.Replace('(portable-workbench.md)',('(https://github.com/von12549/ArchSift/blob/'+$commit+'/docs/portable-workbench.md)'))
     $readme=$readme+"`nPackage version: $($release.version). Source commit: $commit. Final acceptance is recorded separately for exact asset bytes.`n"
     $readme+="`n[Version-matched project integration](https://github.com/von12549/ArchSift/blob/$commit/docs/project-integration.md).`n"
-    $notes=[IO.File]::ReadAllText((Join-Path $repo 'RELEASE_NOTES.md')).Replace('# ArchSift Workbench 0.10.0',('# ArchSift Workbench '+$release.version))
+    $notes=[IO.File]::ReadAllText((Join-Path $repo 'RELEASE_NOTES.md')).Replace('# ArchSift Workbench 0.10.1',('# ArchSift Workbench '+$release.version))
     $notes+="`nPackaging source: $commit. Artifact version: $($release.version).`n"
     $readmePath=Join-Path $root 'package-README.md';$notesPath=Join-Path $root 'package-RELEASE_NOTES.md'
     [IO.File]::WriteAllText($readmePath,$readme,[Text.UTF8Encoding]::new($false))
     [IO.File]::WriteAllText($notesPath,$notes,[Text.UTF8Encoding]::new($false))
     $noticePath=Join-Path $root 'package-third-party-notices.md'
     & (Join-Path $PSScriptRoot 'Write-ReleaseNotices.ps1') -OutputPath $noticePath -SourceCommit $commit
+    $webStage=Join-Path $root 'web-publish'
+    Invoke-ReleaseDotnet 'publish-web-fdd' (@('publish','src/ArchSift.Web/ArchSift.Web.csproj','--no-restore','-c','Release','--self-contained','false','-p:UseAppHost=false',('-p:RuntimeFrameworkVersion='+$release.profile.runtime),'--disable-build-servers','--output',$webStage)+$common)
+    $webNotices=Join-Path $webStage 'notices'
+    [void][IO.Directory]::CreateDirectory($webNotices)
+    Copy-Item -LiteralPath $noticePath -Destination (Join-Path $webNotices 'third-party-notices.md')
+    Copy-Item -LiteralPath (Join-Path $repo 'docs/migration/licenses') -Destination (Join-Path $webNotices 'licenses') -Recurse
+    foreach($folder in @('schemas','templates')){Copy-Item -LiteralPath (Join-Path $repo $folder) -Destination (Join-Path $webStage $folder) -Recurse}
+    & (Join-Path $PSScriptRoot 'Copy-ReleaseDocumentation.ps1') -PayloadRoot $webStage -SourceCommit $commit -Version $release.version
+    & (Join-Path $PSScriptRoot 'New-WebPayloadInventory.ps1') -PayloadRoot $webStage -ExpectedVersion $release.version -SourceCommit $commit
     foreach($id in $release.profile.productPackages){
-        Invoke-ReleaseDotnet ('pack-'+$id) (@('pack',('src/'+$id+'/'+$id+'.csproj'),'--no-build','--no-restore','-c','Release','--output',$packages,'--disable-build-servers',('-p:RepositoryCommit='+$commit),('-p:ArchSiftPackageReadme='+$readmePath),('-p:ArchSiftPackageReleaseNotes='+$notesPath),('-p:ArchSiftPackageNotices='+$noticePath))+$common)
+        Invoke-ReleaseDotnet ('pack-'+$id) (@('pack',('src/'+$id+'/'+$id+'.csproj'),'--no-build','--no-restore','-c','Release','--output',$packages,'--disable-build-servers',('-p:RepositoryCommit='+$commit),('-p:ArchSiftWebPayloadRoot='+$webStage),('-p:ArchSiftPackageDocumentationRoot='+$webStage),('-p:ArchSiftPackageReadme='+$readmePath),('-p:ArchSiftPackageReleaseNotes='+$notesPath),('-p:ArchSiftPackageNotices='+$noticePath))+$common)
         Copy-Item -LiteralPath (Join-Path $packages ($id+'.'+$release.version+'.nupkg')) -Destination $assets
     }
     $seed=Join-Path $root 'closure-discovery'
     & (Join-Path $PSScriptRoot 'Test-WorkbenchConsumer.ps1') -FixtureRoot $seed -OfflineSources @($packages,$feed) -PackageCache (Join-Path $root 'closure-discovery-cache') -ExpectedHostHash $before *> (Join-Path $root 'closure-discovery.log')
     & (Join-Path $PSScriptRoot 'New-WorkbenchOfflineFeed.ps1') -ProductPackages $packages -ConsumerLock (Join-Path $seed 'target/packages.lock.json') -ConsumerCache (Join-Path $root 'closure-discovery-cache') -OutputDirectory (Join-Path $root 'offline-feed') -SourceCommit $commit -ArchivePath (Join-Path $assets ('archsift-workbench-'+$release.version+'-offline-feed.zip')) *> (Join-Path $root 'offline-feed.log')
     $minimalFeed=Join-Path $root 'offline-feed'
+    & (Join-Path $PSScriptRoot 'Test-WorkbenchNuGetWeb.ps1') -OutputRoot (Join-Path $root 'cold-nuget-web') -OfflineFeed $minimalFeed -Dotnet ((Get-Command dotnet -ErrorAction Stop).Source) -ExpectedHostHash $before *> (Join-Path $root 'cold-nuget-web.log')
     $cold=Join-Path $root 'consumer cold'
     & (Join-Path $PSScriptRoot 'Test-WorkbenchConsumer.ps1') -FixtureRoot $cold -OfflineSources @($minimalFeed) -PackageCache (Join-Path $root 'consumer-cold-cache') -ExpectedHostHash $before *> (Join-Path $root 'consumer-cold.log')
     $movedFeed=Join-Path $root 'moved sources/approved generic source'

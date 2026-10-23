@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "0.10.1-rc.1",
+  "stableTarget": "0.10.1",
+  "status": "candidate-implementation-and-machine-qualification-in-progress",
+  "published": false,
+  "humanAcceptance": "pending-user-only",
+  "existingIfxUpgrade": false,
+  "plan": "../../plans/20261023-archsift-0.10.1-plan.json"
+}

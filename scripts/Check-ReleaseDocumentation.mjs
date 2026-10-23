@@ -5,9 +5,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const languagePath = 'docs/releases/0.10.0/documentation-language.json';
+const languagePath = 'docs/releases/0.10.1/documentation-language.json';
 const language = JSON.parse(readFileSync(path.join(root, languagePath), 'utf8'));
-const contract = JSON.parse(readFileSync(path.join(root, 'docs/releases/0.10.0/release-contract.json'), 'utf8'));
+const contract = JSON.parse(readFileSync(path.join(root, 'docs/releases/0.10.1/release-contract.json'), 'utf8'));
 const exceptions = new Map(language.exceptions.map(entry => [entry.path, entry]));
 const files = [...new Set(execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
   cwd: root, encoding: 'utf8'

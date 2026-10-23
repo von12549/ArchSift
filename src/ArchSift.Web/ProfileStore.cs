@@ -10,18 +10,27 @@ public sealed record ProfileHealth(ProfileEntry Entry, string Status, string? Er
 
 public sealed class ProfileStore
 {
-    public Installation Installation { get; }
+    public Installation? Installation { get; }
+    public bool Portable => Installation is null;
+    public string InitialConfigPath { get; }
     public string Root { get; }
     public string ConfigRoot { get; }
     public string CatalogPath { get; }
     public string SelectionPath { get; }
-    public ProfileStore(string root)
+    public ProfileStore(string root) : this(root, null) { }
+    internal static ProfileStore ForInitialization(string root, string configPath) => new(root, configPath);
+    private ProfileStore(string root, string? initializingConfig)
     {
-        Root = SetupFiles.Safe(root); Installation = SetupService.LoadInstallation(Root);
+        Root = SetupFiles.Safe(root);
+        var managed = File.Exists(SetupFiles.Under(Root, "install.json"));
+        var portable = File.Exists(SetupFiles.Under(Root, PortableState.MarkerName));
+        if (managed && (portable || initializingConfig is not null)) throw new ConfigurationException("Ambiguous managed/portable root.");
+        if (managed) { Installation = SetupService.LoadInstallation(Root); InitialConfigPath = Installation.ConfigPath; }
+        else InitialConfigPath = initializingConfig ?? PortableState.Read(Root).InitialConfigPath;
         ConfigRoot = SetupFiles.Under(Root, "config");
         CatalogPath = SetupFiles.Under(Root, "config/profiles.json"); SelectionPath = SetupFiles.Under(Root, "config/selection.json");
-        if (Installation.ConfigPath.Equals(CatalogPath, PathSafety.Comparison) || Installation.ConfigPath.Equals(SelectionPath, PathSafety.Comparison))
-            throw new ConfigurationException("Launcher metadata conflicts with existing managed configuration; preserve it for review.");
+        if (InitialConfigPath.Equals(CatalogPath, PathSafety.Comparison) || InitialConfigPath.Equals(SelectionPath, PathSafety.Comparison))
+            throw new ConfigurationException("Launcher metadata conflicts with configuration; preserve it for review.");
     }
     public string? CatalogHash => File.Exists(CatalogPath) ? SetupFiles.FileHash(CatalogPath) : null;
     public ProfileCatalog ReadCatalog()
@@ -55,11 +64,11 @@ public sealed class ProfileStore
             var config = ConfigLoader.Load(path);
             ValidateConfiguration(path, config);
             if (SetupFiles.FileHash(path) != hash) throw new ConfigurationException("Configuration changed during validation.");
-            var protectedConfig = path.Equals(Installation.ConfigPath, PathSafety.Comparison) && PathSafety.IsUnder(path, ConfigRoot);
+            var protectedConfig = Installation is not null && path.Equals(InitialConfigPath, PathSafety.Comparison) && PathSafety.IsUnder(path, ConfigRoot);
             var library = SetupService.Library(config);
-            var protectedLibrary = library.Equals(Installation.LibraryPath, PathSafety.Comparison);
+            var protectedLibrary = Installation is not null && library.Equals(Installation.LibraryPath, PathSafety.Comparison);
             SetupService.ValidateState(config);
-            if (protectedConfig && (!config.Target.Root.Equals(Installation.TargetRoot, PathSafety.Comparison) || !protectedLibrary))
+            if (protectedConfig && Installation is not null && (!config.Target.Root.Equals(Installation.TargetRoot, PathSafety.Comparison) || !protectedLibrary))
                 throw new ConfigurationException("Managed configuration changed target/library; explicit setup review required.");
             return new(profile, "valid", null, config, new(profile.Name, path, protectedConfig, protectedLibrary), hash);
         }
@@ -87,8 +96,15 @@ public sealed class ProfileStore
         PathSafety.EnsureDisjoint(target, library); PathSafety.EnsureDisjoint(target, output); PathSafety.EnsureDisjoint(configPath, library);
         PathSafety.EnsureDisjoint(configPath, output);
         if (PathSafety.IsUnder(output, library)) throw new ConfigurationException("Reports must not be inside the library.");
+        if (Portable)
+        {
+            foreach (var destination in new[] { library, output }.Concat(new[] { config.Build.LocalFeed, config.Build.CacheDirectory }.OfType<string>()))
+                PathSafety.EnsureDisjoint(Root, destination);
+            PathSafety.EnsureDisjoint(AppContext.BaseDirectory, configPath);
+            foreach (var destination in new[] { target, library, output }) PathSafety.EnsureDisjoint(AppContext.BaseDirectory, destination);
+        }
         foreach (var destination in new[] { library, output })
-            foreach (var reserved in new[] { "versions", "operations", "install.json", ".archsift-setup.lock", "config/profiles.json", "config/selection.json", "config/.archsift-profiles.lock" })
+            foreach (var reserved in new[] { "versions", "operations", "install.json", ".archsift-setup.lock", "config/profiles.json", "config/selection.json", "config/.archsift-profiles.lock", PortableState.MarkerName, "bootstrap.json", ".archsift-workbench.lock" })
                 PathSafety.EnsureDisjoint(SetupFiles.Under(Root, reserved), destination);
     }
     public RunConfiguration Preview(string path, RunConfiguration config)
@@ -110,7 +126,7 @@ public sealed class ProfileStore
         var profile = new ProfileEntry(Guid.NewGuid().ToString("N"), name, path);
         if (create is not null)
         {
-            if (!PathSafety.IsUnder(path, ConfigRoot) || File.Exists(path) || path.Equals(Installation.ConfigPath, PathSafety.Comparison))
+            if (!PathSafety.IsUnder(path, ConfigRoot) || File.Exists(path) || path.Equals(InitialConfigPath, PathSafety.Comparison))
                 throw new ConfigurationException("New external profile requires an unused config-directory path; managed state is not repaired here.");
             create = Preview(path, create);
             SetupFiles.Atomic(path, create, false);
@@ -121,7 +137,7 @@ public sealed class ProfileStore
             if (health.Status != "valid") throw new ConfigurationException(health.Error ?? "Invalid profile.");
         }
         var next = catalog with { Profiles = [.. catalog.Profiles, profile],
-            DefaultProfileId = catalog.DefaultProfileId ?? (path.Equals(Installation.ConfigPath, PathSafety.Comparison) ? profile.ProfileId : null) };
+            DefaultProfileId = catalog.DefaultProfileId ?? (path.Equals(InitialConfigPath, PathSafety.Comparison) ? profile.ProfileId : null) };
         SchemaValidation.Validate(JsonSerializer.SerializeToElement(next, JsonContract.Options), "profile-catalog");
         CheckHash(expectedHash); SetupFiles.Atomic(CatalogPath, next, File.Exists(CatalogPath)); return profile;
     }
@@ -146,9 +162,9 @@ public sealed class ProfileStore
         path = SetupFiles.Safe(path);
         if (!path.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || path.Equals(CatalogPath, PathSafety.Comparison) || path.Equals(SelectionPath, PathSafety.Comparison))
             throw new ConfigurationException("Select a configuration JSON, not launcher metadata.");
-        foreach (var reserved in new[] { "versions", "operations", "install.json", ".archsift-setup.lock" })
+        foreach (var reserved in new[] { "versions", "operations", "install.json", ".archsift-setup.lock", PortableState.MarkerName, "bootstrap.json", ".archsift-workbench.lock" })
             PathSafety.EnsureDisjoint(SetupFiles.Under(Root, reserved), path);
-        PathSafety.EnsureDisjoint(Installation.TargetRoot, path); return path;
+        if (Installation is not null) PathSafety.EnsureDisjoint(Installation.TargetRoot, path); return path;
     }
     private FileStream Lock()
     {

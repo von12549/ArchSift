@@ -19,7 +19,7 @@ $archive=Assert-ArchSiftExternalPath $repo $ArchivePath
 if(Test-Path -LiteralPath $output){throw 'Keep the existing offline-feed attempt; use a fresh directory.'}
 if(Test-Path -LiteralPath $archive){throw 'Do not overwrite an existing offline-feed archive.'}
 if($archive.StartsWith($output+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Archive must be outside the feed being archived.'}
-$allowlist=Get-Content (Join-Path $repo 'docs/releases/0.10.0/consumer-dependency-allowlist.json') -Raw|ConvertFrom-Json
+$allowlist=Get-Content (Join-Path $repo 'docs/releases/0.10.1/consumer-dependency-allowlist.json') -Raw|ConvertFrom-Json
 if($allowlist.schemaVersion -ne 1){throw 'Unknown generic dependency approval.'}
 $lock=Get-Content -LiteralPath $ConsumerLock -Raw|ConvertFrom-Json -AsHashtable
 $graph=$lock.dependencies['net10.0']

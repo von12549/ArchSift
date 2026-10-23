@@ -19,7 +19,7 @@ if(-not(Test-Path -LiteralPath $LocalFeed -PathType Container)){throw 'Explicit 
 $lab=[IO.Path]::GetFullPath($LabRoot)
 if($lab-eq$root-or$lab.StartsWith($root+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Package output must be outside source.'}
 if($Version-notmatch'^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?$'){throw 'Invalid package version.'}
-$productScope=@('src','schemas','templates','samples','scripts','.github','Directory.Build.props','Directory.Build.targets','Directory.Packages.props','global.json','NuGet.Config','LICENSE','docs/migration','docs/package-readme.md','README.md','RELEASE_NOTES.md','docs/getting-started.md','docs/project-integration.md','docs/architecture-test-workbench.md','docs/releases/0.10.0','docs/installation.md','docs/installation-0.4.md','docs/installation-0.5.md','docs/setup-0.5.md','docs/setup.md','docs/cli.md','docs/changes.md','docs/reports.md','docs/rules.md','docs/build-inputs.md','docs/external-build-evidence.md')
+$productScope=@('src','schemas','templates','samples','scripts','.github','Directory.Build.props','Directory.Build.targets','Directory.Packages.props','global.json','NuGet.Config','LICENSE','docs/migration','docs/package-readme.md','README.md','RELEASE_NOTES.md','docs/getting-started.md','docs/project-integration.md','docs/architecture-test-workbench.md','docs/releases/0.10.1','docs/installation.md','docs/installation-0.4.md','docs/installation-0.5.md','docs/setup-0.5.md','docs/setup.md','docs/cli.md','docs/changes.md','docs/reports.md','docs/rules.md','docs/build-inputs.md','docs/external-build-evidence.md')
 $sourceCommitBefore=(& git -C $root rev-parse HEAD).Trim()
 function Product-Hash {
     $paths=((& git -C $root ls-files -z --cached --others --exclude-standard -- @productScope)-join "`n").Split([char]0,[StringSplitOptions]::RemoveEmptyEntries)
@@ -104,6 +104,11 @@ try {
             foreach($file in $notices){Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $licenseRoot ($package+'-'+$framework.version+'-'+$file.Name))}
         }
     }
+    $webNotices=Join-Path $payload 'web/notices'
+    [void][IO.Directory]::CreateDirectory($webNotices)
+    & (Join-Path $PSScriptRoot 'Write-ReleaseNotices.ps1') -OutputPath (Join-Path $webNotices 'third-party-notices.md') -SourceCommit $sourceCommitBefore
+    Copy-Item -LiteralPath (Join-Path $root 'docs/migration/licenses') -Destination (Join-Path $webNotices 'licenses') -Recurse
+    & (Join-Path $PSScriptRoot 'New-WebPayloadInventory.ps1') -PayloadRoot (Join-Path $payload 'web') -ExpectedVersion $Version -SourceCommit $sourceCommitBefore
     . (Join-Path $PSScriptRoot 'ReleaseRuntimeProof.ps1')
     $runtimeProof=@(Get-ArchSiftRuntimeCodeProof $payload (Join-Path $run 'nuget-cache') $release)
     [IO.File]::WriteAllText((Join-Path $run 'runtime-code-proof.json'),($runtimeProof|ConvertTo-Json -Depth 10))

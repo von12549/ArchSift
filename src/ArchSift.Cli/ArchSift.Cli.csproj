@@ -5,6 +5,7 @@
     <ArchSiftPackageNotices Condition="'$(ArchSiftPackageNotices)' == ''">$(MSBuildThisFileDirectory)../../docs/migration/third-party-notices.md</ArchSiftPackageNotices>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../Shared/WebPayload.cs" Link="WebPayload.cs" />
     <None Include="$(ArchSiftPackageNotices)" Pack="true" PackagePath="tools/net10.0/any/notices/third-party-notices.md" />
     <None Include="../../docs/migration/licenses/*" Pack="true" PackagePath="tools/net10.0/any/notices/licenses/" />
     <Compile Include="../Shared/UiProcess.cs" Link="UiProcess.cs" />
@@ -12,4 +13,11 @@
     <ProjectReference Include="../ArchSift.ArchUnit/ArchSift.ArchUnit.csproj" />
     <ProjectReference Include="../ArchSift.TestGate/ArchSift.TestGate.csproj" />
   </ItemGroup>
+  <Target Name="IncludeMatchingWebPublish" BeforeTargets="_GetPackageFiles">
+    <Error Condition="'$(ArchSiftWebPayloadRoot)' == '' Or !Exists('$(ArchSiftWebPayloadRoot)/web-payload.json')" Text="Distributable CLI pack requires a complete version/source-bound Web publish closure. Run Build-WorkbenchRelease.ps1 or supply ArchSiftWebPayloadRoot." />
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildThisFileDirectory)../../scripts/New-WebPayloadInventory.ps1&quot; -PayloadRoot &quot;$(ArchSiftWebPayloadRoot)&quot; -ExpectedVersion &quot;$(ArchSiftReleaseVersion)&quot; -SourceCommit &quot;$(SourceRevisionId)&quot; -VerifyOnly" />
+    <ItemGroup>
+      <None Include="$(ArchSiftWebPayloadRoot)/**/*" Pack="true" PackagePath="tools/net10.0/any/web/%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
 </Project>

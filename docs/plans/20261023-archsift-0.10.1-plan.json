@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "implementation-in-progress",
+  "plan": "20261023-archsift-0.10.1-plan.md",
+  "authorization": {
+    "planningOnly": false,
+    "codeChanges": true,
+    "buildInstallIntegration": "copied-environments-only",
+    "commitPushPrMerge": true,
+    "publication": "after-user-final-acceptance",
+    "liveIfxUpgrade": false
+  },
+  "targetVersion": "0.10.1",
+  "targetVersionState": "candidate-not-reserved",
+  "versionSeries": "0.10.x",
+  "unifiedProductVersionRequired": true,
+  "currentAcceptedRelease": "0.10.0",
+  "sourceBaseline": {
+    "remoteMain": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
+    "tree": "6343f35bad2c056706a92ac19ce7cb1f64102cdf",
+    "documentationWorktreeHead": "fb21889f678bb132f82bbbd02aca4f6788af471d",
+    "trackedFilesOutsidePlannedEdits": 724,
+    "preEditContentAggregateSha256": "376f01b5e32a70be3d60426f3550f5997e6279ba760795f8d24388cd21fec75c"
+  },
+  "toolchain": {
+    "sdk": "10.0.303",
+    "tfm": "net10.0",
+    "configuration": "Release",
+    "coreRuntime": "10.0.13",
+    "aspNetRuntime": "10.0.13",
+    "nativeRid": "win-x64"
+  },
+  "availability": {
+    "checkWindowUtc": "2026-10-23T04:47:00Z/2026-10-23T04:49:00Z",
+    "githubReleaseCount": 9,
+    "githubTagCount": 9,
+    "candidateReleaseFound": false,
+    "candidateTagFound": false,
+    "latestStable": "0.10.0",
+    "localTagOrTrackedVersionMatch": false,
+    "nugetOrgIndexes": [
+      {
+        "id": "ArchSift.Contracts",
+        "httpStatus": 404,
+        "outcome": "no-listed-versions-observed"
+      },
+      {
+        "id": "ArchSift.Core",
+        "httpStatus": 404,
+        "outcome": "no-listed-versions-observed"
+      },
+      {
+        "id": "ArchSift.ArchUnit",
+        "httpStatus": 404,
+        "outcome": "no-listed-versions-observed"
+      },
+      {
+        "id": "ArchSift.Testing",
+        "httpStatus": 404,
+        "outcome": "no-listed-versions-observed"
+      },
+      {
+        "id": "ArchSift.Cli",
+        "httpStatus": 404,
+        "outcome": "no-listed-versions-observed"
+      }
+    ],
+    "githubPackages": {
+      "httpStatus": 403,
+      "outcome": "inconclusive",
+      "reason": "missing-read-packages-scope"
+    },
+    "ownershipProven": false,
+    "recheckRequired": [
+      "before-version-cut",
+      "before-publication"
+    ],
+    "onConflict": "revise-all-product-identities-to-next-available-0.10.x-no-overwrite"
+  },
+  "delivery": {
+    "name": "ArchSift Workbench",
+    "command": "archsift",
+    "productPackages": [
+      "ArchSift.Contracts",
+      "ArchSift.Core",
+      "ArchSift.ArchUnit",
+      "ArchSift.Testing",
+      "ArchSift.Cli"
+    ],
+    "webDelivery": "embedded-framework-dependent-publish-closure-in-cli-tool",
+    "webPath": "tools/net10.0/any/web/",
+    "separateWebPackage": false,
+    "nativeDelivery": "existing-self-contained-windows-zip-and-setup",
+    "plannedChannel": "existing-github-release-assets",
+    "registryPublication": "separate-explicit-channel-authority-required",
+    "plannedAttachmentCount": 11
+  },
+  "items": [
+    {
+      "id": "NX01",
+      "status": "planned-not-started",
+      "packagingDecision": "bundle-matching-complete-web-closure",
+      "bootstrapDecision": "explicit-portable-state-root-and-existing-config-no-counterfeit-setup-state",
+      "plannedPortableCommand": "archsift launch --root <external-state-root> --config <existing-json>",
+      "existingManagedCommandPreserved": "archsift launch --root <managed-install-root>",
+      "portableMarkerProposal": "workbench-state.json",
+      "portableSchemaProposal": 1,
+      "managedSchemaMigration": false,
+      "requiresProof": [
+        "pack-no-build-stale-payload-rejection",
+        "cold-offline-tool-ui-and-launcher",
+        "framework-dependent-owned-child",
+        "safe-explicit-bootstrap",
+        "managed-protection",
+        "payload-approval-notices-audit",
+        "lifecycle-rollback"
+      ]
+    },
+    {
+      "id": "NX02",
+      "status": "planned-not-started",
+      "surface": "Architecture tests JSON inventory renderInventory",
+      "default": "per-ruleset-collapsed",
+      "controls": [
+        "expand-all-json",
+        "collapse-all-json",
+        "separate-visible-copy-or-edit"
+      ],
+      "state": "in-memory-session-by-config-and-canonical-ruleset-path-reset-on-config-switch",
+      "locales": [
+        "en",
+        "zh"
+      ],
+      "executionSelectionChanged": false,
+      "historicalIfxFixture": {
+        "rulesetFiles": 13,
+        "jsonCases": 401,
+        "csharpCases": 92,
+        "totalCases": 493
+      },
+      "reportComparison": "exact-for-controlled-identical-candidate-inputs-explicit-volatile-version-fields-across-releases"
+    }
+  ],
+  "packages": [
+    {
+      "id": "PX00",
+      "dependsOn": [],
+      "status": "complete"
+    },
+    {
+      "id": "PX01",
+      "dependsOn": [
+        "PX00"
+      ],
+      "status": "in-progress"
+    },
+    {
+      "id": "PX02",
+      "dependsOn": [
+        "PX01"
+      ],
+      "status": "in-progress"
+    },
+    {
+      "id": "PX03",
+      "dependsOn": [
+        "PX00"
+      ],
+      "status": "in-progress"
+    },
+    {
+      "id": "PX04",
+      "dependsOn": [
+        "PX02",
+        "PX03"
+      ],
+      "status": "planned-not-started"
+    },
+    {
+      "id": "PX05",
+      "dependsOn": [
+        "PX04"
+      ],
+      "status": "planned-not-started"
+    },
+    {
+      "id": "PX06",
+      "dependsOn": [
+        "PX04",
+        "PX05"
+      ],
+      "status": "planned-not-started"
+    },
+    {
+      "id": "PX07",
+      "dependsOn": [
+        "PX06"
+      ],
+      "status": "planned-not-started"
+    },
+    {
+      "id": "PX08",
+      "dependsOn": [
+        "PX07"
+      ],
+      "status": "planned-not-started"
+    },
+    {
+      "id": "PX09",
+      "dependsOn": [
+        "PX08"
+      ],
+      "status": "planned-not-started"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "PA01",
+      "area": "version-source",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA02",
+      "area": "cold-nuget-ui-and-launcher",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA03",
+      "area": "negative-integrity-runtime-bootstrap",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA04",
+      "area": "folding-accessibility-localization-focus",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA05",
+      "area": "unchanged-execution-policy",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA06",
+      "area": "consumer-managed-compatibility",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA07",
+      "area": "safety-security-license-audit",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA08",
+      "area": "lifecycle-closeout",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA09",
+      "area": "separate-rollback-forward",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA10",
+      "area": "fresh-real-snapshot-separate-audit",
+      "status": "not-run",
+      "humanOnly": false
+    },
+    {
+      "id": "PA11",
+      "area": "independent-stable-human-review",
+      "status": "not-run",
+      "humanOnly": true
+    },
+    {
+      "id": "PA12",
+      "area": "publication-download",
+      "status": "not-run",
+      "humanOnly": false
+    }
+  ],
+  "rollback": {
+    "nuget": "exact-old-package-manifest-lock-approval-feed-config-in-isolated-tool-root",
+    "oldNugetWebAvailable": false,
+    "oldUiFallback": "retained-accepted-windows-installation",
+    "managed": "successful-receipt-plus-independent-scripts-profiles-external-config-backups",
+    "oldVersionCanReadNewPortableMetadataClaimed": false,
+    "rehearseOnCopy": true,
+    "liveIfxDowngrade": false
+  },
+  "constraints": [
+    "immutable-published-0.10.0",
+    "english-formal-documents",
+    "core-independent-of-host-installation-policy",
+    "target-read-only",
+    "no-persistent-environment-profile-path-registry-change",
+    "explicit-offline-sources",
+    "host-hash-checkpoints-stop-on-drift",
+    "same-ifx-policy-deferred-scope",
+    "retain-old-versions-config-evidence",
+    "human-answers-user-only"
+  ],
+  "risks": [
+    "fdd-closure-not-built-restored",
+    "portable-bootstrap-not-implemented",
+    "ux-not-human-tested",
+    "size-license-audit-unmeasured",
+    "github-packages-inconclusive",
+    "existing-parallelchain-runningcount-timing-sensitivity"
+  ],
+  "planningValidation": {
+    "codeChanged": false,
+    "gitHeadChanged": false,
+    "gatesExecuted": [],
+    "documentationChecks": [
+      "json-parse-and-planning-status",
+      "local-markdown-links",
+      "new-formal-documents-english",
+      "historical-markdown-bodies-preserved",
+      "git-diff-check",
+      "head-and-staging-unchanged",
+      "724-other-tracked-files-byte-unchanged"
+    ],
+    "documentationChecksStatus": "passed",
+    "executionAcceptanceGatesRun": 0
+  },
+  "originalPlanningAuthorization": {
+    "planningOnly": true,
+    "codeChanges": false,
+    "buildInstallIntegration": false,
+    "commitPushPrMerge": false,
+    "publication": false,
+    "liveIfxUpgrade": false
+  },
+  "execution": {
+    "authorizedDate": "2026-10-23",
+    "branch": "codex/workbench-0.10.1",
+    "baseCommit": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
+    "evidenceRoot": "D:/ArchSift-lab/runs/workbench-0101-20261023-01",
+    "humanAcceptance": "pending-user-only",
+    "publication": "pending-human-acceptance",
+    "candidateVersion": "0.10.1-rc.1",
+    "developmentChecks": {
+      "run": "development-7d2067b21ec94ca78eaccb73045478a8",
+      "architecture": 2,
+      "unit": 157,
+      "integration": 119,
+      "mtp": 57,
+      "failed": 0,
+      "skipped": 0,
+      "hostEqual": true,
+      "releaseQualification": false
+    }
+  }
+}

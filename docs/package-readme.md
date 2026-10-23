@@ -1,6 +1,6 @@
 # ArchSift Workbench packages and Windows distribution
 
-This README accompanies the unified 0.10.0 release preparation; consult RELEASE_NOTES.md and the matching acceptance record for the actual version, artifact and qualification state. Library/tool packages target net10.0 and require a supported patched .NET 10 runtime, at least 10.0.13 at this release; the pinned SDK 10.0.303 does not identify its selected shared-runtime patch. The separate Windows x64 ZIP is self-contained for CLI/loopback Workbench launch. Target builds/tests still require their approved SDKs, packs and explicit dependencies. No Guard installation or persistent PATH/Profile changes are required. The commands below use an extracted Windows ZIP.
+This README accompanies the unified 0.10.1 candidate preparation; consult RELEASE_NOTES.md and the matching acceptance record for the actual version, artifact and qualification state. Library/tool packages target net10.0 and require a supported patched .NET 10 runtime, at least 10.0.13 at this release; the pinned SDK 10.0.303 does not identify its selected shared-runtime patch. The separate Windows x64 ZIP is self-contained for CLI/loopback Workbench launch. Target builds/tests still require their approved SDKs, packs and explicit dependencies. No Guard installation or persistent PATH/Profile changes are required. The commands below use an extracted Windows ZIP.
 
 After extracting, run in PowerShell:
 
@@ -29,3 +29,5 @@ Guidance is in docs/cli.md, docs/changes.md, docs/reports.md, docs/rules.md and 
 LICENSE is ArchSift's MIT license. licenses retains complete third-party and .NET runtime notices. package-manifest.json records source commit, version, RID and file hashes. Its candidate status describes packaging time; final acceptance must bind the exact ZIP hash. Verify the corresponding SHA256SUMS.txt.
 
 Source and evidence: [von12549/ArchSift](https://github.com/von12549/ArchSift). Linux CLI uses source and .NET 10; this Windows ZIP does not promise Linux Web UI or a Linux self-contained distribution. IFX C/D/E coverage and policy adoption remain outside this release.
+
+The CLI NuGet package supplies matching Web under tools/net10.0/any/web. NuGet Web needs the approved SDK and Core/ASP.NET runtimes; CLI-only commands retain their Core-only prerequisite. See [portable Workbench](portable-workbench.md) for cold local-tool restore, direct UI, explicit Launcher bootstrap and separate rollback combinations. JSON inventory is initially folded by ruleset; folding never excludes cases.

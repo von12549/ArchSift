@@ -21,6 +21,18 @@
     }));
     return result;
   };
+  const canonicalInventoryPath = path => /^[a-z]:/i.test(path) ? path.split(String.fromCharCode(92)).join("/").toLowerCase() : path;
+  let inventoryConfigKey = null;
+  const disclosureState = new Map(), inventoryDetails = new Map();
+  Object.assign(zhTranslations, {
+    "Expand all JSON rules": "\u5c55\u5f00\u5168\u90e8 JSON \u89c4\u5219",
+    "Collapse all JSON rules": "\u6298\u53e0\u5168\u90e8 JSON \u89c4\u5219",
+    "JSON rulesets": "JSON \u89c4\u5219\u96c6",
+    "JSON cases": "JSON \u7528\u4f8b",
+    "C# cases": "C# \u7528\u4f8b",
+    "Expanded JSON rulesets": "\u5df2\u5c55\u5f00 JSON \u89c4\u5219\u96c6",
+    "No JSON rulesets": "\u6ca1\u6709 JSON \u89c4\u5219\u96c6"
+  });
   let inventory = null, discovery = null, historyItems = [], reportData = null;
   let offset = 0, total = 0, polling = null, shownRunId = null, historySelected = false;
 
@@ -79,6 +91,15 @@
   }
   function renderInventory(data) {
     const area = el("test-inventory");
+    const focused = area.contains?.(document.activeElement) ? document.activeElement.dataset.inventoryFocus : null;
+    const configKey = data?.configured ? canonicalInventoryPath(data.configPath) : null;
+    const sameConfig = configKey === inventoryConfigKey;
+    if (configKey !== inventoryConfigKey) disclosureState.clear();
+    else for (const [path, detail] of inventoryDetails) disclosureState.set(path, detail.open);
+    inventoryConfigKey = configKey;
+    inventoryDetails.clear();
+    const paths = new Set((data?.rules || []).map(rule => canonicalInventoryPath(rule.path)));
+    for (const path of disclosureState.keys()) if (!paths.has(path)) disclosureState.delete(path);
     area.replaceChildren();
     if (!data?.configured) {
       inventory = null;
@@ -115,17 +136,57 @@
     const json = make("article", undefined, "test-source-card");
     json.append(make("h4", t("ArchSift JSON type dependencies")),
       make("p", t("Copy rules to the external library to edit them. The next run uses saved bytes.")));
+    const counts = make("p", t("JSON rulesets") + ": " + data.rules.length + " · " +
+      t("JSON cases") + ": " + data.rules.reduce((count, rule) => count + rule.cases.length, 0) +
+      " · " + t("C# cases") + ": " + caseKeys.length, "hint");
+    const controls = make("div", undefined, "actions");
+    const announcement = make("p", undefined, "hint");
+    announcement.setAttribute("role", "status");
+    announcement.setAttribute("aria-live", "polite");
+    function announce() {
+      announcement.textContent = t("Expanded JSON rulesets") + ": " +
+        [...inventoryDetails.values()].filter(detail => detail.open).length + " / " + data.rules.length;
+    }
+    for (const open of [true, false]) {
+      const button = make("button", t(open ? "Expand all JSON rules" : "Collapse all JSON rules"));
+      button.type = "button";
+      button.disabled = data.rules.length === 0;
+      button.dataset.inventoryFocus = open ? "expand-json" : "collapse-json";
+      button.onclick = () => {
+        for (const [path, detail] of inventoryDetails) { detail.open = open; disclosureState.set(path, open); }
+        announce();
+      };
+      controls.append(button);
+    }
+    json.append(counts, controls, announcement);
+    if (!data.rules.length) json.append(make("p", t("No JSON rulesets"), "empty"));
     for (const rule of data.rules) {
+      const ruleKey = canonicalInventoryPath(rule.path);
       const card = make("div", undefined, "test-rule-row");
-      card.append(make("p", rule.path, "path"));
+      const details = make("details"), summary = make("summary");
+      const name = rule.path.split(String.fromCharCode(92)).join("/").split("/").pop();
+      summary.append(make("strong", name), make("span", " · " + rule.cases.length + " " + t("JSON cases")),
+        make("span", rule.path, "path"));
+      summary.dataset.inventoryFocus = "summary:" + ruleKey;
+      details.append(summary);
+      details.open = disclosureState.get(ruleKey) || false;
+      inventoryDetails.set(ruleKey, details);
+      details.addEventListener("toggle", () => {
+        if (inventoryConfigKey !== configKey || !details.isConnected) return;
+        disclosureState.set(ruleKey, details.open);
+        if (!details.open && details.contains(document.activeElement) && document.activeElement !== summary) summary.focus();
+        announce();
+      });
       if (rule.cases.length) {
         const cases = make("ol", undefined, "test-rule-cases");
         for (const id of rule.cases) cases.append(make("li", id));
-        card.append(cases);
-      } else card.append(make("p", t("No enabled cases")));
+        details.append(cases);
+      } else details.append(make("p", t("No enabled cases")));
       const button = make("button", t(rule.editable ?
         "Open in rule editor" : "Copy to external library and edit"));
       button.type = "button";
+      button.dataset.inventoryFocus = "edit:" + ruleKey;
+      button.setAttribute("aria-label", button.textContent + ": " + rule.path);
       button.onclick = async () => {
         try {
           const copy = await api("test-workbench/copy-rule", {index: rule.index});
@@ -137,7 +198,7 @@
           await editCard(saved);
         } catch (error) { message(localizedMessage(error.message), true); }
       };
-      card.append(button);
+      card.append(details, button);
       json.append(card);
     }
     cards.append(json);
@@ -154,6 +215,11 @@
     deferred.append(deferredList);
     cards.append(deferred);
     area.append(cards);
+    announce();
+    if (focused && sameConfig) {
+      const next = [...area.querySelectorAll("[data-inventory-focus]")].find(item => item.dataset.inventoryFocus === focused);
+      if (next) next.focus();
+    }
   }
   function renderDiscovery() {
     const area = el("test-case-results"), source = el("test-discovery-source");

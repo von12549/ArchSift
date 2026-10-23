@@ -41,3 +41,5 @@
 .test-finding{padding:10px;border-left:3px solid #a24140;background:#fff3f2;overflow-x:auto}
 @media(max-width:850px){.test-source-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.test-case-option{grid-template-columns:minmax(0,1fr)}.test-case-option button{grid-column:1;grid-row:auto;justify-self:start}.work-view-switch button{flex:1 1 auto}.test-next .actions{width:100%}}
+
+.test-rule-row details{margin-top:0;padding-top:0;border-top:0}.test-rule-row summary{padding:4px 0;overflow-wrap:anywhere}.test-rule-row summary .path{display:block;margin:4px 0}.test-rule-row>button{margin-top:8px}

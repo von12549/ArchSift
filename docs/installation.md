@@ -1,5 +1,6 @@
 # Windows installation and configuration — ArchSift Workbench 0.10.0
 
+Current-source update: 0.10.1 is a candidate under qualification; final human acceptance and publication are pending. See [portable Workbench](portable-workbench.md) for NuGet UI, portable Launcher and rollback. References to published 0.10.0 below retain their historical context.
 Release status: **0.10.0 published and download-verified**. See the [publication record](releases/0.10.0-publication.md) for exact assets, final acceptance and successful public-download usage. The following instructions retain their packaging-stage context; immutable bundled copies are qualified by the matching final acceptance record.
 
 These instructions were prepared for 0.10.0 qualification. Exact assets, support and final acceptance are established by the separate matching release record; source [release status](releases/0.10.0/release-status.json) retains its packaging-stage timing. These instructions describe the intended verified Windows delivery and retain the established profile/ownership model. They do not claim new package qualification. Start with [getting started](getting-started.md) and [project integration](project-integration.md). Earlier [0.5.0 installation](installation-0.5.md), [Setup](setup-0.5.md) and [0.4.0 manual](installation-0.4.md) guides remain historical.
