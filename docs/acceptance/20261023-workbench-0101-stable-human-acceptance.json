@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "accepted-by-user-and-closeouts-verified",
+  "version": "0.10.1",
+  "releaseSourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
+  "humanAcceptance": {
+    "status": "accepted-by-user",
+    "basis": "Direct user response confirming completion of all three exact-stable entrances after the configuration-instruction correction.",
+    "entrances": [
+      "NuGet UI",
+      "Portable Launcher",
+      "Managed Launcher"
+    ],
+    "versionTargetInventoryAndShutdownNormal": true,
+    "usabilityRatingOutOf5": 4,
+    "defects": [],
+    "untestedMandatoryItems": [],
+    "exactReviewTimeSupplied": false,
+    "retainedVerbatimResponseSha256": "68277c36540e1d4b6b6761ea982066e0ffbd18e214514a508ddd7debfe267c7b",
+    "machineCloseout": {
+      "records": [
+        {
+          "mode": "NuGetUI",
+          "sha256": "e544de0bb8ca1263221d484e7da91d2e126c26d6e255c57f05f4785f5e0b87df",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:54:11.1297118Z"
+        },
+        {
+          "mode": "PortableLauncher",
+          "sha256": "75fc90cf68fc78113f8f40bca50bb14e7f8a0724a1d6ceb01150c625e8e92d33",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:55:30.3005893Z"
+        },
+        {
+          "mode": "ManagedLauncher",
+          "sha256": "4817488a9e128fb35ebeab15422e5b5891812f9041ff987c4b6fca086ce99193",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:58:12.1875132Z"
+        }
+      ],
+      "currentOriginalHostBaselineEqual": true,
+      "remainingProcessesUnderReviewedRoots": 0,
+      "closeoutVerificationSha256": "7705bf6b9bb410fce6d2a4302223ec05f83f3ace9d654b9bf991d7cf0b0ac322"
+    }
+  },
+  "userResponseSha256": "68277c36540e1d4b6b6761ea982066e0ffbd18e214514a508ddd7debfe267c7b",
+  "originalUnansweredChecklistRetainedExternally": true,
+  "publishedReceipt": "../releases/0.10.1/acceptance.json",
+  "liveIfxUpgrade": false
+}

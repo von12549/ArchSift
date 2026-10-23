@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "version": "0.10.1",
   "stableTarget": "0.10.1",
-  "status": "stable-machine-qualified-human-and-publication-pending",
-  "published": false,
-  "humanAcceptance": "pending-user-only",
+  "status": "published-and-download-verified",
+  "published": true,
+  "humanAcceptance": "accepted-by-user-three-closeouts-verified",
   "existingIfxUpgrade": false,
   "plan": "../../plans/20261023-archsift-0.10.1-plan.json",
   "candidateSourceCommit": "c2de2d25d147979f261bbea7a2402e835210ca60",
@@ -16,5 +16,6 @@
   "humanChecklist": "../../acceptance/20261023-workbench-0101-stable-human-checklist.md",
   "stablePr": 23,
   "stableMainCiRun": 39927705009,
-  "stableIndependentWindowsRun": 39927742393
+  "stableIndependentWindowsRun": 39927742393,
+  "publicationRecord": "../0.10.1-publication.json"
 }

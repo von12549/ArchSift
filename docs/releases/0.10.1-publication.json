@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "timezone": "Australia/Sydney",
+  "status": "published-and-download-verified",
+  "recordedUtc": "2026-10-23T11:13:32.953251+00:00",
+  "displayName": "ArchSift Workbench",
+  "version": "0.10.1",
+  "releaseUrl": "https://github.com/von12549/ArchSift/releases/tag/v0.10.1",
+  "releaseId": 421743060,
+  "tag": "v0.10.1",
+  "sourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
+  "sourceTree": "de919e1c1a73170cd8fc42d8400d7f6379450898",
+  "publishedAt": "2026-10-23T11:06:53Z",
+  "draft": false,
+  "prerelease": false,
+  "assets": [
+    {
+      "file": "acceptance.json",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/acceptance.json",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 14514,
+      "sha256": "fb30172b597f381d91b5768d01d59fc1efb3b94cacc9e1f6b2b9eaadd7ca7fd9",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "archsift-workbench-0.10.1-offline-feed.zip",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/archsift-workbench-0.10.1-offline-feed.zip",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 18358113,
+      "sha256": "712f03a52a3253b557086961e47c0db645ec44882180177d6fba1f9a91a3fd3a",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "archsift-workbench-0.10.1-win-x64.zip",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/archsift-workbench-0.10.1-win-x64.zip",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 90185562,
+      "sha256": "47440fe808b6eaadd32932d0c1023270245f0bcfacff8e842189780407d3d94f",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "ArchSift.ArchUnit.0.10.1.nupkg",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/ArchSift.ArchUnit.0.10.1.nupkg",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 107236,
+      "sha256": "d37f692b79178486ece5ad1c18951d8fcbff652fe673d4939c4441030172f0bc",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "ArchSift.Cli.0.10.1.nupkg",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/ArchSift.Cli.0.10.1.nupkg",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 3035910,
+      "sha256": "a586dc8208b105ea13cb98d1022078b7c42e4bdb2464a5d3d4c696683ed86b23",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "ArchSift.Contracts.0.10.1.nupkg",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/ArchSift.Contracts.0.10.1.nupkg",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 166782,
+      "sha256": "ff58cd73ceb87f52aed5467dbb3e3912519d0077429ea9a71ce16f61fd95ec79",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "ArchSift.Core.0.10.1.nupkg",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/ArchSift.Core.0.10.1.nupkg",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 237746,
+      "sha256": "2c9dfb7e4cb8654e2456790d3148714cdd5dbf98f406ff80ffbf298bceff47f0",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "ArchSift.Setup.exe",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/ArchSift.Setup.exe",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 74497834,
+      "sha256": "ec5e75c274e7b1f27ce9a609d9885a16c732d2bb81e7972ab2ae9f9de77afcd7",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "ArchSift.Testing.0.10.1.nupkg",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/ArchSift.Testing.0.10.1.nupkg",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 102522,
+      "sha256": "00539eca477ad03cf3ab12bac74971e8877913c068125d7782df566d0f10e09d",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "artifact-manifest.json",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/artifact-manifest.json",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 2781,
+      "sha256": "b89df14a5bc4b51a2998c927b6bf3ec6e17547bb49ff5d085288fac3e24bf6be",
+      "officialDigestMatched": true
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "url": "https://github.com/von12549/ArchSift/releases/download/v0.10.1/SHA256SUMS.txt",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 945,
+      "sha256": "556197ae2c3f4d51980d6fb934c1084d7c8f96b3149514f0b1ded535757384d6",
+      "officialDigestMatched": true
+    }
+  ],
+  "checksumCoverage": 10,
+  "manifestCoverage": 9,
+  "sourceArchives": [
+    {
+      "format": "zip",
+      "url": "https://codeload.github.com/von12549/ArchSift/zip/refs/tags/v0.10.1",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 3208625,
+      "sha256": "92528a6c53a883a6817660719c9503d657d264fc520a48d5e46e1a10649768dd",
+      "trackedFilesEqualGitBlobs": 752
+    },
+    {
+      "format": "tar.gz",
+      "url": "https://codeload.github.com/von12549/ArchSift/tar.gz/refs/tags/v0.10.1",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 2659247,
+      "sha256": "b024305f6888922df9e00b566c9eb308b436f6d77a18f3d68c35e3dc657ea2a8",
+      "trackedFilesEqualGitBlobs": 752
+    }
+  ],
+  "sourceArchiveFilesVerified": 752,
+  "englishAndLocalLinksPassed": true,
+  "localAnchorsPassed": true,
+  "coldNuget": {
+    "normalToolRestore": true,
+    "toolPathInstall": true,
+    "directUiAndPortableLauncher": true,
+    "emptyCachesAndExplicitOfflineFeed": true,
+    "packageCount": 28,
+    "rawSha512ValuesVerified": 27,
+    "consumerCases": 4,
+    "consumerCsharpCases": 3,
+    "consumerJsonCases": 1,
+    "failed": 0,
+    "skipped": 0,
+    "architectureAudit": "not-run; official security audit is separate"
+  },
+  "downloadedSetup": {
+    "readOnlyPlan": true,
+    "apply": true,
+    "privateWebSmoke": true,
+    "inspect": true,
+    "version": "0.10.1",
+    "targetUnchanged": true,
+    "noTargetBuildOrApplicationExecution": true,
+    "remainingOwnedProcesses": 0
+  },
+  "humanAcceptance": {
+    "status": "accepted-by-user",
+    "basis": "Direct user response confirming completion of all three exact-stable entrances after the configuration-instruction correction.",
+    "entrances": [
+      "NuGet UI",
+      "Portable Launcher",
+      "Managed Launcher"
+    ],
+    "versionTargetInventoryAndShutdownNormal": true,
+    "usabilityRatingOutOf5": 4,
+    "defects": [],
+    "untestedMandatoryItems": [],
+    "exactReviewTimeSupplied": false,
+    "retainedVerbatimResponseSha256": "68277c36540e1d4b6b6761ea982066e0ffbd18e214514a508ddd7debfe267c7b",
+    "machineCloseout": {
+      "records": [
+        {
+          "mode": "NuGetUI",
+          "sha256": "e544de0bb8ca1263221d484e7da91d2e126c26d6e255c57f05f4785f5e0b87df",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:54:11.1297118Z"
+        },
+        {
+          "mode": "PortableLauncher",
+          "sha256": "75fc90cf68fc78113f8f40bca50bb14e7f8a0724a1d6ceb01150c625e8e92d33",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:55:30.3005893Z"
+        },
+        {
+          "mode": "ManagedLauncher",
+          "sha256": "4817488a9e128fb35ebeab15422e5b5891812f9041ff987c4b6fca086ce99193",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:58:12.1875132Z"
+        }
+      ],
+      "currentOriginalHostBaselineEqual": true,
+      "remainingProcessesUnderReviewedRoots": 0,
+      "closeoutVerificationSha256": "7705bf6b9bb410fce6d2a4302223ec05f83f3ace9d654b9bf991d7cf0b0ac322"
+    }
+  },
+  "preservation": {
+    "liveIfxSourceFilesUnchanged": 932,
+    "oldFeedPackagesUnchanged": 251,
+    "installedAndOuterFilesUnchanged": 4527,
+    "hostBaselineSha256": "e779e5a24dc8af031be494bc15d00cf228781f595466dc188eda8ccbd6178914",
+    "liveIfxUpgraded": false,
+    "persistentEnvironmentOrPolicyModified": false,
+    "oldVersionsConfigurationsAndEvidenceRetained": true,
+    "protectedFilesAfterPublicUsage": 5727,
+    "existingPublicReleasesUnchanged": 9
+  },
+  "evidence": {
+    "humanCloseouts": {
+      "path": "stable-publication-01/human-closeout-verification.json",
+      "sha256": "7705bf6b9bb410fce6d2a4302223ec05f83f3ace9d654b9bf991d7cf0b0ac322"
+    },
+    "downloads": {
+      "path": "stable-publication-01/public-download-verification.json",
+      "sha256": "0014010ad8a1e903fdc27d4dced07e108b66f0228969eaa6b2d5a8a2663d30af"
+    },
+    "taggedSources": {
+      "path": "stable-publication-01/tagged-source-archives/verification.json",
+      "sha256": "4a8e01659de5cfee2c5c6c66f25b67fbab08ccd7a1730d938dca2f77c7bfe2d5"
+    },
+    "feed": {
+      "path": "stable-publication-01/public-feed-sha512-verification.json",
+      "sha256": "f0e9c23e042fc82b7b55581561ef79f7bb3f320202f1f74c3fa5e3c8339b4761"
+    },
+    "coldNugetWeb": {
+      "path": "stable-publication-01/downloaded-cold-web/qualification.json",
+      "sha256": "3e5bf49b8073764824f8e6dd147c3919a9c85a15ec592c6964bd6d85e5f48f28"
+    },
+    "consumer": {
+      "path": "stable-publication-01/downloaded-consumer/qualification.json",
+      "sha256": "06b31c3fbdaf37642906decbaa3b3f68188cf6451a64d8f63d40920332ca81a9"
+    },
+    "setup": {
+      "path": "stable-publication-01/downloaded-setup-smoke/qualification.json",
+      "sha256": "cb4a2b479803fb72ac33f620029d0256fbced4c8bddd6c0528cc6f8d8b65133c"
+    },
+    "protection": {
+      "path": "stable-publication-01/postdownload-protection.json",
+      "sha256": "293980a944c6e67c4066282ba13a81cb0623e76944795c05070c703ab660864e"
+    },
+    "olderReleases": {
+      "path": "stable-publication-01/old-releases-preserved.json",
+      "sha256": "0fe6bc010da24dceeb024012f7949fcbcfa2c003fc07a4ec6708c81c12148d1a"
+    }
+  },
+  "registryPublished": false,
+  "liveIfxUpgraded": false,
+  "immutableSourceAndBinaryAssets": true,
+  "limitations": [
+    "Official Windows Server Core guest is headless, not desktop visual or every Windows version certification.",
+    "Framework-dependent NuGet Web requires an approved SDK for install and compatible Core/ASP.NET 10.0.13 runtimes; CLI-only retains Core requirement.",
+    "Linux CI qualifies CLI/contracts, not Linux interactive Web or ARM64. Binaries are not Authenticode signed.",
+    "493 daily cases do not claim the 187 out-of-daily-scope projection items; the official advisory snapshot is time-bound.",
+    "0.10.0 NuGet tool lacks independent Web; retained accepted Windows UI supplies the old UI rollback.",
+    "Registry publication is not in scope.",
+    "Target builds/tests need approved SDKs and dependencies. Source/build identities do not establish a complete compiler-input closure or bit-reproducible build."
+  ]
+}
