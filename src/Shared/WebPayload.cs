@@ -45,7 +45,7 @@ public static class WebPayload
             var runtime = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             host = Path.GetFullPath(Path.Combine(runtime, "..", "..", "..", OperatingSystem.IsWindows() ? "dotnet.exe" : "dotnet"));
         }
-        if (!File.Exists(host)) throw new IOException("An explicit compatible dotnet host with Core and ASP.NET 10.0.13 is required for Web.");
+        if (!File.Exists(host)) throw new IOException("An explicit compatible dotnet host with the required .NET 10 Core and ASP.NET frameworks is required for Web.");
         PathSafety.EnsureNoLinks(host);
         return new(host, assembly);
     }

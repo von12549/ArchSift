@@ -1,0 +1,14 @@
+{
+  "kind": "archsift-workspace",
+  "schemaVersion": 1,
+  "project": { "id": "example-offline-project", "root": "..", "entry": "Example.sln" },
+  "state": { "root": "C:\\ArchSift-lab" },
+  "nuget": {
+    "mode": "offline",
+    "allowNetwork": false,
+    "configFile": "C:\\ArchSift-lab\\nuget\\offline.NuGet.Config",
+    "cacheDirectory": null
+  },
+  "runtime": { "mode": "host", "dotnetPath": null, "minimumSdkVersion": "10.0.0", "allowPrerelease": false },
+  "workbench": { "rulesets": [], "build": { "mode": "existing" } }
+}

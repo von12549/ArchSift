@@ -26,6 +26,20 @@ public static class Program
                 Console.WriteLine(JsonSerializer.Serialize(AssemblyWorker.Evaluate(request), JsonContract.Options)); return 0;
             }
             if (args is ["--version"]) { Console.WriteLine($"archsift {RuntimeInfo.ProductVersion}"); return 0; }
+            if (args.Length >= 2 && args[0] == "workspace")
+            {
+                var noBrowser = args[^1] == "--no-browser";
+                var flags = Flags(noBrowser ? args[2..^1] : args[2..], ["--config", "--local", "--mode", "--migration"]);
+                if (flags.Values.Any(values => values.Count != 1)) throw new ConfigurationException("Each workspace option must occur exactly once.");
+                string? Optional(string key) => flags.TryGetValue(key, out var value) && value.Count == 1 ? value[0] : null;
+                try
+                {
+                    return await ArchSift.Workspaces.WorkspaceService.RunAsync(args[1], Optional("--config") ?? Path.Combine(Environment.CurrentDirectory, ".archsift", "workspace.json"),
+                        Optional("--local"), Optional("--mode") ?? "launcher", noBrowser, Optional("--migration"), cancel.Token);
+                }
+                catch (Exception error) when (error is KeyNotFoundException or InvalidOperationException or FormatException)
+                { throw new ConfigurationException("Invalid workspace/approval field or type: " + error.Message); }
+            }
             if (args is ["test-launch", "--local", _, "--run", _])
             {
                 var launch = TestLaunch.Prepare(args[2], args[4]);
@@ -96,6 +110,7 @@ public static class Program
             {
                 Console.WriteLine("ArchSift — .NET architecture and dependency analyzer.");
                 Console.WriteLine("--version / --help");
+                Console.WriteLine("workspace init|doctor|start [--config <.archsift/workspace.json>] [--local <host settings>] [--mode launcher|workbench] [--migration <reviewed import JSON>] [--no-browser]; SDK >= 10.0.0 and compatible Core/ASP.NET frameworks; state stays outside the project.");
                 Console.WriteLine("test-gate --config <test-gate JSON> (full MTP project by default; filtered runs are subsets)");
                 Console.WriteLine("test-launch --local <machine JSON> --run <new name>; test-map --request <review request JSON> --output <new mapping JSON> (proposal only)");
                 Console.WriteLine("test-history --directory <owned test run root> [--target <worktree>] (read-only)");
