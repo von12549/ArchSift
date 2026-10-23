@@ -1,6 +1,6 @@
 # IFX dual-entry adoption of ArchSift Workbench 0.10.0
 
-Date: 2026-10-23 (Australia/Sydney). Status: UG00–UG06 MACHINE COMPLETE / LIVE UPGRADE COMPLETE / UG07 HANDOFF PREPARED / FINAL HUMAN ACCEPTANCE PENDING.
+Date: 2026-10-23 (Australia/Sydney). Status: UG00–UG07 COMPLETE / LIVE UPGRADE AND FINAL HUMAN ACCEPTANCE PASSED.
 
 The user authorized the complete dual-entry upgrade, child-only .NET 10.0.13 isolation, restoration of the existing CI runner, upgrade/rollback rehearsals, necessary fixes, commits, PRs, normal CI and merges. Final independent visual/hands-on acceptance remains user-owned. Persisted environment/PATH/Profile changes and policy expansion are excluded.
 
@@ -38,3 +38,7 @@ Evidence root: `D:/ArchSift-lab/runs/ifx-stable-upgrade-20261023-01`. New packag
 UG00–UG06 passed, including actual-main IFX CI at `30cca604`, current-source live CLI/Web 493-case parity, independent 105-project/CLI audit, complete daily rollback/forward validation, copied Workbench receipt and outer-profile rollback/forward rehearsal, then actual live Setup/cutover and both outer-entry Safe shutdown checks. Runtime selection is child-only SDK 10.0.303/Core+ASP.NET+host 10.0.13. Old payloads/configuration/packages/reports and failed attempts remain retained. Existing runner 22 is restored and online/idle; host hashes and policy/protection scope are unchanged.
 
 The outer helper's output forwarding and Git stdin isolation fixes are qualified without changing released binaries. The final installed-helper full parity attempt is `live-web-parity-05`. [Machine acceptance](../acceptance/20261023-ifx-stable-upgrade.md) and its JSON bind exact source and receipts. UG07's [independent human checklist](../acceptance/20261023-ifx-stable-upgrade-human-checklist.md) is ready with every user answer pending. Do not mark overall human acceptance complete from these machine checks. ArchSift documentation delivery uses its own normal PR/main CI; the release tag/assets remain immutable.
+
+## Final closure (2026-10-23)
+
+The user completed both independent entrance reviews and accepted expected behavior with usability 4/5, no defects and no untested items. Launcher and separate Workbench closeouts at 04:00:39Z and 04:09:56Z each show 0.10.0, runtime 10.0.13, exit 0 and equal before/after host hashes; no installed CLI/Web remained. [Final acceptance](../acceptance/20261023-ifx-stable-upgrade.md) completes UG07. Earlier pending checkpoint text above retains its historical timing. Old versions/configuration/evidence remain protected. [NX01/NX02](20261023-workbench-next-improvements.md) record the two next-iteration suggestions only; no implementation or new release is started.

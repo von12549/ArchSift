@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "recorded-for-next-iteration-not-started",
+  "source": "User feedback during accepted IFX 0.10.0 human review",
+  "targetVersion": null,
+  "unifiedProductVersionRequired": true,
+  "currentReleaseRemains": "0.10.0",
+  "implementationAuthorizedByThisRecord": false,
+  "boundaries": [
+    "Do not modify immutable 0.10.0 packages, tags or release attachments.",
+    "Core remains independent of CLI/Web and consumer installation.",
+    "Keep existing policy scope, case identities, offline sources, host safety and loopback authentication/lifecycle."
+  ],
+  "items": [
+    {
+      "id": "NX01",
+      "title": "Include the Web component in the NuGet Workbench distribution",
+      "status": "recorded-not-started",
+      "observation": "The released CLI tool package has no Web payload. Its ui/launch entries require an adjacent Web payload or development checkout; the accepted independent Windows installation supplies it.",
+      "packageEvidence": {
+        "name": "ArchSift.Cli.0.10.0.nupkg",
+        "sha256": "601c3710dd387f4a5fd33e539d35bd1f0fc36ff8f6a4b65330b3afe346acc17f",
+        "entries": 40,
+        "webPayloadEntries": 0
+      },
+      "proposedScope": "Design a unified-version NuGet delivery that supplies and resolves the matching Web host, contracts, dependencies and static assets without a separate Workbench installation or source checkout. Bundled assets versus an automatically resolved companion package remain a design decision.",
+      "acceptanceCriteria": [
+        "Cold install/restore from an explicit approved feed can start ui and launcher with the approved SDK/runtime and no separate Web installation or source build.",
+        "The resolved Web payload and static assets match the unified product version, provenance, package approval and notices.",
+        "Offline operation has no hidden download or fallback to an unrelated installed Web component.",
+        "Missing, changed or mismatched Web payloads fail clearly; CLI-only architecture use remains compatible.",
+        "Loopback/token protection, safe shutdown, upgrade/rollback and both entrance lifecycles pass; do not repair persistent PATH/environment."
+      ]
+    },
+    {
+      "id": "NX02",
+      "title": "Make Architecture tests JSON inventory collapsible",
+      "status": "recorded-not-started",
+      "observation": "The inventory renders each ruleset and all case IDs as flat rows. With 401 JSON cases the page becomes long. Existing collapsible result groups are a different surface.",
+      "sourceReference": "src/ArchSift.Web/wwwroot/test-workbench.js: renderInventory",
+      "proposedScope": "Use compact per-ruleset disclosure groups with visible paths/names and case counts, initially collapsed; provide expand/collapse-all controls and preserve access to copy/edit actions.",
+      "acceptanceCriteria": [
+        "The 401-case inventory is readable without scrolling through every case; the 92 C# and responsibility/deferred summaries stay clear.",
+        "Disclosure controls work with keyboard/screen readers and both existing locales; focus and sensible disclosure state survive refresh/locale changes.",
+        "Expanding exposes every original case ID and rule path; empty/disabled/error states remain clear.",
+        "Collapse affects presentation only: complete execution still runs all 493 cases, with unchanged selection, coverage, report bytes and rule authority.",
+        "Existing external-copy/edit flows and source-read-only boundaries remain intact."
+      ]
+    }
+  ]
+}

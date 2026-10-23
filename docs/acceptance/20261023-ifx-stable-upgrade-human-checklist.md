@@ -1,6 +1,6 @@
 # IFX 0.10.0 independent human acceptance checklist
 
-Status: PENDING USER REVIEW. Do not infer answers from machine checks or the separate release review.
+Status: PASSED / 2026-10-23 (Australia/Sydney). The user independently reviewed Launcher and its child, then separately ran `workbench.ps1`, confirmed the same outcome and Safe shutdown. This acceptance is separate from the earlier release review.
 
 Machine baseline: IFX `30cca60467e737ba794e98cde608c713e7f17ff9`, ArchSift Workbench 0.10.0, SDK 10.0.303/runtime 10.0.13, Release/net10.0; 493 = 92 C# + 401 JSON. All machine test sessions were safely closed before handoff. The restored runner remains online.
 
@@ -13,13 +13,15 @@ Machine baseline: IFX `30cca60467e737ba794e98cde608c713e7f17ff9`, ArchSift Workb
 
 | User response | Answer |
 | --- | --- |
-| Reviewer / date | Pending |
-| Behavior matches expectations | Pending |
-| Usability score / 5 | Pending |
-| Defects and severity | Pending |
-| Untested items | Pending |
-| Launcher and its child safely shut down / terminal returned | Pending |
-| Direct Workbench safely shut down / terminal returned | Pending |
-| Final IFX adoption accepted | Pending |
+| Reviewer / date | User, explicit confirmation in this task / 2026-10-23 |
+| Behavior matches expectations | Yes, both entrances |
+| Usability score / 5 | 4/5 |
+| Defects and severity | None reported |
+| Untested items | None reported |
+| Launcher and its child safely shut down / terminal returned | User confirmed; entry closeout exit 0, host equality verified |
+| Direct Workbench safely shut down / terminal returned | User confirmed; separate entry closeout exit 0, host equality verified |
+| Final IFX adoption accepted | Yes |
 
 Keep original versions, packages, profiles and all evidence. If a later user edit exists, stop before rollback rather than overwriting it. [Machine acceptance and rollback boundaries](20261023-ifx-stable-upgrade.md).
+
+The original handoff instructions above remain for traceability. Both post-handoff closeout records are bound in the [acceptance JSON](20261023-ifx-stable-upgrade.json); no installed CLI/Web process remained. Two user suggestions are recorded in the [next-iteration plan](../plans/20261023-workbench-next-improvements.md), not implemented or reported as defects in this accepted scope.

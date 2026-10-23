@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "machine-qualified-live-upgrade-human-acceptance-pending",
+  "status": "accepted-human-and-machine-upgrade-complete",
   "version": "0.10.0",
   "releaseSource": "f08289433b9bc62c50f0f5c2baf9be9d746510b4",
   "ifxSource": "30cca60467e737ba794e98cde608c713e7f17ff9",
@@ -168,16 +168,51 @@
     }
   ],
   "humanAcceptance": {
-    "status": "pending-user-only",
-    "operator": null,
-    "date": null,
-    "behaviorExpected": null,
-    "usabilityScoreOutOf5": null,
-    "defects": null,
-    "untestedItems": null,
-    "launcherSafeShutdown": null,
-    "directWorkbenchSafeShutdown": null,
+    "status": "passed",
+    "operator": "User, explicit confirmation in this task",
+    "date": "2026-10-23",
+    "timezone": "Australia/Sydney",
+    "behaviorExpected": true,
+    "usabilityScoreOutOf5": 4,
+    "defects": [],
+    "untestedItems": [],
+    "launcherSafeShutdown": true,
+    "directWorkbenchSafeShutdown": true,
     "priorReleaseHumanAcceptanceIsSeparate": true
   },
-  "documentationDeliveryCi": "This record binds completed IFX acceptance. Its ArchSift delivery PR and actual-main CI are retained separately to avoid a self-referential commit."
+  "documentationDeliveryCi": "This record binds completed IFX acceptance. Its ArchSift delivery PR and actual-main CI are retained separately to avoid a self-referential commit.",
+  "humanCloseoutVerification": {
+    "status": "passed",
+    "evidence": "human-acceptance-01/verification.json",
+    "sha256": "6a5ecc7bd538935bcd188d68348841e7169a796963f3e10de0bb3c668f4edb06",
+    "closeouts": [
+      {
+        "mode": "Launcher",
+        "closedUtc": "2026-10-23T04:00:39.6027544+00:00",
+        "sha256": "0456c333949af2aca7ef5eec77867dceb17384b81ef2a5c72d8b0e5e183ae716",
+        "exitCode": 0,
+        "withinSessionHostHashEqual": true
+      },
+      {
+        "mode": "Workbench",
+        "closedUtc": "2026-10-23T04:09:56.4503374+00:00",
+        "sha256": "94898e9df93dcd4ab7e4740e4484e4bea95060a796dcec85778d9be5bab195cb",
+        "exitCode": 0,
+        "withinSessionHostHashEqual": true
+      }
+    ],
+    "installedCliWebProcessesRemaining": [],
+    "safeShutdownActions": "user-confirmed",
+    "verificationBoundary": "Operator confirms the Safe shutdown actions; independent entry closeouts prove exit 0 and within-session host equality. Process inspection confirms no installed CLI/Web remains. Individual operator-session ports were not separately logged."
+  },
+  "nextIterationPlan": "../plans/20261023-workbench-next-improvements.md",
+  "historicalCheckpointNote": "The host checkpoint and original machine evidence predate human acceptance; their pending status and original bytes remain historical.",
+  "priorDocumentationDelivery": {
+    "pullRequest": "https://github.com/von12549/ArchSift/pull/20",
+    "main": "91f90a9cd116a1a0700b974456bcc2310ab15f76",
+    "mainCi": "https://github.com/von12549/ArchSift/actions/runs/39896157137",
+    "successfulAttempt": 2,
+    "firstAttemptFailurePreserved": true,
+    "sourceAndAssertionsUnchangedForSingleFullRerun": true
+  }
 }
