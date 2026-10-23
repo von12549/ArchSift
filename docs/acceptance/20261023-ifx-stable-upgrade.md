@@ -1,6 +1,6 @@
-# IFX stable 0.10.0 upgrade: machine acceptance
+# IFX stable 0.10.0 upgrade: final acceptance
 
-Date: 2026-10-23. **Both live entrances now use released 0.10.0. Machine qualification passed; final independent human acceptance is pending.** The earlier release payload's 4/5 review does not accept this IFX adoption.
+Date: 2026-10-23. **Both live entrances use released 0.10.0. Machine qualification and independent human acceptance passed; the IFX upgrade is complete.** The user separately accepted this IFX adoption with usability 4/5, expected behavior, no defects and no untested items. The earlier release review remains a separate acceptance.
 
 [IFX PR #27](https://github.com/von12549/IFX-New/pull/27) merged normally to `30cca60467e737ba794e98cde608c713e7f17ff9`, tree `c8a94069130b0a16606319c6ab656a32632c903f`. All three required checks passed for the [PR](https://github.com/von12549/IFX-New/actions/runs/39888414050) and [actual main](https://github.com/von12549/IFX-New/actions/runs/39889184641). Downloaded official artifact sizes/digests, actual checkout trees, typed cases, audit evidence and same SHA/run/attempt/workflow were independently checked. Branch protection and administrator enforcement remain unchanged.
 
@@ -34,6 +34,19 @@ Daily rollback restores the complete pre-upgrade cl03.1 source/locks/approvals/f
 
 Workbench rollback requires the active successful Setup receipt and unchanged post-upgrade state. Outer scripts, catalog and selection have independent exact backups and require separate reviewed restoration. New helper/config/state files remain retained but unused after rollback. Stop on later configuration drift; do not force replacement. The live installation was not downgraded during rehearsal. See the [execution plan](../plans/20261023-ifx-stable-upgrade-plan.md).
 
-## Independent human handoff
+## Independent human acceptance and closeout
 
-Use the [unanswered checklist](20261023-ifx-stable-upgrade-human-checklist.md). Review both entrances, current target/profile, architecture-test inventory/results/history/downloads, language and usability, then Safe shutdown. The Agent's browser checks are machine evidence only. Usability, defects, untested items and final acceptance remain unset until the user supplies them.
+On 2026-10-23 (Australia/Sydney), the user confirmed expected behavior for both entrances, usability **4/5**, **no defects** and **no untested items**. Launcher and its Workbench child were reviewed first; the user then completed the independent `workbench.ps1` step and confirmed the same conclusion and Safe shutdown.
+
+| Entry | Independent closeout UTC | Verified result |
+| --- | --- | --- |
+| Launcher and owned child | 2026-10-23T04:00:39.6027544Z | Selected 0.10.0, SDK 10.0.303/runtime 10.0.13, child exit 0, host before/after equal |
+| Independent Workbench | 2026-10-23T04:09:56.4503374Z | Selected 0.10.0, SDK 10.0.303/runtime 10.0.13, child exit 0, host before/after equal |
+
+The user confirms the Safe shutdown actions; the two separate closeout files independently establish clean entry exits and within-session host equality. No installed CLI/Web process remained. Individual operator-session ports were not separately logged. Operator shell hashes are compared within each session, not against an Agent shell's different process PATH context. The [completed checklist](20261023-ifx-stable-upgrade-human-checklist.md) and [acceptance JSON](20261023-ifx-stable-upgrade.json) bind the original confirmations and closeout hashes. Private evidence is `human-acceptance-01/verification.json` under the existing external evidence root. Original pending/handoff and machine-completion snapshots are retained.
+
+The preceding machine/documentation delivery [PR #20](https://github.com/von12549/ArchSift/pull/20) reached main `91f90a9`; its [actual-main CI](https://github.com/von12549/ArchSift/actions/runs/39896157137) passed both platforms in attempt 2. Attempt 1's single existing parallel-progress assertion failure, official artifacts and logs remain preserved. Exactly one full same-source rerun passed with unchanged assertions. This is not evidence that the timing sensitivity was repaired.
+
+## Next iteration, outside this accepted scope
+
+The user retained two improvements: include the matching Web component in NuGet Workbench delivery so `ui`/Launcher need no separate Workbench installation, and make the Architecture tests JSON inventory collapsible to reduce page length. The released CLI nupkg currently has no Web payload; the separate Windows distribution does include it. The flat JSON inventory is distinct from existing collapsible result groups. See [NX01/NX02 scope and acceptance criteria](../plans/20261023-workbench-next-improvements.md). Both items are recorded, not implemented; the target version remains unassigned and will use one unified product version. Neither item rewrites immutable 0.10.0 artifacts or expands IFX policies.
