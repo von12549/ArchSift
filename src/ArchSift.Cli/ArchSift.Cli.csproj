@@ -17,7 +17,8 @@
     <Error Condition="'$(ArchSiftWebPayloadRoot)' == '' Or !Exists('$(ArchSiftWebPayloadRoot)/web-payload.json')" Text="Distributable CLI pack requires a complete version/source-bound Web publish closure. Run Build-WorkbenchRelease.ps1 or supply ArchSiftWebPayloadRoot." />
     <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildThisFileDirectory)../../scripts/New-WebPayloadInventory.ps1&quot; -PayloadRoot &quot;$(ArchSiftWebPayloadRoot)&quot; -ExpectedVersion &quot;$(ArchSiftReleaseVersion)&quot; -SourceCommit &quot;$(SourceRevisionId)&quot; -VerifyOnly" />
     <ItemGroup>
-      <None Include="$(ArchSiftWebPayloadRoot)/**/*" Pack="true" PackagePath="tools/net10.0/any/web/%(RecursiveDir)%(Filename)%(Extension)" />
+      <_ArchSiftWebPublishFiles Include="$(ArchSiftWebPayloadRoot)/**/*" />
+      <None Include="@(_ArchSiftWebPublishFiles)" Pack="true" PackagePath="tools/net10.0/any/web/%(_ArchSiftWebPublishFiles.RecursiveDir)%(_ArchSiftWebPublishFiles.Filename)%(_ArchSiftWebPublishFiles.Extension)" />
     </ItemGroup>
   </Target>
 </Project>

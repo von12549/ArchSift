@@ -134,7 +134,7 @@ try{
         [IO.File]::WriteAllText($project,'<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>')
         $targetHash=Hash $project
         $userConfig=Join-Path $modeRoot 'external-config.json'
-        Save $userConfig @{schemaVersion=1;target=@{root=$target;entry='Fixture.csproj'};build=@{mode='existing';configuration='Release';targetFramework='net10.0'};output=@{directory=(Join-Path $modeRoot 'reports')};rulesDirectory=(Join-Path $modeRoot 'rules');rulesets=@()}
+        Save $userConfig @{schemaVersion=1;target=@{root=$target;entry='Fixture.csproj'};build=@{mode='existing';configuration='Release';targetFramework='net10.0'};output=@{directory=(Join-Path $modeRoot 'reports');formats=@('json','html')};rulesDirectory=(Join-Path $modeRoot 'rules');rulesets=@()}
         $configHash=Hash $userConfig
         $ui=Open-Session $file ($prefix+@('ui','--config',$userConfig)) $modeRoot
         try{

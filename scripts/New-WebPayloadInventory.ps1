@@ -10,7 +10,7 @@ if($SourceCommit -notmatch '^[a-f0-9]{40}$'){throw 'An exact source commit is re
 $manifest=Join-Path $root 'web-payload.json'
 $entries=@(Get-ChildItem -LiteralPath $root -Recurse -File|Where-Object FullName -ne $manifest|Sort-Object FullName|ForEach-Object{
     Assert-ArchSiftReleaseNoLinks $_.FullName
-    @{path=[IO.Path]::GetRelativePath($root,$_.FullName).Replace('\\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}
+    @{path=[IO.Path]::GetRelativePath($root,$_.FullName).Replace([IO.Path]::DirectorySeparatorChar,[char]'/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}
 })
 foreach($required in @('ArchSift.Web.dll','ArchSift.Web.deps.json','ArchSift.Web.runtimeconfig.json','wwwroot/index.html','wwwroot/launcher.html','wwwroot/test-workbench.js','notices/third-party-notices.md')){
     if($required -cnotin $entries.path){throw ('Incomplete Web publish closure: '+$required)}
