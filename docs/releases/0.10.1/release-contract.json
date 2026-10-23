@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "stable-source-cut-machine-pending",
+  "status": "stable-machine-qualified-human-and-publication-pending",
   "product": "ArchSift",
   "displayName": "ArchSift Workbench",
   "stableVersion": "0.10.1",
@@ -73,9 +73,10 @@
     "gates": "PA01-PA12",
     "requireFinalStableBytes": true,
     "requireFinalHumanReview": true,
-    "currentOutcome": "stable-source-cut-not-qualified",
+    "currentOutcome": "machine-qualified-human-pending",
     "noOldPassAsCurrent": true,
-    "candidateOutcome": "rc2-machine-qualified-at-c2de2d25"
+    "candidateOutcome": "rc2-machine-qualified-at-c2de2d25",
+    "exactStableSourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c"
   },
   "delivery": {
     "nugetWeb": "complete-framework-dependent-publish-closure",
