@@ -1,6 +1,6 @@
 # ArchSift Workbench 0.10.1
 
-Candidate implementation; exact stable qualification, independent human acceptance and publication are pending.
+Stable source cut; exact package qualification, independent human acceptance and publication are pending.
 
 The CLI tool package includes the complete matching framework-dependent Web publish closure, including static assets, dependency/runtime descriptors and a source/version/hash inventory. A cold offline tool installation can use direct UI and an explicit portable Launcher state directory. The approved SDK and Core/ASP.NET 10.0.13 remain prerequisites for NuGet Web; Windows x64 ZIP/Setup remain self-contained.
 
@@ -12,4 +12,4 @@ SDK 10.0.303, net10.0 Release and runtime/host 10.0.13 stay pinned. Interactive 
 
 Preserve complete old tool/package/manifest/lock/feed/approval/config combinations and old managed versions. Rehearse rollback on copies. The 0.10.0 NuGet tool has no independent Web; retain its accepted Windows installation for old UI fallback. Published 0.10.0 assets remain immutable. Live IFX entrances and policies are outside this release's adoption scope.
 
-See [portable Workbench](docs/portable-workbench.md), [installation](docs/installation.md), [project integration](docs/project-integration.md) and the [implementation/acceptance plan](docs/plans/20261023-archsift-0.10.1-plan.md). Candidate evidence never qualifies rebuilt stable bytes.
+See [portable Workbench](docs/portable-workbench.md), [installation](docs/installation.md), [project integration](docs/project-integration.md) and the [implementation/acceptance plan](docs/plans/20261023-archsift-0.10.1-plan.md). The RC2 evidence does not qualify rebuilt stable bytes.

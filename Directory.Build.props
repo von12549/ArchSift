@@ -6,7 +6,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
     <!-- Cut the stable version here in a reviewed source/lock commit; release scripts consume it unchanged. -->
-    <ArchSiftReleaseVersion Condition="'$(ArchSiftReleaseVersion)' == ''">0.10.1-rc.2</ArchSiftReleaseVersion>
+    <ArchSiftReleaseVersion Condition="'$(ArchSiftReleaseVersion)' == ''">0.10.1</ArchSiftReleaseVersion>
     <ArchSiftBundledRuntimeVersion>10.0.13</ArchSiftBundledRuntimeVersion>
     <Version>$(ArchSiftReleaseVersion)</Version>
     <VersionPrefix>$([System.String]::Copy('$(ArchSiftReleaseVersion)').Split('-')[0])</VersionPrefix>

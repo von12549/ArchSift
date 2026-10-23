@@ -1,16 +1,16 @@
 # Portable NuGet Workbench
 
-Version: 0.10.1 candidate. Exact stable qualification and final user acceptance are pending. Use the five matching product packages and the reviewed offline-feed manifest. The CLI tool contains complete Web under tools/net10.0/any/web; no separate Web installation or source checkout is required.
+Version: 0.10.1 stable source cut. Exact stable package qualification and final user acceptance are pending. Use the five matching product packages and the reviewed offline-feed manifest. The CLI tool contains complete Web under tools/net10.0/any/web; no separate Web installation or source checkout is required.
 
 NuGet installation requires SDK 10.0.303. Web requires compatible Core and ASP.NET 10.0.13 shared runtimes; SDK identity alone does not establish the selected runtime patch. CLI-only analysis keeps its Core-only requirement. The separate Windows x64 ZIP/Setup includes its runtime. Target builds still need the target's approved SDKs, packs and explicit offline dependencies.
 
 ## Local tool and direct UI
 
-Create a dedicated working directory outside target/source roots. Use an explicit NuGet.Config with only approved local sources, then a local tool manifest. During candidate testing use the exact candidate version; after stable acceptance use the matching stable version and its approvals.
+Create a dedicated working directory outside target/source roots. Use an explicit NuGet.Config with only approved local sources, then a local tool manifest. Use the exact reviewed version and its approvals after qualification; do not treat this source example as a released package.
 
 ~~~powershell
 dotnet new tool-manifest
-dotnet tool install ArchSift.Cli --version 0.10.1-rc.2 --configfile D:/approved/NuGet.Config --add-source D:/approved/offline-feed
+dotnet tool install ArchSift.Cli --version 0.10.1 --configfile D:/approved/NuGet.Config --add-source D:/approved/offline-feed
 dotnet tool restore --configfile D:/approved/NuGet.Config --add-source D:/approved/offline-feed
 dotnet tool run archsift -- ui --config D:/configuration/archsift.json
 ~~~
