@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "scope": "Existing third-party identity list and exact-hash candidate approvals. The 0.10.1-rc.2 offline, native and framework-dependent Web closure received fresh advisory/legal qualification at source c2de2d25; exact stable assets must be requalified.",
+  "baselineVersion": "0.10.0-cl03.1",
+  "packages": [
+    {
+      "id": "CycleDetection",
+      "version": "2.0.0",
+      "sha256": "475bd389741bb249a1badf7f0386c5383dbb0ad4807978f883dd5229d2e8dcf3",
+      "bytes": 83171,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "JetBrains.Annotations",
+      "version": "2026.2.0",
+      "sha256": "e34f42b24add688097529946b3db0da657d325f604965955c08430a0359f7669",
+      "bytes": 230439,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.ApplicationInsights",
+      "version": "2.23.0",
+      "sha256": "e6c7f76e0ec26598c7b1e2be1777e839c84486655e8a878fc4c655bd2e918dbd",
+      "bytes": 1737910,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.Bcl.AsyncInterfaces",
+      "version": "6.0.0",
+      "sha256": "e3df87fe2170a7e01f0880af59caa8f6eb380b3c40a4f282dfb43912aaf0f895",
+      "bytes": 76354,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.Testing.Extensions.Telemetry",
+      "version": "2.4.0",
+      "sha256": "1829e24f526ceba89e19230759fab928490c97d02fb2df9370ef475ed3d5be9c",
+      "bytes": 515767,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.Testing.Extensions.TrxReport.Abstractions",
+      "version": "2.4.0",
+      "sha256": "b9b754ee45f074ce37d1e35fc2995ac4d7e1214c702371ad3b85e01707ceeebf",
+      "bytes": 113416,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.Testing.Platform",
+      "version": "2.4.0",
+      "sha256": "526f55747072e8fac86f3ee4e8c5ea9d08e07361755fd6773db3eeed52aa69b4",
+      "bytes": 3582539,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.Testing.Platform.MSBuild",
+      "version": "2.4.0",
+      "sha256": "29571503000fa1ee0deb2a62613d2c57bc23e5474286813b2f16ec7fe787dc09",
+      "bytes": 2187308,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Microsoft.Win32.Registry",
+      "version": "5.0.0",
+      "sha256": "f64ca53c67ca65ce7cc85a8d29aefbb2da2672836731e1115e8cd62730dc5080",
+      "bytes": 354731,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Mono.Cecil",
+      "version": "0.11.6",
+      "sha256": "d2a23832aaa948ba9a01acc42b5726e34c5f995958f1b30d45c0e7c70b3a72d5",
+      "bytes": 707868,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "Newtonsoft.Json",
+      "version": "13.0.4",
+      "sha256": "f09081d457405baf35a973fa0c50d6bf272ed683f2568c5a620a49da952f6529",
+      "bytes": 2484726,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "System.Security.AccessControl",
+      "version": "6.0.1",
+      "sha256": "462e26f796417e8a4350655a85bbd4233b94cbd0f7150c1c5e9acfd88e885141",
+      "bytes": 235270,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "System.ValueTuple",
+      "version": "4.6.2",
+      "sha256": "76fd0e366a2b90655fd15d557b0b79504197748358cb578fe3193f6d97bdd9aa",
+      "bytes": 86474,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "MIT"
+      }
+    },
+    {
+      "id": "TngTech.ArchUnitNET",
+      "version": "0.13.4",
+      "sha256": "1212391b1c3aefb249cb3adb026c2b49ada958db7fa740650c61958127423fa8",
+      "bytes": 386280,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.analyzers",
+      "version": "2.1.0",
+      "sha256": "501bc3059cd89a08df5ec6798923dc1bb0c154175a3509597eedbfdf7ec9b6bc",
+      "bytes": 335684,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3",
+      "version": "4.0.1",
+      "sha256": "6ce3139361bae3e67eb96722fe10e6027eb7a427b6cdd6443c91adeadbd2a5d7",
+      "bytes": 32100,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.assert",
+      "version": "4.0.1",
+      "sha256": "7bce4e6a31b023f79482ce84779d25005c06d3bca01cec5eaa4a8c51d7500f80",
+      "bytes": 293854,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.common",
+      "version": "4.0.1",
+      "sha256": "66e8c27cd2262c9caafa8fb0ff54e5fd01485acaf2bfe5bca3e10dd92bd7f9bf",
+      "bytes": 169400,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.core.mtp-v2",
+      "version": "4.0.1",
+      "sha256": "20c9d445daf912c64b0263c1ffe254b8e17ef154352bb36df095c090200187b6",
+      "bytes": 432990,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.extensibility.core",
+      "version": "4.0.1",
+      "sha256": "2119cc438ca039680dc0baabeaa290695f78bac8b4bd658f03acdca6d3abf31f",
+      "bytes": 381667,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.mtp-v2",
+      "version": "4.0.1",
+      "sha256": "657dc1afb35fc8e0d0ee0b05e57ab5e2238d38dd908b75d02a02fa7cab6d98bf",
+      "bytes": 32231,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.runner.common",
+      "version": "4.0.1",
+      "sha256": "46247800b91bb97f7cdcad26f286c667588f4fdbfbb3e3396d54fe66b4fa51a7",
+      "bytes": 531577,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    },
+    {
+      "id": "xunit.v3.runner.inproc.console",
+      "version": "4.0.1",
+      "sha256": "dcce91c8bf89ce13d076baa371605866b63b3629ac663da34826c113e88eeea4",
+      "bytes": 134430,
+      "licenseMetadata": {
+        "type": "expression",
+        "value": "Apache-2.0"
+      }
+    }
+  ],
+  "vulnerabilityAudit": "rc2-fresh-snapshot-passed-31-unique-identities-zero-known-matches-stable-requalification-required"
+}

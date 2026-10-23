@@ -28,6 +28,7 @@ public static class UiProcess
         // Inherit the complete Windows environment; only child-scoped overrides are added.
         start.Environment["DOTNET_CLI_HOME"] = Path.Combine(Path.GetTempPath(), "archsift-ui-home-" + Guid.NewGuid().ToString("N"));
         start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
+        start.Environment["GIT_REDIRECT_STDIN"] = "off";
         start.Environment["ARCHSIFT_UI_PARENT_CONTROL"] = "stdin-v1";
         start.Environment["ARCHSIFT_UI_PROFILE_CONTROL"] = "stdin-profile-v1";
         using var process = Process.Start(start) ?? throw new IOException("Web child did not start.");

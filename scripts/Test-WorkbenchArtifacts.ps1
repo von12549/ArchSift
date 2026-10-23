@@ -51,7 +51,8 @@ foreach($id in $release.profile.productPackages){
         if(@($dependencies|Where-Object{$_.GetAttribute('version') -cne ('['+$release.version+']')}).Count){throw 'Internal dependency range is not exact.'}
         $directory=Join-Path $output $id;[void][IO.Directory]::CreateDirectory($directory)
         $versions=@(foreach($entry in $zip.Entries|Where-Object{[IO.Path]::GetFileName($_.FullName) -match '^(?:ArchSift\..+|archsift)\.dll$'}){
-            $destination=Join-Path $directory ([IO.Path]::GetFileName($entry.FullName))
+            $destination=Join-Path $directory $entry.FullName
+            [void][IO.Directory]::CreateDirectory((Split-Path $destination))
             $source=$entry.Open();$target=[IO.FileStream]::new($destination,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
             try{$source.CopyTo($target)}finally{$source.Dispose();$target.Dispose()}
             Check-Version $destination $true
@@ -101,7 +102,7 @@ try{
 }finally{$zip.Dispose()}
 . (Join-Path $PSScriptRoot 'ReleaseRuntimeProof.ps1')
 $runtimeCode=@(Get-ArchSiftRuntimeCodeProof $payload (Join-Path $native.runRoot 'nuget-cache') $release)
-$contract=Get-Content (Join-Path $repo 'docs/releases/0.10.0/release-contract.json') -Raw|ConvertFrom-Json
+$contract=Get-Content (Join-Path $repo 'docs/releases/0.10.1/release-contract.json') -Raw|ConvertFrom-Json
 foreach($path in $contract.bundledDocumentation.requiredFiles){if(-not(Test-Path -LiteralPath (Join-Path $payload $path) -PathType Leaf)){throw 'Native guide missing.'}}
 foreach($file in Get-ChildItem -LiteralPath (Join-Path $payload 'docs') -Recurse -Filter '*.md' -File){if([IO.File]::ReadAllText($file.FullName) -match '[\p{IsCJKUnifiedIdeographs}]'){throw 'Untranslated bundled guide.'}}
 & (Join-Path $PSScriptRoot 'Test-ReleaseDocumentation.ps1') -PayloadRoot $payload -SourceCommit $SourceCommit -Version $release.version

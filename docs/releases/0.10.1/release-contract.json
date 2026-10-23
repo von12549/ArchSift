@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "rc2-machine-qualified-stable-pending",
+  "product": "ArchSift",
+  "displayName": "ArchSift Workbench",
+  "stableVersion": "0.10.1",
+  "candidateVersion": "0.10.1-rc.2",
+  "sourceBase": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
+  "authorization": {
+    "implementation": true,
+    "commit": true,
+    "push": true,
+    "pr": true,
+    "ci": true,
+    "merge": true,
+    "publish": "after-user-final-human-acceptance",
+    "finalHumanUiAcceptance": "user-only",
+    "liveIfxUpgrade": false,
+    "registryPublication": false
+  },
+  "channel": "GitHub Releases",
+  "tag": "v0.10.1",
+  "requiredAssets": [
+    "archsift-workbench-0.10.1-win-x64.zip",
+    "ArchSift.Setup.exe",
+    "ArchSift.Contracts.0.10.1.nupkg",
+    "ArchSift.Core.0.10.1.nupkg",
+    "ArchSift.ArchUnit.0.10.1.nupkg",
+    "ArchSift.Testing.0.10.1.nupkg",
+    "ArchSift.Cli.0.10.1.nupkg",
+    "archsift-workbench-0.10.1-offline-feed.zip",
+    "acceptance.json",
+    "artifact-manifest.json",
+    "SHA256SUMS.txt",
+    "GitHub tagged source zip and tar archives"
+  ],
+  "bundledDocumentation": {
+    "language": "English",
+    "requiredFiles": [
+      "README.md",
+      "RELEASE_NOTES.md",
+      "docs/getting-started.md",
+      "docs/project-integration.md",
+      "docs/installation.md",
+      "docs/setup.md",
+      "docs/cli.md",
+      "docs/reports.md",
+      "docs/rules.md",
+      "docs/build-inputs.md",
+      "docs/external-build-evidence.md",
+      "docs/architecture-test-workbench.md",
+      "docs/portable-workbench.md"
+    ],
+    "projectInstructions": [
+      "sample project package references",
+      "configuration field explanations",
+      "explicit local package-source and locked restore",
+      "test-project adapter example",
+      "rule and case-identity setup",
+      "local full/subset run",
+      "CI invocation",
+      "upgrade and rollback",
+      "external state and reports"
+    ],
+    "sampleMode": "Templates only; machine paths, baseline identities and approvals must be supplied and reviewed per consumer.",
+    "includeSchemasAndTemplates": true,
+    "includePrivateIfxConfiguration": false,
+    "includePrivateIfx251Feed": false
+  },
+  "acceptance": {
+    "plan": "docs/plans/20261023-archsift-0.10.1-plan.json",
+    "gates": "PA01-PA12",
+    "requireFinalStableBytes": true,
+    "requireFinalHumanReview": true,
+    "currentOutcome": "stable-not-qualified",
+    "noOldPassAsCurrent": true,
+    "candidateOutcome": "rc2-machine-qualified-at-c2de2d25"
+  },
+  "delivery": {
+    "nugetWeb": "complete-framework-dependent-publish-closure",
+    "portableStateSchema": 1,
+    "managedSchemaMigration": false,
+    "runtime": "10.0.13",
+    "interactivePlatform": "Windows x64",
+    "linux": "CLI and contract CI only"
+  },
+  "preservation": {
+    "published0100": "immutable",
+    "liveIfx": "read-only; no existing entry upgrade",
+    "olderVersionsConfigurationsAndEvidence": "retain"
+  }
+}

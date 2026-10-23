@@ -10,6 +10,8 @@ namespace ArchSift.IntegrationTests;
 public sealed class SetupTests
 {
     [Theory]
+    [InlineData("0.10.1-rc.1")]
+    [InlineData("0.10.1")]
     [InlineData("0.10.0-rc.1")]
     [InlineData("0.10.0")]
     public async Task WorkbenchUpgradeAndRollbackPreserveStateAndReports(string version)
@@ -52,6 +54,8 @@ public sealed class SetupTests
     }
 
     [Theory]
+    [InlineData("0.10.1", "archsift-workbench-0.10.1-win-x64.zip")]
+    [InlineData("0.10.1-rc.1", "archsift-workbench-0.10.1-rc.1-win-x64.zip")]
     [InlineData("0.8.0", "archsift-0.8.0-win-x64.zip")]
     [InlineData("0.10.0", "archsift-workbench-0.10.0-win-x64.zip")]
     [InlineData("0.10.0-rc.1", "archsift-workbench-0.10.0-rc.1-win-x64.zip")]

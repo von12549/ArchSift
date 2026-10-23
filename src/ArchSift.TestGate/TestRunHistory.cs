@@ -159,6 +159,7 @@ public static class TestRunHistory
         {
             var start = new ProcessStartInfo("git") { WorkingDirectory = root, UseShellExecute = false,
                 RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
+            start.Environment["GIT_REDIRECT_STDIN"] = "off";
             foreach (var arg in new[] { "-C", root, "rev-parse", "HEAD" }) start.ArgumentList.Add(arg);
             using var process = Process.Start(start);
             if (process is null) return null;

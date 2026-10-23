@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "policy": "Formal repository and release prose is English. Original legal text, raw evidence, quoted example data and existing UI localization are preserved. Chinese internal summaries are not committed as formal documentation.",
+  "exceptions": [
+    {
+      "path": "docs/acceptance/20261012-0.7-final-acceptance.json",
+      "sha256": "447994cf38f0ac0b99211a5a9fc1cb065b36d443fb26ba552ef6819fc9c4b394",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    },
+    {
+      "path": "docs/acceptance/20261013-0.8-final-acceptance.json",
+      "sha256": "4ab8fd6297bdb4c5e1a0bcd8fbe0eeb7d104f8fe71edc0ad25028eca79166379",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    },
+    {
+      "path": "docs/acceptance/20261017-fa05-human-ui-completion.json",
+      "sha256": "37be834451fbc61bac7920674eb9b9937b15f9ad04bac981a7b609b1f54d1b0f",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    },
+    {
+      "path": "docs/acceptance/20261020-sp03-completion.json",
+      "sha256": "be59e63f060fec76b3dca2159d14ffadfca50c90fdb9a81f2a5273e63cc1b650",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    },
+    {
+      "path": "docs/acceptance/20261020-sp04-ui-human-confirmation.json",
+      "sha256": "9b40c6bf36f73b7d422848c5d8ab0ff6c1a34e7ae1bdb2a0289dd8d693fdbf7d",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    },
+    {
+      "path": "docs/contracts/0.4/single-ruleset.json",
+      "sha256": "a00f30b040920c478587a182c9944e6661abb8ada0d03e2a8871a19f5102125e",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Frozen historical UI example data; English narrative surrounds the original values."
+    },
+    {
+      "path": "docs/migration/source-inventory.json",
+      "sha256": "5fe842cc33970bb1889b49993d7233155dc481fdddc49e877ef00f5819b3feec",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable source-reuse authorization/provenance record; do not translate hash-bound scope evidence."
+    },
+    {
+      "path": "docs/releases/0.7.0/acceptance.json",
+      "sha256": "5c46a18f985d8572e7fc10d781624c45f01bbc2b4f12451a2eb75bd3c2946753",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    },
+    {
+      "path": "docs/releases/0.7.0/publication.json",
+      "sha256": "62c31f775a5580c96f1bdc1d73730ec16b5c9c9fdbc2a8407b5bbf96a86278a3",
+      "classification": "historical-evidence-or-example-data",
+      "reason": "Immutable historical machine/human acceptance evidence. English Markdown explains its dated scope and result."
+    }
+  ],
+  "uiLocalization": [
+    "src/ArchSift.Web/wwwroot/index.html",
+    "src/ArchSift.Web/wwwroot/launcher.html",
+    "src/ArchSift.Web/wwwroot/i18n.js"
+  ],
+  "originalSourceArchiveSha256": "6cf4cb04016deb9bf80088cc6ee9150576a6bc5f91ac4a5c670a5c2ebbe14fbe",
+  "additionalOriginalArchiveSha256": "de2e121a073efe534aedafe14d58d4f47348033e66c8a25ccd6c33559fdcdd0c",
+  "translationIsNewAcceptance": false
+}

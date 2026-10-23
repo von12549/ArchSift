@@ -11,7 +11,7 @@
     "sha": {"type":"string","pattern":"^[a-f0-9]{64}$"},
     "text": {"type":"string","minLength":1},
     "id": {"type":"string","pattern":"^[a-f0-9]{32}$"},
-    "version": {"type":"string","pattern":"^(?:\\d+\\.\\d+\\.\\d+|0\\.10\\.0-rc\\.[1-9]\\d*)$"},
+    "version": {"type":"string","pattern":"^(?:\\d+\\.\\d+\\.\\d+|0\\.10\\.[01]-rc\\.[1-9]\\d*)$"},
     "PackageFile": {
       "type":"object","additionalProperties":false,"required":["path","bytes","sha256"],
       "properties":{"path":{"$ref":"#/$defs/text"},"bytes":{"type":"integer","minimum":0,"maximum":268435456},"sha256":{"$ref":"#/$defs/sha"}}

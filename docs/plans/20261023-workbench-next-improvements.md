@@ -1,5 +1,7 @@
 # Workbench next iteration: NuGet Web delivery and JSON inventory readability
 
+Planning update, 2026-10-23: [complete 0.10.1 patch plan](20261023-archsift-0.10.1-plan.md) selects embedded Web and an explicit portable Launcher context, inventory disclosures, compatibility, rollback and PA01–PA12. Target 0.10.1 is a checked candidate, not reserved; GitHub Packages inventory remains inconclusive. NX01/NX02 are **planned, not started**. Only local planning documents changed; implementation, Git and publication are not authorized by this update. The original registration below retains its historical timing.
+
 Recorded: 2026-10-23, from the user's accepted IFX 0.10.0 human review. **NX01 and NX02 are recorded for the next iteration, not started.** No target version is assigned; preserve one unified product version when that version is chosen. This closeout records scope and acceptance criteria, not implementation authorization, a new release, or a rewrite of published 0.10.0 assets. [Machine-readable backlog](20261023-workbench-next-improvements.json).
 
 ## NX01 — Include Web in NuGet Workbench delivery

@@ -62,23 +62,30 @@ public static class Program
                 Console.WriteLine(JsonSerializer.Serialize(history, JsonContract.Options));
                 return 0;
             }
-            if (args is ["ui", "--config", _] or ["launch", "--root", _])
+            if (args.Length > 0 && args[0] is "ui" or "launch")
             {
                 var launch = args[0] == "launch";
-                var configPath = Path.GetFullPath(args[2]); if (!launch) ConfigLoader.Load(configPath);
-                var web = Path.Combine(AppContext.BaseDirectory, "web", "ArchSift.Web.dll");
-                if (!File.Exists(web))
+                var noBrowser = launch && args[^1] == "--no-browser";
+                var options = noBrowser ? args[1..^1] : args[1..];
+                var flags = Flags(options, launch ? ["--root", "--config"] : ["--config"]);
+                var path = Path.GetFullPath(Required(flags, launch ? "--root" : "--config"));
+                if (!launch) ConfigLoader.Load(path);
+                var directory = Path.Combine(AppContext.BaseDirectory, "web");
+                var requireInventory = true;
+#if DEBUG
+                if (!Directory.Exists(directory))
                 {
-                    var directory = new DirectoryInfo(AppContext.BaseDirectory);
-                    while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "ArchSift.slnx"))) directory = directory.Parent;
-                    var configuration = typeof(Program).Assembly.GetCustomAttributes(false).OfType<System.Reflection.AssemblyConfigurationAttribute>().Single().Configuration;
-                    if (directory is not null) web = Path.Combine(directory.FullName, "src", "ArchSift.Web", "bin", configuration, "net10.0", "ArchSift.Web.dll");
+                    var source = new DirectoryInfo(AppContext.BaseDirectory);
+                    while (source is not null && !File.Exists(Path.Combine(source.FullName, "ArchSift.slnx"))) source = source.Parent;
+                    if (source is not null) { directory = Path.Combine(source.FullName, "src", "ArchSift.Web", "bin", "Debug", "net10.0"); requireInventory = false; }
                 }
-                if (!File.Exists(web)) throw new IOException("Web payload is missing; use the complete local package.");
-                var native = Path.ChangeExtension(web, OperatingSystem.IsWindows() ? ".exe" : null);
-                return await ArchSift.Hosting.UiProcess.RunArgumentsAsync(File.Exists(native) ? native : SafeProcess.Dotnet,
-                    File.Exists(native) ? null : web, [launch ? "--launcher" : "--config", configPath], Console.Out, Console.Error, cancel.Token,
-                    onAddress: launch ? address =>
+#endif
+                var web = ArchSift.Hosting.WebPayload.Resolve(directory, RuntimeInfo.ProductVersion, requireInventory);
+                var arguments = launch && flags.TryGetValue("--config", out var initialConfig)
+                    ? new[] { "--launcher", path, "--config", Path.GetFullPath(initialConfig.Single()) }
+                    : new[] { launch ? "--launcher" : "--config", path };
+                return await ArchSift.Hosting.UiProcess.RunArgumentsAsync(web.Executable, web.Assembly, arguments,
+                    Console.Out, Console.Error, cancel.Token, onAddress: launch && !noBrowser ? address =>
                     {
                         try { using var browser = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(address.AbsoluteUri) { UseShellExecute = true }); }
                         catch (Exception error) when (error is System.ComponentModel.Win32Exception or InvalidOperationException)
@@ -98,7 +105,7 @@ public static class Program
                 Console.WriteLine("analyze/verify --config <JSON> [--target --entry --rules --output --tfm --configuration]");
                 Console.WriteLine("rules validate --file <JSON>; rules render --file <JSON> --output <new Markdown>");
                 Console.WriteLine("rules draft --config <JSON> --output <directory>; ui --config <JSON>");
-                Console.WriteLine("launch --root <verified-install-root>; choose a profile before starting the workbench.");
+                Console.WriteLine("launch --root <verified-install-root>; portable initialization: launch --root <external-state-root> --config <existing-json>; choose a profile before starting the workbench; append --no-browser for explicit headless control.");
                 Console.WriteLine("changes --config <JSON> [--base <local commit> --head <local commit>]; default HEAD vs final worktree."); return 0;
             }
             if (args.Length >= 2 && args[0] == "evidence")

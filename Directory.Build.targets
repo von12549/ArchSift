@@ -21,6 +21,16 @@
     <None Include="$(ArchSiftPackageReleaseNotes)" Pack="true" PackagePath="RELEASE_NOTES.md" />
     <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="/" />
   </ItemGroup>
+  <ItemGroup Condition="'$(ArchSiftPackageDocumentationRoot)' != '' And ('$(MSBuildProjectName)' == 'ArchSift.Contracts' Or '$(MSBuildProjectName)' == 'ArchSift.Core' Or '$(MSBuildProjectName)' == 'ArchSift.ArchUnit' Or '$(MSBuildProjectName)' == 'ArchSift.Testing' Or '$(MSBuildProjectName)' == 'ArchSift.Cli')">
+    <_ArchSiftGuideFiles Include="$(ArchSiftPackageDocumentationRoot)/docs/**/*" />
+    <None Include="@(_ArchSiftGuideFiles)" Pack="true" PackagePath="docs/%(_ArchSiftGuideFiles.RecursiveDir)%(_ArchSiftGuideFiles.Filename)%(_ArchSiftGuideFiles.Extension)" />
+    <_ArchSiftSchemaFiles Include="$(ArchSiftPackageDocumentationRoot)/schemas/**/*" />
+    <None Include="@(_ArchSiftSchemaFiles)" Pack="true" PackagePath="schemas/%(_ArchSiftSchemaFiles.RecursiveDir)%(_ArchSiftSchemaFiles.Filename)%(_ArchSiftSchemaFiles.Extension)" />
+    <_ArchSiftTemplateFiles Include="$(ArchSiftPackageDocumentationRoot)/templates/**/*" />
+    <None Include="@(_ArchSiftTemplateFiles)" Pack="true" PackagePath="templates/%(_ArchSiftTemplateFiles.RecursiveDir)%(_ArchSiftTemplateFiles.Filename)%(_ArchSiftTemplateFiles.Extension)" />
+    <_ArchSiftExampleFiles Include="$(ArchSiftPackageDocumentationRoot)/samples/**/*" />
+    <None Include="@(_ArchSiftExampleFiles)" Pack="true" PackagePath="samples/%(_ArchSiftExampleFiles.RecursiveDir)%(_ArchSiftExampleFiles.Filename)%(_ArchSiftExampleFiles.Extension)" />
+  </ItemGroup>
   <!-- NuGet Pack consumes ProjectVersion as a range; product packages must stay in one release. -->
   <Target Name="PinArchSiftPackageDependencies" AfterTargets="_GetProjectReferenceVersions">
     <ItemGroup>

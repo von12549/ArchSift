@@ -25,7 +25,7 @@ public sealed class Launcher(string root) : IAsyncDisposable
     public void Map(WebApplication app)
     {
         // An untrusted/broken installation still gets a read-only explanation page. No target JSON is loaded to host it.
-        try { _ = Store(); installationLease = new(SetupFiles.Under(installRoot, ".archsift-setup.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+        try { var store = Store(); installationLease = new(SetupFiles.Under(installRoot, store.Portable ? ".archsift-workbench.lock" : ".archsift-setup.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
         catch (Exception error) when (error is IOException or ConfigurationException or UnauthorizedAccessException) { childError = error.Message; }
         app.Lifetime.ApplicationStopping.Register(() => ownedCancellation?.Cancel());
         app.Use(async (context, next) =>
@@ -54,11 +54,13 @@ public sealed class Launcher(string root) : IAsyncDisposable
             try
             {
                 var store = Store(); var catalog = store.ReadCatalog(); var selection = store.ReadSelection();
-                var candidate = new ProfileEntry("", Path.GetFileName(store.Installation.ConfigPath), store.Installation.ConfigPath);
-                return Results.Json(new { toolVersion = ToolIdentity.Version, installation = store.Installation,
+                var candidate = new ProfileEntry("", Path.GetFileName(store.InitialConfigPath), store.InitialConfigPath);
+                return Results.Json(new { toolVersion = ToolIdentity.Version, mode = store.Portable ? "portable" : "managed",
+                    installation = store.Installation,
+                    hostContext = new { root = store.Root, selectedVersion = store.Installation?.SelectedVersion ?? ToolIdentity.Version },
                     catalogSha256 = store.CatalogHash, selectionSha256 = File.Exists(store.SelectionPath) ? SetupFiles.FileHash(store.SelectionPath) : null,
                     suggestedProfileId = selection?.SelectedProfileId ?? catalog.DefaultProfileId, profiles = catalog.Profiles.Select(store.Inspect).ToArray(),
-                    managedCandidate = catalog.Profiles.Any(p => p.ConfigPath.Equals(candidate.ConfigPath, PathSafety.Comparison)) ? null : store.Inspect(candidate),
+                    managedCandidate = store.Portable || catalog.Profiles.Any(p => p.ConfigPath.Equals(candidate.ConfigPath, PathSafety.Comparison)) ? null : store.Inspect(candidate),
                     session = current, workbenchUrl = address?.AbsoluteUri, childError }, JsonContract.Options);
             }
             catch (Exception error) when (error is ConfigurationException or IOException or UnauthorizedAccessException or JsonException)
@@ -111,7 +113,16 @@ public sealed class Launcher(string root) : IAsyncDisposable
                 var profile = store.ReadCatalog().Profiles.SingleOrDefault(p => p.ProfileId == Text(doc, "profileId")) ?? throw new ConfigurationException("Missing registered profile.");
                 var health = store.Inspect(profile);
                 if (health.Status != "valid" || health.Sha256 != Text(doc, "configSha256")) throw new ConfigurationException(health.Error ?? "Configuration changed; reload and review.");
-                var version = store.Installation.Versions.Single(v => v.Version == store.Installation.SelectedVersion);
+                WebHostCommand child;
+                if (store.Portable) child = WebPayload.Resolve(AppContext.BaseDirectory, ToolIdentity.Version,
+                    true);
+                else
+                {
+                    if (store.Installation!.SelectedVersion != ToolIdentity.Version)
+                        throw new ConfigurationException("Launcher and selected managed version differ; use the selected installation entry.");
+                    var version = store.Installation.Versions.Single(v => v.Version == store.Installation.SelectedVersion);
+                    child = WebPayload.Resolve(SetupFiles.Under(version.Directory, "web"), ToolIdentity.Version, false);
+                }
                 ownedCancellation?.Dispose(); ownedCancellation = new();
                 var ready = new TaskCompletionSource<Uri>(TaskCreationOptions.RunContinuationsAsynchronously);
                 address = null; current = health.Session; childError = null;
@@ -120,7 +131,7 @@ public sealed class Launcher(string root) : IAsyncDisposable
                 {
                     try
                     {
-                        var code = await UiProcess.RunArgumentsAsync(SetupFiles.Under(version.Directory, "web/ArchSift.Web.exe"), null,
+                        var code = await UiProcess.RunArgumentsAsync(child.Executable, child.Assembly,
                             ["--config", profile.ConfigPath], TextWriter.Null, TextWriter.Null, cancellation,
                             onAddress: uri => ready.TrySetResult(uri), profile: health.Session);
                         if (code != 0) childError = "Workbench exited with code " + code;

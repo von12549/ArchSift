@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "recorded-for-next-iteration-not-started",
+  "status": "planned-not-started",
   "source": "User feedback during accepted IFX 0.10.0 human review",
-  "targetVersion": null,
+  "targetVersion": "0.10.1",
   "unifiedProductVersionRequired": true,
   "currentReleaseRemains": "0.10.0",
   "implementationAuthorizedByThisRecord": false,
@@ -16,7 +16,7 @@
     {
       "id": "NX01",
       "title": "Include the Web component in the NuGet Workbench distribution",
-      "status": "recorded-not-started",
+      "status": "planned-not-started",
       "observation": "The released CLI tool package has no Web payload. Its ui/launch entries require an adjacent Web payload or development checkout; the accepted independent Windows installation supplies it.",
       "packageEvidence": {
         "name": "ArchSift.Cli.0.10.0.nupkg",
@@ -31,12 +31,13 @@
         "Offline operation has no hidden download or fallback to an unrelated installed Web component.",
         "Missing, changed or mismatched Web payloads fail clearly; CLI-only architecture use remains compatible.",
         "Loopback/token protection, safe shutdown, upgrade/rollback and both entrance lifecycles pass; do not repair persistent PATH/environment."
-      ]
+      ],
+      "designDecision": "Bundle complete matching framework-dependent Web in ArchSift.Cli; explicit portable Launcher state/config context; retain managed Setup protection."
     },
     {
       "id": "NX02",
       "title": "Make Architecture tests JSON inventory collapsible",
-      "status": "recorded-not-started",
+      "status": "planned-not-started",
       "observation": "The inventory renders each ruleset and all case IDs as flat rows. With 401 JSON cases the page becomes long. Existing collapsible result groups are a different surface.",
       "sourceReference": "src/ArchSift.Web/wwwroot/test-workbench.js: renderInventory",
       "proposedScope": "Use compact per-ruleset disclosure groups with visible paths/names and case counts, initially collapsed; provide expand/collapse-all controls and preserve access to copy/edit actions.",
@@ -46,7 +47,15 @@
         "Expanding exposes every original case ID and rule path; empty/disabled/error states remain clear.",
         "Collapse affects presentation only: complete execution still runs all 493 cases, with unchanged selection, coverage, report bytes and rule authority.",
         "Existing external-copy/edit flows and source-read-only boundaries remain intact."
-      ]
+      ],
+      "designDecision": "Initially collapsed native ruleset disclosures; visible paths/counts/actions; JSON-only bulk controls; session state/focus preservation."
     }
-  ]
+  ],
+  "originalRegistration": {
+    "status": "recorded-for-next-iteration-not-started",
+    "targetVersion": null,
+    "implementationAuthorizedByThisRecord": false
+  },
+  "targetVersionState": "candidate-not-reserved",
+  "implementationPlan": "20261023-archsift-0.10.1-plan.md"
 }

@@ -75,6 +75,12 @@ public sealed class CliUiLifecycleTests
         while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "ArchSift.slnx"))) directory = directory.Parent;
         var build = typeof(CliUiLifecycleTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
         var executable = Path.Combine(directory!.FullName, "src", "ArchSift.Cli", "bin", build, "net10.0", OperatingSystem.IsWindows() ? "archsift.exe" : "archsift");
+        var payload = Path.Combine(root, "payload");
+        WebPayloadFixtures.CopyDirectory(Path.GetDirectoryName(executable)!, payload);
+        var web = Path.Combine(directory.FullName, "src", "ArchSift.Web", "bin", build, "net10.0");
+        WebPayloadFixtures.CopyDirectory(web, Path.Combine(payload, "web"));
+        WebPayloadFixtures.Inventory(Path.Combine(payload, "web"));
+        executable = Path.Combine(payload, Path.GetFileName(executable));
         var start = new ProcessStartInfo(executable) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
         foreach (var arg in new[] { "ui", "--config", configPath }) start.ArgumentList.Add(arg);
         start.Environment["DOTNET_CLI_HOME"] = Path.Combine(root, "cli-home");

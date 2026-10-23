@@ -11,7 +11,7 @@ public static class GitSnapshots
     private static async Task<string> Git(string root, string[] args, string home, CancellationToken token)
     {
         ProcessResult result;
-        try { result = await SafeProcess.RunAsync("git", root, [.. Options, .. args], home, null, token); }
+        try { result = await SafeProcess.RunAsync("git", root, [.. Options, .. args], home, null, token, environment: new() { ["GIT_REDIRECT_STDIN"] = "off" }); }
         catch (System.ComponentModel.Win32Exception error) { throw new IOException("Git is required for changes and was not available.", error); }
         if (result.ExitCode != 0 || result.Output.Contains("[output truncated]", StringComparison.Ordinal))
             throw new ConfigurationException("Git operation failed: " + result.Error.Trim());
@@ -60,6 +60,7 @@ public static class GitSnapshots
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             var start = new ProcessStartInfo("git") { WorkingDirectory = repository, UseShellExecute = false,
                 RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
+            start.Environment["GIT_REDIRECT_STDIN"] = "off";
             foreach (var argument in Options.Concat(["cat-file", "blob", metadata[2]])) start.ArgumentList.Add(argument);
             start.Environment["DOTNET_CLI_HOME"] = home; start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
             using var child = Process.Start(start)!;

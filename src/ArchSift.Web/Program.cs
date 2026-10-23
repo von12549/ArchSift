@@ -27,12 +27,15 @@ public static class Program
             }
             catch (Exception error) { Console.Error.WriteLine(error.Message); return 3; }
         }
-        var launcherRoot = args is ["--launcher", var root] ? root : null;
+        var launcherRoot = args is ["--launcher", var root] ? root :
+            args is ["--launcher", var portableRoot, "--config", _] ? portableRoot : null;
+        var portableConfig = args is ["--launcher", _, "--config", var initialConfig] ? initialConfig : null;
         var configFile = args is ["--config", var file] ? file : null;
         if (launcherRoot is null && configFile is null)
         { Console.Error.WriteLine("Local workbench: use --config <JSON>, --launcher <install-root> or --version."); return 2; }
         try
         {
+            if (portableConfig is not null) PortableState.Initialize(launcherRoot!, portableConfig);
             SessionProfile? profile = null;
             if (Environment.GetEnvironmentVariable("ARCHSIFT_UI_PROFILE_CONTROL") == "stdin-profile-v1")
             {

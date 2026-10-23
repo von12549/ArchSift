@@ -13,11 +13,11 @@ public static class PackageReader
     public const int MaximumEntries = 10000;
     public static void Version(string version)
     {
-        if (!System.Text.RegularExpressions.Regex.IsMatch(version, "^(?:\\d+\\.\\d+\\.\\d+|0\\.10\\.0-rc\\.[1-9]\\d*)$"))
-            throw new ConfigurationException("A stable semantic version or supported 0.10.0 release candidate is required.");
+        if (!System.Text.RegularExpressions.Regex.IsMatch(version, "^(?:\\d+\\.\\d+\\.\\d+|0\\.10\\.[01]-rc\\.[1-9]\\d*)$"))
+            throw new ConfigurationException("A stable semantic version or supported 0.10.0/0.10.1 release candidate is required.");
     }
-    public static bool IsWorkbenchVersion(string version) => version == "0.10.0" ||
-        System.Text.RegularExpressions.Regex.IsMatch(version, "^0\\.10\\.0-rc\\.[1-9]\\d*$");
+    public static bool IsWorkbenchVersion(string version) => version is "0.10.0" or "0.10.1" ||
+        System.Text.RegularExpressions.Regex.IsMatch(version, "^0\\.10\\.[01]-rc\\.[1-9]\\d*$");
 
     public static string ReleaseArchiveName(string version)
     {
