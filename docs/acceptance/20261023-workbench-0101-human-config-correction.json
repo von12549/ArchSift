@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "human-review-preparation-corrected-machine-load-verified",
+  "releaseSourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
+  "version": "0.10.1",
+  "cause": "The original human checklist conflated Workbench startup/profile configuration with the separate daily-test configuration required by Load configuration and inventory.",
+  "productCodeChanged": false,
+  "originalConfigurationPreserved": true,
+  "humanAcceptance": "pending-user-only",
+  "verification": {
+    "schemaVersion": 1,
+    "status": "passed-human-daily-config-load-correction",
+    "version": "0.10.1",
+    "releaseSource": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
+    "workbenchConfig": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-review-prep-01\\review-ifx-config.json",
+    "workbenchConfigSha256": "b99c72334195a6a5dbfded3e96719ff20ddf20762db46dae9e309de187a3552e",
+    "dailyTestConfig": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-review-prep-01\\review-ifx-test-config.json",
+    "dailyTestConfigSha256": "4fdcfa19e5721183d65ca84ec80d7608322d0cda3541e3349cc0897bd4103dc0",
+    "derivedFrom": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\ifx-snapshot-stable-01\\state\\config\\stable-full-01.json",
+    "sourceConfigSha256": "da66413dc0146bbadae3d986c85b64a46e0065569818d89fb9a4032658382b1e",
+    "targetRoot": "D:\\ArchSift-lab\\fixtures\\workbench-0101-ifx-human-01\\IFX-New",
+    "csharpCases": 92,
+    "jsonRulesets": 13,
+    "jsonCases": 401,
+    "originalWrongSchemaErrorReproduced": true,
+    "officialPackageWebFilesEqual": 143,
+    "isolatedHumanPackageCache": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-review-prep-01\\review-test-package-cache",
+    "sealedInputsUnchanged": true,
+    "safeShutdownExitCode": 0,
+    "loopbackListenerClosed": true,
+    "targetBuildOrTestsExecuted": false,
+    "humanAcceptance": "pending-user-only"
+  },
+  "evidence": [
+    {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-daily-config-fix-03\\verification.json",
+      "sha256": "0c33c6bb234dc8398bfaad5a641b685347bf54ba10acb561d8a4d7b562999508"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-daily-config-fix-03\\loaded-inventory.json",
+      "sha256": "28f88918448ffbb75277c93df0fdaf181a71799916d4dad169b08c30c153bafe"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-daily-config-fix-03.json",
+      "sha256": "6ff1ca865331118fa471e0414a409c5afc401bf37cd50acfc1e78ae07228d3c6"
+    },
+    {
+      "path": "D:\\ArchSift-lab\\runs\\workbench-0101-20261023-01\\stable-human-review-prep-01\\review-ifx-test-config.json",
+      "sha256": "4fdcfa19e5721183d65ca84ec80d7608322d0cda3541e3349cc0897bd4103dc0"
+    }
+  ],
+  "retainedHarnessFailures": [
+    {
+      "attempt": "stable-human-daily-config-fix-01",
+      "reason": "Verification harness assumed a JSON body for the successful empty shutdown response."
+    },
+    {
+      "attempt": "stable-human-daily-config-fix-02",
+      "reason": "Verification harness assumed HTTP 200 rather than the documented HTTP 202 shutdown response."
+    }
+  ],
+  "limitations": [
+    "This correction verifies configuration loading and inventory through the official packaged Web; it does not execute target builds or architecture tests and does not fill independent human review answers."
+  ]
+}

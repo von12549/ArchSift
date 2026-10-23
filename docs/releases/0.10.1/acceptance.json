@@ -1,0 +1,373 @@
+{
+  "schemaVersion": 1,
+  "status": "accepted-with-documented-limitations",
+  "displayName": "ArchSift Workbench",
+  "version": "0.10.1",
+  "recordedUtc": "2026-10-23T11:03:41.550355+00:00",
+  "sourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
+  "sourceTree": "de919e1c1a73170cd8fc42d8400d7f6379450898",
+  "sdk": "10.0.303",
+  "runtime": "10.0.13",
+  "tfm": "net10.0",
+  "rid": "win-x64",
+  "configuration": "Release",
+  "finalAcceptance": true,
+  "sourceCi": {
+    "implementation": 22,
+    "stableCut": 23,
+    "stablePrCiRun": 39927104035,
+    "stableMainCiRun": 39927705009,
+    "windowsUbuntuTypedCasesEqual": true,
+    "eachPlatform": {
+      "architecture": 2,
+      "unit": 157,
+      "integration": 123,
+      "mtp": 57
+    }
+  },
+  "independentWindows": {
+    "runId": 39927742393,
+    "artifactId": 12491040948,
+    "officialArchiveBytes": 552950207,
+    "officialArchiveSha256": "a817eae159cdc218d0cadab8234580b5b490b9907ca4bf66b73957be5f681958",
+    "archiveFilesVerified": 2965,
+    "extractedAssetsVerified": 10,
+    "serverCoreNoInstalledSdkOrCore": true,
+    "network": "none",
+    "readOnlyInput": true,
+    "guestChecks": 8,
+    "nativeManifestFilesVerified": 691
+  },
+  "machineGates": {
+    "coldNugetWebAndPortable": true,
+    "nugetPayloadNegatives": 22,
+    "browserComponentChecks": 9,
+    "jsonRulesets": 13,
+    "jsonCases": 401,
+    "csharpCases": 92,
+    "packagedNegatives": 15,
+    "nativeSmokeChecks": 17,
+    "frozenPerformanceThresholdsChanged": false,
+    "officialSarifSchema": true,
+    "packagedHttpFullSubsetCancelErrorHistoryInterruptDownloadShutdown": true,
+    "officialAdvisoryIdentities": 31,
+    "knownAdvisoryMatches": 0,
+    "offlineArchivesLegalReviewed": 28,
+    "copiedIfxCliCases": 493,
+    "copiedIfxWebCases": 493,
+    "cliWebTypedCasesEqual": true,
+    "freshProductionAssemblies": 89,
+    "officialAuditedIfxProjects": 105,
+    "officialAuditSkips": 0,
+    "managedLifecycleChecks": 23,
+    "managedOldNewOldNew": true,
+    "completeNugetOldNewOldNewRestores": 4
+  },
+  "assets": [
+    {
+      "file": "archsift-workbench-0.10.1-offline-feed.zip",
+      "bytes": 18358113,
+      "sha256": "712f03a52a3253b557086961e47c0db645ec44882180177d6fba1f9a91a3fd3a"
+    },
+    {
+      "file": "archsift-workbench-0.10.1-win-x64.zip",
+      "bytes": 90185562,
+      "sha256": "47440fe808b6eaadd32932d0c1023270245f0bcfacff8e842189780407d3d94f"
+    },
+    {
+      "file": "ArchSift.ArchUnit.0.10.1.nupkg",
+      "bytes": 107236,
+      "sha256": "d37f692b79178486ece5ad1c18951d8fcbff652fe673d4939c4441030172f0bc"
+    },
+    {
+      "file": "ArchSift.Cli.0.10.1.nupkg",
+      "bytes": 3035910,
+      "sha256": "a586dc8208b105ea13cb98d1022078b7c42e4bdb2464a5d3d4c696683ed86b23"
+    },
+    {
+      "file": "ArchSift.Contracts.0.10.1.nupkg",
+      "bytes": 166782,
+      "sha256": "ff58cd73ceb87f52aed5467dbb3e3912519d0077429ea9a71ce16f61fd95ec79"
+    },
+    {
+      "file": "ArchSift.Core.0.10.1.nupkg",
+      "bytes": 237746,
+      "sha256": "2c9dfb7e4cb8654e2456790d3148714cdd5dbf98f406ff80ffbf298bceff47f0"
+    },
+    {
+      "file": "ArchSift.Setup.exe",
+      "bytes": 74497834,
+      "sha256": "ec5e75c274e7b1f27ce9a609d9885a16c732d2bb81e7972ab2ae9f9de77afcd7"
+    },
+    {
+      "file": "ArchSift.Testing.0.10.1.nupkg",
+      "bytes": 102522,
+      "sha256": "00539eca477ad03cf3ab12bac74971e8877913c068125d7782df566d0f10e09d"
+    }
+  ],
+  "humanAcceptance": {
+    "status": "accepted-by-user",
+    "basis": "Direct user response confirming completion of all three exact-stable entrances after the configuration-instruction correction.",
+    "entrances": [
+      "NuGet UI",
+      "Portable Launcher",
+      "Managed Launcher"
+    ],
+    "versionTargetInventoryAndShutdownNormal": true,
+    "usabilityRatingOutOf5": 4,
+    "defects": [],
+    "untestedMandatoryItems": [],
+    "exactReviewTimeSupplied": false,
+    "retainedVerbatimResponseSha256": "68277c36540e1d4b6b6761ea982066e0ffbd18e214514a508ddd7debfe267c7b",
+    "machineCloseout": {
+      "records": [
+        {
+          "mode": "NuGetUI",
+          "sha256": "e544de0bb8ca1263221d484e7da91d2e126c26d6e255c57f05f4785f5e0b87df",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:54:11.1297118Z"
+        },
+        {
+          "mode": "PortableLauncher",
+          "sha256": "75fc90cf68fc78113f8f40bca50bb14e7f8a0724a1d6ceb01150c625e8e92d33",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:55:30.3005893Z"
+        },
+        {
+          "mode": "ManagedLauncher",
+          "sha256": "4817488a9e128fb35ebeab15422e5b5891812f9041ff987c4b6fca086ce99193",
+          "exitCode": 0,
+          "hostEqual": true,
+          "finishedUtc": "2026-10-23T10:58:12.1875132Z"
+        }
+      ],
+      "currentOriginalHostBaselineEqual": true,
+      "remainingProcessesUnderReviewedRoots": 0,
+      "closeoutVerificationSha256": "7705bf6b9bb410fce6d2a4302223ec05f83f3ace9d654b9bf991d7cf0b0ac322"
+    }
+  },
+  "preservation": {
+    "liveIfxSourceFilesUnchanged": 932,
+    "oldFeedPackagesUnchanged": 251,
+    "installedAndOuterFilesUnchanged": 4527,
+    "hostBaselineSha256": "e779e5a24dc8af031be494bc15d00cf228781f595466dc188eda8ccbd6178914",
+    "liveIfxUpgraded": false,
+    "persistentEnvironmentOrPolicyModified": false,
+    "oldVersionsConfigurationsAndEvidenceRetained": true
+  },
+  "machineEvidence": [
+    {
+      "name": "stable-pr-ci-39927104035/verification.json",
+      "sha256": "04ab0edee8163b7fac027e38a2d981e9c7a436533daa2aa0477bcd7a6450158c",
+      "bytes": 165356
+    },
+    {
+      "name": "stable-pr-ci-39927104035/official-archive-verification.json",
+      "sha256": "0cda8b966880af29e18825bbbde4d075db024f661f4a003d17bcc691799e53ab",
+      "bytes": 684
+    },
+    {
+      "name": "stable-main-ci-39927705009/verification.json",
+      "sha256": "0ab755c91d2bf47e2e58108c0147807b3155615b5ecbf6fc06cef3ee9f0cada6",
+      "bytes": 165356
+    },
+    {
+      "name": "stable-main-ci-39927705009/official-archive-verification.json",
+      "sha256": "5d4cf1e3d123fc15394aea8fc5cf80afef91c4d15c9a28cc30ab396549818f12",
+      "bytes": 684
+    },
+    {
+      "name": "stable-independent-39927742393/independent-workbench-66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c/verification-stable.json",
+      "sha256": "d1d86cc8345d8fff04f73b220f9e981d49cf4e5694e005ddf9d443fd6d763493",
+      "bytes": 2222
+    },
+    {
+      "name": "stable-independent-official-archive-verification.json",
+      "sha256": "3634c00217095de7414a4955f7befb10513f0d5e2c9b75a3815ba542b6903b79",
+      "bytes": 259
+    },
+    {
+      "name": "stable-independent-full-archive-verification.json",
+      "sha256": "c47f207f1ddaa1ec82a33b76dd81e3a053f874e8cc2879ad5022ce875d879e65",
+      "bytes": 252
+    },
+    {
+      "name": "stable-official-view-relocation-02.json",
+      "sha256": "ad5156c9a989b5d77452b7d5ca28447217ec2a86bb8f2779b07ab3e7ca258c30",
+      "bytes": 962
+    },
+    {
+      "name": "stable-official-view-native-materialization.json",
+      "sha256": "f1764a527809c8bdfa8fcee38c55efff74a72af125111a283d59c40050947844",
+      "bytes": 446
+    },
+    {
+      "name": "stable-official-build-02/build-result.json",
+      "sha256": "189db6ee60b77d2493b1724f243c770f0644d54d8afc5ed4ee7aa9b0c7319cb5",
+      "bytes": 581
+    },
+    {
+      "name": "stable-official-build-02/artifact-verification/verification.json",
+      "sha256": "a6a29b507cc47f084f28098adb6a64f300015576ebf4d040b0491bf3c686b72e",
+      "bytes": 98186
+    },
+    {
+      "name": "stable-official-build-02/cold-nuget-web/qualification.json",
+      "sha256": "615080b283409de6df2b9a60d85f8fdbe55c660c892fb5d06684a3e8cfb2c93c",
+      "bytes": 3233
+    },
+    {
+      "name": "stable-human-review-prep-01/qualification.json",
+      "sha256": "63fa9567378351504bc3fd392d2b82f302886dc84a2a842e17ff2fe902c54ede",
+      "bytes": 3385
+    },
+    {
+      "name": "stable-nuget-negatives-01/qualification.json",
+      "sha256": "19f3da471681298556fe03b4eb626b0b3e4a3d4e9bf53d5832b747ec3a0aa1a7",
+      "bytes": 4559
+    },
+    {
+      "name": "stable-inventory-browser-01/verification.json",
+      "sha256": "dfd71cf9f7dc27c25b5082930706ee6e235193d71dca2c446825769af509674c",
+      "bytes": 3120
+    },
+    {
+      "name": "stable-packaged-negatives-02/verification.json",
+      "sha256": "bfb2e1bc9d9e3dbd62199ac16cbdb9b236781f821a7b2f65ce76e1115d00aadf",
+      "bytes": 5065
+    },
+    {
+      "name": "stable-native-smoke-02/packages/smoke-ba3638faaf67470eb84baa87916527c8/smoke-result.json",
+      "sha256": "40c7b507c91595f55b6a15385baf09466123df8523e5851f0dc3109b8afc2d8f",
+      "bytes": 4658
+    },
+    {
+      "name": "stable-packaged-http-01/verification.json",
+      "sha256": "e4247541e4a6de454ce94a20f8f37cb3483e983db79b4e0712c91e5894b5ac60",
+      "bytes": 4275
+    },
+    {
+      "name": "stable-advisory-01/audit.json",
+      "sha256": "28f801aa393da3684177e774b927edc210d70cd993e72994062d65fddb7cc39e",
+      "bytes": 80944
+    },
+    {
+      "name": "stable-license-review-01/licenses.json",
+      "sha256": "b349e888eb7147cdda87a3dfaf89b8ff03b40c29908930b443545ff10c83b43c",
+      "bytes": 21932
+    },
+    {
+      "name": "ifx-preflight-01/preflight.json",
+      "sha256": "1852abfb6b9cbf1aa1bc6ded7996aef4eb3398f8de6a1ddf1fddbcb0bd0a3b4e",
+      "bytes": 1308206
+    },
+    {
+      "name": "ifx-snapshot-stable-01/snapshot-preparation.json",
+      "sha256": "fbd53ab90d7d27fbe91ce3a8e17c830a8c98b21463183604351c269cf2310d9e",
+      "bytes": 19178
+    },
+    {
+      "name": "ifx-snapshot-stable-01/lock-refresh-verification.json",
+      "sha256": "de2ceaa3ab6ba225c810666d74349ca4f472523b96fc49c4721e0ea0fc921815",
+      "bytes": 33522
+    },
+    {
+      "name": "ifx-snapshot-stable-01/portable-verification.json",
+      "sha256": "1213e9ddb98f89246c5e54ea56880e84286386f1fba7885d1593eb5bebe635c0",
+      "bytes": 488245
+    },
+    {
+      "name": "ifx-snapshot-stable-01/web-raw-verification.json",
+      "sha256": "74679304552dd0e75b5827f987262b671e827c81ac763cf5d6c29ec9cda52660",
+      "bytes": 488280
+    },
+    {
+      "name": "ifx-snapshot-stable-01/official-audit-independent-verification.json",
+      "sha256": "a67a7ca999696adf6cb74eb4120de3e55cd4cccd2361b2629be1a8ba1fce0217",
+      "bytes": 734
+    },
+    {
+      "name": "stable-setup-lifecycle-forward-01/packages/setup-smoke-73b7a2c3235d419f991c46991a302a49/setup-smoke-result.json",
+      "sha256": "21e79c2399cc335a82b75c3439ffc3236ce0f902e916052f50da335ae6e43ab4",
+      "bytes": 4842
+    },
+    {
+      "name": "stable-nuget-rollback-01/verification.json",
+      "sha256": "0cf0f7e883de3e6d74102888ce359322ba86416fb3d3df1f3c2ad8db47d73dfd",
+      "bytes": 11345
+    },
+    {
+      "name": "stable-final-preservation.json",
+      "sha256": "4091975e71423e2e24858109d303c6a51d4b4442d2a2bc36db4e72bed01c0283",
+      "bytes": 458
+    },
+    {
+      "name": "stable-human-ifx-fixture-preparation.json",
+      "sha256": "ac2c5025cce74bf36fe61c4c45c7e422b081e5b1a5308e014e3e4067a84433e6",
+      "bytes": 616
+    },
+    {
+      "name": "stable-human-managed-review-02/preparation.json",
+      "sha256": "ecf26d8f86dcbccfbf8b374b20f3c329c0c891257e80eec57633bc253810ae5f",
+      "bytes": 718
+    }
+  ],
+  "humanReviewPreparationCorrection": {
+    "status": "corrected-and-load-verified-before-user-acceptance",
+    "recordSha256": "5f830f2131af099e74ea2ba2662e2bc7d13630bfaaf7e25d83cc660c0fa91e5c",
+    "productCodeChanged": false,
+    "csharpCases": 92,
+    "jsonRulesets": 13,
+    "jsonCases": 401
+  },
+  "sourceLinks": {
+    "pr": "https://github.com/von12549/ArchSift/pull/23",
+    "actualMainCi": "https://github.com/von12549/ArchSift/actions/runs/39927705009",
+    "independentWindows": "https://github.com/von12549/ArchSift/actions/runs/39927742393"
+  },
+  "publication": {
+    "authorized": true,
+    "channel": "GitHub Releases",
+    "tag": "v0.10.1",
+    "sourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
+    "stateAtRecordCreation": "accepted-before-publication",
+    "postDownloadVerification": "Required separately; see subsequent publication record.",
+    "registryPublication": false,
+    "liveIfxUpgrade": false
+  },
+  "documentation": {
+    "language": "English",
+    "bundledNotesAndGuides": true,
+    "schemasAndGenericTemplates": true,
+    "privateIfxConfigurationAndFeedIncluded": false,
+    "datedSourceAndBundledPreparationLedgers": "Historical; this final acceptance receipt qualifies the immutable bytes."
+  },
+  "publisherSignatures": {
+    "ArchSift.Setup.exe": "NotSigned",
+    "archsift.exe": "NotSigned",
+    "ArchSift.Web.exe": "NotSigned"
+  },
+  "limitations": [
+    "Official Windows Server Core guest is headless, not desktop visual or every Windows version certification.",
+    "Framework-dependent NuGet Web requires an approved SDK for install and compatible Core/ASP.NET 10.0.13 runtimes; CLI-only retains Core requirement.",
+    "Linux CI qualifies CLI/contracts, not Linux interactive Web or ARM64. Binaries are not Authenticode signed.",
+    "493 daily cases do not claim the 187 out-of-daily-scope projection items; the official advisory snapshot is time-bound.",
+    "0.10.0 NuGet tool lacks independent Web; retained accepted Windows UI supplies the old UI rollback.",
+    "Registry publication is not in scope.",
+    "Target builds/tests need approved SDKs and dependencies. Source/build identities do not establish a complete compiler-input closure or bit-reproducible build.",
+    "All public attachments and actual tagged ZIP/TAR archives require subsequent download and content verification."
+  ],
+  "retainedFailedAttempts": [
+    "stable-lock-and-regression-01: PowerShell argument binding in external runner",
+    "stable-rid-locks-01: external initializer omitted RuntimeFrameworkVersion and requested unavailable 10.0.11",
+    "Prepare-StableOfficialView.py: raw JSON escaped-path match",
+    "Materialize-StableNative.py: 691 manifest files mistaken for 692 ZIP entries",
+    "stable-packaged-negatives-01: official transfer omitted native unpacked directory; verified ZIP materialized for pass",
+    "stable-native-smoke-01: RC2 input identity used with stable source; unchanged ceilings and stable identity passed on next attempt",
+    "stable-managed-human-review-prep-01: external PowerShell Args automatic parameter collision",
+    "Human configuration verification harness attempt 01 parsed the empty HTTP shutdown body as JSON.",
+    "Human configuration verification harness attempt 02 expected HTTP 200 instead of HTTP 202."
+  ]
+}

@@ -1,6 +1,6 @@
 # ArchSift Workbench 0.10.1
 
-Stable source cut; exact package qualification, independent human acceptance and publication are pending.
+Published and download-verified on 2026-10-23. [Publication](docs/releases/0.10.1-publication.md) binds exact source `66cf7c4d`, all 11 attachments, both tagged source archives and successful cold downloaded usage. [Final acceptance](docs/releases/0.10.1/acceptance.json) records the user's three-entrance 4/5 review, no defects or untested mandatory items and verified Safe shutdowns. Bundled preparation ledgers remain immutable.
 
 The CLI tool package includes the complete matching framework-dependent Web publish closure, including static assets, dependency/runtime descriptors and a source/version/hash inventory. A cold offline tool installation can use direct UI and an explicit portable Launcher state directory. The approved SDK and Core/ASP.NET 10.0.13 remain prerequisites for NuGet Web; Windows x64 ZIP/Setup remain self-contained.
 

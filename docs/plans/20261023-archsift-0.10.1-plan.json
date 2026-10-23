@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "stable-machine-qualified-human-and-publication-pending",
+  "status": "published-and-download-verified",
   "plan": "20261023-archsift-0.10.1-plan.md",
   "authorization": {
     "planningOnly": false,
@@ -12,10 +12,10 @@
     "liveIfxUpgrade": false
   },
   "targetVersion": "0.10.1",
-  "targetVersionState": "candidate-not-reserved",
+  "targetVersionState": "published-immutable",
   "versionSeries": "0.10.x",
   "unifiedProductVersionRequired": true,
-  "currentAcceptedRelease": "0.10.0",
+  "currentAcceptedRelease": "0.10.1",
   "sourceBaseline": {
     "remoteMain": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
     "tree": "6343f35bad2c056706a92ac19ce7cb1f64102cdf",
@@ -99,7 +99,7 @@
   "items": [
     {
       "id": "NX01",
-      "status": "implemented-exact-stable-machine-qualified-human-review-pending",
+      "status": "complete-accepted-and-published",
       "packagingDecision": "bundle-matching-complete-web-closure",
       "bootstrapDecision": "explicit-portable-state-root-and-existing-config-no-counterfeit-setup-state",
       "plannedPortableCommand": "archsift launch --root <external-state-root> --config <existing-json>",
@@ -119,7 +119,7 @@
     },
     {
       "id": "NX02",
-      "status": "implemented-exact-stable-machine-qualified-human-review-pending",
+      "status": "complete-accepted-and-published",
       "surface": "Architecture tests JSON inventory renderInventory",
       "default": "per-ruleset-collapsed",
       "controls": [
@@ -204,14 +204,14 @@
       "dependsOn": [
         "PX07"
       ],
-      "status": "pending-user-only-exact-stable"
+      "status": "complete-user-accepted-three-closeouts-verified"
     },
     {
       "id": "PX09",
       "dependsOn": [
         "PX08"
       ],
-      "status": "pending-human-acceptance"
+      "status": "complete-published-all-assets-source-archives-and-cold-usage-verified"
     }
   ],
   "acceptance": [
@@ -220,82 +220,84 @@
       "area": "version-source",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA02",
       "area": "cold-nuget-ui-and-launcher",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA03",
       "area": "negative-integrity-runtime-bootstrap",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA04",
       "area": "folding-accessibility-localization-focus",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA05",
       "area": "unchanged-execution-policy",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA06",
       "area": "consumer-managed-compatibility",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA07",
       "area": "safety-security-license-audit",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA08",
       "area": "lifecycle-closeout",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA09",
       "area": "separate-rollback-forward",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA10",
       "area": "fresh-real-snapshot-separate-audit",
       "status": "stable-machine-passed-human-review-separate",
       "humanOnly": false,
-      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
+      "qualification": "Exact stable source 66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c; see 20261023-workbench-0101-stable-machine-qualification.json."
     },
     {
       "id": "PA11",
       "area": "independent-stable-human-review",
-      "status": "pending-user-only-exact-stable",
-      "humanOnly": true
+      "status": "passed-user-accepted-4-of-5-three-closeouts-verified",
+      "humanOnly": true,
+      "qualification": "20261023-workbench-0101-stable-human-acceptance.json"
     },
     {
       "id": "PA12",
       "area": "publication-download",
-      "status": "pending-human-acceptance-and-publication",
-      "humanOnly": false
+      "status": "passed-eleven-public-assets-two-tagged-archives-cold-usage-setup",
+      "humanOnly": false,
+      "qualification": "0.10.1-publication.json"
     }
   ],
   "rollback": {
@@ -356,8 +358,8 @@
     "branch": "codex/workbench-0.10.1",
     "baseCommit": "8f84254ff13f6bd0a8d01b5f4555e89ad171ec19",
     "evidenceRoot": "D:/ArchSift-lab/runs/workbench-0101-20261023-01",
-    "humanAcceptance": "pending-user-only",
-    "publication": "pending-human-acceptance",
+    "humanAcceptance": "accepted-by-user-three-closeouts-verified",
+    "publication": "published-and-download-verified",
     "candidateVersion": "0.10.1-rc.2",
     "developmentChecks": {
       "version": "0.10.1-rc.2",
@@ -383,6 +385,8 @@
     "rc2MachineStatus": "passed-candidate-only",
     "prAndMerge": "passed-pr23-main-66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c-ci39927705009",
     "exactStable": "machine-qualified-at-66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c",
-    "stableMachineQualification": "docs/acceptance/20261023-workbench-0101-stable-machine-qualification.json"
-  }
+    "stableMachineQualification": "docs/acceptance/20261023-workbench-0101-stable-machine-qualification.json",
+    "publicationRecord": "docs/releases/0.10.1-publication.json"
+  },
+  "publicationRecord": "docs/releases/0.10.1-publication.json"
 }

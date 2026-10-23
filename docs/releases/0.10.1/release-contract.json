@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "stable-machine-qualified-human-and-publication-pending",
+  "status": "published-and-download-verified",
   "product": "ArchSift",
   "displayName": "ArchSift Workbench",
   "stableVersion": "0.10.1",
@@ -73,7 +73,7 @@
     "gates": "PA01-PA12",
     "requireFinalStableBytes": true,
     "requireFinalHumanReview": true,
-    "currentOutcome": "machine-qualified-human-pending",
+    "currentOutcome": "accepted-and-published-download-verified",
     "noOldPassAsCurrent": true,
     "candidateOutcome": "rc2-machine-qualified-at-c2de2d25",
     "exactStableSourceCommit": "66cf7c4d4ca2a4a0b492fad3f9edb87c1e4e3b4c"
@@ -90,5 +90,6 @@
     "published0100": "immutable",
     "liveIfx": "read-only; no existing entry upgrade",
     "olderVersionsConfigurationsAndEvidence": "retain"
-  }
+  },
+  "publicationRecord": "../0.10.1-publication.json"
 }
