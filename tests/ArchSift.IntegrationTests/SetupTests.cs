@@ -10,6 +10,7 @@ namespace ArchSift.IntegrationTests;
 public sealed class SetupTests
 {
     [Theory]
+    [InlineData("0.11.0")]
     [InlineData("0.10.1-rc.1")]
     [InlineData("0.10.1")]
     [InlineData("0.10.0-rc.1")]
@@ -54,6 +55,20 @@ public sealed class SetupTests
     }
 
     [Theory]
+    [InlineData("0.11.1")]
+    [InlineData("0.12.0")]
+    [InlineData("1.0.0")]
+    public void UnlistedStableVersionsRejectBeforeInstallation(string version)
+    {
+        Assert.False(PackageReader.IsWorkbenchVersion(version));
+        using var fixture = new Fixture(); var setup = new SetupService();
+        var package = fixture.Package(version);
+        Assert.Throws<ConfigurationException>(() => setup.PlanInstall(fixture.Install, package, SetupFiles.FileHash(package), fixture.Config, false));
+        Assert.False(Directory.Exists(fixture.Install));
+    }
+
+    [Theory]
+    [InlineData("0.11.0", "archsift-workbench-0.11.0-win-x64.zip")]
     [InlineData("0.10.1", "archsift-workbench-0.10.1-win-x64.zip")]
     [InlineData("0.10.1-rc.1", "archsift-workbench-0.10.1-rc.1-win-x64.zip")]
     [InlineData("0.8.0", "archsift-0.8.0-win-x64.zip")]

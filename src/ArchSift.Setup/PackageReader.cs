@@ -16,7 +16,7 @@ public static class PackageReader
         if (!System.Text.RegularExpressions.Regex.IsMatch(version, "^(?:\\d+\\.\\d+\\.\\d+|0\\.10\\.[01]-rc\\.[1-9]\\d*)$"))
             throw new ConfigurationException("A stable semantic version or supported 0.10.0/0.10.1 release candidate is required.");
     }
-    public static bool IsWorkbenchVersion(string version) => version is "0.10.0" or "0.10.1" ||
+    public static bool IsWorkbenchVersion(string version) => version is "0.10.0" or "0.10.1" or "0.11.0" ||
         System.Text.RegularExpressions.Regex.IsMatch(version, "^0\\.10\\.[01]-rc\\.[1-9]\\d*$");
 
     public static string ReleaseArchiveName(string version)
