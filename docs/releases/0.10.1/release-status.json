@@ -1,12 +1,14 @@
 {
   "schemaVersion": 1,
-  "version": "0.10.1-rc.2",
+  "version": "0.10.1",
   "stableTarget": "0.10.1",
-  "status": "rc2-machine-qualified-stable-and-human-pending",
+  "status": "stable-source-cut-machine-and-human-pending",
   "published": false,
   "humanAcceptance": "pending-user-only",
   "existingIfxUpgrade": false,
   "plan": "../../plans/20261023-archsift-0.10.1-plan.json",
   "candidateSourceCommit": "c2de2d25d147979f261bbea7a2402e835210ca60",
-  "qualification": "../../acceptance/20261023-workbench-0101-rc2-machine-qualification.json"
+  "qualification": "../../acceptance/20261023-workbench-0101-rc2-machine-qualification.json",
+  "rcMergeCommit": "71539f2c5e34f221605640d68039a6f57618f446",
+  "rcMainCiRun": 39925606616
 }

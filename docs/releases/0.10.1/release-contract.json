@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "rc2-machine-qualified-stable-pending",
+  "status": "stable-source-cut-machine-pending",
   "product": "ArchSift",
   "displayName": "ArchSift Workbench",
   "stableVersion": "0.10.1",
@@ -73,7 +73,7 @@
     "gates": "PA01-PA12",
     "requireFinalStableBytes": true,
     "requireFinalHumanReview": true,
-    "currentOutcome": "stable-not-qualified",
+    "currentOutcome": "stable-source-cut-not-qualified",
     "noOldPassAsCurrent": true,
     "candidateOutcome": "rc2-machine-qualified-at-c2de2d25"
   },
