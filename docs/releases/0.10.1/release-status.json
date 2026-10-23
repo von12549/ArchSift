@@ -2,9 +2,11 @@
   "schemaVersion": 1,
   "version": "0.10.1-rc.2",
   "stableTarget": "0.10.1",
-  "status": "candidate-implementation-and-machine-qualification-in-progress",
+  "status": "rc2-machine-qualified-stable-and-human-pending",
   "published": false,
   "humanAcceptance": "pending-user-only",
   "existingIfxUpgrade": false,
-  "plan": "../../plans/20261023-archsift-0.10.1-plan.json"
+  "plan": "../../plans/20261023-archsift-0.10.1-plan.json",
+  "candidateSourceCommit": "c2de2d25d147979f261bbea7a2402e835210ca60",
+  "qualification": "../../acceptance/20261023-workbench-0101-rc2-machine-qualification.json"
 }

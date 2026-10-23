@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Existing third-party identity candidates retained for exact-hash review only. Recompute actual 0.10.1 consumer/tool/Web closure; fresh audit/license evidence and product approvals remain required.",
+  "scope": "Existing third-party identity list and exact-hash candidate approvals. The 0.10.1-rc.2 offline, native and framework-dependent Web closure received fresh advisory/legal qualification at source c2de2d25; exact stable assets must be requalified.",
   "baselineVersion": "0.10.0-cl03.1",
   "packages": [
     {
@@ -234,5 +234,5 @@
       }
     }
   ],
-  "vulnerabilityAudit": "pending-fresh-0.10.1-qualification"
+  "vulnerabilityAudit": "rc2-fresh-snapshot-passed-31-unique-identities-zero-known-matches-stable-requalification-required"
 }

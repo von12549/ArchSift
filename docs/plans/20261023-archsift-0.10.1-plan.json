@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-23",
-  "status": "implementation-in-progress",
+  "status": "rc2-machine-qualified-pr-and-stable-pending",
   "plan": "20261023-archsift-0.10.1-plan.md",
   "authorization": {
     "planningOnly": false,
@@ -99,7 +99,7 @@
   "items": [
     {
       "id": "NX01",
-      "status": "planned-not-started",
+      "status": "implemented-rc2-machine-qualified-stable-pending",
       "packagingDecision": "bundle-matching-complete-web-closure",
       "bootstrapDecision": "explicit-portable-state-root-and-existing-config-no-counterfeit-setup-state",
       "plannedPortableCommand": "archsift launch --root <external-state-root> --config <existing-json>",
@@ -119,7 +119,7 @@
     },
     {
       "id": "NX02",
-      "status": "planned-not-started",
+      "status": "implemented-rc2-machine-qualified-stable-pending",
       "surface": "Architecture tests JSON inventory renderInventory",
       "default": "per-ruleset-collapsed",
       "controls": [
@@ -153,21 +153,21 @@
       "dependsOn": [
         "PX00"
       ],
-      "status": "in-progress"
+      "status": "rc2-machine-passed-stable-requalification-pending"
     },
     {
       "id": "PX02",
       "dependsOn": [
         "PX01"
       ],
-      "status": "in-progress"
+      "status": "rc2-machine-passed-stable-requalification-pending"
     },
     {
       "id": "PX03",
       "dependsOn": [
         "PX00"
       ],
-      "status": "in-progress"
+      "status": "rc2-machine-passed-stable-requalification-pending"
     },
     {
       "id": "PX04",
@@ -175,14 +175,14 @@
         "PX02",
         "PX03"
       ],
-      "status": "planned-not-started"
+      "status": "rc2-machine-passed-stable-requalification-pending"
     },
     {
       "id": "PX05",
       "dependsOn": [
         "PX04"
       ],
-      "status": "planned-not-started"
+      "status": "rc2-machine-passed-stable-requalification-pending"
     },
     {
       "id": "PX06",
@@ -190,108 +190,111 @@
         "PX04",
         "PX05"
       ],
-      "status": "planned-not-started"
+      "status": "in-progress-pr-and-merge-pending"
     },
     {
       "id": "PX07",
       "dependsOn": [
         "PX06"
       ],
-      "status": "planned-not-started"
+      "status": "pending-merge-and-stable-cut"
     },
     {
       "id": "PX08",
       "dependsOn": [
         "PX07"
       ],
-      "status": "planned-not-started"
+      "status": "pending-user-only-exact-stable"
     },
     {
       "id": "PX09",
       "dependsOn": [
         "PX08"
       ],
-      "status": "planned-not-started"
+      "status": "pending-human-acceptance"
     }
   ],
   "acceptance": [
     {
       "id": "PA01",
       "area": "version-source",
-      "status": "in-progress",
+      "status": "rc2-machine-passed-stable-requalification-pending",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA02",
       "area": "cold-nuget-ui-and-launcher",
-      "status": "in-progress",
+      "status": "rc2-machine-passed-stable-requalification-pending",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA03",
       "area": "negative-integrity-runtime-bootstrap",
-      "status": "in-progress",
+      "status": "rc2-machine-passed-stable-requalification-pending",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA04",
       "area": "folding-accessibility-localization-focus",
-      "status": "in-progress",
+      "status": "rc2-machine-passed-stable-requalification-pending",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA05",
       "area": "unchanged-execution-policy",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "rc2-machine-passed-stable-requalification-pending",
+      "humanOnly": false,
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA06",
       "area": "consumer-managed-compatibility",
-      "status": "in-progress",
+      "status": "rc2-branch-and-independent-windows-passed-main-ci-pending",
       "humanOnly": false,
       "qualification": "development/probe/preflight evidence only; exact stable gate pending"
     },
     {
       "id": "PA07",
       "area": "safety-security-license-audit",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "rc2-machine-passed-stable-requalification-pending",
+      "humanOnly": false,
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA08",
       "area": "lifecycle-closeout",
-      "status": "in-progress",
+      "status": "rc2-machine-passed-stable-requalification-pending",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA09",
       "area": "separate-rollback-forward",
-      "status": "not-run",
-      "humanOnly": false
+      "status": "rc2-machine-passed-stable-requalification-pending",
+      "humanOnly": false,
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA10",
       "area": "fresh-real-snapshot-separate-audit",
-      "status": "in-progress",
+      "status": "rc2-machine-passed-stable-requalification-pending",
       "humanOnly": false,
-      "qualification": "development/probe/preflight evidence only; exact stable gate pending"
+      "qualification": "Candidate source c2de2d25; see 20261023-workbench-0101-rc2-machine-qualification.json."
     },
     {
       "id": "PA11",
       "area": "independent-stable-human-review",
-      "status": "not-run",
+      "status": "pending-user-only-exact-stable",
       "humanOnly": true
     },
     {
       "id": "PA12",
       "area": "publication-download",
-      "status": "not-run",
+      "status": "pending-human-acceptance-and-publication",
       "humanOnly": false
     }
   ],
@@ -374,6 +377,11 @@
       "build": "candidate-build-02",
       "outcome": "build/cold consumer/native packaging passed; full release gates pending; superseded for stronger immutable-cache boundary and malformed-inventory rejection"
     },
-    "ifxPreflight": "read-only passed; original source/feed and 4527 installed/outer files protected"
+    "ifxPreflight": "read-only passed; original source/feed and 4527 installed/outer files protected",
+    "candidateSourceCommit": "c2de2d25d147979f261bbea7a2402e835210ca60",
+    "rc2MachineQualification": "docs/acceptance/20261023-workbench-0101-rc2-machine-qualification.json",
+    "rc2MachineStatus": "passed-candidate-only",
+    "prAndMerge": "pending",
+    "exactStable": "pending"
   }
 }
