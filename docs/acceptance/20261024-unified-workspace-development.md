@@ -1,0 +1,35 @@
+# Unified project workspace development checkpoint
+
+Date: 2026-10-24 (Australia/Sydney). Status: **DEVELOPMENT QUALIFICATION / SETUP SCOPE DECISION PENDING / NOT MERGE-READY / NOT RELEASED**.
+
+The user authorized revision-2 `.archsift/` implementation, necessary changes, tests, migration/rollback rehearsals, PR/CI/merge and fixes. Final independent visual/hands-on acceptance remains user-only. Public publication has not been performed. Work uses isolated external candidates; the live IFX source and existing package-only 0.10.1 topology remain unchanged.
+
+## Implemented candidate
+
+Candidate 0.11.0 adds strict workspace/local schemas and contracts; package-owned init/doctor/start; per-user/project external state, root-bound markers, initialization recovery and an exclusive session lease; explicit hash-bound library/inactive-backup import; standard NuGet project scope, source mapping/authentication/cache behavior; actual SDK/framework discovery; and matching embedded Web verification/lifecycle. The project template keeps only integration files in `.archsift/`. A NuGet-only five-package builder retains the existing exact build SDK/runtime inputs and rejects dirty source for qualified builds.
+
+IFX preparation retains all 493 cases, the original 13 rulesets, 404 responsibility sources, exact runtime approval and 251-package closure. All 246 third-party packages retain their bytes. Among 90 lock files only one has product-version/hash changes. Standard NuGet/SDK files, IFX policies and architecture tests retain their paths. Shared gate/audit helpers keep their checks; version-bound Web assertions remain exact. The old UI helper and outer scripts are retained until the reviewed migration/cutover step.
+
+## Actual development results
+
+Evidence root: `D:/ArchSift-lab/runs/archsift-unified-init-20261024-01`. All results below bind development inputs, not final clean committed packages. Earlier attempts and their failures remain retained. Host equality is recorded by each guarded stage; no persisted environment, PATH or Profile drift was observed.
+
+| Check | Actual result and evidence |
+| --- | --- |
+| Backup/restoration copies | 934 IFX tracked files, three outer scripts, 63 current state files and plan inputs independently verified; `execution.json` and frozen manifests |
+| Full source architecture/unit suites | 2 architecture and 157 unit passed; `full-development-03/runs/development-fe606e00955943a99549675868d331e2` |
+| Full unfiltered integration suite | **144 passed / 3 failed / 0 skipped / 147 total**; same run; all 24 new workspace cases passed, including actual PowerShell single-field overrides and interrupted initialization recovery |
+| Native MTP supplement | **57 passed / 0 failed / 0 skipped**, independently with the standard synthetic verification fixture; `mtp-supplement-prepare-01` and `mtp-supplement-tests-01`; this does not convert the failed full regression into a pass |
+| Minimum actual host | Official SHA-512-verified SDK 10.0.100 archive, actual Core+ASP.NET 10.0.0; cold/warm/doctor package consumption and real Web CoreCLR module identity; `minimum-sdk-inputs`, `package-bootstrap-*`, `workspace-lifecycle-driver-01` |
+| Standard NuGet behavior | Actual authenticated loopback HTTP v3 download/source mapping, unmapped source zero hits, offline HTTP rejection, unavailable exact version rejection and server-free warm cache; `package-network-03` |
+| Project/cache paths | Actual Unicode paths, unrelated current directory, normal project-root NuGet configuration inheritance, relative global cache and local-over-environment cache precedence; `package-bootstrap-03`, `package-bootstrap-04` |
+| Package/host boundaries | Actual corrupt/missing/extra Web and invalid inventory rejection, explicit missing host, global.json conflict and empty-cache recovery preserving startup configuration; `package-boundaries-driver-02` |
+| Framework/discovery | Actual SDK/Core-only host rejected for missing ASP.NET; SDK 10.0.402/Core 10.0.13 through environment discovery and SDK 10.0.100/Core 10.0.0 through a valid root after a stale implicit hint; `host-frameworks-driver-02` |
+| IFX entry development smoke | Both UI modes, 92 C# / 13 rulesets / 401 JSON inventory, dirty-state protection, normal closeouts and corrupt/extra payload negatives; **no target build**, `ifx-entry-development-driver-02` |
+| Documentation | English/local-link and retained immutable-evidence validation passed at its recorded checkpoint; subsequent documentation edits require the normal fresh check |
+
+The existing managed-Launcher tests fabricate installation metadata with the current product identity. Their three failures reach the unchanged known-version Setup boundary at 0.11.0; two report unsupported compatibility directly and the native case cannot load the rejected managed profile. Setup source/schema have not been widened. Product version/reference lock changes do not imply installer qualification. The [concrete one-line stable-version compatibility proposal](../plans/20261024-archsift-setup-version-scope-proposal.md) remains pending explicit user authorization after automatic approval review rejected an earlier RC-regex scope expansion. No case has been removed or suppressed.
+
+## Remaining delivery and acceptance
+
+Resolve the explicit Setup scope decision, rerun the complete product suite, obtain normal PR and actual-main Windows/Ubuntu CI, and build/qualify exact clean committed packages. Rebind IFX only to those final bytes, perform four sequential package-only 0.10.1/new/0.10.1/new full 493-case gates, CLI/Web fresh-assembly parity, separate 105-project plus complete CLI/Web union official audit, state/config/library migration/rollback and required IFX PR/main checks. Only then perform reviewed no-build live cutover and recoverably archive the old outer entry scripts. Preserve old versions, configuration, evidence and immediate 0.10.1 rollback material. Final independent human acceptance is unanswered and has no inferred score.

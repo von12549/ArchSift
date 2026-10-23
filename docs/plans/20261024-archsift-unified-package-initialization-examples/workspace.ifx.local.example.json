@@ -1,0 +1,10 @@
+{
+  "kind": "archsift-workspace-local",
+  "schemaVersion": 1,
+  "state": { "root": "D:\\ArchSift-lab\\state\\ifx-unified-next" },
+  "runtime": { "dotnetPath": "D:\\ArchSift-lab\\tools\\workbench-runtime13-20261023-01\\dotnet.exe" },
+  "nuget": {
+    "cacheDirectory": "D:\\ArchSift-lab\\caches\\ifx-unified-next",
+    "configFile": "D:\\ArchSift-lab\\config\\ifx-unified-next.NuGet.Config"
+  }
+}

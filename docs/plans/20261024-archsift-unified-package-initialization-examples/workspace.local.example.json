@@ -1,0 +1,7 @@
+{
+  "kind": "archsift-workspace-local",
+  "schemaVersion": 1,
+  "state": { "root": "C:\\ArchSift-lab" },
+  "runtime": { "dotnetPath": "C:\\Program Files\\dotnet\\dotnet.exe" },
+  "nuget": { "cacheDirectory": "C:\\ArchSift-lab\\nuget-cache" }
+}

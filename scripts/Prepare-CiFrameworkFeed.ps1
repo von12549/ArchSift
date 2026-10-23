@@ -36,5 +36,22 @@ try{
     [IO.File]::WriteAllText((Join-Path $work 'NuGet.Config'),'<configuration><packageSources><clear /></packageSources></configuration>')
     $output=Invoke-CiDotnet @('restore','Warm.csproj','--configfile','NuGet.Config','--source','https://api.nuget.org/v3/index.json','--packages',$feedPath,'--disable-build-servers','-p:NuGetAudit=false')
     Write-Output $output
+    # SDK-installed targeting packs can cause PackageDownload to omit archives from
+    # the requested cache. The separate offline consumer still needs those archives.
+    $acquired=[Collections.Generic.List[object]]::new()
+    foreach($pack in $packs.Values|Sort-Object name,version){
+        if($pack.name -notmatch '^[A-Za-z0-9_.]+$'){throw 'Unsafe SDK targeting-pack identity.'}
+        $id=$pack.name.ToLowerInvariant();$name=$id+'.'+$pack.version+'.nupkg'
+        $existing=@(Get-ChildItem -LiteralPath $feedPath -Recurse -File -Filter $name)
+        if(-not $existing.Count){
+            $target=Join-Path $feedPath $name
+            $url='https://api.nuget.org/v3-flatcontainer/'+$id+'/'+$pack.version+'/'+$name
+            Invoke-WebRequest -Uri $url -OutFile $target
+            if((Get-ArchSiftHostHash)-cne$before){throw 'Host drift after explicit prerequisite acquisition; no repair.'}
+            $existing=@(Get-Item -LiteralPath $target)
+        }
+        foreach($archive in $existing){$acquired.Add(@{id=$pack.name;version=$pack.version;path=$archive.FullName;sha256=(Get-FileHash -LiteralPath $archive.FullName -Algorithm SHA256).Hash.ToLowerInvariant()})}
+    }
+    ConvertTo-Json -InputObject $acquired.ToArray() -Depth 8|Set-Content -LiteralPath (Join-Path $work 'framework-archives.json') -Encoding utf8NoBOM
     $packs.Values|Sort-Object name,version|ConvertTo-Json
 }finally{if((Get-ArchSiftHostHash)-cne$before){throw 'CI prerequisite host drift; no repair.'};Write-Output 'framework-feed-host-state-equal=True'}

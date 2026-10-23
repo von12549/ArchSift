@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ArchSift local host settings",
+  "type": "object", "additionalProperties": false, "required": ["kind", "schemaVersion"],
+  "properties": {
+    "kind": { "const": "archsift-workspace-local" }, "schemaVersion": { "const": 1 },
+    "state": { "type": "object", "additionalProperties": false, "properties": { "root": { "type": "string", "minLength": 1 } } },
+    "runtime": { "type": "object", "additionalProperties": false, "properties": { "dotnetPath": { "type": ["string", "null"], "minLength": 1 } } },
+    "nuget": { "type": "object", "additionalProperties": false, "properties": { "cacheDirectory": { "type": ["string", "null"], "minLength": 1 }, "configFile": { "type": ["string", "null"], "minLength": 1 } } }
+  }
+}

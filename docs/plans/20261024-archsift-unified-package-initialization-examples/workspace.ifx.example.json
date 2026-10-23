@@ -1,0 +1,22 @@
+{
+  "kind": "archsift-workspace",
+  "schemaVersion": 1,
+  "project": { "id": "ifx-new", "root": "..", "entry": "IFX.sln" },
+  "state": { "root": "C:\\ArchSift-lab" },
+  "nuget": {
+    "mode": "offline",
+    "allowNetwork": false,
+    "configFile": "../NuGet.Config",
+    "cacheDirectory": null,
+    "sourceApprovalFile": "../architecture/package-source.json"
+  },
+  "runtime": {
+    "mode": "approvedExact",
+    "dotnetPath": null,
+    "minimumSdkVersion": "10.0.0",
+    "allowPrerelease": false,
+    "approvalFile": "../architecture/runtime-approval.json"
+  },
+  "gate": { "kind": "ifx", "metadataFile": "../architecture/portable-gate.json" },
+  "workbench": { "rulesets": [], "build": { "mode": "existing" } }
+}
