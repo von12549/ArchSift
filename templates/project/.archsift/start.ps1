@@ -16,6 +16,7 @@ function Host-State {
  HashText ($values|ConvertTo-Json -Compress)
 }
 $baseline=Host-State
+$consumerNuGetHome=if($env:DOTNET_CLI_HOME){[IO.Path]::GetFullPath($env:DOTNET_CLI_HOME)}else{[Environment]::GetFolderPath('UserProfile')}
 function Check-Host {Need ((Host-State) -ceq $baseline) 'Host environment/Profile drift; stop all tool commands and preserve evidence. No repair is attempted.'}
 function Canonical([string]$path,[string]$base=''){
  Need (-not [string]::IsNullOrWhiteSpace($path)) 'An explicit nonempty path is required.'
@@ -153,7 +154,7 @@ function Child([string]$executable,[string[]]$arguments,[string]$stage,[switch]$
   return $output
  }finally{if(-not $process.HasExited){$process.Kill($true);$process.WaitForExit()};$process.Dispose();Check-Host}
 }
-$success=$false
+$success=$false;$dotnet='';$sdk='';$cache=''
 try{
  $explicit=if($settings.runtime.Contains('dotnetPath')){$settings.runtime.dotnetPath}else{$null};$candidates=[Collections.Generic.List[string]]::new()
  if($explicit){$candidates.Add((Canonical $explicit $configDirectory))}else{
@@ -189,7 +190,11 @@ try{
   $cacheSetting=$nugetXml.SelectSingleNode('/configuration/config/add[@key="globalPackagesFolder"]')
   if($null -ne $cacheSetting){$cache=Canonical ([Environment]::ExpandEnvironmentVariables([string]$cacheSetting.value)) (Split-Path $nugetConfig)}
  }
- if(-not $cache){$cacheOutput=Child $dotnet @('nuget','locals','global-packages','--list','--force-english-output') 'cache-location';Need ($cacheOutput -match '(?m)^global-packages:\s*(.+)\s*$') 'NuGet did not resolve its global cache.';$cache=Canonical $Matches[1].Trim()}
+ if(-not $cache){
+  $cacheOutput=Child $dotnet @('nuget','locals','global-packages','--list','--force-english-output') 'cache-location';Need ($cacheOutput -match '(?m)^global-packages:\s*(.+)\s*$') 'NuGet did not resolve its global cache.';$cache=Canonical $Matches[1].Trim()
+  # SDK safety isolation must not turn the normal NuGet cache into a per-launch cache.
+  if($cache -ieq (Canonical (Join-Path $child.DOTNET_CLI_HOME '.nuget/packages'))){$cache=Canonical (Join-Path $consumerNuGetHome '.nuget/packages')}
+ }
  Disjoint $root $cache;Disjoint $bootstrap $cache;Disjoint $projectState $cache;Disjoint $runtimeRoot $cache
  if($offline){foreach($source in $sourceNodes){$sourcePath=Canonical ([string]$source.value) (Split-Path $nugetConfig);Disjoint $cache $sourcePath;Disjoint $runtimeRoot $sourcePath;Disjoint $projectState $sourcePath}}
  $child.NUGET_PACKAGES=$cache
@@ -198,7 +203,7 @@ try{
  if($InteractiveRestore){Need ($Action -cne 'Doctor') 'Doctor does not restore tools or prompt for authentication.';$arguments+='--interactive'}
  if($Action -cne 'Doctor'){if($InteractiveRestore){[void](Child $dotnet $arguments 'tool-restore' -Interactive -InheritInput)}else{[void](Child $dotnet $arguments 'tool-restore')}}
  $payload=Canonical (Join-Path $cache ('archsift.cli/'+$version+'/tools/net10.0/any'))
- Need (Test-Path -LiteralPath (Join-Path $payload 'archsift.dll') -PathType Leaf) 'Pinned tool is not restored. Run this entry with -Action Init; doctor does not install tools.'
+ Need (Test-Path -LiteralPath (Join-Path $payload 'archsift.dll') -PathType Leaf) ('Pinned tool is not restored in '+$cache+'. Run this entry with -Action Init; doctor does not install tools.')
  if($ifx){
   $zip=[IO.Compression.ZipFile]::OpenRead((Join-Path $feed ('ArchSift.Cli.'+$version+'.nupkg')));$expected=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   try{foreach($entry in $zip.Entries|Where-Object {$_.FullName.StartsWith('tools/net10.0/any/') -and -not $_.FullName.EndsWith('/')}){$relative=$entry.FullName.Substring('tools/net10.0/any/'.Length);Need ($relative -notmatch '(^|/)\.\.(/|$)|\\|:' -and $expected.Add($relative)) 'Unsafe/duplicate package payload.';$stream=$entry.Open();try{$hash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream)).ToLowerInvariant()}finally{$stream.Dispose()};Need ((Hash (Canonical (Join-Path $payload $relative))) -ceq $hash) 'Restored package/Web differs from approved bytes.'};Need (@(Get-ChildItem -LiteralPath $payload -File -Recurse -Force).Count -eq $expected.Count) 'Extra restored tool/Web files.'}finally{$zip.Dispose()}
@@ -213,5 +218,5 @@ try{
  $success=$true
 }finally{
  Check-Host
- @{schemaVersion=1;status=$(if($success){'passed'}else{'stopped'});targetRoot=$root;selectedVersion=$version;hostEqual=$true;action=$Action;mode=$Mode;utc=[DateTimeOffset]::UtcNow.ToString('O')}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $bootstrap 'closeout.json') -Encoding utf8NoBOM
+ @{schemaVersion=1;status=$(if($success){'passed'}else{'stopped'});targetRoot=$root;selectedVersion=$version;selectedDotnet=$dotnet;selectedSdk=$sdk;cacheDirectory=$cache;hostEqual=$true;action=$Action;mode=$Mode;utc=[DateTimeOffset]::UtcNow.ToString('O')}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $bootstrap 'closeout.json') -Encoding utf8NoBOM
 }

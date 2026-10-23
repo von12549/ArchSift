@@ -7,6 +7,7 @@ $ErrorActionPreference='Stop'
 $before=Get-ArchSiftHostHash
 $repository=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $feedPath=[IO.Path]::GetFullPath($Feed)
+$flatFeed=[IO.Directory]::Exists($feedPath) -and @(Get-ChildItem -LiteralPath $feedPath -File -Filter '*.nupkg').Count -gt 0
 if($feedPath.StartsWith($repository+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'CI feed must be outside source.'}
 $work=Join-Path ([IO.Path]::GetDirectoryName($feedPath)) ('framework-prerequisites-'+[Guid]::NewGuid().ToString('N'))
 [void][IO.Directory]::CreateDirectory($work)
@@ -43,14 +44,20 @@ try{
         if($pack.name -notmatch '^[A-Za-z0-9_.]+$'){throw 'Unsafe SDK targeting-pack identity.'}
         $id=$pack.name.ToLowerInvariant();$name=$id+'.'+$pack.version+'.nupkg'
         $existing=@(Get-ChildItem -LiteralPath $feedPath -Recurse -File -Filter $name)
-        if(-not $existing.Count){
-            $target=Join-Path $feedPath $name
+        $target=if($flatFeed){Join-Path $feedPath $name}else{Join-Path $feedPath ($id+'/'+$pack.version+'/'+$name)}
+        if(-not (Test-Path -LiteralPath $target -PathType Leaf)){
+            $archive=if($existing.Count){$existing[0].FullName}else{Join-Path $work $name}
+            if(-not $existing.Count){
             $url='https://api.nuget.org/v3-flatcontainer/'+$id+'/'+$pack.version+'/'+$name
-            Invoke-WebRequest -Uri $url -OutFile $target
+            Invoke-WebRequest -Uri $url -OutFile $archive
             if((Get-ArchSiftHostHash)-cne$before){throw 'Host drift after explicit prerequisite acquisition; no repair.'}
-            $existing=@(Get-Item -LiteralPath $target)
+            }
+            # Let NuGet preserve the feed layout and create hierarchical nuspec/hash
+            # sidecars. A top-level archive would hide an existing v3 cache/source.
+            [void](Invoke-CiDotnet @('nuget','push',$archive,'--source',$feedPath,'--no-symbols'))
         }
-        foreach($archive in $existing){$acquired.Add(@{id=$pack.name;version=$pack.version;path=$archive.FullName;sha256=(Get-FileHash -LiteralPath $archive.FullName -Algorithm SHA256).Hash.ToLowerInvariant()})}
+        if(-not (Test-Path -LiteralPath $target -PathType Leaf)){throw 'NuGet did not import the SDK targeting archive into the expected feed layout.'}
+        $acquired.Add(@{id=$pack.name;version=$pack.version;path=$target;sha256=(Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant()})
     }
     ConvertTo-Json -InputObject $acquired.ToArray() -Depth 8|Set-Content -LiteralPath (Join-Path $work 'framework-archives.json') -Encoding utf8NoBOM
     $packs.Values|Sort-Object name,version|ConvertTo-Json

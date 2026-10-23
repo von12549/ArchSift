@@ -8,6 +8,35 @@ namespace ArchSift.IntegrationTests;
 
 public sealed class WorkspaceTests
 {
+    [Fact]
+    public async Task ProjectEntryKeepsNormalDefaultCacheWhenIsolatingSdkHome()
+    {
+        using var fixture = new WorkspaceFixture();
+        Directory.CreateDirectory(Path.Combine(fixture.Target, ".config"));
+        File.WriteAllText(Path.Combine(fixture.Target, "NuGet.Config"), "<configuration><packageSources><clear/></packageSources></configuration>");
+        File.WriteAllText(Path.Combine(fixture.Target, ".config", "dotnet-tools.json"), JsonSerializer.Serialize(new
+        {
+            version = 1, isRoot = true, tools = new Dictionary<string, object>
+            { ["archsift.cli"] = new { version = typeof(WorkspaceConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion.Split('+')[0], commands = new[] { "archsift" }, rollForward = false } }
+        }));
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root is not null && !File.Exists(Path.Combine(root.FullName, "ArchSift.slnx"))) root = root.Parent;
+        Assert.NotNull(root);
+        var callerHome = Path.Combine(fixture.Root, "caller-home");
+        var start = new ProcessStartInfo("pwsh") { WorkingDirectory = fixture.Root, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
+        foreach (var arg in new[] { "-NoProfile", "-NonInteractive", "-File", Path.Combine(root.FullName, "templates", "project", ".archsift", "start.ps1"), "-Config", fixture.Config, "-Action", "Doctor", "-NoBrowser" }) start.ArgumentList.Add(arg);
+        start.Environment["DOTNET_CLI_HOME"] = callerHome; start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
+        start.Environment["APPDATA"] = Path.Combine(fixture.Root, "appdata"); start.Environment.Remove("NUGET_PACKAGES");
+        using var process = Process.Start(start)!; var output = process.StandardOutput.ReadToEndAsync(); var error = process.StandardError.ReadToEndAsync();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        try { await process.WaitForExitAsync(timeout.Token); Assert.NotEqual(0, process.ExitCode); var diagnostic = await output + await error;
+            Assert.Contains("Pinned tool is not restored", diagnostic);
+            var closeout = Assert.Single(Directory.GetFiles(fixture.State, "closeout.json", SearchOption.AllDirectories));
+            using var record = JsonDocument.Parse(File.ReadAllBytes(closeout));
+            Assert.Equal(Path.Combine(callerHome, ".nuget", "packages"), record.RootElement.GetProperty("cacheDirectory").GetString());
+            Assert.False(Directory.Exists(callerHome)); }
+        finally { if (!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(CancellationToken.None); } }
+    }
     [Theory]
     [InlineData("state")]
     [InlineData("runtime")]

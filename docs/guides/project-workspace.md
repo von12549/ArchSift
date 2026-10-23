@@ -21,6 +21,8 @@ pwsh -NoProfile -File ./.archsift/start.ps1 -Action Doctor
 
 An absolute script path works from another current directory. The entry deliberately uses the resolved project root for SDK, tool-manifest and standard NuGet resolution. PowerShell 7.4 or later is required. A generic host needs stable SDK >=10.0.0 and compatible .NET 10 Core and ASP.NET shared frameworks; a newer SDK by itself is insufficient. Explicit `runtime.dotnetPath` is authoritative. Otherwise discovery consults existing `DOTNET_HOST_PATH`, `DOTNET_ROOT_X64`, `DOTNET_ROOT` and PATH. Invalid implicit hints may be skipped; an invalid explicit host is an error. Existing `global.json` remains authoritative. The entry does not install an SDK or change persisted environment settings.
 
+Current project-entry/UI machine qualification covers Windows x64. Linux CLI regression is separate and does not establish Linux project-entry or user-configuration inheritance compatibility.
+
 ## Sources, cache and local paths
 
 For ordinary NuGet network restore, select `nuget.mode: "configured"` and `allowNetwork: true`. Leave `configFile` null for standard NuGet configuration inheritance, or select an explicit standard configuration file. NuGet handles sources, source mapping and credentials. An unavailable exact package version fails without switching versions or silently enabling another source. Use `-InteractiveRestore` only when explicit interactive provider authentication is needed; Doctor does not restore or prompt.
