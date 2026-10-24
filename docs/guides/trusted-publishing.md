@@ -1,0 +1,36 @@
+# Trusted Publishing preparation for ArchSift 0.11.0
+
+Status: preparation only, authorized on 2026-10-24. NuGet account username XiaolongFeng and completed email verification were reported by the user. Published/Unlisted lists are empty, and the upload form has no warning. The user reported an empty Trusted Publishing policy list. Five public version indexes returned 404; this does not prove name availability, prefix ownership or publication rights.
+
+## What the merged workflow can do
+
+[publish-nuget.yml](../../.github/workflows/publish-nuget.yml) accepts manual dispatch only, on main in von12549/ArchSift. It has contents/actions read permissions, runs on a GitHub-hosted runner, and verifies the reviewed reference and original package-source CI. It has no inputs, environment job, id-token permission, NuGet login, token exchange, package upload/download, tag, release or installer step. Configuring the proposed trust policy does not make this preparation workflow a publisher. It cannot test OIDC authentication or prove live policy enforcement.
+
+The separate preparation-check workflow exercises contract and package-byte negatives on Windows/Ubuntu. Existing product verification/workbench workflows are unchanged. No workflow uses an IFX self-hosted runner. No source package is rebuilt: accepted final-build-02 submissions remain tied to source 8b721f44e90a41285fa74a6f72576c7f6996ef7d and tree 2c18d18145beb52a917a3884ddd7f442ec486967. [The reference](../releases/0.11.0/trusted-publishing-reference.json) records all five hashes, accepted-preview hashes and original PR/main CI. The preparation workflow commit is a different identity, never represented as the package source.
+
+After merge, the maintainer may manually run “NuGet release preflight (publication disabled)” from main. Its result distinguishes source/CI checks from package-byte verification. It does not download local submissions or claim their bytes were checked on the hosted runner. Local actual-package verification uses Test-NuGetReleasePreflight.ps1 with PackageDirectory pointing to the accepted snapshot; neither mode executes the packages.
+
+## Operator configuration: one reviewed step at a time
+
+The user, not the agent, creates and saves the GitHub environment and NuGet policy. First configure GitHub, report the readback, then receive the NuGet instructions. Do not obtain a token or run a publishing job under this preparation authority.
+
+1. GitHub repository Settings → Environments → New environment: name nuget-release. Set Required reviewers to the maintainer account von12549. For a single-maintainer release, leave “Prevent self-review” off if the maintainer also dispatches; this still requires a separate manual approval click. If a second authorized reviewer is available, enabling prevention requires that other person's approval. Do not invent another reviewer.
+2. Select deployment branches/tags explicitly: allow branch main only, no tags. Do not use “Protected branches only”: the current repository has no branch protection, so that setting would not restrict to main. Disable administrator bypass. Add no secrets, credentials or environment variables. If the UI lacks any required control or an existing environment differs, stop and review the actual state; do not silently weaken the proposed protection.
+3. After GitHub readback is reviewed, NuGet.org → username → Trusted Publishing → add a GitHub policy. Suggested policy name, if requested: ArchSift-NuGet-release. Owner: XiaolongFeng; Repository Owner: von12549; Repository: ArchSift; Workflow File: publish-nuget.yml (filename only, without .github/workflows/); Environment: nuget-release. Limit package scope to ArchSift.* and Push new packages and package versions. No Unlist permission is required. Review actual UI fields before saving. A scope pattern grants no additional package-name ownership.
+4. Report only nonsecret policy fields/status. A temporary activation warning is not a successful authentication test; record any expiry/status shown. Do not share passwords, MFA codes, OIDC tokens or temporary API keys. Do not press any test/publish control that acquires credentials.
+
+Creating these two configurations is separate from authorizing NR05–NR08. Their actual pending/completed status must be read back; this guide is not evidence that either exists. Policy details must match the eventual publishing job's workflow filename/environment exactly. Renaming either requires deliberate coordinated updates.
+
+## Future separately authorized activation
+
+A subsequent reviewed PR must introduce the environment-gated publishing job, job-scoped id-token permission and a full-commit-pinned official NuGet login action. Preparation contains no dormant publisher to enable with an input. Before that PR/release, verify the environment's reviewer/main-only/no-bypass rules and actual NuGet policy readback. Require a new explicit release decision for the fixed account, original source, exact submission hashes, withdrawal plan and transaction.
+
+Securely transfer the accepted unsigned submissions to an identified same-repository artifact, pin its run/artifact/archive digest and verify each package before any credential request. Existing regression artifacts do not contain this approved submission set. This transfer and any future artifact upload are not performed by preparation. Do not rebuild or substitute different same-version archives. Original source CI and new publishing-workflow CI are separate obligations. Any package changes require new qualification and human acceptance.
+
+After approval, request short-lived credentials immediately before sequential pushes (Contracts, Core, ArchUnit, Testing, Cli). Validate every per-ID state and stop on conflicts/partial publication; do not use skip-duplicate as an identity check. Verify repository signatures and all nonsignature payload entries from actual served packages, then cold public consumption, a regenerated offline set and GitHub release downloads. Never replace live IFX unsigned approvals/cache automatically. NR05–NR08, package pushes, tags/releases, installer distribution and host/account mutation by the agent remain outside current authority.
+
+## Rollback and evidence
+
+Before publication, a normal inverse PR can remove preparation; preserve the accepted asset snapshot and earlier CI/acceptance. If the user has already created trust configuration, the user can disable/delete the exact policy and remove the exact environment after checking that nothing else uses it; preserve readback first. Never broaden cleanup or alter IFX checks, runner registration, host environment/Profiles or historical assets. Disabling a trust policy is not package withdrawal and does not retroactively revoke an already issued temporary credential; future incidents require credential/state assessment. After publication, the separate release plan governs authorized unlisting/deprecation and a new correction version; published bytes/tags are immutable.
+
+Official references: [NuGet Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing), [GitHub environment protection](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments), [GitHub workflow security](https://docs.github.com/en/actions/reference/security/secure-use).
