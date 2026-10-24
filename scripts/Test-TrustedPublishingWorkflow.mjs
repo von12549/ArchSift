@@ -40,12 +40,16 @@ const mutations = [
  w => { w.concurrency['cancel-in-progress'] = true; },
  w => { w.jobs['public-verification'].permissions = { 'id-token': 'write' }; },
  w => { w.jobs['public-verification'].env.NUGET_API_KEY = '${{ steps.login.outputs.NUGET_API_KEY }}'; },
- w => { w.jobs['public-verification'].steps[3].run += '\ngh release create v0.11.0'; }
+ w => { w.jobs['public-verification'].steps[3].run += '\ngh release create v0.11.0'; },
+ w => { w.jobs.preflight.steps[5].if = 'false'; },
+ w => { w.jobs.preflight.steps[5].run = 'echo unverified'; },
+ w => { w.jobs.preflight.steps[5].env.NUGET_API_KEY = '${{ secrets.NUGET_API_KEY }}'; },
+ w => { w.jobs.preflight.steps[5].run += '\nNuGet/login'; }
 ];
 for (const [i, mutate] of mutations.entries()) { const w = parseWorkflow(workflow); mutate(w); assert.throws(() => checkWorkflow(stringify(w)), `Unsafe workflow mutation ${i}`); }
 assert.throws(() => checkWorkflow(workflow + '\npermissions:\n  contents: write\n'));
 const policy = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/publishing-activation.json')));
-assert.equal(policy.realAssetTransferEnabled, false); assert.equal(policy.publicationEnabled, false);
+assert.equal(policy.realAssetTransferEnabled, true); assert.equal(policy.publicationEnabled, false);
 assert.equal(policy.localGuardDotnet, 'stopped'); assert.equal(policy.newInstaller, false);
 assert.equal(sha256(fs.readFileSync(path.join(root, policy.originalReference))), policy.originalReferenceSha256);
 const preflight = fs.readFileSync(path.join(root, 'scripts/Test-NuGetReleasePreflight.ps1'), 'utf8');
@@ -54,7 +58,7 @@ const hosted = fs.readFileSync(path.join(root, 'scripts/Invoke-HostedNuGet.ps1')
 assert.doesNotMatch(hosted, /(?:SetEnvironmentVariable|setx\b|Set-ItemProperty|--api-key|--skip-duplicate)/i);
 assert.match(hosted, /Environment\['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'\]='0'/);
 assert.match(hosted, /Get-ArchSiftHostHash/);
-console.log(`Passed structural YAML release boundary, ${mutations.length + 1} rejected mutations and committed closed locks.`);
+console.log(`Passed structural YAML release boundary, ${mutations.length + 1} rejected mutations and the committed closed publication lock.`);
 
 const licenses = JSON.parse(fs.readFileSync(path.join(root, 'scripts/nuget-release/licenses/manifest.json')));
 for (const license of licenses.packages) {

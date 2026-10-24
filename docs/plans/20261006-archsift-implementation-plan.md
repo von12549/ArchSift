@@ -1,3 +1,7 @@
+## TA04 public original-byte preview (2026-10-25)
+
+TA04 implementation/tests/PR/CI/merge and the exact five accepted original-package upload to an independent public data branch are authorized; see [preview plan](20261025-trusted-publishing-preview.md). Enable transfer only; keep publicationEnabled false and repository switch closed. No NuGet credentials/push, tag/Release, installer, local Guard/dotnet or persistent host changes. Preserve original assets/evidence and IFX gates. Earlier checkpoints below retain their timing.
+
 ## Trusted Publishing activation preparation (2026-10-25)
 
 TA00-TA03 implementation/tests/PR/CI/merge authorized; see [activation plan](20261025-trusted-publishing-activation.md). Real asset transfer and publication remain committed-locked false; repository switch stays closed. No local Guard/dotnet, credentials, NuGet push, tag/Release, installer or host mutation. Original acceptance/reference and IFX policies remain unchanged.
