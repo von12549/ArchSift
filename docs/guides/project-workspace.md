@@ -1,6 +1,6 @@
 # Project-local package workspace
 
-Version: 0.11.0 candidate. This guide describes the new NuGet workspace route. Candidate packages require the reviewed candidate source; they have not been publicly published or independently accepted by the user. Existing published 0.10.1 bytes remain unchanged.
+Version: 0.11.0. This guide describes the NuGet workspace route. The earlier implemented package passed machine and user acceptance; rebuilt formal-release packages require their own final evidence and user acceptance. Public availability is established only by the matching publication record. Existing published 0.10.1 bytes remain unchanged. Follow [NuGet first use](nuget-first-use.md) to adopt missing project files before initialization; workspace init initializes external state and does not scaffold the project.
 
 ## Project files
 
