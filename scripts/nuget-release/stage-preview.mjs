@@ -6,6 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { checkReference, checkRequest, checkPackages, checkEnvironment, checkCiRun, requireThat, sha256 } from './model.mjs';
 
+export function checkStagingRepository(repo, policy) {
+  requireThat(repo.id === policy.repositoryId && repo.owner?.id === policy.ownerId && repo.full_name === policy.repository, 'Public staging repository identity differs');
+}
 export function assertPreviewOnly(policy, releaseSwitch) {
   requireThat(policy.realAssetTransferEnabled === true && policy.publicationEnabled === false, 'Only separately authorized transfer with publication locked is allowed');
   requireThat(releaseSwitch === '' || releaseSwitch === 'false', 'Repository publication switch must remain closed');
@@ -42,19 +45,23 @@ async function main() {
   const name = git(['config', '--get', 'user.name']), email = git(['config', '--get', 'user.email']);
   requireThat(name === 'Xiaolong Feng' && email === 'xiaolong@cxisoftware.com.au', 'Human primary author differs');
   const api = (endpoint, input) => {
-    requireThat(endpoint.startsWith('repos/von12549/ArchSift/'), 'Fixed repository only');
+    requireThat(endpoint === 'repos/von12549/ArchSift' || endpoint.startsWith('repos/von12549/ArchSift/'), 'Fixed repository only');
     const command = ['api', '--hostname', 'github.com', endpoint];
     if (input) command.push('--method', 'POST', '--input', input);
     try { return JSON.parse(execFileSync('gh', command, { encoding: 'utf8', timeout: 120_000, maxBuffer: 16_000_000, windowsHide: true })); }
     catch { throw new Error('GitHub operation failed; preserve ledger and reconcile before retry'); }
   };
   const base = 'repos/von12549/ArchSift/';
+  checkStagingRepository(api(base.slice(0, -1)), policy);
   requireThat(api(base + 'commits/main').sha === args.workflow, 'Main moved before data transfer');
+  const source = api(base + 'git/commits/' + reference.sourceCommit);
+  requireThat(source.sha === reference.sourceCommit && source.tree.sha === reference.sourceTree, 'Original source tree differs');
+  for (const ci of reference.sourceCi) checkCiRun(api(base + 'actions/runs/' + ci.runId), { path: '.github/workflows/verify.yml', sha: ci.headSha, event: ci.event });
   const variable = api(base + 'actions/variables').variables.find(v => v.name === policy.versionSwitch);
   assertPreviewOnly(policy, variable?.value ?? '');
   checkEnvironment(api(base + 'environments/nuget-release'), api(base + 'environments/nuget-release/deployment-branch-policies'), policy);
-  const merged = api(base + `commits/${args.workflow}/pulls?per_page=100`).filter(p => p.state === 'closed' && p.merged_at && p.merge_commit_sha === args.workflow && p.base?.ref === 'main' && p.head?.repo?.full_name === policy.repository);
-  requireThat(merged.length === 1, 'Exact reviewed merged PR missing');
+  const merged = api(base + `commits/${args.workflow}/pulls?per_page=100`).filter(p => p.state === 'closed' && p.merged_at && p.merge_commit_sha === args.workflow && p.base?.ref === 'main' && p.base?.repo?.full_name === policy.repository && p.head?.repo?.full_name === policy.repository);
+  requireThat(merged.length === 1 && /^[a-f0-9]{40}$/.test(merged[0].head.sha), 'Exact reviewed merged PR missing');
   for (const workflow of ['verify.yml', 'trusted-publishing-checks.yml', 'session-baseline-checks.yml']) for (const [sha, event] of [[args.workflow, 'push'], [merged[0].head.sha, 'pull_request']]) {
     const candidates = api(base + `actions/workflows/${workflow}/runs?head_sha=${sha}&event=${event}&per_page=100`).workflow_runs.filter(r => r.head_sha === sha && r.event === event).sort((a,b) => b.id-a.id);
     requireThat(candidates.length > 0, 'PR/main CI missing'); checkCiRun(candidates[0], { path: `.github/workflows/${workflow}`, sha, event });

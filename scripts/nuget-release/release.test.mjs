@@ -1,4 +1,4 @@
-import { assertPreviewOnly, createPreviewData } from './stage-preview.mjs';
+import { assertPreviewOnly, createPreviewData, checkStagingRepository } from './stage-preview.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -142,3 +142,7 @@ test('preview rejects tampered package despite a freshly hashed outer ZIP',async
  const f=await previewFixture();const b=Buffer.from(f.prepared.files.get(f.r.packages[0].file));b[0]^=1;f.prepared.files.set(f.r.packages[0].file,b);const raw=zip([...f.prepared.files]);
  await assert.rejects(checkPreviewArtifact(raw,{...f.a,size_in_bytes:raw.length,digest:`sha256:${sha256(raw)}`},f.r,f.p,f.c,sha256(raw)));
 });
+
+const stagingRepo={id:policy.repositoryId,owner:{id:policy.ownerId},full_name:policy.repository};
+test('staging verifies actual public repository IDs before any write',()=>checkStagingRepository(stagingRepo,policy));
+for(const change of [{id:1},{owner:{id:1}},{full_name:'other/ArchSift'},{id:String(policy.repositoryId)}])test('reject mismatched staging repository '+JSON.stringify(change),()=>assert.throws(()=>checkStagingRepository({...stagingRepo,...change},policy)));
