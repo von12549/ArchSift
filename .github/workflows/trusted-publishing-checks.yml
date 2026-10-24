@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   preparation:
     strategy:
@@ -20,8 +21,16 @@ jobs:
           persist-credentials: false
       - name: Reject unsafe workflow changes and exercise release preflight negatives
         shell: pwsh -NoProfile -NonInteractive -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           $ErrorActionPreference = 'Stop'
           & node ./scripts/Test-TrustedPublishingWorkflow.mjs
           if ($LASTEXITCODE -ne 0) { throw 'Preparation workflow boundary failed' }
           & ./scripts/Test-NuGetReleasePreflightCases.ps1 -OutputRoot (Join-Path $env:RUNNER_TEMP 'trusted-publishing-tests')
+      - name: Resolve the hosted GitHub CLI and verify original source CI read-only
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          & ./scripts/Test-NuGetReleasePreflight.ps1 -CheckSourceCi
