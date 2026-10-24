@@ -1,0 +1,24 @@
+name: Session PATH baseline checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  baseline:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Verify synthetic session identity, explicit confirmation and exact PATH stops
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        run: |
+          & ./scripts/Test-SessionHostBaselineCases.ps1 -OutputRoot (Join-Path $env:RUNNER_TEMP 'session-baseline-tests') -CheckHostedCapture
