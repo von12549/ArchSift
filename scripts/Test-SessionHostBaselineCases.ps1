@@ -71,6 +71,10 @@ try {
  if(Test-ArchSiftNoProfileLaunch @('pwsh','-Command','script','-NoProfile')){throw 'Script argument must not impersonate startup NoProfile.'}
  $results.Add(@{name='actual-NoProfile-startup-option';status='passed';expected='accept'})
  $results.Add(@{name='NoProfile-after-command-is-not-startup-policy';status='passed';expected='reject'})
+ if(Test-ArchSiftNoProfileLaunch @('pwsh','script.ps1','-NoProfile')){throw 'Implicit script file must end startup-option scanning.'}
+ if(-not(Test-ArchSiftNoProfileLaunch @('pwsh','-NoLogo','-NonInteractive','-NoProfile','-File','test.ps1'))){throw 'Safe leading switch handling failed.'}
+ $results.Add(@{name='NoProfile-after-implicit-script-file-rejected';status='passed';expected='reject'})
+ $results.Add(@{name='NoProfile-after-safe-leading-switches';status='passed';expected='accept'})
  $confirm=[IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Confirm-SessionHostBaseline.ps1'))
  if($confirm -notmatch 'Read-Host' -or $confirm -notmatch 'CONFIRM ' -or $confirm -match '\[switch\]|-Force'){throw 'Confirmation must remain an explicit operator interaction.'}
  foreach($name in @('SessionHostBaseline.ps1','New-SessionHostBaselineCandidate.ps1','Confirm-SessionHostBaseline.ps1','Test-SessionHostBaseline.ps1')) {

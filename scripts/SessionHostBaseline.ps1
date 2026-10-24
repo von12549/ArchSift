@@ -112,12 +112,12 @@ function Compare-ArchSiftHostOperation($Before,$After) {
     } catch {return $result}
 }
 function Test-ArchSiftNoProfileLaunch([string[]]$Arguments) {
-    $found=$false
     foreach($argument in @($Arguments|Select-Object -Skip 1)) {
-        if($argument -imatch '^-(?:File|Command|CommandWithArgs|EncodedCommand|f|c|e|ec)$'){break}
-        if($argument -ieq '-NoProfile'){$found=$true}
+        if($argument -ieq '-NoProfile'){return $true}
+        if($argument -imatch '^-(?:NoLogo|NonInteractive|STA|MTA)$'){continue}
+        return $false
     }
-    return $found
+    return $false
 }
 function Get-ArchSiftSessionSnapshot([string]$LaunchPolicyPath) {
     $policy=Read-ArchSiftBaselineDocument $LaunchPolicyPath
