@@ -1,3 +1,5 @@
+Completion update, 2026-10-24: NR00–NR04 completed through PR #27 at source 8b721f44e90a41285fa74a6f72576c7f6996ef7d, normal PR/main CI and final-byte machine qualification. The user accepted both entry modes, correct target/version/inventory and safe shutdown, usability 4/5, no reported defects. Accepted final-build-02 submissions are unchanged. Trusted Publishing preparation is separately authorized; see [new scope](20261024-trusted-publishing-preparation.md). Account environment/policy configuration is user-operated; no token, push, tag, release or installer is authorized. The original planning checkpoint below retains its timing.
+
 # ArchSift 0.11.0 NuGet preparation: NR00–NR04
 
 Authorized on 2026-10-24: necessary documentation/tooling changes, tests, normal PR/CI/merge and final asset/publication-preview preparation. No public package push, tag, GitHub release/upload, new installer or live IFX deployment change is authorized. Final visual/hands-on acceptance belongs to the user.

@@ -1,0 +1,26 @@
+name: NuGet release preflight (publication disabled)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nuget-release-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'von12549/ArchSift' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check reviewed release identity and original source CI (no package download)
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & ./scripts/Test-NuGetReleasePreflight.ps1 -CheckSourceCi
+          'Preflight only: no environment job, OIDC permission, NuGet login, push, tag or release.' >> $env:GITHUB_STEP_SUMMARY
