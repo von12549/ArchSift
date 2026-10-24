@@ -61,3 +61,12 @@ for (const license of licenses.packages) {
   assert.equal(sha256(fs.readFileSync(path.join(root, 'scripts/nuget-release/licenses', license.file))), license.sha256);
   assert.equal(sha256(fs.readFileSync(path.join(root, 'scripts/nuget-release/node_modules', license.name, 'LICENSE'))), license.sha256);
 }
+
+function checkHostedHttpBoundary(text) {
+  assert.ok(text.includes("Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='1'"));
+  assert.ok(text.includes("Environment['NUGET_EXE_NO_PROMPT']='true'"));
+}
+checkHostedHttpBoundary(hosted);
+assert.throws(() => checkHostedHttpBoundary(hosted.replace("Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='1'", "Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='6'")));
+assert.throws(() => checkHostedHttpBoundary(hosted.replace("Environment['NUGET_EXE_NO_PROMPT']='true'", "Environment['NUGET_EXE_NO_PROMPT']='false'")));
+console.log('Passed child HTTP attempt/prompt boundary and 2 rejected mutations.');

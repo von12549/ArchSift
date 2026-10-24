@@ -23,6 +23,8 @@ $start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
 $start.Environment['NUGET_PACKAGES']=Join-Path $childRoot 'packages'
 $start.Environment['NUGET_HTTP_CACHE_PATH']=Join-Path $childRoot 'http-cache'
 $start.Environment['DOTNET_CLI_UI_LANGUAGE']='en-US'
+$start.Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='1'
+$start.Environment['NUGET_EXE_NO_PROMPT']='true'
 $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
 foreach($key in @('GH_TOKEN','ACTIONS_ID_TOKEN_REQUEST_TOKEN','ACTIONS_ID_TOKEN_REQUEST_URL','NUGET_API_KEY')){[void]$start.Environment.Remove($key)}
 if($Operation -ceq 'Push'){
