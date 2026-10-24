@@ -38,7 +38,7 @@ export function checkWorkflow(text) {
   exactKeys(a, ['if','runs-on','timeout-minutes','outputs','steps']);
   assert.equal(a.if, gate); assert.equal(a['runs-on'], 'ubuntu-latest'); assert.equal(a['timeout-minutes'], 10);
   assert.deepEqual(a.outputs, { publish_ready: '${{ steps.prepare.outputs.publish_ready }}', has_inputs: '${{ steps.prepare.outputs.has_inputs }}', artifact_id: '${{ steps.upload.outputs.artifact-id }}', artifact_sha256: '${{ steps.upload.outputs.artifact-digest }}' });
-  assert.equal(a.steps.length, 5);
+  assert.equal(a.steps.length, 6);
   assert.deepEqual(a.steps[0], { uses: pins.checkout, with: { 'persist-credentials': false } });
   assert.deepEqual(a.steps[1], { name: 'Install locked release parsers without lifecycle scripts', run: npm });
   const prepare = a.steps[2]; exactKeys(prepare, ['name','id','shell','env','run']);
@@ -47,6 +47,7 @@ export function checkWorkflow(text) {
   assert.equal(prepare.run.trim(), ["$ErrorActionPreference = 'Stop'", '. ./scripts/HostState.ps1', '$before = Get-ArchSiftHostHash', 'try {', '  & node ./scripts/nuget-release/driver.mjs prepare', "  if ($LASTEXITCODE -ne 0) { throw 'Release preparation gate failed' }", '} finally {', "  if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift; no repair performed' }", '}'].join('\n'));
   assert.deepEqual(a.steps[3], { uses: pins.upload, id: 'upload', if: "steps.prepare.outputs.has_inputs == 'true'", with: { name: 'archsift-0.11.0-reviewed-submissions', path: '${{ runner.temp }}/archsift-release-inputs', 'if-no-files-found': 'error', 'retention-days': 7 } });
   assert.deepEqual(a.steps[4], { name: 'Record immutable artifact identity for operator review', if: "steps.prepare.outputs.has_inputs == 'true'", env: { ARTIFACT_ID: '${{ steps.upload.outputs.artifact-id }}', ARTIFACT_SHA256: '${{ steps.upload.outputs.artifact-digest }}' }, run: 'printf \'%s\\n\' "Artifact ID=$ARTIFACT_ID SHA256=$ARTIFACT_SHA256" >> "$GITHUB_STEP_SUMMARY"' });
+  assert.deepEqual(a.steps[5], { name: 'Independently re-download and verify the exact preview ZIP', if: "steps.prepare.outputs.has_inputs == 'true' && inputs.mode == 'preview'", shell: 'pwsh -NoProfile -NonInteractive -File {0}', env: { GH_TOKEN: '${{ github.token }}', RELEASE_ARTIFACT_ID: '${{ steps.upload.outputs.artifact-id }}', RELEASE_ARTIFACT_SHA256: '${{ steps.upload.outputs.artifact-digest }}' }, run: ["$ErrorActionPreference = 'Stop'", '. ./scripts/HostState.ps1', '$before = Get-ArchSiftHostHash', 'try {', '  & node ./scripts/nuget-release/driver.mjs verify-preview', "  if ($LASTEXITCODE -ne 0) { throw 'Preview artifact verification failed' }", '} finally {', "  if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift; no repair performed' }", '}', ''].join('\n') });
   exactKeys(b, ['needs','if','environment','runs-on','timeout-minutes','permissions','env','steps']);
   assert.equal(b.needs, 'preflight'); assert.equal(b.if, publishGate); assert.equal(b.environment, 'nuget-release');
   assert.equal(b['runs-on'], 'ubuntu-latest'); assert.equal(b['timeout-minutes'], 45);

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { checkReference, checkContext, checkEnvironment, checkCiRun, checkRequest, checkPackages, checkArtifact, checkOwnerPage, readZip, publishSequential, requireThat, sha256 } from './model.mjs';
+import { checkReference, checkContext, checkEnvironment, checkCiRun, checkRequest, checkPackages, checkArtifact, checkPreviewArtifact, checkOwnerPage, readZip, publishSequential, requireThat, sha256 } from './model.mjs';
 import { GitHubReader, boundedResponse } from './github.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -67,13 +67,7 @@ async function artifactInputs() {
   requireThat(metadata.digest === `sha256:${e.RELEASE_ARTIFACT_SHA256}`, 'Approval artifact digest differs');
   const raw = await gh.artifact(id);
   requireThat(sha256(raw) === e.RELEASE_ARTIFACT_SHA256, 'Raw artifact ZIP digest differs');
-  const files = await readZip(raw, { maxTotal: 4_000_000, maxEntries: 7 });
-  const allowed = [...reference.packages.map(p => p.file), 'release-request.json', 'package-payload-manifest.json'].sort();
-  requireThat(JSON.stringify([...files.keys()].sort()) === JSON.stringify(allowed), 'Artifact file allowlist differs');
-  checkRequest(files.get('release-request.json'), c.requestSha256, reference, policy, c);
-  requireThat(sha256(files.get('package-payload-manifest.json')) === policy.payloadManifestSha256, 'Payload manifest differs');
-  await checkPackages(files, reference, JSON.parse(files.get('package-payload-manifest.json')));
-  return files;
+  return checkPreviewArtifact(raw, metadata, reference, policy, c, e.RELEASE_ARTIFACT_SHA256);
 }
 async function registryMissing() {
   for (const p of reference.packages) {
@@ -115,7 +109,7 @@ async function servedProof(p, originalFiles, scratch) {
 }
 async function main() {
   const command = process.argv[2];
-  requireThat(['prepare', 'validate-artifact', 'publish', 'verify-public'].includes(command), 'Unknown release command');
+  requireThat(['prepare', 'verify-preview', 'validate-artifact', 'publish', 'verify-public'].includes(command), 'Unknown release command');
   // This check precedes all archive transfer, credential use and child execution.
   await validateContext();
   const identity = { version: reference.version, packageSource: reference.sourceCommit, workflowCommit: c.sha, mode, publicationEnabled: policy.publicationEnabled, localGuardDotnet: 'stopped' };
@@ -130,6 +124,12 @@ async function main() {
     output('has_inputs', 'true'); output('publish_ready', mode === 'publish' ? 'true' : 'false');
     summary({ ...identity, requestSha256: c.requestSha256, dataCommit: c.dataCommit, packages: reference.packages, packageBytesVerified: true, credentialsAcquired: false });
     return;
+  }
+  if (command === 'verify-preview') {
+    requireThat(mode === 'preview' && policy.publicationEnabled === false && !e.NUGET_API_KEY && !e.ACTIONS_ID_TOKEN_REQUEST_TOKEN, 'Preview must have no publication authority or credentials');
+    await artifactInputs();
+    summary({ ...identity, status: 'passed-original-byte-preview-not-publication', sourceTree: reference.sourceTree, dataCommit: c.dataCommit, requestSha256: c.requestSha256, artifactId: Number(e.RELEASE_ARTIFACT_ID), artifactSha256: e.RELEASE_ARTIFACT_SHA256, payloadManifestSha256: policy.payloadManifestSha256, acceptanceSha256: reference.acceptedPreview.acceptanceSha256, packages: reference.packages, packageBytesVerified: true, credentialsAcquired: false, publicNugetPublication: false, publicationApproval: 'not-granted' });
+    console.log('Preview artifact independently verified: original package bytes and raw ZIP digest match; no credentials or NuGet publication.'); return;
   }
   requireThat(mode === 'publish', 'Only an approved publishing transaction may enter this job');
   const files = await artifactInputs();

@@ -1,9 +1,9 @@
-name: ArchSift NuGet release (closed preparation)
+name: ArchSift NuGet preview (publication closed)
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Preflight is safe by default; preview/publish remain committed-locked
+        description: Preflight by default; preview allowed, publication remains committed-locked
         type: choice
         options: [preflight, preview, publish]
         default: preflight
@@ -77,6 +77,23 @@ jobs:
           ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
           ARTIFACT_SHA256: ${{ steps.upload.outputs.artifact-digest }}
         run: printf '%s\n' "Artifact ID=$ARTIFACT_ID SHA256=$ARTIFACT_SHA256" >> "$GITHUB_STEP_SUMMARY"
+      - name: Independently re-download and verify the exact preview ZIP
+        if: steps.prepare.outputs.has_inputs == 'true' && inputs.mode == 'preview'
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          RELEASE_ARTIFACT_SHA256: ${{ steps.upload.outputs.artifact-digest }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          . ./scripts/HostState.ps1
+          $before = Get-ArchSiftHostHash
+          try {
+            & node ./scripts/nuget-release/driver.mjs verify-preview
+            if ($LASTEXITCODE -ne 0) { throw 'Preview artifact verification failed' }
+          } finally {
+            if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift; no repair performed' }
+          }
   publish:
     needs: preflight
     if: github.repository == 'von12549/ArchSift' && github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.mode == 'publish' && needs.preflight.outputs.publish_ready == 'true' && vars.ARCHSIFT_NUGET_PUBLISH_0110 == 'true'

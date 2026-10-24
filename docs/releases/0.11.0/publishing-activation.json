@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "version": "0.11.0",
-  "authorizedPreparation": "TA00-TA03",
-  "realAssetTransferEnabled": false,
+  "authorizedPreparation": "TA04",
+  "realAssetTransferEnabled": true,
   "publicationEnabled": false,
   "repository": "von12549/ArchSift",
   "repositoryId": 1407069697,
@@ -17,7 +17,7 @@
   "hostedSdk": "10.0.303",
   "originalReference": "docs/releases/0.11.0/trusted-publishing-reference.json",
   "originalReferenceSha256": "699d42ad54374320ee35305a183872c8f334c71753c43ebb54af593d8f5ed35c",
-  "futureAuthorization": "A separately reviewed change and operator approval must enable real asset transfer/publication. Repository switch alone cannot open these committed locks.",
+  "futureAuthorization": "TA04 authorizes only the exact five accepted originals and two public metadata files on an independent data branch and a verified preview artifact. Credentials/publication require a separately reviewed change and explicit operator authorization.",
   "localGuardDotnet": "stopped",
   "newInstaller": false
 }

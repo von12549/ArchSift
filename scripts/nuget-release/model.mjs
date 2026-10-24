@@ -137,3 +137,15 @@ export async function publishSequential({ reference, push, verifyServed, record,
   }
   return rows;
 }
+
+export async function checkPreviewArtifact(raw, metadata, reference, policy, context, expectedDigest) {
+  checkArtifact(metadata, context);
+  requireThat(/^[a-f0-9]{64}$/.test(expectedDigest) && metadata.digest === `sha256:${expectedDigest}` && sha256(raw) === expectedDigest && raw.length === metadata.size_in_bytes, 'Raw artifact ZIP digest/size differs');
+  const files = await readZip(raw, { maxTotal: 4_000_000, maxEntries: 7 });
+  const allowed = [...reference.packages.map(p => p.file), 'release-request.json', 'package-payload-manifest.json'].sort();
+  requireThat(JSON.stringify([...files.keys()].sort()) === JSON.stringify(allowed), 'Artifact file allowlist differs');
+  checkRequest(files.get('release-request.json'), context.requestSha256, reference, policy, context);
+  requireThat(sha256(files.get('package-payload-manifest.json')) === policy.payloadManifestSha256, 'Payload manifest differs');
+  await checkPackages(files, reference, JSON.parse(files.get('package-payload-manifest.json')));
+  return files;
+}

@@ -1,10 +1,11 @@
+import { assertPreviewOnly, createPreviewData, checkStagingRepository } from './stage-preview.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { checkContext, checkEnvironment, checkRequest, checkArtifact, checkPackages, checkOwnerPage, checkCiRun, publishSequential, sha256, readZip, safeEntry } from './model.mjs';
+import { checkContext, checkEnvironment, checkRequest, checkArtifact, checkPackages, checkOwnerPage, checkCiRun, checkPreviewArtifact, publishSequential, sha256, readZip, safeEntry } from './model.mjs';
 import { GitHubReader } from './github.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const reference = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/trusted-publishing-reference.json')));
@@ -12,9 +13,10 @@ const policy = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/
 const context = { repository: policy.repository, repositoryId: String(policy.repositoryId), ownerId: String(policy.ownerId), ref: 'refs/heads/main', sha: 'a'.repeat(40), mainSha: 'a'.repeat(40), runAttempt: '1', event: 'workflow_dispatch', workflowSha: '', dataCommit: '', requestSha256: '', releaseSwitch: '' };
 const active = { ...policy, realAssetTransferEnabled: true, publicationEnabled: true };
 const publishing = { ...context, workflowSha: context.sha, dataCommit: 'b'.repeat(40), requestSha256: 'c'.repeat(64), releaseSwitch: 'true' };
-test('default preflight works with committed locks closed', () => checkContext(context, policy, 'preflight'));
+test('default preflight works with publication locked', () => checkContext(context, policy, 'preflight'));
 test('even a true repository switch cannot open committed publication lock', () => assert.throws(() => checkContext(publishing, policy, 'publish')));
-test('even preview cannot read real assets under TA00-TA03', () => assert.throws(() => checkContext(publishing, policy, 'preview')));
+test('TA04 permits exact preview inputs while publication stays locked', () => checkContext(publishing, policy, 'preview'));
+test('disabled transfer still rejects preview', () => assert.throws(() => checkContext(publishing, {...policy,realAssetTransferEnabled:false}, 'preview')));
 test('separately enabled synthetic publication model accepts exact context', () => checkContext(publishing, active, 'publish'));
 for (const [name, change, mode] of [
   ['wrong repo', {repository: 'other/ArchSift'}, 'preflight'],
@@ -93,9 +95,54 @@ test('ambiguous duplicate gallery owner regions fail closed',()=>assert.throws((
 test('artifact redirect does not leak GitHub token to storage',async()=>{const calls=[];const reader=new GitHubReader('FAKE-GH-TOKEN',async(url,options)=>{calls.push({url:String(url),options});if(calls.length===1)return new Response(null,{status:302,headers:{location:'https://example.blob.core.windows.net/x?sig=redacted'}});return new Response('zip');});assert.equal((await reader.artifact(1)).toString(),'zip');assert.ok(calls[0].options.headers.Authorization);assert.equal(calls[1].options.headers,undefined);});
 test('artifact redirect to arbitrary host is rejected',async()=>{const reader=new GitHubReader('fake',async()=>new Response(null,{status:302,headers:{location:'https://evil.example/x'}}));await assert.rejects(reader.artifact(1));});
 test('GitHub reader rejects mutation and arbitrary endpoint paths',async()=>{const reader=new GitHubReader('fake',async()=>{throw new Error('must not call');});await assert.rejects(reader.json('repos/other/repo/actions'));});
-for(const mode of ['preflight','preview','publish'])test(`real driver ${mode} under closed scope never accesses token/push/asset endpoints`,()=>{
+for(const mode of ['preflight','preview','publish'])test(`real driver ${mode} with publication locked and no staged identity never accesses token/push/asset endpoints`,()=>{
  const child={...process.env,GITHUB_ACTIONS:'true',RUNNER_ENVIRONMENT:'github-hosted',GITHUB_REPOSITORY:policy.repository,GITHUB_REPOSITORY_ID:String(policy.repositoryId),GITHUB_REPOSITORY_OWNER_ID:String(policy.ownerId),GITHUB_REF:'refs/heads/main',GITHUB_SHA:context.sha,GITHUB_RUN_ID:'100',GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_WORKFLOW_REF:`${policy.repository}/${policy.workflow}@refs/heads/main`,RELEASE_MODE:mode,RELEASE_WORKFLOW_SHA:'',RELEASE_DATA_COMMIT:'',RELEASE_REQUEST_SHA256:'',RELEASE_SWITCH:'true',GH_TOKEN:'FAKE-GH-TOKEN',NUGET_API_KEY:'FAKE-SECRET-MUST-NOT-LEAK'};
  delete child.GITHUB_OUTPUT;delete child.GITHUB_STEP_SUMMARY;
  const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),'prepare'],{cwd:root,env:child,encoding:'utf8',timeout:20000});
  assert.equal(result.status,mode==='preflight'?0:1,result.stderr);assert.ok(result.stdout.includes('SYNTHETIC-TRANSPORT-LOADED'));assert.ok(!`${result.stdout}${result.stderr}`.includes(child.NUGET_API_KEY));assert.ok(!`${result.stdout}${result.stderr}`.includes('FORBIDDEN-TRANSPORT'));
 });
+
+// TA04 fixtures exercise full preview bytes without a network/upload transport.
+test('TA04 builds exactly seven public files from five originals and pinned metadata', async()=>{
+ const {r,files,m}=syntheticPackages();const bytes=Buffer.from(JSON.stringify(m));files.set('package-payload-manifest.json',bytes);
+ const p={...policy,payloadManifestSha256:sha256(bytes)};
+ const result=await createPreviewData(files,r,p,context.sha);
+ assert.equal(result.files.size,7);assert.equal(result.requestSha256,sha256(result.files.get('release-request.json')));
+ assert.equal(result.files.get(r.packages[0].file),files.get(r.packages[0].file));
+});
+test('TA04 staging rejects a publication-enabled policy',()=>assert.throws(()=>assertPreviewOnly({...policy,publicationEnabled:true},'')));
+test('TA04 staging rejects a true repository publication switch',()=>assert.throws(()=>assertPreviewOnly(policy,'true')));
+test('TA04 staging rejects extra private evidence',async()=>{
+ const {r,files,m}=syntheticPackages();const b=Buffer.from(JSON.stringify(m));files.set('package-payload-manifest.json',b);files.set('host-baseline.json',Buffer.from('private'));
+ await assert.rejects(createPreviewData(files,r,{...policy,payloadManifestSha256:sha256(b)},context.sha));
+});
+test('TA04 staging rejects a changed original payload manifest',async()=>{
+ const {r,files,m}=syntheticPackages();files.set('package-payload-manifest.json',Buffer.from(JSON.stringify(m)));
+ await assert.rejects(createPreviewData(files,r,policy,context.sha));
+});
+async function previewFixture(){
+ const {r,files,m}=syntheticPackages();const b=Buffer.from(JSON.stringify(m));files.set('package-payload-manifest.json',b);
+ const p={...policy,payloadManifestSha256:sha256(b)};const prepared=await createPreviewData(files,r,p,context.sha);
+ const raw=zip([...prepared.files]);const c={...publishing,runId:'100',requestSha256:prepared.requestSha256};
+ const a={...artifact,size_in_bytes:raw.length,digest:`sha256:${sha256(raw)}`};
+ return {r,p,c,a,raw,prepared};
+}
+test('complete same-run preview artifact is independently verified',async()=>{
+ const f=await previewFixture();const files=await checkPreviewArtifact(f.raw,f.a,f.r,f.p,f.c,sha256(f.raw));assert.equal(files.size,7);
+});
+test('preview rejects a mismatched raw ZIP digest',async()=>{const f=await previewFixture();await assert.rejects(checkPreviewArtifact(f.raw,f.a,f.r,f.p,f.c,'0'.repeat(64)));});
+test('preview rejects a mismatched API ZIP size',async()=>{const f=await previewFixture();await assert.rejects(checkPreviewArtifact(f.raw,{...f.a,size_in_bytes:f.raw.length+1},f.r,f.p,f.c,sha256(f.raw)));});
+test('preview rejects another run even when file hashes match',async()=>{const f=await previewFixture();await assert.rejects(checkPreviewArtifact(f.raw,f.a,f.r,f.p,{...f.c,runId:'101'},sha256(f.raw)));});
+test('preview rejects a changed approved request digest',async()=>{const f=await previewFixture();await assert.rejects(checkPreviewArtifact(f.raw,f.a,f.r,f.p,{...f.c,requestSha256:'0'.repeat(64)},sha256(f.raw)));});
+test('preview rejects missing original package with a freshly hashed outer ZIP',async()=>{
+ const f=await previewFixture();f.prepared.files.delete(f.r.packages[0].file);const raw=zip([...f.prepared.files]);
+ await assert.rejects(checkPreviewArtifact(raw,{...f.a,size_in_bytes:raw.length,digest:`sha256:${sha256(raw)}`},f.r,f.p,f.c,sha256(raw)));
+});
+test('preview rejects tampered package despite a freshly hashed outer ZIP',async()=>{
+ const f=await previewFixture();const b=Buffer.from(f.prepared.files.get(f.r.packages[0].file));b[0]^=1;f.prepared.files.set(f.r.packages[0].file,b);const raw=zip([...f.prepared.files]);
+ await assert.rejects(checkPreviewArtifact(raw,{...f.a,size_in_bytes:raw.length,digest:`sha256:${sha256(raw)}`},f.r,f.p,f.c,sha256(raw)));
+});
+
+const stagingRepo={id:policy.repositoryId,owner:{id:policy.ownerId},full_name:policy.repository};
+test('staging verifies actual public repository IDs before any write',()=>checkStagingRepository(stagingRepo,policy));
+for(const change of [{id:1},{owner:{id:1}},{full_name:'other/ArchSift'},{id:String(policy.repositoryId)}])test('reject mismatched staging repository '+JSON.stringify(change),()=>assert.throws(()=>checkStagingRepository({...stagingRepo,...change},policy)));
