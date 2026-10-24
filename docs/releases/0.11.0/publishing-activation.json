@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "version": "0.11.0",
-  "authorizedPreparation": "TA04",
+  "authorizedPreparation": "TA05-preparation",
   "realAssetTransferEnabled": true,
-  "publicationEnabled": false,
+  "publicationEnabled": true,
   "repository": "von12549/ArchSift",
   "repositoryId": 1407069697,
   "ownerId": 2306937,
@@ -17,7 +17,8 @@
   "hostedSdk": "10.0.303",
   "originalReference": "docs/releases/0.11.0/trusted-publishing-reference.json",
   "originalReferenceSha256": "699d42ad54374320ee35305a183872c8f334c71753c43ebb54af593d8f5ed35c",
-  "futureAuthorization": "TA04 authorizes only the exact five accepted originals and two public metadata files on an independent data branch and a verified preview artifact. Credentials/publication require a separately reviewed change and explicit operator authorization.",
+  "futureAuthorization": "Code capability prepared only. Repository switch must remain absent/false during TA05. Credentials/push need a separate explicit release authorization, fresh publish dispatch and nuget-release human approval.",
   "localGuardDotnet": "stopped",
-  "newInstaller": false
+  "newInstaller": false,
+  "auditMaxAgeHours": 24
 }

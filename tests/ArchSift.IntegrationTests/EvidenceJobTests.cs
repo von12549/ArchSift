@@ -119,9 +119,27 @@ public sealed class EvidenceJobTests
             var childId = int.Parse(result.Output.Trim(), System.Globalization.CultureInfo.InvariantCulture);
             Assert.Throws<ArgumentException>(() => System.Diagnostics.Process.GetProcessById(childId));
             using var cancel = new CancellationTokenSource(); ProcessResult? partial = null;
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => SafeProcess.RunAsync(shell, root,
-                ["-NoProfile", "-NonInteractive", "-Command", "Write-Output 'Started'; Start-Sleep -Seconds 30"], Path.Combine(root, "cancel-home"), null, cancel.Token,
-                ownTree: true, processStarted: _ => cancel.CancelAfter(700), failureOutput: value => partial = value));
+            var ready = Path.Combine(root, "cancel-child-ready.txt");
+            var cancellationScript = "Write-Output 'Started'; [Console]::Out.Flush(); [IO.File]::WriteAllText('" + ready.Replace("'", "''", StringComparison.Ordinal) + "', 'ready'); Start-Sleep -Seconds 30";
+            var pending = SafeProcess.RunAsync(shell, root,
+                ["-NoProfile", "-NonInteractive", "-Command", cancellationScript], Path.Combine(root, "cancel-home"), null, cancel.Token,
+                ownTree: true, failureOutput: value => partial = value);
+            var childReady = false;
+            try
+            {
+                // Process creation does not mean a cold PowerShell has produced its first output.
+                // Cancel after an explicit flushed-output signal, with a bounded startup wait.
+                var startup = System.Diagnostics.Stopwatch.StartNew();
+                while (!File.Exists(ready) && !pending.IsCompleted && startup.Elapsed < TimeSpan.FromSeconds(20))
+                    await Task.Delay(25);
+                childReady = File.Exists(ready);
+            }
+            finally
+            {
+                cancel.Cancel();
+                await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
+            }
+            Assert.True(childReady, "Cancellation fixture did not signal flushed output within its startup bound.");
             Assert.NotNull(partial); Assert.True(partial.OwnedTreeStopped); Assert.Contains("Started", partial.Output);
         }
         finally { Assert.True(PathSafety.IsUnder(root, Path.GetTempPath())); if (Directory.Exists(root)) Directory.Delete(root, true); }

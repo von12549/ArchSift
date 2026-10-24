@@ -44,12 +44,20 @@ const mutations = [
  w => { w.jobs.preflight.steps[5].if = 'false'; },
  w => { w.jobs.preflight.steps[5].run = 'echo unverified'; },
  w => { w.jobs.preflight.steps[5].env.NUGET_API_KEY = '${{ secrets.NUGET_API_KEY }}'; },
- w => { w.jobs.preflight.steps[5].run += '\nNuGet/login'; }
+ w => { w.jobs.preflight.steps[5].run += '\nNuGet/login'; },
+ w => { w.jobs.audit.permissions = { 'id-token': 'write' }; },
+ w => { w.jobs.audit.env.NUGET_API_KEY = 'secret'; },
+ w => { w.jobs.audit.steps[4].run += ' -SkipAudit'; },
+ w => { w.jobs.audit.if = 'false'; },
+ w => { w.jobs.audit.steps[5].with.path = '${{ github.workspace }}'; },
+ w => { w.jobs.publish.needs = 'preflight'; },
+ w => { w.jobs.publish.if = w.jobs.publish.if.replace(" && needs.audit.result == 'success'", ''); },
+ w => { w.jobs.preflight.steps[5].if += " && inputs.mode == 'preview'"; }
 ];
 for (const [i, mutate] of mutations.entries()) { const w = parseWorkflow(workflow); mutate(w); assert.throws(() => checkWorkflow(stringify(w)), `Unsafe workflow mutation ${i}`); }
 assert.throws(() => checkWorkflow(workflow + '\npermissions:\n  contents: write\n'));
 const policy = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/publishing-activation.json')));
-assert.equal(policy.realAssetTransferEnabled, true); assert.equal(policy.publicationEnabled, false);
+assert.equal(policy.realAssetTransferEnabled, true); assert.equal(policy.publicationEnabled, true); assert.equal(policy.auditMaxAgeHours, 24);
 assert.equal(policy.localGuardDotnet, 'stopped'); assert.equal(policy.newInstaller, false);
 assert.equal(sha256(fs.readFileSync(path.join(root, policy.originalReference))), policy.originalReferenceSha256);
 const preflight = fs.readFileSync(path.join(root, 'scripts/Test-NuGetReleasePreflight.ps1'), 'utf8');
@@ -58,7 +66,7 @@ const hosted = fs.readFileSync(path.join(root, 'scripts/Invoke-HostedNuGet.ps1')
 assert.doesNotMatch(hosted, /(?:SetEnvironmentVariable|setx\b|Set-ItemProperty|--api-key|--skip-duplicate)/i);
 assert.match(hosted, /Environment\['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'\]='0'/);
 assert.match(hosted, /Get-ArchSiftHostHash/);
-console.log(`Passed structural YAML release boundary, ${mutations.length + 1} rejected mutations and the committed closed publication lock.`);
+console.log(`Passed structural YAML release boundary, ${mutations.length + 1} rejected mutations and the closed operational release gates.`);
 
 const licenses = JSON.parse(fs.readFileSync(path.join(root, 'scripts/nuget-release/licenses/manifest.json')));
 for (const license of licenses.packages) {
@@ -74,3 +82,11 @@ checkHostedHttpBoundary(hosted);
 assert.throws(() => checkHostedHttpBoundary(hosted.replace("Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='1'", "Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='6'")));
 assert.throws(() => checkHostedHttpBoundary(hosted.replace("Environment['NUGET_EXE_NO_PROMPT']='true'", "Environment['NUGET_EXE_NO_PROMPT']='false'")));
 console.log('Passed child HTTP attempt/prompt boundary and 2 rejected mutations.');
+
+const auditScript=fs.readFileSync(path.join(root,'scripts/Invoke-HostedReleaseAudit.ps1'),'utf8');
+assert.doesNotMatch(auditScript, /SetEnvironmentVariable|setx\b|Set-ItemProperty/i);
+assert.ok(auditScript.includes("Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'"));
+assert.ok(auditScript.includes("'-p:NuGetAudit=true'"));
+assert.ok(auditScript.includes("'-p:NuGetAuditMode=all'"));
+assert.ok(auditScript.includes("'-p:NuGetAuditLevel=moderate'"));
+assert.ok(auditScript.includes('Get-ArchSiftHostHash'));

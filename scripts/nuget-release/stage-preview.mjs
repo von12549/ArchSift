@@ -10,7 +10,7 @@ export function checkStagingRepository(repo, policy) {
   requireThat(repo.id === policy.repositoryId && repo.owner?.id === policy.ownerId && repo.full_name === policy.repository, 'Public staging repository identity differs');
 }
 export function assertPreviewOnly(policy, releaseSwitch) {
-  requireThat(policy.realAssetTransferEnabled === true && policy.publicationEnabled === false, 'Only separately authorized transfer with publication locked is allowed');
+  requireThat(policy.realAssetTransferEnabled === true && typeof policy.publicationEnabled === 'boolean', 'Reviewed transfer capability and typed publication capability required');
   requireThat(releaseSwitch === '' || releaseSwitch === 'false', 'Repository publication switch must remain closed');
 }
 export async function createPreviewData(files, reference, policy, workflowCommit) {
@@ -28,7 +28,7 @@ export async function createPreviewData(files, reference, policy, workflowCommit
 }
 const gitBlobSha = bytes => createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
 async function main() {
-  const { values: args } = parseArgs({ options: { assets: { type: 'string' }, evidence: { type: 'string' }, workflow: { type: 'string' }, branch: { type: 'string' }, 'authorize-public-data-upload': { type: 'boolean', default: false } } });
+  const { values: args } = parseArgs({ options: { assets: { type: 'string' }, evidence: { type: 'string' }, workflow: { type: 'string' }, branch: { type: 'string' }, 'authorize-public-data-upload': { type: 'boolean', default: false }, 'reuse-data-commit': { type: 'string' } } });
   requireThat(args['authorize-public-data-upload'] === true && process.env.GITHUB_ACTIONS !== 'true', 'Explicit authorized local Git-data upload only; never run from Actions');
   requireThat(path.isAbsolute(args.assets ?? '') && path.isAbsolute(args.evidence ?? '') && /^release-inputs\/archsift-0\.11\.0\/[a-z0-9-]+$/.test(args.branch ?? ''), 'Explicit external assets/evidence and unique data branch required');
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -75,7 +75,7 @@ async function main() {
   const prepared = await createPreviewData(inputs, reference, policy, args.workflow);
   fs.mkdirSync(evidence); const payload = path.join(evidence, 'public-payload'); fs.mkdirSync(payload);
   for (const [file, bytes] of prepared.files) fs.writeFileSync(path.join(payload, file), bytes, { flag: 'wx' });
-  const ledger = { schemaVersion: 1, status: 'validated-not-yet-uploaded', branch: args.branch, workflowCommit: args.workflow, sourceCommit: reference.sourceCommit, requestSha256: prepared.requestSha256, publicFiles: [...prepared.files].map(([file, bytes]) => ({ file, bytes: bytes.length, sha256: sha256(bytes), gitBlob: gitBlobSha(bytes) })), createdBlobs: [], credentialAcquisition: false, nugetPush: false, tagOrRelease: false, localGuardDotnet: 'stopped' };
+  const ledger = { schemaVersion: 1, status: 'validated-not-yet-uploaded', branch: args.branch, workflowCommit: args.workflow, sourceCommit: reference.sourceCommit, requestSha256: prepared.requestSha256, publicFiles: [...prepared.files].map(([file, bytes]) => ({ file, bytes: bytes.length, sha256: sha256(bytes), gitBlob: gitBlobSha(bytes) })), createdBlobs: [], reusedBlobs: [], credentialAcquisition: false, nugetPush: false, tagOrRelease: false, localGuardDotnet: 'stopped' };
   const save = () => fs.writeFileSync(path.join(evidence, 'operation-ledger.json'), JSON.stringify(ledger, null, 2) + '\n');
   let operation = 0;
   const post = (endpoint, body) => {
@@ -84,8 +84,24 @@ async function main() {
     const result = api(base + endpoint, file); delete ledger.pendingEndpoint; return result;
   };
   save();
+  const reused = new Map();
+  if (args['reuse-data-commit']) {
+    requireThat(/^[a-f0-9]{40}$/.test(args['reuse-data-commit']), 'Exact prior data commit required');
+    const old = api(base + 'git/trees/' + args['reuse-data-commit'] + '?recursive=1');
+    requireThat(old.truncated === false && old.tree.length === 7 && old.tree.every(x => x.mode === '100644' && x.type === 'blob'), 'Prior data-only tree differs');
+    for (const row of old.tree) if (row.path !== 'release-request.json') {
+      requireThat(prepared.files.has(row.path), 'Unapproved prior public blob');
+      const blob = api(base + 'git/blobs/' + row.sha), bytes = Buffer.from(blob.content, 'base64');
+      requireThat(blob.encoding === 'base64' && sha256(bytes) === sha256(prepared.files.get(row.path)) && row.sha === gitBlobSha(bytes), 'Prior public blob differs');
+      reused.set(row.path, row.sha);
+    }
+    requireThat(reused.size === 6, 'Exactly six unchanged prior blobs required');
+  }
   const tree = [];
   for (const [file, bytes] of prepared.files) {
+    if (reused.has(file)) {
+      tree.push({path:file,mode:'100644',type:'blob',sha:reused.get(file)}); ledger.reusedBlobs.push(reused.get(file)); save(); console.log('Reused verified public blob: '+file); continue;
+    }
     const blob = post('git/blobs', { content: bytes.toString('base64'), encoding: 'base64' });
     requireThat(blob.sha === gitBlobSha(bytes), 'Created blob identity differs');
     ledger.createdBlobs.push(blob.sha); save(); tree.push({ path: file, mode: '100644', type: 'blob', sha: blob.sha });
@@ -106,6 +122,6 @@ async function main() {
     requireThat(blob.encoding === 'base64' && sha256(Buffer.from(blob.content, 'base64')) === sha256(prepared.files.get(row.path)), 'Public blob bytes differ');
   }
   ledger.status = 'public-data-branch-verified-preview-not-yet-dispatched'; save();
-  console.log(JSON.stringify({ status: ledger.status, branch: ledger.branch, dataCommit: ledger.dataCommit, workflowCommit: ledger.workflowCommit, requestSha256: ledger.requestSha256, publicFiles: 7, originalPackages: 5, publicationEnabled: false }));
+  console.log(JSON.stringify({ status: ledger.status, branch: ledger.branch, dataCommit: ledger.dataCommit, workflowCommit: ledger.workflowCommit, requestSha256: ledger.requestSha256, publicFiles: 7, originalPackages: 5, publicationCapabilityPrepared: policy.publicationEnabled, repositorySwitch: 'closed' }));
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main().catch(() => { console.error('Public preview staging stopped; preserve the ledger, do not overwrite refs or retry blindly.'); process.exitCode = 1; });
