@@ -43,7 +43,7 @@ try {
         $packagesVerified = $true
     }
     if ($CheckSourceCi) {
-        $gh = (Get-Command gh -CommandType Application).Source
+        $gh = (Get-Command gh -CommandType Application | Select-Object -First 1).Source
         function Read-GitHub([string]$endpoint) {
             $raw = & $gh api --hostname github.com $endpoint
             if ($LASTEXITCODE -ne 0) { throw 'Read-only GitHub source verification failed.' }
