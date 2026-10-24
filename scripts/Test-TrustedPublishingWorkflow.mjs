@@ -55,3 +55,9 @@ assert.doesNotMatch(hosted, /(?:SetEnvironmentVariable|setx\b|Set-ItemProperty|-
 assert.match(hosted, /Environment\['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'\]='0'/);
 assert.match(hosted, /Get-ArchSiftHostHash/);
 console.log(`Passed structural YAML release boundary, ${mutations.length + 1} rejected mutations and committed closed locks.`);
+
+const licenses = JSON.parse(fs.readFileSync(path.join(root, 'scripts/nuget-release/licenses/manifest.json')));
+for (const license of licenses.packages) {
+  assert.equal(sha256(fs.readFileSync(path.join(root, 'scripts/nuget-release/licenses', license.file))), license.sha256);
+  assert.equal(sha256(fs.readFileSync(path.join(root, 'scripts/nuget-release/node_modules', license.name, 'LICENSE'))), license.sha256);
+}
