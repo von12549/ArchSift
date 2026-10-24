@@ -111,10 +111,18 @@ function Compare-ArchSiftHostOperation($Before,$After) {
         $result.status='matched';$result.unchanged=$true;return $result
     } catch {return $result}
 }
+function Test-ArchSiftNoProfileLaunch([string[]]$Arguments) {
+    $found=$false
+    foreach($argument in @($Arguments|Select-Object -Skip 1)) {
+        if($argument -imatch '^-(?:File|Command|CommandWithArgs|EncodedCommand|f|c|e|ec)$'){break}
+        if($argument -ieq '-NoProfile'){$found=$true}
+    }
+    return $found
+}
 function Get-ArchSiftSessionSnapshot([string]$LaunchPolicyPath) {
     $policy=Read-ArchSiftBaselineDocument $LaunchPolicyPath
     if(-not(Test-ArchSiftSchemaOne $policy.value.schemaVersion) -or [string]::IsNullOrWhiteSpace($policy.value.label) -or [string]::IsNullOrWhiteSpace($policy.value.isolationPolicy)){throw 'A reviewed, nonsecret launch-policy document is required.'}
-    if(@([Environment]::GetCommandLineArgs()|Where-Object {$_ -ieq '-NoProfile'}).Count -ne 1){throw 'Invoke PowerShell with explicit -NoProfile.'}
+    if(-not(Test-ArchSiftNoProfileLaunch ([Environment]::GetCommandLineArgs()))){throw 'Invoke PowerShell with explicit -NoProfile.'}
     if($IsWindows){$parentId=[int](Get-CimInstance Win32_Process -Filter "ProcessId=$PID").ParentProcessId}
     elseif($IsLinux){$line=@([IO.File]::ReadAllLines("/proc/$PID/status")|Where-Object {$_ -match '^PPid:'})[0];$parentId=[int]([regex]::Match($line,'\d+').Value)}
     else{throw 'Session identity capture supports Windows and Linux only; no silent fallback.'}

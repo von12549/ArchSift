@@ -67,6 +67,10 @@ try {
  $rejected=$false;try{Write-ArchSiftNewBaselineDocument $path @{overwrite=$true}}catch{$rejected=$true}
  if(-not $rejected -or (Read-ArchSiftBaselineDocument $path).sha256 -cne $first){throw 'Evidence overwrite was not rejected.'}
  $results.Add(@{name='immutable-existing-record';status='passed';expected='reject-overwrite'})
+ if(-not(Test-ArchSiftNoProfileLaunch @('pwsh','-NoProfile','-File','test.ps1'))){throw 'Actual startup NoProfile option rejected.'}
+ if(Test-ArchSiftNoProfileLaunch @('pwsh','-Command','script','-NoProfile')){throw 'Script argument must not impersonate startup NoProfile.'}
+ $results.Add(@{name='actual-NoProfile-startup-option';status='passed';expected='accept'})
+ $results.Add(@{name='NoProfile-after-command-is-not-startup-policy';status='passed';expected='reject'})
  $confirm=[IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Confirm-SessionHostBaseline.ps1'))
  if($confirm -notmatch 'Read-Host' -or $confirm -notmatch 'CONFIRM ' -or $confirm -match '\[switch\]|-Force'){throw 'Confirmation must remain an explicit operator interaction.'}
  foreach($name in @('SessionHostBaseline.ps1','New-SessionHostBaselineCandidate.ps1','Confirm-SessionHostBaseline.ps1','Test-SessionHostBaseline.ps1')) {
