@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { checkContext, checkEnvironment, checkRequest, checkArtifact, checkPackages, checkOwnerPage, checkCiRun, checkPreviewArtifact, publishSequential, sha256, readZip, safeEntry } from './model.mjs';
+import { checkContext, checkEnvironment, checkRequest, checkArtifact, checkPackages, checkOwnerPage, checkCiRun, checkAuditReport, checkPreviewArtifact, publishSequential, sha256, readZip, safeEntry } from './model.mjs';
 import { GitHubReader } from './github.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const reference = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/trusted-publishing-reference.json')));
@@ -14,7 +14,8 @@ const context = { repository: policy.repository, repositoryId: String(policy.rep
 const active = { ...policy, realAssetTransferEnabled: true, publicationEnabled: true };
 const publishing = { ...context, workflowSha: context.sha, dataCommit: 'b'.repeat(40), requestSha256: 'c'.repeat(64), releaseSwitch: 'true' };
 test('default preflight works with publication locked', () => checkContext(context, policy, 'preflight'));
-test('even a true repository switch cannot open committed publication lock', () => assert.throws(() => checkContext(publishing, policy, 'publish')));
+test('a disabled code capability cannot be opened by the repository switch', () => assert.throws(() => checkContext(publishing, {...policy,publicationEnabled:false}, 'publish')));
+test('prepared capability cannot publish while repository switch is closed', () => assert.throws(() => checkContext({...publishing,releaseSwitch:''},policy,'publish')));
 test('TA04 permits exact preview inputs while publication stays locked', () => checkContext(publishing, policy, 'preview'));
 test('disabled transfer still rejects preview', () => assert.throws(() => checkContext(publishing, {...policy,realAssetTransferEnabled:false}, 'preview')));
 test('separately enabled synthetic publication model accepts exact context', () => checkContext(publishing, active, 'publish'));
@@ -95,11 +96,11 @@ test('ambiguous duplicate gallery owner regions fail closed',()=>assert.throws((
 test('artifact redirect does not leak GitHub token to storage',async()=>{const calls=[];const reader=new GitHubReader('FAKE-GH-TOKEN',async(url,options)=>{calls.push({url:String(url),options});if(calls.length===1)return new Response(null,{status:302,headers:{location:'https://example.blob.core.windows.net/x?sig=redacted'}});return new Response('zip');});assert.equal((await reader.artifact(1)).toString(),'zip');assert.ok(calls[0].options.headers.Authorization);assert.equal(calls[1].options.headers,undefined);});
 test('artifact redirect to arbitrary host is rejected',async()=>{const reader=new GitHubReader('fake',async()=>new Response(null,{status:302,headers:{location:'https://evil.example/x'}}));await assert.rejects(reader.artifact(1));});
 test('GitHub reader rejects mutation and arbitrary endpoint paths',async()=>{const reader=new GitHubReader('fake',async()=>{throw new Error('must not call');});await assert.rejects(reader.json('repos/other/repo/actions'));});
-for(const mode of ['preflight','preview','publish'])test(`real driver ${mode} with publication locked and no staged identity never accesses token/push/asset endpoints`,()=>{
- const child={...process.env,GITHUB_ACTIONS:'true',RUNNER_ENVIRONMENT:'github-hosted',GITHUB_REPOSITORY:policy.repository,GITHUB_REPOSITORY_ID:String(policy.repositoryId),GITHUB_REPOSITORY_OWNER_ID:String(policy.ownerId),GITHUB_REF:'refs/heads/main',GITHUB_SHA:context.sha,GITHUB_RUN_ID:'100',GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_WORKFLOW_REF:`${policy.repository}/${policy.workflow}@refs/heads/main`,RELEASE_MODE:mode,RELEASE_WORKFLOW_SHA:'',RELEASE_DATA_COMMIT:'',RELEASE_REQUEST_SHA256:'',RELEASE_SWITCH:'true',GH_TOKEN:'FAKE-GH-TOKEN',NUGET_API_KEY:'FAKE-SECRET-MUST-NOT-LEAK'};
+for(const mode of ['preflight','preview','publish'])test(`real driver ${mode} with no staged identity never accesses token/push/asset endpoints`,()=>{
+ const child={...process.env,GITHUB_ACTIONS:'true',RUNNER_ENVIRONMENT:'github-hosted',GITHUB_REPOSITORY:policy.repository,GITHUB_REPOSITORY_ID:String(policy.repositoryId),GITHUB_REPOSITORY_OWNER_ID:String(policy.ownerId),GITHUB_REF:'refs/heads/main',GITHUB_SHA:context.sha,GITHUB_RUN_ID:'100',GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_WORKFLOW_REF:`${policy.repository}/${policy.workflow}@refs/heads/main`,RELEASE_MODE:mode,RELEASE_WORKFLOW_SHA:'',RELEASE_DATA_COMMIT:'',RELEASE_REQUEST_SHA256:'',RELEASE_SWITCH:'true',GH_TOKEN:'FAKE-GH-TOKEN',NUGET_API_KEY:''};
  delete child.GITHUB_OUTPUT;delete child.GITHUB_STEP_SUMMARY;
  const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),'prepare'],{cwd:root,env:child,encoding:'utf8',timeout:20000});
- assert.equal(result.status,mode==='preflight'?0:1,result.stderr);assert.ok(result.stdout.includes('SYNTHETIC-TRANSPORT-LOADED'));assert.ok(!`${result.stdout}${result.stderr}`.includes(child.NUGET_API_KEY));assert.ok(!`${result.stdout}${result.stderr}`.includes('FORBIDDEN-TRANSPORT'));
+ assert.equal(result.status,mode==='preflight'?0:1,result.stderr);assert.ok(result.stdout.includes('SYNTHETIC-TRANSPORT-LOADED'));assert.ok(!`${result.stdout}${result.stderr}`.includes('FAKE-SENSITIVE-KEY'));assert.ok(!`${result.stdout}${result.stderr}`.includes('FORBIDDEN-TRANSPORT'));
 });
 
 // TA04 fixtures exercise full preview bytes without a network/upload transport.
@@ -110,7 +111,8 @@ test('TA04 builds exactly seven public files from five originals and pinned meta
  assert.equal(result.files.size,7);assert.equal(result.requestSha256,sha256(result.files.get('release-request.json')));
  assert.equal(result.files.get(r.packages[0].file),files.get(r.packages[0].file));
 });
-test('TA04 staging rejects a publication-enabled policy',()=>assert.throws(()=>assertPreviewOnly({...policy,publicationEnabled:true},'')));
+test('TA05 staging allows prepared publication capability with operational switch closed',()=>assertPreviewOnly(policy,''));
+test('staging rejects untyped publication capability',()=>assert.throws(()=>assertPreviewOnly({...policy,publicationEnabled:'true'},'')));
 test('TA04 staging rejects a true repository publication switch',()=>assert.throws(()=>assertPreviewOnly(policy,'true')));
 test('TA04 staging rejects extra private evidence',async()=>{
  const {r,files,m}=syntheticPackages();const b=Buffer.from(JSON.stringify(m));files.set('package-payload-manifest.json',b);files.set('host-baseline.json',Buffer.from('private'));
@@ -146,3 +148,34 @@ test('preview rejects tampered package despite a freshly hashed outer ZIP',async
 const stagingRepo={id:policy.repositoryId,owner:{id:policy.ownerId},full_name:policy.repository};
 test('staging verifies actual public repository IDs before any write',()=>checkStagingRepository(stagingRepo,policy));
 for(const change of [{id:1},{owner:{id:1}},{full_name:'other/ArchSift'},{id:String(policy.repositoryId)}])test('reject mismatched staging repository '+JSON.stringify(change),()=>assert.throws(()=>checkStagingRepository({...stagingRepo,...change},policy)));
+
+const auditNow=Date.parse('2026-10-25T00:00:00Z');
+const auditInput={id:42,sha256:'a'.repeat(64)};
+const auditContext={...publishing,runId:'100'};
+const freshAudit={schemaVersion:1,status:'passed-fresh-source-audit',binding:{sourceCommit:reference.sourceCommit,sourceTree:reference.sourceTree,workflowCommit:auditContext.sha,runId:100,dataCommit:auditContext.dataCommit,requestSha256:auditContext.requestSha256,inputArtifactId:42,inputArtifactSha256:auditInput.sha256},completedUtc:'2026-10-25T00:00:00Z',audit:{enabled:true,mode:'all',level:'moderate',warningsAsErrors:true,source:'https://data.nuget.org/v3/index.json'},projects:Array.from({length:5},(_,i)=>({project:'project-'+i+'.csproj',assetsSha256:'a'.repeat(64)})),packages:['dependency/1.0.0'],dataFiles:['vuln_index.dat','vuln_data_base.dat','vuln_data_update.dat'].map(name=>({name,sha256:'a'.repeat(64)})),hostEqual:true,credentialAcquisition:false,targetApplicationExecuted:false};
+test('fresh exact-source and same-run audit is required before login',()=>checkAuditReport(freshAudit,auditContext,reference,policy,auditInput,auditNow));
+for(const [name,change]of [
+ ['wrong request',r=>{r.binding.requestSha256='0'.repeat(64);}],
+ ['wrong input artifact',r=>{r.binding.inputArtifactId=43;}],
+ ['wrong source',r=>{r.binding.sourceCommit='0'.repeat(40);}],
+ ['wrong run',r=>{r.binding.runId=101;}],
+ ['direct-only audit',r=>{r.audit.mode='direct';}],
+ ['lowered audit level',r=>{r.audit.level='critical';}],
+ ['warnings ignored',r=>{r.audit.warningsAsErrors=false;}],
+ ['offline audit data absent',r=>{r.dataFiles=[];}],
+ ['stale audit',r=>{r.completedUtc='2026-10-23T00:00:00Z';}],
+ ['future audit',r=>{r.completedUtc='2026-10-26T00:00:00Z';}],
+ ['invalid audit date',r=>{r.completedUtc='not a date';}],
+ ['host drift',r=>{r.hostEqual=false;}],
+ ['credential-bearing audit',r=>{r.credentialAcquisition=true;}],
+ ['empty project graph',r=>{r.projects=[];}]
+])test('reject audit '+name,()=>{const r=structuredClone(freshAudit);change(r);assert.throws(()=>checkAuditReport(r,auditContext,reference,policy,auditInput,auditNow));});
+for(const prepared of [false,true])for(const releaseSwitch of ['', 'false','true'])test(`preview never gains publication authority: capability=${prepared},switch=${releaseSwitch}`,()=>checkContext({...publishing,releaseSwitch},{...policy,publicationEnabled:prepared},'preview'));
+test('publish rejects string-valued code capability',()=>assert.throws(()=>checkContext(publishing,{...policy,publicationEnabled:'true'},'publish')));
+
+for(const command of ['prepare','verify-preview','prepare-audit'])for(const credential of ['NUGET_API_KEY','ACTIONS_ID_TOKEN_REQUEST_TOKEN'])test('credential-free '+command+' rejects injected '+credential+' without exposing it',()=>{
+ const child={...process.env,NUGET_API_KEY:'',ACTIONS_ID_TOKEN_REQUEST_TOKEN:'',[credential]:'FAKE-SENSITIVE-KEY'};
+ delete child.GITHUB_OUTPUT;delete child.GITHUB_STEP_SUMMARY;
+ const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),command],{cwd:root,env:child,encoding:'utf8',timeout:20000});
+ assert.equal(result.status,1);assert.ok(result.stdout.includes('SYNTHETIC-TRANSPORT-LOADED'));assert.ok(!String(result.stdout+result.stderr).includes('FAKE-SENSITIVE-KEY'));assert.ok(!String(result.stdout+result.stderr).includes('FORBIDDEN-TRANSPORT'));
+});

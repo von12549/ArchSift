@@ -149,3 +149,11 @@ export async function checkPreviewArtifact(raw, metadata, reference, policy, con
   await checkPackages(files, reference, JSON.parse(files.get('package-payload-manifest.json')));
   return files;
 }
+
+export function checkAuditReport(report, context, reference, policy, input, now = Date.now()) {
+  requireThat(report.status==='passed-fresh-source-audit' && report.schemaVersion===1 && report.binding.sourceCommit===reference.sourceCommit && report.binding.sourceTree===reference.sourceTree && report.binding.workflowCommit===context.sha && report.binding.runId===Number(context.runId) && report.binding.dataCommit===context.dataCommit && report.binding.requestSha256===context.requestSha256 && report.binding.inputArtifactId===input.id && report.binding.inputArtifactSha256===input.sha256, 'Audit source/request/artifact binding differs');
+  requireThat(report.audit.enabled===true && report.audit.mode==='all' && report.audit.level==='moderate' && report.audit.warningsAsErrors===true && report.audit.source==='https://data.nuget.org/v3/index.json' && report.credentialAcquisition===false && report.hostEqual===true && report.targetApplicationExecuted===false && report.projects.length>=5 && report.projects.every(x=>typeof x.project==='string' && /^[a-f0-9]{64}$/.test(x.assetsSha256)) && report.packages.length>0 && report.dataFiles.length>=3, 'Audit policy or coverage missing');
+  const time=Date.parse(report.completedUtc);
+  requireThat(Number.isFinite(time) && time<=now+60_000 && now-time<=policy.auditMaxAgeHours*3_600_000 && policy.auditMaxAgeHours===24,'Audit is stale or has an invalid timestamp');
+  requireThat(report.dataFiles.some(x=>x.name==='vuln_index.dat') && report.dataFiles.some(x=>x.name==='vuln_data_base.dat') && report.dataFiles.some(x=>x.name==='vuln_data_update.dat') && report.dataFiles.every(x=>/^[a-f0-9]{64}$/.test(x.sha256)),'Fresh official advisory data proof missing');
+}

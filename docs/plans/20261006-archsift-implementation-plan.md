@@ -1,3 +1,7 @@
+## TA05 final approval preparation (2026-10-25)
+
+Implementation/tests/PR/CI/merge, refreshed original-byte preview and external final confirmation card are authorized. Prepare source publication capability, credential-free fresh hosted official source audit and same-run audit validation before login; keep the operational repository switch absent/false. No NuGet credentials/push, tag/Release, installer, local Guard/dotnet or persisted host changes. Preserve immutable accepted packages, original references/evidence and IFX gates. See [TA05 scope, tests and rollback](20261025-trusted-publishing-final-approval.md). Final manual release operation requires separate authorization; earlier checkpoints below retain their timing.
+
 ## TA04 public original-byte preview (2026-10-25)
 
 TA04 implementation/tests/PR/CI/merge and the exact five accepted original-package upload to an independent public data branch are authorized; see [preview plan](20261025-trusted-publishing-preview.md). Enable transfer only; keep publicationEnabled false and repository switch closed. No NuGet credentials/push, tag/Release, installer, local Guard/dotnet or persistent host changes. Preserve original assets/evidence and IFX gates. Earlier checkpoints below retain their timing.

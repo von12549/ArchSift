@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { checkReference, checkContext, checkEnvironment, checkCiRun, checkRequest, checkPackages, checkArtifact, checkPreviewArtifact, checkOwnerPage, readZip, publishSequential, requireThat, sha256 } from './model.mjs';
+import { checkReference, checkContext, checkEnvironment, checkCiRun, checkRequest, checkPackages, checkArtifact, checkAuditReport, checkPreviewArtifact, checkOwnerPage, readZip, publishSequential, requireThat, sha256 } from './model.mjs';
 import { GitHubReader, boundedResponse } from './github.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -109,7 +109,8 @@ async function servedProof(p, originalFiles, scratch) {
 }
 async function main() {
   const command = process.argv[2];
-  requireThat(['prepare', 'verify-preview', 'validate-artifact', 'publish', 'verify-public'].includes(command), 'Unknown release command');
+  requireThat(['prepare', 'verify-preview', 'prepare-audit', 'validate-artifact', 'publish', 'verify-public'].includes(command), 'Unknown release command');
+  if (['prepare','verify-preview','prepare-audit'].includes(command)) requireThat(!e.NUGET_API_KEY && !e.ACTIONS_ID_TOKEN_REQUEST_TOKEN, 'Credential-free preparation required');
   // This check precedes all archive transfer, credential use and child execution.
   await validateContext();
   const identity = { version: reference.version, packageSource: reference.sourceCommit, workflowCommit: c.sha, mode, publicationEnabled: policy.publicationEnabled, localGuardDotnet: 'stopped' };
@@ -126,10 +127,16 @@ async function main() {
     return;
   }
   if (command === 'verify-preview') {
-    requireThat(mode === 'preview' && policy.publicationEnabled === false && !e.NUGET_API_KEY && !e.ACTIONS_ID_TOKEN_REQUEST_TOKEN, 'Preview must have no publication authority or credentials');
+    requireThat(['preview','publish'].includes(mode) && !e.NUGET_API_KEY && !e.ACTIONS_ID_TOKEN_REQUEST_TOKEN, 'Input verification must have no publishing credentials/OIDC');
     await artifactInputs();
     summary({ ...identity, status: 'passed-original-byte-preview-not-publication', sourceTree: reference.sourceTree, dataCommit: c.dataCommit, requestSha256: c.requestSha256, artifactId: Number(e.RELEASE_ARTIFACT_ID), artifactSha256: e.RELEASE_ARTIFACT_SHA256, payloadManifestSha256: policy.payloadManifestSha256, acceptanceSha256: reference.acceptedPreview.acceptanceSha256, packages: reference.packages, packageBytesVerified: true, credentialsAcquired: false, publicNugetPublication: false, publicationApproval: 'not-granted' });
     console.log('Preview artifact independently verified: original package bytes and raw ZIP digest match; no credentials or NuGet publication.'); return;
+  }
+  if (command === 'prepare-audit') {
+    requireThat(['preview','publish'].includes(mode) && !e.NUGET_API_KEY && !e.ACTIONS_ID_TOKEN_REQUEST_TOKEN, 'Audit preparation must be credential-free');
+    await artifactInputs();
+    const folder=ownedScratch('archsift-audit-inputs');
+    fs.writeFileSync(path.join(folder,'binding.json'),JSON.stringify({schemaVersion:1,version:reference.version,sourceCommit:reference.sourceCommit,sourceTree:reference.sourceTree,workflowCommit:c.sha,runId:Number(c.runId),dataCommit:c.dataCommit,requestSha256:c.requestSha256,inputArtifactId:Number(e.RELEASE_ARTIFACT_ID),inputArtifactSha256:e.RELEASE_ARTIFACT_SHA256},null,2)+'\n',{flag:'wx'}); return;
   }
   requireThat(mode === 'publish', 'Only an approved publishing transaction may enter this job');
   const files = await artifactInputs();
@@ -139,6 +146,14 @@ async function main() {
     for (const p of reference.packages) proofs.push({ id: p.id, ...await servedProof(p, files, scratch) });
     summary({ ...identity, status: 'public-signature-owner-payload-verified', proofs, consumerAcceptance: 'separate-human-operated-NR06-checks-required' }); return;
   }
+  const auditId=Number(e.RELEASE_AUDIT_ARTIFACT_ID);
+  const auditMeta=await gh.json(`${base}actions/artifacts/${auditId}`);
+  requireThat(auditMeta.expired===false && auditMeta.name==='archsift-0.11.0-prepublication-audit' && auditMeta.workflow_run?.id===Number(c.runId) && auditMeta.workflow_run?.head_sha===c.sha && auditMeta.workflow_run?.head_repository_id===Number(c.repositoryId) && auditMeta.digest===`sha256:${e.RELEASE_AUDIT_ARTIFACT_SHA256}`, 'Audit artifact identity differs');
+  const auditZip=await gh.artifact(auditId);
+  requireThat(sha256(auditZip)===e.RELEASE_AUDIT_ARTIFACT_SHA256,'Audit ZIP digest differs');
+  const auditFiles=await readZip(auditZip,{maxTotal:2_000_000,maxEntries:2});
+  requireThat(auditFiles.size===2 && auditFiles.has('audit-report.json') && auditFiles.has('restore.log'),'Audit artifact allowlist differs');
+  checkAuditReport(JSON.parse(auditFiles.get('audit-report.json')),c,reference,policy,{id:Number(e.RELEASE_ARTIFACT_ID),sha256:e.RELEASE_ARTIFACT_SHA256});
   await registryMissing();
   if (command === 'validate-artifact') {
     summary({ ...identity, artifactId: Number(e.RELEASE_ARTIFACT_ID), artifactSha256: e.RELEASE_ARTIFACT_SHA256, requestSha256: c.requestSha256, packages: reference.packages, status: 'reverified-before-login', credentialsAcquired: false }); return;
