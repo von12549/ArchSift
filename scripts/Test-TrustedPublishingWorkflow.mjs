@@ -84,7 +84,7 @@ assert.throws(() => checkHostedHttpBoundary(hosted.replace("Environment['NUGET_E
 console.log('Passed child HTTP attempt/prompt boundary and 2 rejected mutations.');
 
 const auditScript=fs.readFileSync(path.join(root,'scripts/Invoke-HostedReleaseAudit.ps1'),'utf8');
-assert.doesNotMatch(auditScript, /SetEnvironmentVariable|setx\\b|Set-ItemProperty/i);
+assert.doesNotMatch(auditScript, /SetEnvironmentVariable|setx\b|Set-ItemProperty/i);
 assert.ok(auditScript.includes("Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'"));
 assert.ok(auditScript.includes("'-p:NuGetAudit=true'"));
 assert.ok(auditScript.includes("'-p:NuGetAuditMode=all'"));
