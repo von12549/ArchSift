@@ -1,4 +1,4 @@
-name: Trusted Publishing preparation checks
+name: Trusted Publishing activation safety checks
 on:
   push:
     branches: [main]
@@ -19,16 +19,24 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - name: Reject unsafe workflow changes and exercise release preflight negatives
+      - name: Install pinned parsers without lifecycle scripts
+        run: npm ci --prefix scripts/nuget-release --ignore-scripts --no-audit --no-fund
+      - name: Reject unsafe workflows and exercise only synthetic release transactions
         shell: pwsh -NoProfile -NonInteractive -File {0}
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           $ErrorActionPreference = 'Stop'
-          & node ./scripts/Test-TrustedPublishingWorkflow.mjs
-          if ($LASTEXITCODE -ne 0) { throw 'Preparation workflow boundary failed' }
-          & ./scripts/Test-NuGetReleasePreflightCases.ps1 -OutputRoot (Join-Path $env:RUNNER_TEMP 'trusted-publishing-tests')
-      - name: Resolve the hosted GitHub CLI and verify original source CI read-only
+          . ./scripts/HostState.ps1
+          $before = Get-ArchSiftHostHash
+          try {
+            & node ./scripts/Test-TrustedPublishingWorkflow.mjs
+            if ($LASTEXITCODE -ne 0) { throw 'Workflow boundary failed' }
+            & node --test ./scripts/nuget-release/release.test.mjs
+            if ($LASTEXITCODE -ne 0) { throw 'Synthetic release safety cases failed' }
+            & ./scripts/Test-NuGetReleasePreflightCases.ps1 -OutputRoot (Join-Path $env:RUNNER_TEMP 'trusted-publishing-tests')
+          } finally {
+            if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift; no repair performed' }
+          }
+      - name: Verify original source CI read-only
         shell: pwsh -NoProfile -NonInteractive -File {0}
         env:
           GH_TOKEN: ${{ github.token }}

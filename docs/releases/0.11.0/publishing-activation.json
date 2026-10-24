@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.0",
+  "authorizedPreparation": "TA00-TA03",
+  "realAssetTransferEnabled": false,
+  "publicationEnabled": false,
+  "repository": "von12549/ArchSift",
+  "repositoryId": 1407069697,
+  "ownerId": 2306937,
+  "workflow": ".github/workflows/publish-nuget.yml",
+  "environment": "nuget-release",
+  "reviewer": "von12549",
+  "versionSwitch": "ARCHSIFT_NUGET_PUBLISH_0110",
+  "nugetUser": "XiaolongFeng",
+  "nugetSource": "https://api.nuget.org/v3/index.json",
+  "payloadManifestSha256": "da6c59dc051e406425b80a8953848bca169b17c6f8aa4331758d0a6177582b4e",
+  "hostedSdk": "10.0.303",
+  "originalReference": "docs/releases/0.11.0/trusted-publishing-reference.json",
+  "originalReferenceSha256": "699d42ad54374320ee35305a183872c8f334c71753c43ebb54af593d8f5ed35c",
+  "futureAuthorization": "A separately reviewed change and operator approval must enable real asset transfer/publication. Repository switch alone cannot open these committed locks.",
+  "localGuardDotnet": "stopped",
+  "newInstaller": false
+}

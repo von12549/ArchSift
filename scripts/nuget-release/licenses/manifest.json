@@ -1,0 +1,27 @@
+{
+  "scope": "Release-workflow parser dependencies only; not redistributed inside accepted nupkg files.",
+  "schemaVersion": 1,
+  "packages": [
+    {
+      "sha256": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869",
+      "version": "2.9.1",
+      "license": "ISC",
+      "file": "yaml-LICENSE.txt",
+      "name": "yaml"
+    },
+    {
+      "sha256": "b303783d5eb7ca50b853ffa5f145e4e7998fab339831d848f507ca6cd970577a",
+      "version": "3.4.0",
+      "license": "MIT",
+      "file": "yauzl-LICENSE.txt",
+      "name": "yauzl"
+    },
+    {
+      "sha256": "7e64acffcb0d20d33f5a86949ffd4a99ae045b10c7332a9c3a58635876c16880",
+      "version": "1.2.0",
+      "license": "MIT",
+      "file": "pend-LICENSE.txt",
+      "name": "pend"
+    }
+  ]
+}
