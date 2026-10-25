@@ -1,3 +1,7 @@
+## RELEASE_SWITCH repair after stopped TA06 attempt (2026-10-25)
+
+Repair, publish-mode regressions, normal PR/CI/merge and refreshed preview/confirmation card are authorized. Keep the operational switch closed; no credentials or new publication attempt, tags/Release, installer, local Guard/dotnet or persistent host changes. Preserve failed run 40154094089 and all original assets/evidence and IFX gates. See [minimal repair and verification plan](20261025-trusted-publishing-switch-repair.md). Earlier checkpoints retain their timing.
+
 ## TA05 final approval preparation (2026-10-25)
 
 Implementation/tests/PR/CI/merge, refreshed original-byte preview and external final confirmation card are authorized. Prepare source publication capability, credential-free fresh hosted official source audit and same-run audit validation before login; keep the operational repository switch absent/false. No NuGet credentials/push, tag/Release, installer, local Guard/dotnet or persisted host changes. Preserve immutable accepted packages, original references/evidence and IFX gates. See [TA05 scope, tests and rollback](20261025-trusted-publishing-final-approval.md). Final manual release operation requires separate authorization; earlier checkpoints below retain their timing.
