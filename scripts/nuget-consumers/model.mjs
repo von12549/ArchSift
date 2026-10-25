@@ -68,6 +68,15 @@ export function validateConsumerReceipt(receipt, kind, fixture, payload) {
     assert.equal(sha256(fs.readFileSync(item.location)), expected[0].sha256, 'Runtime copy must equal the signed package library');
   }
 }
+export function verifyTargetReport(report, tfm, expected, sdk) {
+  assert.equal(report.execution,'completed');assert.equal(report.projects.length,1);assert.deepEqual(report.projects[0].frameworks,[tfm]);
+  assert.equal(report.coverage.projectCount,1);assert.ok(report.coverage.assemblyCount>0);assert.equal(report.coverage.sourceBound,true);
+  assert.equal(report.buildContext.mode,'isolated');assert.equal(report.buildContext.binding,'source-bound');assert.equal(report.buildContext.sdk,sdk);
+  assert.deepEqual(report.ruleResults.map(x=>x.ruleId).sort(),['framework-contract','synthetic-no-transactions']);
+  assert.ok(report.ruleResults.every(x=>x.status===expected && x.matched===1));
+  assert.equal(report.executionErrors.length,0);
+  if(expected==='violation')assert.ok(report.findings.some(x=>x.source==='Synthetic.AllowedSource' && x.target==='System.String'),'Actual source-bound type dependency must violate');
+}
 const pinned = {
   'actions/checkout': '11d5960a326750d5838078e36cf38b85af677262',
   'actions/setup-dotnet': '67a3573c9a986a3f9c594539f4ab511d57bb3ce9',

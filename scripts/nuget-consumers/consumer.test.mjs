@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { assertHosted, contained, readJson, sha256, validatePublication, validateWorkflow, verifyGate, validateConsumerReceipt, verifyPublicInputs, writeJson } from './model.mjs';
+import { assertHosted, contained, readJson, sha256, validatePublication, validateWorkflow, verifyGate, validateConsumerReceipt, verifyPublicInputs, writeJson, verifyTargetReport } from './model.mjs';
 import { generateFixtures, nugetXml } from './fixtures.mjs';
 const source=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const pub=readJson(path.join(source,'docs/releases/0.11.0/nr06-publication.json'));
@@ -49,6 +49,7 @@ test('Generated consumer topology has exact standard files, package references, 
  assert.equal(readJson(path.join(f.mtp,'.config/dotnet-tools.json')).tools['archsift.cli'].version,'0.11.0','MTP approval must bind its own standard tool manifest');
  assert.ok(f.targets.every(t=>fs.readFileSync(path.join(t.directory,'NeverExecute.cs'),'utf8').includes('must never run')));
  for(const target of f.targets){const allowed=readJson(target.badRules).rules[0].parameters.allowedFrameworks;assert.ok(allowed.every(x=>['net8.0','net9.0','net10.0'].includes(x)));assert.ok(!allowed.includes(target.tfm),'A semantic violation must use a schema-valid supported framework');}
+ for(const target of f.targets){assert.equal(readJson(target.config).build.mode,'isolated');assert.equal(readJson(target.rules).rules.filter(x=>x.type==='type-dependency').length,1);}
 });
 test('Explicit NuGet configurations clear inherited sources, fallbacks and audit sources',()=>{
  const config=nugetXml();for(const s of ['packageSources','fallbackPackageFolders','auditSources'])assert.ok(config.includes(`<${s}><clear/>`));assert.ok(!config.includes('ignore-failed'));
@@ -70,6 +71,10 @@ test('A source-built or stale copied assembly cannot satisfy public package prov
  const receipt={kind:'Contracts',version:'0.11.0',checks:'passed',assemblies:[{name:'ArchSift.Contracts',version:'0.11.0',location:dll}]};
  assert.throws(()=>validateConsumerReceipt(receipt,'Contracts',receiptRoot,payload));
 });
+const bound={execution:'completed',projects:[{frameworks:['net8.0']}],coverage:{projectCount:1,assemblyCount:1,sourceBound:true},buildContext:{mode:'isolated',binding:'source-bound',sdk:'10.0.100'},ruleResults:[{ruleId:'framework-contract',status:'pass',matched:1},{ruleId:'synthetic-no-transactions',status:'pass',matched:1}],executionErrors:[],findings:[]};
+test('Actual isolated source-bound target report is required',()=>verifyTargetReport(bound,'net8.0','pass','10.0.100'));
+for(const [name,mutate] of [['declaration-only',x=>x.coverage.sourceBound=false],['no-assembly',x=>x.coverage.assemblyCount=0],['unbound',x=>x.buildContext.binding='assemblies-only'],['wrong-sdk',x=>x.buildContext.sdk='10.0.402'],['zero-source',x=>x.ruleResults[1].matched=0],['missing-type-rule',x=>x.ruleResults.pop()],['error',x=>x.executionErrors=['failed']]])test(`Reject incomplete target binding ${name}`,()=>{const x=copy(bound);mutate(x);assert.throws(()=>verifyTargetReport(x,'net8.0','pass','10.0.100'));});
+test('Framework-only violation cannot masquerade as a type dependency violation',()=>{const x=copy(bound);x.ruleResults.forEach(r=>r.status='violation');assert.throws(()=>verifyTargetReport(x,'net8.0','violation','10.0.100'));x.findings=[{source:'Synthetic.AllowedSource',target:'System.String'}];verifyTargetReport(x,'net8.0','violation','10.0.100');});
 test('Hosted PowerShell entry keeps host APIs read only and never falls through to installer/push',()=>{
  const script=fs.readFileSync(path.join(source,'scripts/Invoke-NR06HostedConsumers.ps1'),'utf8');
  assert.ok(script.indexOf('Assert-NR06HostedContext.ps1')<script.indexOf('ProcessStartInfo'));

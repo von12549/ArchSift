@@ -206,6 +206,8 @@ try{
   foreach($directory in @('Contracts','Core','ArchUnit','Testing')){$target=Join-Path $evidence ('library-'+$directory);[void][IO.Directory]::CreateDirectory($target);$library=Join-Path $root ('libraries/'+$directory);foreach($relative in @('packages.lock.json','obj/project.assets.json','Consumer.csproj','Program.cs')){if(Test-Path -LiteralPath (Join-Path $library $relative)){Copy-Item -LiteralPath (Join-Path $library $relative) -Destination (Join-Path $target ([IO.Path]::GetFileName($relative)))}}}
   $mtpEvidence=Join-Path $evidence 'MTP-fixture';[void][IO.Directory]::CreateDirectory($mtpEvidence)
   foreach($relative in @('required-cases.json','policy.json','package-approval.json','packages.lock.json','NuGet.Gate.Config','Portable.Architecture.Tests.csproj')){$file=Join-Path $root ('MTP target/'+$relative);if(Test-Path -LiteralPath $file){Copy-Item -LiteralPath $file -Destination $mtpEvidence}}
+  $analysisRoot=Join-Path $root 'analysis results'
+  if(Test-Path -LiteralPath $analysisRoot){foreach($file in Get-ChildItem -LiteralPath $analysisRoot -Recurse -File -Filter 'assembly-manifest.json'){$target=Join-Path $evidence ('assembly-manifests/'+[IO.Path]::GetRelativePath($analysisRoot,$file.FullName));[void][IO.Directory]::CreateDirectory((Split-Path $target));Copy-Item -LiteralPath $file.FullName -Destination $target}}
  }
  if($before -cne $after){throw 'Final host drift; no repair performed.'}
 }

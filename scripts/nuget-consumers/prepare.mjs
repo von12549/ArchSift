@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
-import { assertHosted, contained, readJson, writeJson, sha256, readZip, verifyPublicInputs, validateConsumerReceipt, verifyGate } from './model.mjs';
+import { assertHosted, contained, readJson, writeJson, sha256, readZip, verifyPublicInputs, validateConsumerReceipt, verifyGate, verifyTargetReport } from './model.mjs';
 import { generateFixtures, nugetXml, workspace } from './fixtures.mjs';
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const publication = readJson(path.join(source,'docs/releases/0.11.0/nr06-publication.json'));
@@ -59,15 +59,13 @@ if (operation === 'prepare') {
   for(const item of fixtures.targets){
     for(const outcome of ['pass','violation']){
       const result=readJson(path.join(root,`target-${item.tfm}-${outcome}.stdout.log`));
-      assert.equal(result.execution,'completed'); assert.equal(result.projects.length,1); assert.equal(result.projects[0].frameworks[0],item.tfm);
-      assert.equal(result.ruleResults.length,1); assert.equal(result.ruleResults[0].status,outcome); assert.equal(result.ruleResults[0].matched,1);
-      if(outcome==='violation') assert.ok(result.findings.length>0);
+      verifyTargetReport(result,item.tfm,outcome,fixtures.sdk);
     }
   }
   const checks=readJson(path.join(root,'checks.json')); assert.ok(checks.every(x=>x.hostEqual && x.expectationMet));
   const prefix=['sdk','frameworks','tool-restore','tool-version','tool-path-install','tool-path-version','mapped-source-restore','poison-source-rejection','missing-version-rejection','unavailable-source-rejection','mtp-seed-lock',fixtures.sdk==='10.0.303'?'full-gate':'full-gate-sdk-contract-rejection','host-shim-build'];
   for(const name of prefix) assert.equal(checks.filter(x=>x.name===name).length,1,`Missing or duplicate required step ${name}`);
   const mtp=fixtures.sdk==='10.0.303'?{status:'passed-exact-approved-SDK',sdk:'10.0.303',cSharp:3,json:1,total:4,passed:4,failed:0,skipped:0,audit:'not-run-functional-phase'}:{status:'expected-rejection-existing-exact-SDK-contract',requiredSdk:'10.0.303',attemptedSdk:fixtures.sdk,executedCases:0};
-  const gateStatus={schemaVersion:1,status:'passed-NR06.00-through-NR06.03-machine-cell',harnessCommit:process.env.GITHUB_SHA,runId:process.env.GITHUB_RUN_ID,runAttempt:1,selectedSdk:fixtures.sdk,runtime:'10.0.13',publicPackageVersion:'0.11.0',packageSourceCommit:publication.sourceCommit,checks:checks.length,libraryConsumers:4,mtp,analyzedFrameworks:['net8.0','net9.0','net10.0'],windowsEntryScope:process.platform==='win32'?'project entry/cache/init/doctor and embedded UI smoke':'not-applicable-Windows-only',strictOffline:'not-executed-awaiting-user-environment-confirmation',fullLifecycle:'not-executed-NR06.05',freshCompleteClosureAudit:'not-executed-NR06.06',humanAcceptance:'pending-user-only',publicationSwitch:'absent-at-independent-preflight',localAuthorRuntimeUsed:false,hostEqual:true};
+  const gateStatus={schemaVersion:1,status:'passed-NR06.00-through-NR06.03-machine-cell',harnessCommit:process.env.GITHUB_SHA,runId:process.env.GITHUB_RUN_ID,runAttempt:1,selectedSdk:fixtures.sdk,runtime:'10.0.13',publicPackageVersion:'0.11.0',packageSourceCommit:publication.sourceCommit,checks:checks.length,libraryConsumers:4,mtp,analyzedFrameworks:['net8.0','net9.0','net10.0'],analyzedAssemblyBinding:'source-bound-isolated-allow-and-real-type-violation',windowsEntryScope:process.platform==='win32'?'project entry/cache/init/doctor and embedded UI smoke':'not-applicable-Windows-only',strictOffline:'not-executed-awaiting-user-environment-confirmation',fullLifecycle:'not-executed-NR06.05',freshCompleteClosureAudit:'not-executed-NR06.06',humanAcceptance:'pending-user-only',publicationSwitch:'absent-at-independent-preflight',localAuthorRuntimeUsed:false,hostEqual:true};
   writeJson(path.join(root,'qualification.json'),gateStatus); console.log(JSON.stringify(gateStatus));
 } else throw new Error('Unknown consumer preparation operation');

@@ -7,7 +7,7 @@
     "NR06.02",
     "NR06.03"
   ],
-  "status": "NR06.00-through-NR06.03-machine-qualified-normal-delivery-tracked-by-PR",
+  "status": "NR06.00-through-NR06.02-qualified-NR06.03-source-bound-target-verification-in-progress",
   "packageSourceCommit": "8b721f44e90a41285fa74a6f72576c7f6996ef7d",
   "baselineToolingCommit": "802a631625c5e42b6ce153f31e8c063ca020d67a",
   "publicationRun": 40158940042,
@@ -27,7 +27,7 @@
     },
     {
       "id": "NR06.03",
-      "status": "passed-scoped-host-matrix-existing-exact-MTP-gate-preserved"
+      "status": "source-bound-isolated-target-extension-in-progress"
     },
     {
       "id": "NR06.04",
@@ -184,5 +184,6 @@
       "run": 40165525104,
       "reason": "existing exact MTP SDK boundary and Windows automatic-variable collision; preserve the product gate and correct the harness"
     }
-  ]
+  ],
+  "targetBindingCorrection": "Prior 308-step evidence covered declared-target analysis; require additional isolated source-bound assembly allow/violation verification before NR06.03 closeout."
 }
