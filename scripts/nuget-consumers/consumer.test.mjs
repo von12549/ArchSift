@@ -26,6 +26,7 @@ test('Published archive corruption rejects before package use',async()=>{
 });
 test('Dedicated workflow is pinned, read only and separates safety from five real consumer cells',()=>validateWorkflow(workflow));
 test('Release switch binding cannot be replaced by a constant',()=>assert.throws(()=>validateWorkflow(workflow.replace('${{ vars.ARCHSIFT_NUGET_PUBLISH_0110 }}',"''"))));
+test('Runner context is rejected in job env before GitHub loading',()=>assert.throws(()=>validateWorkflow(workflow.replace('NR06_RELEASE_SWITCH:', 'BROKEN_PATH: ${{ runner.temp }}\n      NR06_RELEASE_SWITCH:'))));
 for(const [name,from,to] of [
  ['OIDC','contents: read','contents: read\n  id-token: write'],['write-token','actions: read','actions: write'],['untrusted-action','actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9','actions/setup-dotnet@main'],['persisted-token','persist-credentials: false','persist-credentials: true'],['self-hosted','runs-on: ubuntu-latest','runs-on: self-hosted'],['publish-environment','timeout-minutes: 45','timeout-minutes: 45\n    environment: nuget-release'],['push','run: ./scripts/Invoke-NR06HostedConsumers.ps1','run: dotnet nuget push'],['missing-boundary','Assert-NR06HostedContext.ps1','UnreviewedContext.ps1'],['matrix','os: windows-latest, sdk: 10.0.100','os: windows-latest, sdk: 9.0.314']
 ])test(`Reject unsafe workflow ${name}`,()=>{assert.notEqual(workflow.replace(from,to),workflow);assert.throws(()=>validateWorkflow(workflow.replace(from,to)));});

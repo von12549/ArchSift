@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { assertHosted, contained, sha256 } from './model.mjs';
+assertHosted(process.env); assert.equal(process.platform,'linux'); assert.equal(process.arch,'x64');
+const root=contained(process.env.RUNNER_TEMP,path.join(process.env.RUNNER_TEMP,'nr06-actionlint-1.7.12'));
+assert.ok(!fs.existsSync(root),'Preserve prior linter evidence');fs.mkdirSync(root);
+const response=await fetch('https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz',{signal:AbortSignal.timeout(60000)});
+assert.equal(response.status,200);const bytes=Buffer.from(await response.arrayBuffer());
+assert.equal(sha256(bytes),'8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8');
+const archive=path.join(root,'actionlint.tar.gz');fs.writeFileSync(archive,bytes);
+const extract=spawnSync('tar',['-xzf',archive,'-C',root,'actionlint'],{encoding:'utf8'});assert.equal(extract.status,0);
+const check=spawnSync(path.join(root,'actionlint'),['-no-color','-shellcheck=','-pyflakes=',path.join(process.env.GITHUB_WORKSPACE,'.github/workflows/verify-nuget-consumers.yml')],{encoding:'utf8'});
+process.stdout.write(check.stdout);process.stderr.write(check.stderr);assert.equal(check.status,0,'GitHub workflow expression/syntax checks failed');

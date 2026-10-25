@@ -83,6 +83,7 @@ export function validateWorkflow(text) {
   for (const job of Object.values(w.jobs)) {
     assert.ok(!job.environment && !job.permissions && !job.container && !job.services);
     assert.ok(!JSON.stringify(job).includes('self-hosted'));
+    assert.ok(!JSON.stringify(job.env ?? {}).includes('runner.'),'Runner context is unavailable in job-level env; use step env');
     for (const step of job.steps) {
       if (step.uses) { const [action, commit] = step.uses.split('@'); assert.equal(commit, pinned[action], 'Only pinned approved actions'); }
       if (step.uses?.startsWith('actions/checkout')) assert.equal(step.with['persist-credentials'], false);
