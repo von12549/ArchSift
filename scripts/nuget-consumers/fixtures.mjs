@@ -46,7 +46,7 @@ export function generateFixtures(root, source, sdk) {
     const good=JSON.parse(fs.readFileSync(rules,'utf8'));good.rules.push(...typeRule('System.Transactions.TransactionScope').rules);writeJson(rules,good);
     const bad=JSON.parse(fs.readFileSync(badRules,'utf8'));bad.rules.push(...typeRule('System.String').rules);writeJson(badRules,bad);
     const config = path.join(root, 'analysis inputs', tfm, 'config.json');
-    writeJson(config, {schemaVersion:1,target:{root:directory,entry:'Consumer.csproj'},rulesets:[rules],build:{mode:'isolated',targetFramework:tfm,configuration:'Release',allowNetwork:true,sources:['https://api.nuget.org/v3/index.json'],cacheDirectory:path.join(root,'target-pack-cache')},output:{directory:path.join(root,'analysis results',tfm),formats:['json']}});
+    writeJson(config, {schemaVersion:1,target:{root:directory,entry:'Consumer.csproj'},rulesets:[rules],build:{mode:'isolated',targetFramework:tfm,configuration:'Debug',allowNetwork:true,sources:['https://api.nuget.org/v3/index.json'],cacheDirectory:path.join(root,'target-pack-cache')},output:{directory:path.join(root,'analysis results',tfm),formats:['json']}});
     return { tfm, directory, config, rules, badRules };
   });
   const unsupported = ['net8.0','net9.0'].map(tfm => { const directory=path.join(root,'unsupported consumer',tfm); project(directory,sdk,'ArchSift.Contracts','0.11.0',tfm); text(path.join(directory,'Program.cs'),'System.Console.WriteLine(ArchSift.Contracts.ToolIdentity.Version);'); return directory; });
