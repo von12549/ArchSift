@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-nr06-published-inputs",
+  "version": "0.11.0",
+  "publicationRun": 40158940042,
+  "sourceCommit": "8b721f44e90a41285fa74a6f72576c7f6996ef7d",
+  "sourceTree": "2c18d18145beb52a917a3884ddd7f442ec486967",
+  "owner": "XiaolongFeng",
+  "publicationCloseoutSha256": "6c4bc9baefb0804a98ef19b6f9dd4cfdca4236713c496b8b5fb4cb4dc098f689",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "url": "https://api.nuget.org/v3-flatcontainer/archsift.contracts/0.11.0/archsift.contracts.0.11.0.nupkg",
+      "version": "0.11.0",
+      "submissionSha256": "73a43fa4db7bd1dbbb3675acbf2ac3656f4c827440bc55d66f99558cd6b15047",
+      "servedSha256": "b96ad039d293f3451af160f91d56a7ec5c1d100f8e34037e88ccadd95a2b857c",
+      "servedBytes": 107839
+    },
+    {
+      "id": "ArchSift.Core",
+      "url": "https://api.nuget.org/v3-flatcontainer/archsift.core/0.11.0/archsift.core.0.11.0.nupkg",
+      "version": "0.11.0",
+      "submissionSha256": "72f8f1a2aea3a818ad5edc0457a6ae935fc4f302ba33cbe63acc810d5ab32a3f",
+      "servedSha256": "c97c8d24ddb2fe038263bd818ff5ba5b1682c476f7b84953ee4320289e0879d7",
+      "servedBytes": 175710
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "url": "https://api.nuget.org/v3-flatcontainer/archsift.archunit/0.11.0/archsift.archunit.0.11.0.nupkg",
+      "version": "0.11.0",
+      "submissionSha256": "ef6001bc30dfb6f49a561e02f9996407d9e32b5d49e863c2b0819e81cccb35c5",
+      "servedSha256": "e424f4b282cee4fcdc9500afbdc255127eb7c26a2ff3369f87d93213a7c3faf4",
+      "servedBytes": 44643
+    },
+    {
+      "id": "ArchSift.Testing",
+      "url": "https://api.nuget.org/v3-flatcontainer/archsift.testing/0.11.0/archsift.testing.0.11.0.nupkg",
+      "version": "0.11.0",
+      "submissionSha256": "ac00b12b0c2353a1bc337b7379c89e9ce16b6cb9d258dae8bee4df6b1633f67e",
+      "servedSha256": "345b35171e844aff751cf987c9ecec92201071979f2e23105c07559ae834ff6d",
+      "servedBytes": 39929
+    },
+    {
+      "id": "ArchSift.Cli",
+      "url": "https://api.nuget.org/v3-flatcontainer/archsift.cli/0.11.0/archsift.cli.0.11.0.nupkg",
+      "version": "0.11.0",
+      "submissionSha256": "c076eb5bbbcd08aa4d93138da72db3c99025f1c7a10e6b371686be0801477b1e",
+      "servedSha256": "dfe72c3ed5b0060e4bed57f2ca179b5edae930751d77dd6975b1b4150c1be60e",
+      "servedBytes": 2920710
+    }
+  ]
+}

@@ -633,3 +633,8 @@ W09-W10 authority 2026-10-07:stage commits/later release/MIT license.W090286b75/
 - [P05 final verification](D:/IFX-10-Root/guard-lab/archives/p05-20261006-final-verification.json).
 - [P05 safety audit](D:/IFX-10-Root/guard-lab/archives/p05-20261006/cleanup/h4-final-safety-and-cleanup-audit.json).
 - [ArchUnitNET](https://github.com/TNG/ArchUnitNET/blob/main/README.md), [build limitations](https://archunitnet.readthedocs.io/en/latest/limitations/debug_artifacts/).
+
+
+## Published consumer qualification, 2026-10-25
+
+NR06.00-NR06.03 authorized: immutable public input freeze, dedicated network consumer harness and exact hosted SDK/runtime compatibility, normal PR/CI/merge. [Scope and evidence contract](20261025-nr06-consumer-qualification.md), [current status](../acceptance/20261025-nr06-consumer-status.json). Actual disconnected and remote Windows human environments remain [proposed for confirmation](20261025-nr06-offline-human-environments.md). No local Guard/dotnet, publishing credential/switch/tag/Release, new installer, persisted host mutation or live IFX policy/runner change. Full NR06 and human acceptance are not complete.

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.0",
+  "scope": [
+    "NR06.00",
+    "NR06.01",
+    "NR06.02",
+    "NR06.03"
+  ],
+  "status": "implementation-in-progress-hosted-consumer-results-pending",
+  "packageSourceCommit": "8b721f44e90a41285fa74a6f72576c7f6996ef7d",
+  "baselineToolingCommit": "802a631625c5e42b6ce153f31e8c063ca020d67a",
+  "publicationRun": 40158940042,
+  "publicationInputs": "../releases/0.11.0/nr06-publication.json",
+  "stages": [
+    {
+      "id": "NR06.00",
+      "status": "authorized-in-progress"
+    },
+    {
+      "id": "NR06.01",
+      "status": "authorized-in-progress"
+    },
+    {
+      "id": "NR06.02",
+      "status": "authorized-in-progress"
+    },
+    {
+      "id": "NR06.03",
+      "status": "authorized-in-progress"
+    },
+    {
+      "id": "NR06.04",
+      "status": "not-executed-not-authorized"
+    },
+    {
+      "id": "NR06.05",
+      "status": "not-executed-not-authorized"
+    },
+    {
+      "id": "NR06.06",
+      "status": "not-executed-not-authorized"
+    },
+    {
+      "id": "NR06.07",
+      "status": "not-executed-not-authorized"
+    },
+    {
+      "id": "NR06.08",
+      "status": "not-executed-not-authorized"
+    },
+    {
+      "id": "NR06.09",
+      "status": "not-executed-not-authorized"
+    }
+  ],
+  "localGuardDotnetLaunch": false,
+  "publishingCredentials": false,
+  "releaseSwitch": "absent",
+  "actualDisconnection": "awaiting-user-environment-confirmation",
+  "remoteHumanAcceptance": "awaiting-user-environment-confirmation-and-later-hands-on-answers",
+  "privateIfxTransfer": false,
+  "fullNr06Complete": false
+}
