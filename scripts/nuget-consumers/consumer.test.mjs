@@ -14,6 +14,8 @@ const workflow=fs.readFileSync(path.join(source,'.github/workflows/verify-nuget-
 const copy=x=>structuredClone(x);
 test('NR05 immutable public identities and original payload manifest bind the same submissions',()=>{
  validatePublication(pub,reference); assert.equal(payload.sourceCommit,pub.sourceCommit);
+ assert.equal(sha256(fs.readFileSync(path.join(source,'docs/releases/0.11.0/nr06-payload-manifest.json'))),pub.payloadManifestSha256);
+ assert.ok(fs.readFileSync(path.join(source,'.gitattributes'),'utf8').includes('docs/releases/0.11.0/nr06-payload-manifest.json -text -diff -merge'));
  for(const p of pub.packages)assert.equal(payload.packages.find(x=>x.id===p.id).submittedSha256,p.submissionSha256);
 });
 for(const [name,mutate] of [
@@ -44,7 +46,9 @@ test('Generated consumer topology has exact standard files, package references, 
  for(const p of f.libraries){const project=fs.readFileSync(path.join(p.directory,'Consumer.csproj'),'utf8');assert.ok(project.includes(`Include="ArchSift.${p.kind}" Version="[0.11.0]"`));assert.ok(!project.includes('ProjectReference'));assert.equal(readJson(path.join(p.directory,'global.json')).sdk.rollForward,'disable');}
  const manifest=readJson(path.join(f.tool,'.config/dotnet-tools.json'));assert.equal(manifest.isRoot,true);assert.equal(manifest.tools['archsift.cli'].rollForward,false);
  const gate=readJson(f.gate);assert.equal(gate.auditMode,'offline-architecture');assert.equal(readJson(path.join(f.mtp,'required-cases.json')).cases.length,3);
+ assert.equal(readJson(path.join(f.mtp,'.config/dotnet-tools.json')).tools['archsift.cli'].version,'0.11.0','MTP approval must bind its own standard tool manifest');
  assert.ok(f.targets.every(t=>fs.readFileSync(path.join(t.directory,'NeverExecute.cs'),'utf8').includes('must never run')));
+ for(const target of f.targets){const allowed=readJson(target.badRules).rules[0].parameters.allowedFrameworks;assert.ok(allowed.every(x=>['net8.0','net9.0','net10.0'].includes(x)));assert.ok(!allowed.includes(target.tfm),'A semantic violation must use a schema-valid supported framework');}
 });
 test('Explicit NuGet configurations clear inherited sources, fallbacks and audit sources',()=>{
  const config=nugetXml();for(const s of ['packageSources','fallbackPackageFolders','auditSources'])assert.ok(config.includes(`<${s}><clear/>`));assert.ok(!config.includes('ignore-failed'));

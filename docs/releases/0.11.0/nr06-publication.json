@@ -48,5 +48,6 @@
       "servedSha256": "dfe72c3ed5b0060e4bed57f2ca179b5edae930751d77dd6975b1b4150c1be60e",
       "servedBytes": 2920710
     }
-  ]
+  ],
+  "payloadManifestSha256": "da6c59dc051e406425b80a8953848bca169b17c6f8aa4331758d0a6177582b4e"
 }

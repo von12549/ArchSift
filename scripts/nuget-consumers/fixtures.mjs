@@ -41,13 +41,14 @@ export function generateFixtures(root, source, sdk) {
     text(path.join(directory, 'Consumer.csproj'), `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>${tfm}</TargetFramework></PropertyGroup></Project>`);
     text(path.join(directory, 'NeverExecute.cs'), 'public static class NeverExecute { public static void Main() => throw new System.Exception("Analyzed business entry must never run"); }');
     const rules = path.join(root, 'analysis inputs', tfm, 'pass.json'); writeJson(rules, frameworkRule([tfm]));
-    const badRules = path.join(root, 'analysis inputs', tfm, 'violation.json'); writeJson(badRules, frameworkRule(['net7.0']));
+    const badRules = path.join(root, 'analysis inputs', tfm, 'violation.json'); writeJson(badRules, frameworkRule([tfm === 'net8.0' ? 'net9.0' : 'net8.0']));
     const config = path.join(root, 'analysis inputs', tfm, 'config.json');
     writeJson(config, {schemaVersion:1,target:{root:directory,entry:'Consumer.csproj'},rulesets:[rules],build:{mode:'existing',targetFramework:tfm},output:{directory:path.join(root,'analysis results',tfm),formats:['json']}});
     return { tfm, directory, config, rules, badRules };
   });
   const unsupported = ['net8.0','net9.0'].map(tfm => { const directory=path.join(root,'unsupported consumer',tfm); project(directory,sdk,'ArchSift.Contracts','0.11.0',tfm); text(path.join(directory,'Program.cs'),'System.Console.WriteLine(ArchSift.Contracts.ToolIdentity.Version);'); return directory; });
   const mtp = path.join(root,'MTP target'); project(mtp,sdk);
+  writeJson(path.join(mtp,'.config/dotnet-tools.json'),{version:1,isRoot:true,tools:{'archsift.cli':{version:'0.11.0',commands:['archsift'],rollForward:false}}});
   fs.rmSync(path.join(mtp,'Consumer.csproj'));
   text(path.join(mtp,'Portable.Architecture.Tests.csproj'), `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><RestorePackagesWithLockFile>true</RestorePackagesWithLockFile><UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner><NuGetAudit>false</NuGetAudit><TreatWarningsAsErrors>true</TreatWarningsAsErrors><UseSharedCompilation>false</UseSharedCompilation></PropertyGroup><ItemGroup><PackageReference Include="ArchSift.Testing" Version="[0.11.0]"/><PackageReference Include="xunit.v3" Version="[4.0.1]"/></ItemGroup></Project>`);
   text(path.join(mtp,'PortableTests.cs'),fs.readFileSync(path.join(source,'samples/portable-verification/PortableTests.cs')));

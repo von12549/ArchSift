@@ -8,6 +8,7 @@ const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..
 const publication = readJson(path.join(source,'docs/releases/0.11.0/nr06-publication.json'));
 const reference = readJson(path.join(source,'docs/releases/0.11.0/trusted-publishing-reference.json'));
 const payload = readJson(path.join(source,'docs/releases/0.11.0/nr06-payload-manifest.json'));
+assert.equal(sha256(fs.readFileSync(path.join(source,'docs/releases/0.11.0/nr06-payload-manifest.json'))),publication.payloadManifestSha256,'Original payload manifest bytes changed');
 assertHosted(process.env);
 const [operation, rootArg, sdk] = process.argv.slice(2);
 const root = contained(process.env.RUNNER_TEMP, rootArg);
