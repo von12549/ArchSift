@@ -2,6 +2,8 @@ import { assertPreviewOnly, createPreviewData, checkStagingRepository } from './
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import { parseWorkflow } from './workflow-policy.mjs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -178,4 +180,53 @@ for(const command of ['prepare','verify-preview','prepare-audit'])for(const cred
  delete child.GITHUB_OUTPUT;delete child.GITHUB_STEP_SUMMARY;
  const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),command],{cwd:root,env:child,encoding:'utf8',timeout:20000});
  assert.equal(result.status,1);assert.ok(result.stdout.includes('SYNTHETIC-TRANSPORT-LOADED'));assert.ok(!String(result.stdout+result.stderr).includes('FAKE-SENSITIVE-KEY'));assert.ok(!String(result.stdout+result.stderr).includes('FORBIDDEN-TRANSPORT'));
+});
+
+// Execute the unchanged production CLI using the actual YAML step environment,
+// synthetic packages/reference and a preload that forbids real network/native children.
+function runWiredInputVerification({mode='publish',switchValue='true',omitSwitch=false,changeFixture=()=>{},changeEnv=()=>{}}={}){
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'archsift-input-wiring-'));
+ try{
+  const {r,files,m}=syntheticPackages();const manifest=Buffer.from(JSON.stringify(m));files.set('package-payload-manifest.json',manifest);
+  const p={...policy,payloadManifestSha256:sha256(manifest),originalReferenceSha256:sha256(Buffer.from(JSON.stringify(r)))};
+  const request={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,sourceTree:r.sourceTree,workflowCommit:context.sha,repositoryId:p.repositoryId,ownerId:p.ownerId,packages:r.packages,payloadManifestSha256:p.payloadManifestSha256,acceptanceSha256:r.acceptedPreview.acceptanceSha256};
+  const requestBytes=Buffer.from(JSON.stringify(request));files.set('release-request.json',requestBytes);const raw=zip([...files]);
+  const fixture={reference:r,policy:p,archiveBase64:raw.toString('base64'),metadata:{id:42,name:'archsift-0.11.0-reviewed-submissions',expired:false,size_in_bytes:raw.length,digest:`sha256:${sha256(raw)}`,workflow_run:{id:100,head_sha:context.sha,head_repository_id:p.repositoryId}}};
+  changeFixture(fixture);
+  const fixtureFile=path.join(directory,'fixture.json');fs.writeFileSync(fixtureFile,JSON.stringify(fixture));
+  const child={...process.env,GITHUB_ACTIONS:'true',RUNNER_ENVIRONMENT:'github-hosted',GITHUB_REPOSITORY:p.repository,GITHUB_REPOSITORY_ID:String(p.repositoryId),GITHUB_REPOSITORY_OWNER_ID:String(p.ownerId),GITHUB_REF:'refs/heads/main',GITHUB_SHA:context.sha,GITHUB_RUN_ID:'100',GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_WORKFLOW_REF:`${p.repository}/${p.workflow}@refs/heads/main`,RELEASE_MODE:mode,RELEASE_WORKFLOW_SHA:context.sha,RELEASE_DATA_COMMIT:'b'.repeat(40),RELEASE_REQUEST_SHA256:sha256(requestBytes),ARCHSIFT_RELEASE_TEST_FIXTURE:fixtureFile,NUGET_API_KEY:'',ACTIONS_ID_TOKEN_REQUEST_TOKEN:'',GITHUB_STEP_SUMMARY:path.join(directory,'summary.json')};
+  for(const name of ['RELEASE_SWITCH','RELEASE_ARTIFACT_ID','RELEASE_ARTIFACT_SHA256','GH_TOKEN','GITHUB_OUTPUT'])delete child[name];
+  const stepEnv={...parseWorkflow(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8')).jobs.preflight.steps[5].env};
+  if(omitSwitch)delete stepEnv.RELEASE_SWITCH;
+  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN','${{ vars.ARCHSIFT_NUGET_PUBLISH_0110 }}':switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
+  for(const [name,expression]of Object.entries(stepEnv)){assert.ok(Object.hasOwn(bindings,expression),'Unknown step binding');child[name]=bindings[expression];}
+  changeEnv(child);
+  const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-artifact-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),'verify-preview'],{cwd:root,env:child,encoding:'utf8',timeout:20000});
+  const summary=fs.existsSync(child.GITHUB_STEP_SUMMARY)?JSON.parse(fs.readFileSync(child.GITHUB_STEP_SUMMARY,'utf8')):null;
+  assert.ok(result.stdout.includes('SYNTHETIC-TRANSPORT-LOADED'));assert.ok(!`${result.stdout}${result.stderr}`.includes('FORBIDDEN-TRANSPORT'));assert.ok(!`${result.stdout}${result.stderr}`.includes('FAKE-GH-TOKEN'));assert.ok(!`${result.stdout}${result.stderr}`.includes('FAKE-SENSITIVE-KEY'));
+  return {result,summary,metadataRead:result.stdout.includes('SYNTHETIC-ARTIFACT-METADATA-READ'),bytesRead:result.stdout.includes('SYNTHETIC-ARTIFACT-BYTES-READ')};
+ }finally{
+  const actual=fs.realpathSync(directory),base=fs.realpathSync(os.tmpdir());
+  assert.equal(path.dirname(actual),base);assert.ok(path.basename(actual).startsWith('archsift-input-wiring-'));
+  fs.rmSync(actual,{recursive:true,force:true});
+ }
+}
+for(const [mode,switchValue]of [['publish','true'],['preview',''],['preview','false'],['preview','true']])test(`real CLI independently verifies synthetic original ZIP with YAML wiring: ${mode}/${switchValue}`,()=>{
+ const {result,summary,metadataRead,bytesRead}=runWiredInputVerification({mode,switchValue});
+ assert.equal(result.status,0,result.stderr);assert.equal(metadataRead,true);assert.equal(bytesRead,true);assert.equal(summary.mode,mode);assert.equal(summary.packageBytesVerified,true);assert.equal(summary.credentialsAcquired,false);assert.equal(summary.publicNugetPublication,false);assert.equal(summary.publicationApproval,'not-granted');
+});
+for(const [name,options]of [['missing YAML step binding',{omitSwitch:true}],['empty switch',{switchValue:''}],['false switch',{switchValue:'false'}],['nonexact switch',{switchValue:'True'}]])test('real publish-mode CLI rejects '+name+' before any artifact read',()=>{
+ const {result,summary,metadataRead,bytesRead}=runWiredInputVerification(options);assert.equal(result.status,1);assert.equal(summary,null);assert.equal(metadataRead,false);assert.equal(bytesRead,false);
+});
+test('real publish-mode CLI still rejects altered ZIP despite correct switch wiring',()=>{
+ const {result,bytesRead,summary}=runWiredInputVerification({changeFixture:f=>{const bytes=Buffer.from(f.archiveBase64,'base64');bytes[0]^=1;f.archiveBase64=bytes.toString('base64');}});assert.equal(result.status,1);assert.equal(bytesRead,true);assert.equal(summary,null);
+});
+test('real publish-mode CLI still rejects cross-run artifact before download',()=>{
+ const {result,metadataRead,bytesRead}=runWiredInputVerification({changeFixture:f=>{f.metadata.workflow_run.id=101;}});assert.equal(result.status,1);assert.equal(metadataRead,true);assert.equal(bytesRead,false);
+});
+test('real publish-mode CLI still rejects a different request binding',()=>{
+ const {result,bytesRead}=runWiredInputVerification({changeEnv:e=>{e.RELEASE_REQUEST_SHA256='0'.repeat(64);}});assert.equal(result.status,1);assert.equal(bytesRead,true);
+});
+for(const credential of ['NUGET_API_KEY','ACTIONS_ID_TOKEN_REQUEST_TOKEN'])test('real publish-mode input verification rejects injected '+credential+' without reads or leaks',()=>{
+ const {result,metadataRead,bytesRead}=runWiredInputVerification({changeEnv:e=>{e[credential]='FAKE-SENSITIVE-KEY';}});assert.equal(result.status,1);assert.equal(metadataRead,false);assert.equal(bytesRead,false);
 });

@@ -8,6 +8,11 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const workflow = fs.readFileSync(path.join(root, '.github/workflows/publish-nuget.yml'), 'utf8');
 checkWorkflow(workflow);
 const mutations = [
+ w => { delete w.jobs.preflight.steps[5].env.RELEASE_SWITCH; },
+ w => { w.jobs.preflight.steps[5].env.RELEASE_SWITCH = 'true'; },
+ w => { w.jobs.preflight.steps[5].env.RELEASE_SWITCH = 'false'; },
+ w => { w.jobs.preflight.steps[5].env.RELEASE_SWITCH = '${{ vars.OTHER_RELEASE_SWITCH }}'; },
+ w => { delete w.jobs.preflight.steps[5].env.RELEASE_SWITCH; w.jobs.preflight.steps[2].env.RELEASE_SWITCH = '${{ vars.ARCHSIFT_NUGET_PUBLISH_0110 }}'; },
  w => { w.permissions.contents = 'write'; },
  w => { w.permissions['id-token'] = 'write'; },
  w => { w.on.push = {}; },
