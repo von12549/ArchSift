@@ -7,7 +7,7 @@
     "NR06.02",
     "NR06.03"
   ],
-  "status": "implementation-in-progress-hosted-consumer-results-pending",
+  "status": "NR06.00-through-NR06.03-machine-qualified-normal-delivery-tracked-by-PR",
   "packageSourceCommit": "8b721f44e90a41285fa74a6f72576c7f6996ef7d",
   "baselineToolingCommit": "802a631625c5e42b6ce153f31e8c063ca020d67a",
   "publicationRun": 40158940042,
@@ -15,19 +15,19 @@
   "stages": [
     {
       "id": "NR06.00",
-      "status": "authorized-in-progress"
+      "status": "passed-public-input-source-owner-payload-native-signature-freeze"
     },
     {
       "id": "NR06.01",
-      "status": "authorized-in-progress"
+      "status": "harness-implemented-and-qualified-normal-delivery-tracked-by-linked-PR"
     },
     {
       "id": "NR06.02",
-      "status": "authorized-in-progress"
+      "status": "passed-five-hosted-network-consumer-cells"
     },
     {
       "id": "NR06.03",
-      "status": "authorized-in-progress"
+      "status": "passed-scoped-host-matrix-existing-exact-MTP-gate-preserved"
     },
     {
       "id": "NR06.04",
@@ -60,5 +60,129 @@
   "actualDisconnection": "awaiting-user-environment-confirmation",
   "remoteHumanAcceptance": "awaiting-user-environment-confirmation-and-later-hands-on-answers",
   "privateIfxTransfer": false,
-  "fullNr06Complete": false
+  "fullNr06Complete": false,
+  "qualification": {
+    "consumerRun": 40165831554,
+    "url": "https://github.com/von12549/ArchSift/actions/runs/40165831554",
+    "prHead": "046f0caaa29ee2c574dd37516674cca02991376d",
+    "actualPrMergeCheckout": "9a1d311c0530a0a945a9cf9c88116167b9a306c3",
+    "originalRunAttempt": 1,
+    "cells": [
+      {
+        "name": "nr06-windows-latest-10.0.100",
+        "sdk": "10.0.100",
+        "runtime": "10.0.13",
+        "checks": 66,
+        "libraryConsumers": 4,
+        "mtp": {
+          "status": "expected-rejection-existing-exact-SDK-contract",
+          "requiredSdk": "10.0.303",
+          "attemptedSdk": "10.0.100",
+          "executedCases": 0
+        },
+        "windowsEntryAndUiSmoke": true,
+        "hostEqual": true,
+        "rawArtifactSha256": "a19869f7ac1effd05b9553a82f13aadfa1326848b7968bf0d8a253d305dafce0"
+      },
+      {
+        "name": "nr06-windows-latest-10.0.402",
+        "sdk": "10.0.402",
+        "runtime": "10.0.13",
+        "checks": 66,
+        "libraryConsumers": 4,
+        "mtp": {
+          "status": "expected-rejection-existing-exact-SDK-contract",
+          "requiredSdk": "10.0.303",
+          "attemptedSdk": "10.0.402",
+          "executedCases": 0
+        },
+        "windowsEntryAndUiSmoke": true,
+        "hostEqual": true,
+        "rawArtifactSha256": "9101743aacc8c9d595a40442d32d972d1c0f71e58d3a9a80de0efe6e14f74e45"
+      },
+      {
+        "name": "nr06-ubuntu-latest-10.0.100",
+        "sdk": "10.0.100",
+        "runtime": "10.0.13",
+        "checks": 55,
+        "libraryConsumers": 4,
+        "mtp": {
+          "status": "expected-rejection-existing-exact-SDK-contract",
+          "requiredSdk": "10.0.303",
+          "attemptedSdk": "10.0.100",
+          "executedCases": 0
+        },
+        "windowsEntryAndUiSmoke": false,
+        "hostEqual": true,
+        "rawArtifactSha256": "354de5e190c49365090038119049facc2f6e9c9d0ff71034eb82315d3e612a24"
+      },
+      {
+        "name": "nr06-windows-latest-10.0.303",
+        "sdk": "10.0.303",
+        "runtime": "10.0.13",
+        "checks": 66,
+        "libraryConsumers": 4,
+        "mtp": {
+          "status": "passed-exact-approved-SDK",
+          "sdk": "10.0.303",
+          "cSharp": 3,
+          "json": 1,
+          "total": 4,
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "audit": "not-run-functional-phase"
+        },
+        "windowsEntryAndUiSmoke": true,
+        "hostEqual": true,
+        "rawArtifactSha256": "3bafe524d950fa606899861906b44e95ac9f50354f64eca98bc298978ca80048"
+      },
+      {
+        "name": "nr06-ubuntu-latest-10.0.303",
+        "sdk": "10.0.303",
+        "runtime": "10.0.13",
+        "checks": 55,
+        "libraryConsumers": 4,
+        "mtp": {
+          "status": "passed-exact-approved-SDK",
+          "sdk": "10.0.303",
+          "cSharp": 3,
+          "json": 1,
+          "total": 4,
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "audit": "not-run-functional-phase"
+        },
+        "windowsEntryAndUiSmoke": false,
+        "hostEqual": true,
+        "rawArtifactSha256": "5d09f8f06d26e241c07327ad75c0aae15b5c2488e5b6450c2e25a77b44edcad9"
+      }
+    ],
+    "totalRecordedSteps": 308,
+    "independentOfficialZipReadback": "passed-5-artifacts",
+    "nodeSafetyCases": 45
+  },
+  "normalDelivery": {
+    "pullRequest": 36,
+    "url": "https://github.com/von12549/ArchSift/pull/36",
+    "requireExistingChecks": true,
+    "mainConsumerVerificationRequired": true,
+    "chronology": "This checkpoint records successful head machine evidence. Merge/main verification is tracked by the linked PR and the independent final closeout, not inferred here."
+  },
+  "mtpCompatibilityBoundary": "Existing published RequiredCases SDK 10.0.303 only; four complete cases pass on Windows/Ubuntu 10.0.303. Other SDK cells record the exact expected rejection and zero executed MTP cases, without broadening the gate.",
+  "failedAttemptsRetained": [
+    {
+      "run": 40165050637,
+      "reason": "runner context unavailable in job-level environment; no consumer job started"
+    },
+    {
+      "run": 40165267793,
+      "reason": "unsupported target framework in a synthetic violation rule; fixed the test fixture"
+    },
+    {
+      "run": 40165525104,
+      "reason": "existing exact MTP SDK boundary and Windows automatic-variable collision; preserve the product gate and correct the harness"
+    }
+  ]
 }
