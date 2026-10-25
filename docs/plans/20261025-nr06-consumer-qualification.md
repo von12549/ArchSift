@@ -1,0 +1,56 @@
+# Published 0.11.0 consumer qualification: NR06.00-NR06.03
+
+On 2026-10-25 the user authorized input freezing, the dedicated consumer harness, network consumption and host compatibility, including necessary changes, tests, normal PR/CI/merge. The published packages remain immutable. Actual network-denial and remote interactive Windows acceptance environments require the user's confirmation before provisioning or execution. Local Guard/dotnet must not start; the user reports closing the unrelated VS Code service process. No publishing credential, release switch activation, tag, GitHub Release or new installer is authorized.
+
+The complete planning record remains outside product source. This source checkpoint implements only NR06.00-NR06.03, with machine evidence reported separately from NR06.04 offline, NR06.05 lifecycle/rollback, NR06.06 fresh complete-closure audit and NR06.08 user-only acceptance. See the [status contract](../acceptance/20261025-nr06-consumer-status.json) and [environment arrangement awaiting confirmation](20261025-nr06-offline-human-environments.md).
+
+## Frozen inputs and actual consumers
+
+The original package source is 8b721f44e90a41285fa74a6f72576c7f6996ef7d, tree 2c18d18145beb52a917a3884ddd7f442ec486967. Publication run [40158940042](https://github.com/von12549/ArchSift/actions/runs/40158940042) supplied the [signed archive ledger](../releases/0.11.0/nr06-publication.json). The [unchanged original payload manifest](../releases/0.11.0/nr06-payload-manifest.json) binds every nonsignature entry. Gallery owner XiaolongFeng, exact served hashes, repository signature/owner constraints and all payload entries are independently verified before consumption. An identity change stops the affected run without retry or baseline replacement.
+
+All four library packages and the CLI target net10.0. Positive consumers reference exact [0.11.0] packages and use public APIs in owned synthetic harnesses, not ProjectReference or source bin/obj. Normal PackageReference builds copy libraries into the consumer output: verify these runtime copies against the public package payload, and independently verify project.assets package origins and locks. Assembly output location alone is insufficient provenance. net8/net9 references are expected NU1202 negatives; net8/net9/net10 declaration analysis is a separate supported-target test. Target business entry points are never executed.
+
+The packaged MTP gate has three original C# cases and one JSON case, with full required-case coverage, no skipped/failed/unaccounted cases. Real API tests include a controlled forbidden dependency and its expected rejection. The gate uses a small feed copied from the same cell's verified network-restored packages to exercise its existing offline-architecture contract. This is explicitly not NR06.04 disconnected consumption or a fresh vulnerability audit. Functional audit is recorded as not-run; no old audit pass is reused.
+
+The existing published RequiredCases.Validate contract explicitly accepts SDK 10.0.303 only. Preserve it: full MTP acceptance runs in the Windows/Ubuntu 10.0.303 cells; the 10.0.100/10.0.402 cells require the precise expected manifest rejection and report zero executed MTP cases. Their CLI/library/workspace compatibility remains independently exercised. General SDK >=10 host discovery does not broaden the existing exact architecture-test gate. The initial planning assumption that all matrix cells could run this gate is superseded by this source-verified boundary, without changing product policy.
+
+## Hosted execution and preservation
+
+[verify-nuget-consumers.yml](../../.github/workflows/verify-nuget-consumers.yml) is a read-only PR/main/manual workflow, independent of publishing. It has no OIDC, secret, publish environment or self-hosted runner capability. Pinned safety tests run first. Actual consumers run only on disposable GitHub-hosted Windows x64 (SDK 10.0.100, 10.0.303, 10.0.402) and Ubuntu x64 (10.0.100, 10.0.303). A context/switch preflight precedes SDK provisioning. The author machine does not execute even dotnet version/help.
+
+Each cell uses an isolated tool directory and its own global.json with rollForward=disable, then measures the actual selected SDK. SDK 10.0.402 is additionally preprovisioned to supply stable Core/ASP.NET 10.0.13: SDK 10.0.303 alone ships runtime 10.0.11 and SDK 10.0.100 ships 10.0.0. The minimum cell proves effective SDK 10.0.100, not a machine containing only that SDK. Its global.json rejects fallback to 10.0.402. The Windows 10.0.303 cell additionally provisions real SDK 9.0.314 for the conflicting/below-floor global.json rejection. Exact image/SDK/framework evidence is retained.
+
+Missing-framework, prerelease-only and SDK-floor validation probes additionally use a clearly labeled synthetic executable that answers only host discovery requests. These are published-product rejection tests, not claims about real prerelease installations. Bad explicit hosts must reject; invalid implicit hints may fall through only to a verified actual host. Global.json is never silently rewritten by the product.
+
+Every child with DOTNET_CLI_HOME also receives DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0. Host environment/PATH/Profile hashes are compared before/after every capable child and finally; no persisted host state or parent environment is changed. Source, fixtures, caches, state and evidence have distinct roots. Only curated synthetic/public evidence is uploaded; neither live IFX nor private inventories are inputs.
+
+Network cases cover local-tool manifests, explicit tool-path install, four exact library references, generated then unchanged locked restores, source mapping with fresh caches and a deliberately corrupt owned feed, unavailable source/missing version rejection, invalid/duplicate workspace input and Windows package-local entry init/doctor. Default cache semantics are tested in a fresh child CLI home, configuration-relative globalPackagesFolder, existing child NUGET_PACKAGES, explicit workspace cache and allowed local override. They do not claim a new Windows user profile or modify the author's normal cache. Windows embedded Workbench/Launcher checks are headless host smoke only, with real version/target and owned shutdown/listener receipts; independent human interaction and the complete lifecycle suite remain pending.
+
+Failure, uncertainty, source/host drift or changed public identity stops the affected test and preserves its attempt. No blind rerun, global process kill, cache purge, automatic PATH repair, same-version package replacement or public rollback occurs. A harness correction receives a new reviewed source/CI identity. A published product defect requires a separately authorized correction-version plan.
+
+## Planned delivery and completion
+
+Normal local checks use Node and PowerShell parsing/context guards only; product builds and real consumer execution happen in hosted CI. Require passing dedicated five-cell consumers plus existing PR checks before normal merge, then verify main CI and independently download/hash/read the official evidence. Keep harness commit, PR merge commit and original package commit distinct. Do not mark full NR06 complete or populate human answers from these results.
+
+References: [local tool restore](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-restore), [PackageReference locks](https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files), [source mapping cache limitations](https://learn.microsoft.com/en-us/nuget/consume-packages/package-source-mapping), [official .NET 10 release metadata](https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json).
+
+
+## Qualified head checkpoint
+
+[Consumer run 40165831554](https://github.com/von12549/ArchSift/actions/runs/40165831554), attempt 1, passed all five cells at PR head 046f0caaa29ee2c574dd37516674cca02991376d (actual PR merge checkout 9a1d311c0530a0a945a9cf9c88116167b9a306c3). Independent retrieval matched all five official raw ZIP digests and rechecked public archive/payload/assembly origins, locks, exact SDK/runtime receipts, all 308 recorded positive/expected-rejection steps, the two complete 10.0.303 four-case MTP gates, three Windows cache/entry matrices and six Windows UI machine-smoke receipts. The other three MTP cells correctly reject the unchanged exact SDK contract and execute zero cases. The original workflow/fixture failures are retained. Forty-five Node safety cases and pinned actionlint also pass.
+
+This checkpoint is head qualification, with normal review/merge/main CI tracked through [PR #36](https://github.com/von12549/ArchSift/pull/36) and the independent final closeout. No later disconnected, complete lifecycle/audit or human acceptance claim is made. The user must confirm the environment arrangement before later execution; publishing and the author runtime remain stopped.
+
+
+### Source-bound target expansion
+
+Final scope review found the first successful matrix covered declared target-framework rules only. NR06.03 additionally requires current-source-bound assemblies: the dedicated fixture now performs explicit-network isolated snapshot builds for net8/net9/net10, verifies both a framework rule and a real type-dependency allow/violation, and requires sourceBound=true, nonzero assemblies and the exact selected SDK. The target Main method deliberately throws if executed and is never run. Retain all isolated assembly manifests and reject declaration-only, unbound, zero-source or wrong-SDK reports. Prior head evidence remains historical; the strengthened matrix must pass before NR06.03 closeout.
+
+The first isolated target attempt proved sourceBound=true but correctly returned partial/inconclusive for a Release-optimized no-finding rule. Keep this existing conservative gate unchanged: conclusive positive target fixtures use the analyzer's standard Debug configuration, while the Release result and original attempt remain retained. Do not relabel inconclusive as pass.
+
+
+### Complete source-bound head qualification
+
+[Run 40167011120](https://github.com/von12549/ArchSift/actions/runs/40167011120), original attempt 1, passed all five cells at head 2b2720f683e8a730583d810b39cb8edeb504233b. Independent official ZIP readback verified all 308 recorded steps, 20 direct library consumers, 30 actual Debug isolated target builds with sourceBound=true, nonzero assemblies and real net8/net9/net10 type-dependency allow/violation, plus all 30 retained original assembly manifests. Both approved-SDK four-case MTP gates and the other exact-SDK rejection cells passed; Windows entry/cache and UI smoke receipts also passed. Fifty-five Node safety cases pass. The original package source and signed bytes remain unchanged.
+
+This complete source-bound checkpoint supersedes the earlier declared-target-only claim. Normal PR/merge/main verification remains bound through PR #36 and the independent final closeout. The user explicitly reports no existing remote environment; retain the concrete VM/console/disconnection arrangement pending confirmation, with no resource provisioning or later-stage execution.

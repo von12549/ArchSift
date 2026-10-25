@@ -12,3 +12,6 @@ docs/acceptance/20261017-fa05-human-ui-completion.json -text -diff -merge
 docs/acceptance/20261020-sp03-completion.json -text -diff -merge
 docs/acceptance/20261020-sp04-ui-human-confirmation.json -text -diff -merge
 docs/acceptance/20261022-inproject-retirement.json -text -diff -merge
+
+# Preserve the immutable NR05 package payload manifest without line-ending conversion.
+docs/releases/0.11.0/nr06-payload-manifest.json -text -diff -merge
