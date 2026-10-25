@@ -43,14 +43,19 @@ if (operation === 'prepare') {
   const fixtures=readJson(path.join(root,'fixtures.json'));
   for(const item of fixtures.libraries){
     const receipt=readJson(path.join(root,`api-${item.kind}.stdout.log`)); validateConsumerReceipt(receipt,item.kind,item.directory,payload);
+    writeJson(path.join(root,`provenance-${item.kind}.json`),{...receipt,assemblies:receipt.assemblies.map(a=>({...a,sha256:sha256(fs.readFileSync(a.location))}))});
     const assets=readJson(path.join(item.directory,'obj/project.assets.json'));
     assert.ok(Object.keys(assets.packageFolders).every(x => path.resolve(x)===path.join(root,'packages')),'Only owned cache folders');
     assert.equal(assets.libraries[`ArchSift.${item.kind}/0.11.0`].type,'package');
     assert.ok(!Object.values(assets.libraries).some(x=>x.type==='project'));
   }
   const config=readJson(fixtures.gate);
-  const report=readJson(path.join(config.runDirectory,'architecture-test-run.json'));
-  verifyGate(report,readJson(path.join(config.runDirectory,'test-results.ctrf.json')),config);
+  if(fixtures.sdk==='10.0.303'){
+    const report=readJson(path.join(config.runDirectory,'architecture-test-run.json'));
+    verifyGate(report,readJson(path.join(config.runDirectory,'test-results.ctrf.json')),config);
+  }else{
+    assert.ok(fs.readFileSync(path.join(root,'full-gate-sdk-contract-rejection.stderr.log'),'utf8').includes('Unsupported or incomplete required-case manifest.'));
+  }
   for(const item of fixtures.targets){
     for(const outcome of ['pass','violation']){
       const result=readJson(path.join(root,`target-${item.tfm}-${outcome}.stdout.log`));
@@ -60,8 +65,9 @@ if (operation === 'prepare') {
     }
   }
   const checks=readJson(path.join(root,'checks.json')); assert.ok(checks.every(x=>x.hostEqual && x.expectationMet));
-  const prefix=['sdk','frameworks','tool-restore','tool-version','tool-path-install','tool-path-version','mapped-source-restore','poison-source-rejection','missing-version-rejection','unavailable-source-rejection','mtp-seed-lock','full-gate','host-shim-build'];
+  const prefix=['sdk','frameworks','tool-restore','tool-version','tool-path-install','tool-path-version','mapped-source-restore','poison-source-rejection','missing-version-rejection','unavailable-source-rejection','mtp-seed-lock',fixtures.sdk==='10.0.303'?'full-gate':'full-gate-sdk-contract-rejection','host-shim-build'];
   for(const name of prefix) assert.equal(checks.filter(x=>x.name===name).length,1,`Missing or duplicate required step ${name}`);
-  const gateStatus={schemaVersion:1,status:'passed-NR06.00-through-NR06.03-machine-cell',harnessCommit:process.env.GITHUB_SHA,runId:process.env.GITHUB_RUN_ID,runAttempt:1,selectedSdk:fixtures.sdk,runtime:'10.0.13',publicPackageVersion:'0.11.0',packageSourceCommit:publication.sourceCommit,checks:checks.length,libraryConsumers:4,mtp:{cSharp:3,json:1,total:4,passed:4,failed:0,skipped:0,audit:'not-run-functional-phase'},analyzedFrameworks:['net8.0','net9.0','net10.0'],windowsEntryScope:process.platform==='win32'?'project entry/cache/init/doctor and embedded UI smoke':'not-applicable-Windows-only',strictOffline:'not-executed-awaiting-user-environment-confirmation',fullLifecycle:'not-executed-NR06.05',freshCompleteClosureAudit:'not-executed-NR06.06',humanAcceptance:'pending-user-only',publicationSwitch:'absent-at-independent-preflight',localAuthorRuntimeUsed:false,hostEqual:true};
+  const mtp=fixtures.sdk==='10.0.303'?{status:'passed-exact-approved-SDK',sdk:'10.0.303',cSharp:3,json:1,total:4,passed:4,failed:0,skipped:0,audit:'not-run-functional-phase'}:{status:'expected-rejection-existing-exact-SDK-contract',requiredSdk:'10.0.303',attemptedSdk:fixtures.sdk,executedCases:0};
+  const gateStatus={schemaVersion:1,status:'passed-NR06.00-through-NR06.03-machine-cell',harnessCommit:process.env.GITHUB_SHA,runId:process.env.GITHUB_RUN_ID,runAttempt:1,selectedSdk:fixtures.sdk,runtime:'10.0.13',publicPackageVersion:'0.11.0',packageSourceCommit:publication.sourceCommit,checks:checks.length,libraryConsumers:4,mtp,analyzedFrameworks:['net8.0','net9.0','net10.0'],windowsEntryScope:process.platform==='win32'?'project entry/cache/init/doctor and embedded UI smoke':'not-applicable-Windows-only',strictOffline:'not-executed-awaiting-user-environment-confirmation',fullLifecycle:'not-executed-NR06.05',freshCompleteClosureAudit:'not-executed-NR06.06',humanAcceptance:'pending-user-only',publicationSwitch:'absent-at-independent-preflight',localAuthorRuntimeUsed:false,hostEqual:true};
   writeJson(path.join(root,'qualification.json'),gateStatus); console.log(JSON.stringify(gateStatus));
 } else throw new Error('Unknown consumer preparation operation');

@@ -114,7 +114,13 @@ try{
  Save (Join-Path $f.mtp 'package-approval.json') @{schemaVersion=1;testingVersion='0.11.0';cliVersion='0.11.0';packages=@(foreach($id in ($closure|Sort-Object)){$key=@($graph.Keys|Where-Object{[string]::Equals($_,$id,[StringComparison]::OrdinalIgnoreCase)})[0];@{id=$key;version=$graph[$key].resolved;contentHash=$graph[$key].contentHash}})}
  $copied=@(foreach($packageFile in Get-ChildItem -LiteralPath (Join-Path $root 'packages') -Recurse -File -Filter '*.nupkg'){$destination=Join-Path $f.feed $packageFile.Name;if(Test-Path -LiteralPath $destination){throw 'Duplicate package file in graph.'};Copy-Item -LiteralPath $packageFile.FullName -Destination $destination;@{file=$packageFile.Name;sha256=(Hash $destination)}})
  Save (Join-Path $root 'same-network-gate-feed.json') @{scope='Only the same cell network-restored packages for the existing offline-architecture gate; not NR06.04 closure or strict offline acceptance';packages=$copied}
- [void](Dotnet 'full-gate' @($payload,'test-gate','--config',$f.gate) $f.mtp)
+ if($Sdk -ceq '10.0.303'){
+  [void](Dotnet 'full-gate' @($payload,'test-gate','--config',$f.gate) $f.mtp)
+ }else{
+  [void](Dotnet 'full-gate-sdk-contract-rejection' @($payload,'test-gate','--config',$f.gate) $f.mtp @{} @(3))
+  $rejection=[IO.File]::ReadAllText((Join-Path $root 'full-gate-sdk-contract-rejection.stderr.log'))
+  if(-not $rejection.Contains('Unsupported or incomplete required-case manifest.')){throw 'MTP must reject the existing exact SDK contract, not an unrelated failure.'}
+ }
  foreach($package in $publication.packages){$cacheFile=Join-Path $root ('packages/'+$package.id.ToLowerInvariant()+'/0.11.0/'+$package.id.ToLowerInvariant()+'.0.11.0.nupkg');if((Hash $cacheFile) -cne $package.servedSha256){throw 'Restored signed package is not the NR05 archive.'}}
  [void](Dotnet 'host-shim-restore' @('restore',(Join-Path $f.shim 'Consumer.csproj'),'--configfile',(Join-Path $f.shim 'NuGet.Config'),'--disable-build-servers','-p:NuGetAudit=false') $f.shim)
  $shimOutput=Join-Path $root 'probe-shim-output'
@@ -156,13 +162,13 @@ try{
  if($IsWindows){
   $pwsh=(Get-Command pwsh -CommandType Application|Select-Object -First 1).Source
   foreach($mode in @('default','config','environment','explicit','local-override')){
-   $target=Join-Path $root ('workspaces/'+$mode+'/target');$state=Join-Path $root ('state-'+$mode);$home=Join-Path $root ('entry-home-'+$mode)
+   $target=Join-Path $root ('workspaces/'+$mode+'/target');$state=Join-Path $root ('state-'+$mode);$entryHome=Join-Path $root ('entry-home-'+$mode)
    [void][IO.Directory]::CreateDirectory((Join-Path $target '.archsift'));[void][IO.Directory]::CreateDirectory((Join-Path $target '.config'))
    [IO.File]::WriteAllText((Join-Path $target 'Consumer.csproj'),'<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>')
    Save (Join-Path $target 'global.json') @{sdk=@{version=$Sdk;rollForward='disable';allowPrerelease=$false}}
    Copy-Item -LiteralPath $manifest -Destination (Join-Path $target '.config/dotnet-tools.json')
    Copy-Item -LiteralPath (Join-Path $root 'package-start.ps1') -Destination (Join-Path $target '.archsift/start.ps1')
-   $config=Join-Path $target 'NuGet.Config';$expectedCache=Join-Path $home '.nuget/packages';$workspaceCache='null';$environmentCache=$null
+   $config=Join-Path $target 'NuGet.Config';$expectedCache=Join-Path $entryHome '.nuget/packages';$workspaceCache='null';$environmentCache=$null
    if($mode -eq 'config'){$expectedCache=Join-Path $root ('workspaces/'+$mode+'/configured-cache')}
    if($mode -eq 'environment'){$expectedCache=Join-Path $root 'entry-environment-cache';$environmentCache=$expectedCache}
    if($mode -in @('explicit','local-override')){$expectedCache=Join-Path $root ('entry-'+$mode+'-cache');$workspaceCache=$expectedCache;$environmentCache=Join-Path $root ('ignored-env-'+$mode)}
@@ -174,7 +180,7 @@ try{
     $shared=Get-Content -LiteralPath (Join-Path $target '.archsift/workspace.json') -Raw|ConvertFrom-Json;$shared.nuget.cacheDirectory=Join-Path $root 'ignored-shared-cache';Save (Join-Path $target '.archsift/workspace.json') $shared
     Save (Join-Path $target '.archsift/workspace.local.json') @{kind='archsift-workspace-local';schemaVersion=1;nuget=@{cacheDirectory=$expectedCache}}
    }
-   $entryOverrides=@{DOTNET_CLI_HOME=$home;NUGET_PACKAGES=$environmentCache;NUGET_HTTP_CACHE_PATH=(Join-Path $root ('entry-http-'+$mode));NUGET_PLUGINS_CACHE_PATH=(Join-Path $root ('entry-plugin-'+$mode))}
+   $entryOverrides=@{DOTNET_CLI_HOME=$entryHome;NUGET_PACKAGES=$environmentCache;NUGET_HTTP_CACHE_PATH=(Join-Path $root ('entry-http-'+$mode));NUGET_PLUGINS_CACHE_PATH=(Join-Path $root ('entry-plugin-'+$mode))}
    $start=Join-Path $target '.archsift/start.ps1';$entryHash=Hash $start;$configHash=Hash (Join-Path $target '.archsift/workspace.json')
    [void](Invoke-Step ('entry-'+$mode+'-init') $pwsh @('-NoProfile','-NonInteractive','-File',$start,'-Action','Init','-NoBrowser') $target $entryOverrides)
    [void](Invoke-Step ('entry-'+$mode+'-doctor') $pwsh @('-NoProfile','-NonInteractive','-File',$start,'-Action','Doctor','-NoBrowser') $target $entryOverrides)
@@ -198,6 +204,8 @@ try{
   foreach($file in Get-ChildItem -LiteralPath $root -File){if($file.Extension -in @('.json','.log','.Config')){Copy-Item -LiteralPath $file.FullName -Destination $evidence}}
   foreach($directory in @('signed-public-inputs','gate-results')){if(Test-Path -LiteralPath (Join-Path $root $directory)){Copy-Item -LiteralPath (Join-Path $root $directory) -Destination $evidence -Recurse}}
   foreach($directory in @('Contracts','Core','ArchUnit','Testing')){$target=Join-Path $evidence ('library-'+$directory);[void][IO.Directory]::CreateDirectory($target);$library=Join-Path $root ('libraries/'+$directory);foreach($relative in @('packages.lock.json','obj/project.assets.json','Consumer.csproj','Program.cs')){if(Test-Path -LiteralPath (Join-Path $library $relative)){Copy-Item -LiteralPath (Join-Path $library $relative) -Destination (Join-Path $target ([IO.Path]::GetFileName($relative)))}}}
+  $mtpEvidence=Join-Path $evidence 'MTP-fixture';[void][IO.Directory]::CreateDirectory($mtpEvidence)
+  foreach($relative in @('required-cases.json','policy.json','package-approval.json','packages.lock.json','NuGet.Gate.Config','Portable.Architecture.Tests.csproj')){$file=Join-Path $root ('MTP target/'+$relative);if(Test-Path -LiteralPath $file){Copy-Item -LiteralPath $file -Destination $mtpEvidence}}
  }
  if($before -cne $after){throw 'Final host drift; no repair performed.'}
 }

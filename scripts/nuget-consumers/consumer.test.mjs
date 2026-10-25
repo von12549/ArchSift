@@ -75,6 +75,8 @@ test('Hosted PowerShell entry keeps host APIs read only and never falls through 
  assert.ok(script.indexOf('Assert-NR06HostedContext.ps1')<script.indexOf('ProcessStartInfo'));
  for(const forbidden of [/SetEnvironmentVariable\s*\(/,/\bsetx\b/i,/\bnuget[\s'",]+push\b/i,/ReleaseInputs\.ps1/])assert.ok(!forbidden.test(script));
  assert.ok(script.includes("DOTNET_ADD_GLOBAL_TOOLS_TO_PATH='0'"));
+ assert.ok(!/\$(?:home|codex_home)\s*=/i.test(script),'Do not overwrite host-owned automatic variables');
+ assert.ok(script.includes("if($Sdk -ceq '10.0.303')")&&script.includes('full-gate-sdk-contract-rejection'),'Preserve the existing exact MTP SDK contract');
  assert.ok(script.includes('ReadToEndAsync')&&script.includes('Check-Host')&&script.includes('Get-ArchSiftHostHash'));
 });
 // Keep small synthetic evidence under the OS temp root until the normal ephemeral job ends.

@@ -12,6 +12,8 @@ All four library packages and the CLI target net10.0. Positive consumers referen
 
 The packaged MTP gate has three original C# cases and one JSON case, with full required-case coverage, no skipped/failed/unaccounted cases. Real API tests include a controlled forbidden dependency and its expected rejection. The gate uses a small feed copied from the same cell's verified network-restored packages to exercise its existing offline-architecture contract. This is explicitly not NR06.04 disconnected consumption or a fresh vulnerability audit. Functional audit is recorded as not-run; no old audit pass is reused.
 
+The existing published RequiredCases.Validate contract explicitly accepts SDK 10.0.303 only. Preserve it: full MTP acceptance runs in the Windows/Ubuntu 10.0.303 cells; the 10.0.100/10.0.402 cells require the precise expected manifest rejection and report zero executed MTP cases. Their CLI/library/workspace compatibility remains independently exercised. General SDK >=10 host discovery does not broaden the existing exact architecture-test gate. The initial planning assumption that all matrix cells could run this gate is superseded by this source-verified boundary, without changing product policy.
+
 ## Hosted execution and preservation
 
 [verify-nuget-consumers.yml](../../.github/workflows/verify-nuget-consumers.yml) is a read-only PR/main/manual workflow, independent of publishing. It has no OIDC, secret, publish environment or self-hosted runner capability. Pinned safety tests run first. Actual consumers run only on disposable GitHub-hosted Windows x64 (SDK 10.0.100, 10.0.303, 10.0.402) and Ubuntu x64 (10.0.100, 10.0.303). A context/switch preflight precedes SDK provisioning. The author machine does not execute even dotnet version/help.
