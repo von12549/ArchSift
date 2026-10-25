@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.0",
+  "sourceCommit": "8b721f44e90a41285fa74a6f72576c7f6996ef7d",
+  "sourceTree": "2c18d18145beb52a917a3884ddd7f442ec486967",
+  "workflowCommit": "802a631625c5e42b6ce153f31e8c063ca020d67a",
+  "repositoryId": 1407069697,
+  "ownerId": 2306937,
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.0.nupkg",
+      "bytes": 94749,
+      "sha256": "73a43fa4db7bd1dbbb3675acbf2ac3656f4c827440bc55d66f99558cd6b15047"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.0.nupkg",
+      "bytes": 162619,
+      "sha256": "72f8f1a2aea3a818ad5edc0457a6ae935fc4f302ba33cbe63acc810d5ab32a3f"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.0.nupkg",
+      "bytes": 31552,
+      "sha256": "ef6001bc30dfb6f49a561e02f9996407d9e32b5d49e863c2b0819e81cccb35c5"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.0.nupkg",
+      "bytes": 26839,
+      "sha256": "ac00b12b0c2353a1bc337b7379c89e9ce16b6cb9d258dae8bee4df6b1633f67e"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.0.nupkg",
+      "bytes": 2907619,
+      "sha256": "c076eb5bbbcd08aa4d93138da72db3c99025f1c7a10e6b371686be0801477b1e"
+    }
+  ],
+  "payloadManifestSha256": "da6c59dc051e406425b80a8953848bca169b17c6f8aa4331758d0a6177582b4e",
+  "acceptanceSha256": "e5fc57dd7f8673e93efc414bbb2bf9d6ba539acaf0059fe9eeb91cd415588353"
+}
