@@ -259,6 +259,7 @@ public static class TestRunReportWriter
             };
             foreach (var argument in arguments) start.ArgumentList.Add(argument);
             start.Environment["IFX_UPDATE_SNAPSHOTS"] = "0";
+            start.Environment["DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE"] = "true";
             if (config.DotnetCliHome is not null)
             {
                 start.Environment["DOTNET_CLI_HOME"] = config.DotnetCliHome;

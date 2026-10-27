@@ -33,7 +33,6 @@ public static class SafeProcess
         start.Environment["DOTNET_CLI_HOME"] = cliHome;
         start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
         start.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
-        start.Environment["DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE"] = "1";
         start.Environment["DOTNET_NOLOGO"] = "1";
         start.Environment["DOTNET_CLI_UI_LANGUAGE"] = "en-US";
         start.Environment["MSBUILDDISABLENODEREUSE"] = "1";
@@ -42,6 +41,9 @@ public static class SafeProcess
             foreach (var item in environment) start.Environment[item.Key] = item.Value;
         start.Environment["DOTNET_CLI_HOME"] = cliHome;
         start.Environment["DOTNET_ADD_GLOBAL_TOOLS_TO_PATH"] = "0";
+        // SDK 10 parses this setting as a Boolean. Keep background network refresh disabled
+        // after caller overrides, just like the isolated home/global-tools safety pair.
+        start.Environment["DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE"] = "true";
         using var process = Process.Start(start)!;
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
         timeout.CancelAfter(timeoutLimit ?? TimeSpan.FromMinutes(3));

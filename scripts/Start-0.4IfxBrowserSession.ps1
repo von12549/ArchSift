@@ -59,7 +59,7 @@ try{
     $start.Environment['DOTNET_CLI_HOME']=Join-Path $sessionRoot 'web-home'
     $start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
     $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
-    $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='1'
+    $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true'
     $start.Environment['DOTNET_CLI_UI_LANGUAGE']='en-US'
     $process=[Diagnostics.Process]::Start($start);$stderrTail=$process.StandardError.ReadToEndAsync()
     $ready=$null

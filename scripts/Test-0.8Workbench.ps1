@@ -28,7 +28,7 @@ try {
     $taskStart.Environment['DOTNET_CLI_HOME'] = Join-Path $taskOutput 'build-cli-home'
     $taskStart.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'] = '0'
     $taskStart.Environment['DOTNET_CLI_TELEMETRY_OPTOUT'] = '1'
-    $taskStart.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE'] = '1'
+    $taskStart.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE'] = 'true'
     $taskStart.Environment['MSBUILDDISABLENODEREUSE'] = '1'
     $taskBuild = [Diagnostics.Process]::Start($taskStart)
     try {

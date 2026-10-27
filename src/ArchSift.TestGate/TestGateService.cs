@@ -284,6 +284,7 @@ public static class TestGateService
         if (stage == "build" && config.ToolRoot is not null)
             start.ArgumentList.Add("-p:ArchSiftToolRoot=" + Path.GetFullPath(config.ToolRoot));
         start.Environment["IFX_UPDATE_SNAPSHOTS"] = "0";
+        start.Environment["DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE"] = "true";
         if (config.SchemaVersion == 2) start.Environment["DOTNET_GENERATE_ASPNET_CERTIFICATE"] = "false";
         start.Environment["ARCHSIFT_TEST_GATE_CONFIG"] = Path.GetFullPath(configPath);
         if (config.DotnetCliHome is not null)

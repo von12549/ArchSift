@@ -37,7 +37,7 @@ function Start-Info([string]$File,[string[]]$Arguments,[string]$ModeRoot){
     $start.Environment['NUGET_PACKAGES']=Join-Path $ModeRoot 'cache'
     $start.Environment['NUGET_CERT_REVOCATION_MODE']='offline'
     $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
-    $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='1'
+    $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true'
     $start.Environment['DOTNET_GENERATE_ASPNET_CERTIFICATE']='false'
     $start.Environment['DOTNET_NOLOGO']='1'
     return $start

@@ -126,7 +126,7 @@ foreach ($argument in @($cli, 'verify', '--config', $configPath)) { $start.Argum
 $start.Environment['DOTNET_CLI_HOME'] = Join-Path $runRoot 'cli-home'
 $start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'] = '0'
 $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT'] = '1'
-$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE'] = '1'
+$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE'] = 'true'
 $start.Environment['DOTNET_NOLOGO'] = '1'
 $start.Environment['MSBUILDDISABLENODEREUSE'] = '1'
 

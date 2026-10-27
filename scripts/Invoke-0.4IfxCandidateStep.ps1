@@ -64,7 +64,7 @@ $configHash=Sha $configPath
 Save-Json (Join-Path $run 'before.json') ([ordered]@{hostSha256=$hostBefore;targetHead=$headBefore;targetStatusSha256=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($statusBefore))).ToLowerInvariant();rulesSha256=$expectedRulesHash;manifestSha256=$expectedManifestHash;discoverySourceInputSha256=$discovery.inputIdentity.sha256;discoveryReportSha256=(Sha $discoveryPath);scriptSha256=(Sha $PSCommandPath)})
 $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=Join-Path $package 'archsift.exe';$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
 foreach($argument in @('verify','--config',$configPath)){$start.ArgumentList.Add($argument)}
-$start.Environment['DOTNET_CLI_HOME']=Join-Path $run 'cli-home';$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0';$start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1';$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='1';$start.Environment['DOTNET_CLI_UI_LANGUAGE']='en-US'
+$start.Environment['DOTNET_CLI_HOME']=Join-Path $run 'cli-home';$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0';$start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1';$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true';$start.Environment['DOTNET_CLI_UI_LANGUAGE']='en-US'
 $process=$null;$operationError=$null;$exitCode=$null;$report=$null;$checksPassed=$false;$sourceRecordsEqual=$false;$packageEqual=$false;$rulesEqual=$false;$configEqual=$false;$processExited=$false
 try{
     if((Get-ArchSiftHostHash)-cne$hostBefore){throw 'Host drift before native verify; no repair.'}

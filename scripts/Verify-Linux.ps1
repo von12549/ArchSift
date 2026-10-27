@@ -36,7 +36,7 @@ if($LASTEXITCODE-ne0){throw 'Linux SDK image unavailable; do not pull implicitly
 $name='archsift-linux-'+[Guid]::NewGuid().ToString('N')
 $arguments=@('run','--rm','--name',$name,'--pull','never','--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp:rw',
     '--mount',('type=bind,source='+$run+',target=/work'), '--mount',('type=bind,source='+[IO.Path]::GetFullPath($LocalFeed)+',target=/feed,readonly'),
-    '-e','DOTNET_CLI_HOME=/work/home','-e','DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0','-e','DOTNET_CLI_TELEMETRY_OPTOUT=1','-e','DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=1','-e','NUGET_PACKAGES=/work/cache',
+    '-e','DOTNET_CLI_HOME=/work/home','-e','DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=0','-e','DOTNET_CLI_TELEMETRY_OPTOUT=1','-e','DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true','-e','NUGET_PACKAGES=/work/cache',
     '-w','/work/source',$imageIdentity.Trim(),'bash','scripts/verify-linux.sh')
 $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=(Get-Command docker).Source;$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
 foreach($arg in $arguments){$start.ArgumentList.Add($arg)}
