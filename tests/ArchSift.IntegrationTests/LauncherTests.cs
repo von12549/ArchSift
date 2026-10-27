@@ -160,9 +160,13 @@ public sealed class LauncherTests
             var repo = new DirectoryInfo(AppContext.BaseDirectory);
             while (repo is not null && !File.Exists(Path.Combine(repo.FullName, "ArchSift.slnx"))) repo = repo.Parent;
             var configuration = typeof(LauncherTests).Assembly.GetCustomAttributes(false).OfType<System.Reflection.AssemblyConfigurationAttribute>().Single().Configuration;
-            var source = Path.Combine(repo!.FullName, "src", "ArchSift.Web", "bin", configuration, "net10.0");
+            var source = Environment.GetEnvironmentVariable("ARCHSIFT_TEST_MANAGED_LAUNCHER") ??
+                Path.Combine(repo!.FullName, "src", "ArchSift.Web", "bin", configuration, "net10.0");
+            if (OperatingSystem.IsWindows())
+                Assert.Equal(InstallationVersion, FileVersionInfo.GetVersionInfo(Path.Combine(source, "ArchSift.Contracts.dll")).ProductVersion!.Split('+')[0]);
             Directory.CreateDirectory(WebDirectory);
-            // Use actual ArchSift bytes; the fixture manifest is synthetic, not release/self-contained qualification.
+            // Current-source code built separately under the historical installation identity.
+            // This synthetic fixture is not release/self-contained or candidate qualification.
             foreach (var file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
             {
                 var path = Path.Combine(WebDirectory, Path.GetRelativePath(source, file)); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.Copy(file, path);

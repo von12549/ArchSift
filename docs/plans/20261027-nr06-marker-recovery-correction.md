@@ -20,6 +20,8 @@ The marker-write shape is exercised deterministically using the existing test fi
 
 Development version becomes 0.11.1, distinct from all immutable public 0.11.0 bytes. On 2026-10-27 read-only official NuGet version indexes reported 0.11.0 latest and no 0.11.1 for all five product IDs; this is not a promise of future public availability. Existing Setup ZIP allowlists remain unchanged because this is a NuGet-only candidate.
 
+Initial CI exposed a legacy launcher fixture coupled to the current product version. The managed installation contract deliberately rejects unknown ZIP versions and requires matching launcher/selection identity. Preserve both checks: Windows development checks compile current-source Web into separate external intermediate/output directories under the historical 0.11.0 fixture identity, then pass that path only to the integration-test child. The fixture asserts its binary version. This is synthetic managed-launcher coverage, not a rebuilt public package or 0.11.1 candidate acceptance. Normal solution tests and candidate packaging retain 0.11.1. Failed runs remain retained.
+
 The new read-only candidate workflow has no publishing environment, secrets, OIDC, release command or installer. It uses clean checked-out source, SDK 10.0.303 and compatible 10.0.13 frameworks, explicit hosted prerequisite acquisition followed by local-feed locked build/pack, and host hash checks. Five NuGet archives, exact source/tree, byte hashes and logs are retained as workflow artifacts. Artifacts are unpublished candidates, not publicly released or repository-signed packages. The build script resolves release notes from the actual version.
 
 ## Acceptance boundaries
