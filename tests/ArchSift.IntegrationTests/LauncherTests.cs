@@ -144,11 +144,13 @@ public sealed class LauncherTests
 
     private sealed class Fixture : IDisposable
     {
+        // This fixture exercises the retained ZIP installation contract, independently of the current NuGet version.
+        private const string InstallationVersion = "0.11.0";
         public string Root { get; } = Path.Combine(Path.GetTempPath(), "archsift-launcher-test-" + Guid.NewGuid().ToString("N"));
         public string Target => Path.Combine(Root, "target");
         public string Install => Path.Combine(Root, "install");
         public string ConfigPath => Path.Combine(Install, "config", "default.json");
-        private string WebDirectory => Path.Combine(Install, "versions", ToolIdentity.Version, "web");
+        private string WebDirectory => Path.Combine(Install, "versions", InstallationVersion, "web");
         public RunConfiguration Config => new() { SchemaVersion = 1, Target = new() { Root = Target, Entry = "Project.csproj" },
             Build = new() { TargetFramework = "net10.0" }, RulesDirectory = Path.Combine(Install, "rules"),
             Output = new() { Directory = Path.Combine(Install, "reports") } };
@@ -158,9 +160,13 @@ public sealed class LauncherTests
             var repo = new DirectoryInfo(AppContext.BaseDirectory);
             while (repo is not null && !File.Exists(Path.Combine(repo.FullName, "ArchSift.slnx"))) repo = repo.Parent;
             var configuration = typeof(LauncherTests).Assembly.GetCustomAttributes(false).OfType<System.Reflection.AssemblyConfigurationAttribute>().Single().Configuration;
-            var source = Path.Combine(repo!.FullName, "src", "ArchSift.Web", "bin", configuration, "net10.0");
+            var source = Environment.GetEnvironmentVariable("ARCHSIFT_TEST_MANAGED_LAUNCHER") ??
+                Path.Combine(repo!.FullName, "src", "ArchSift.Web", "bin", configuration, "net10.0");
+            if (OperatingSystem.IsWindows())
+                Assert.Equal(InstallationVersion, FileVersionInfo.GetVersionInfo(Path.Combine(source, "ArchSift.Contracts.dll")).ProductVersion!.Split('+')[0]);
             Directory.CreateDirectory(WebDirectory);
-            // Use actual ArchSift bytes; the fixture manifest is synthetic, not release/self-contained qualification.
+            // Current-source code built separately under the historical installation identity.
+            // This synthetic fixture is not release/self-contained or candidate qualification.
             foreach (var file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
             {
                 var path = Path.Combine(WebDirectory, Path.GetRelativePath(source, file)); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.Copy(file, path);
@@ -172,10 +178,10 @@ public sealed class LauncherTests
             File.WriteAllText(Path.Combine(version, "LICENSE"), "Synthetic manifest fixture.");
             SetupFiles.Atomic(Path.Combine(version, "setup-compatibility.json"), new SetupCompatibility(1, 1, 1, 1));
             var files = Directory.GetFiles(version, "*", SearchOption.AllDirectories).Select(path => new PackageFile(Path.GetRelativePath(version, path).Replace('\\', '/'), new FileInfo(path).Length, SetupFiles.FileHash(path))).ToArray();
-            var manifest = Path.Combine(version, "package-manifest.json"); SetupFiles.Atomic(manifest, new PackageManifest(1, ToolIdentity.Version, "win-x64", true, "synthetic-fixture", new string('a', 40), false, false, new string('b', 64), files, true));
+            var manifest = Path.Combine(version, "package-manifest.json"); SetupFiles.Atomic(manifest, new PackageManifest(1, InstallationVersion, "win-x64", true, "synthetic-fixture", new string('a', 40), false, false, new string('b', 64), files, true));
             SetupFiles.Atomic(ConfigPath, Config);
-            SetupFiles.Atomic(SetupService.Selection(Install), new Installation(1, Install, Target, ConfigPath, Config.RulesDirectory!, ToolIdentity.Version,
-                [new(ToolIdentity.Version, version, SetupFiles.FileHash(manifest), new string('c', 64))], new string('d', 32)));
+            SetupFiles.Atomic(SetupService.Selection(Install), new Installation(1, Install, Target, ConfigPath, Config.RulesDirectory!, InstallationVersion,
+                [new(InstallationVersion, version, SetupFiles.FileHash(manifest), new string('c', 64))], new string('d', 32)));
         }
         public ProcessStartInfo Start()
         {

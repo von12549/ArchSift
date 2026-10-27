@@ -120,13 +120,24 @@ try {
     Invoke-CheckedDotnet 'restore' $restore
     if ($InitializeLocks) { Invoke-CheckedDotnet 'restore-locked' ($restore + '--locked-mode') }
     Invoke-CheckedDotnet 'build' @('build', 'ArchSift.slnx', '--no-restore', '--disable-build-servers', '-p:UseSharedCompilation=false', '-c', $Configuration, '--verbosity', 'minimal')
+    $integrationEnvironment = @{}
+    if ($IsWindows) {
+        # Current source under the historical managed-installation identity, for the synthetic
+        # launcher fixture only. Separate intermediates prevent contamination of current binaries.
+        $fixtureArtifacts = Join-Path $runRoot 'managed-launcher-build'
+        $fixturePayload = Join-Path $runRoot 'managed-launcher-fixture'
+        $fixtureProject = 'src/ArchSift.Web/ArchSift.Web.csproj'
+        Invoke-CheckedDotnet 'restore-managed-launcher-fixture' @('restore', $fixtureProject, '--locked-mode', '--configfile', 'NuGet.Config', '--source', $localFeedPath, '--packages', $packageCache, '--artifacts-path', $fixtureArtifacts, '--disable-build-servers', '-p:ArchSiftReleaseVersion=0.11.0', '-p:NuGetAudit=false', '--verbosity', 'minimal')
+        Invoke-CheckedDotnet 'build-managed-launcher-fixture' @('publish', $fixtureProject, '--no-restore', '--artifacts-path', $fixtureArtifacts, '--output', $fixturePayload, '--disable-build-servers', '-p:ArchSiftReleaseVersion=0.11.0', '-p:UseSharedCompilation=false', '-p:UseAppHost=true', '-c', $Configuration, '--verbosity', 'minimal')
+        $integrationEnvironment['ARCHSIFT_TEST_MANAGED_LAUNCHER'] = $fixturePayload
+    }
     # VSTest and Microsoft.Testing.Platform cannot share a solution-level dotnet test invocation.
     foreach ($suite in @(
         [ordered]@{ name = 'architecture'; project = 'tests/ArchSift.ArchitectureTests/ArchSift.ArchitectureTests.csproj' },
         [ordered]@{ name = 'unit'; project = 'tests/ArchSift.UnitTests/ArchSift.UnitTests.csproj' },
         [ordered]@{ name = 'integration'; project = 'tests/ArchSift.IntegrationTests/ArchSift.IntegrationTests.csproj' }
     )) {
-        Invoke-CheckedDotnet ('test-' + $suite.name) @('test', $suite.project, '--no-build', '--no-restore', '--disable-build-servers', '-c', $Configuration, '--logger', 'trx', '--results-directory', (Join-Path $runRoot ('test-results/' + $suite.name)))
+        Invoke-CheckedDotnet ('test-' + $suite.name) @('test', $suite.project, '--no-build', '--no-restore', '--disable-build-servers', '-c', $Configuration, '--logger', 'trx', '--results-directory', (Join-Path $runRoot ('test-results/' + $suite.name))) $(if ($suite.name -eq 'integration') { $integrationEnvironment } else { @{} })
     }
     $mtpAssembly = Join-Path $repositoryRoot "tests/ArchSift.Testing.Tests/bin/$Configuration/net10.0/ArchSift.Testing.Tests.dll"
     $portableFixture = Join-Path $runRoot 'portable-verification-fixture'

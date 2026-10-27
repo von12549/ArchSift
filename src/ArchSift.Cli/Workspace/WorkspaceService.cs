@@ -213,6 +213,21 @@ internal static class WorkspaceService
             throw new ConfigurationException("Workspace state has another schema/project/root binding; preserve it and migrate explicitly.");
         return marker;
     }
+    // Called only after the journal equals the expected transaction marker.
+    // Reserved marker temporaries are opaque retained evidence: never load,
+    // promote, rewrite or delete them. Their names do not prove ownership.
+    private static bool IsPreservedInitializationTemporary(string root, string path)
+    {
+        const string prefix = "workspace-state.json.";
+        var relative = Path.GetRelativePath(root, path);
+        if (relative.Length != prefix.Length + 32 + 4 ||
+            !relative.StartsWith(prefix, StringComparison.Ordinal) ||
+            !relative.EndsWith(".tmp", StringComparison.Ordinal)) return false;
+        var token = relative.Substring(prefix.Length, 32);
+        if (!Guid.TryParseExact(token, "N", out var id) || token != id.ToString("N")) return false;
+        PathSafety.EnsureNoLinks(path);
+        return true;
+    }
     private static void Initialize(WorkspaceSettings settings, string markerPath, string configPath)
     {
         var root = settings.StateRoot; var journalPath = Path.Combine(root, "initialization.json");
@@ -230,7 +245,8 @@ internal static class WorkspaceService
                 throw new ConfigurationException("Interrupted initialization inputs changed; preserve the transaction for review.");
             var allowed = new HashSet<string>([".workspace.lock", "initialization.json", "config/workbench.json"], StringComparer.Ordinal);
             foreach (var path in Directory.GetFiles(root, "*", SearchOption.AllDirectories))
-                if (!allowed.Contains(Path.GetRelativePath(root, path).Replace('\\', '/'))) throw new ConfigurationException("Unknown file in interrupted workspace transaction.");
+                if (!allowed.Contains(Path.GetRelativePath(root, path).Replace('\\', '/')) && !IsPreservedInitializationTemporary(root, path))
+                    throw new ConfigurationException("Unknown file in interrupted workspace transaction.");
             if (File.Exists(configPath) && AssemblyArtifacts.FileHash(configPath) != expectedHash) throw new ConfigurationException("Interrupted generated configuration changed.");
         }
         if (marker is null) WriteOrCheckJournal();
