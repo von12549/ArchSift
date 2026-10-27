@@ -41,7 +41,7 @@ try{
     Checkpoint;Check-Package $manifest
     $start=[Diagnostics.ProcessStartInfo]::new();$start.FileName=Join-Path $package 'web/ArchSift.Web.exe';$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
     foreach($argument in @('--config',$configPath)){$start.ArgumentList.Add($argument)}
-    $start.Environment['DOTNET_CLI_HOME']=Join-Path $run 'web-home';$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0';$start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1';$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='1'
+    $start.Environment['DOTNET_CLI_HOME']=Join-Path $run 'web-home';$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0';$start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1';$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true'
     $server=[Diagnostics.Process]::Start($start);$serverError=$server.StandardError.ReadToEndAsync();Checkpoint
     for($index=0;$index-lt30;$index++){$read=$server.StandardOutput.ReadLineAsync();Require ($read.Wait(10000)) 'Native UI readiness timeout.';$line=$read.Result;Require ($null-ne$line) 'Native UI exited before readiness.';if($line.StartsWith('ARCHSIFT_UI=')){$address=[uri]$line.Substring(12);$baseUri=$address.GetLeftPart([UriPartial]::Authority);$sessionToken=$address.Fragment.Substring(9);break}}
     Require ($null-ne$baseUri) 'No native UI readiness address.';$serverTail=$server.StandardOutput.ReadToEndAsync()

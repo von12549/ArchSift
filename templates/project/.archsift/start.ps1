@@ -115,7 +115,7 @@ if($ifx){
  Need ((Hash (Join-Path $feed ('ArchSift.Cli.'+$version+'.nupkg'))) -ceq $gate.cliPackageSha256) 'CLI archive is unapproved.'
 }
 [IO.Directory]::CreateDirectory($bootstrap)|Out-Null
-$child=@{DOTNET_CLI_HOME=(Join-Path $bootstrap 'cli-home');DOTNET_ADD_GLOBAL_TOOLS_TO_PATH='0';DOTNET_CLI_TELEMETRY_OPTOUT='1';DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE='1';DOTNET_GENERATE_ASPNET_CERTIFICATE='false';DOTNET_NOLOGO='1';DOTNET_CLI_UI_LANGUAGE='en-US';DOTNET_ROLL_FORWARD='LatestPatch';GIT_REDIRECT_STDIN='off';MSBUILDDISABLENODEREUSE='1';ARCHSIFT_PROFILE_PATHS=(ConvertTo-Json -Compress -InputObject @($PROFILE.AllUsersAllHosts,$PROFILE.AllUsersCurrentHost,$PROFILE.CurrentUserAllHosts,$PROFILE.CurrentUserCurrentHost))}
+$child=@{DOTNET_CLI_HOME=(Join-Path $bootstrap 'cli-home');DOTNET_ADD_GLOBAL_TOOLS_TO_PATH='0';DOTNET_CLI_TELEMETRY_OPTOUT='1';DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE='true';DOTNET_GENERATE_ASPNET_CERTIFICATE='false';DOTNET_NOLOGO='1';DOTNET_CLI_UI_LANGUAGE='en-US';DOTNET_ROLL_FORWARD='LatestPatch';GIT_REDIRECT_STDIN='off';MSBUILDDISABLENODEREUSE='1';ARCHSIFT_PROFILE_PATHS=(ConvertTo-Json -Compress -InputObject @($PROFILE.AllUsersAllHosts,$PROFILE.AllUsersCurrentHost,$PROFILE.CurrentUserAllHosts,$PROFILE.CurrentUserCurrentHost))}
 if($offline){$child.NUGET_CERT_REVOCATION_MODE='offline';$child.NUGET_HTTP_CACHE_PATH=Join-Path $bootstrap 'http-cache';$child.NUGET_PLUGINS_CACHE_PATH=Join-Path $bootstrap 'plugins-cache';$child.NUGET_PLUGIN_PATHS='';$child.NUGET_PLUGIN_NETCORE_PATHS=''}
 function Child([string]$executable,[string[]]$arguments,[string]$stage,[switch]$Interactive,[switch]$InheritInput){
  Check-Host

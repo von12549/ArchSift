@@ -30,7 +30,7 @@ function Invoke-Dotnet([string]$name,[string[]]$arguments){
  $start=[Diagnostics.ProcessStartInfo]::new($dotnet);$start.WorkingDirectory=$repo;$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
  foreach($argument in $arguments){$start.ArgumentList.Add($argument)}
  $start.Environment['DOTNET_CLI_HOME']=Join-Path $output 'cli-home';$start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
- $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1';$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='1';$start.Environment['DOTNET_GENERATE_ASPNET_CERTIFICATE']='false'
+ $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1';$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true';$start.Environment['DOTNET_GENERATE_ASPNET_CERTIFICATE']='false'
  $start.Environment['DOTNET_HOST_PATH']=$dotnet;$start.Environment['DOTNET_ROOT']=Split-Path $dotnet;$start.Environment['DOTNET_ROOT_X64']=Split-Path $dotnet;$start.Environment['DOTNET_ROLL_FORWARD']='LatestPatch'
  $start.Environment['NUGET_PACKAGES']=Join-Path $output 'build-cache';$start.Environment['NUGET_CERT_REVOCATION_MODE']='offline';$start.Environment['MSBUILDDISABLENODEREUSE']='1'
  $process=[Diagnostics.Process]::Start($start)

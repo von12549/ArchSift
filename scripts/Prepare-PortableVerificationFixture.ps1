@@ -36,7 +36,7 @@ function Invoke-FixtureDotnet([string]$Name,[string[]]$Arguments){
     $start.Environment['DOTNET_CLI_HOME']=Join-Path $root 'cli-home'
     $start.Environment['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH']='0'
     $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
-    $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='1'
+    $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true'
     $start.Environment['DOTNET_GENERATE_ASPNET_CERTIFICATE']='false'
     $start.Environment['DOTNET_NOLOGO']='1'
     $start.Environment['NUGET_CERT_REVOCATION_MODE']='offline'
