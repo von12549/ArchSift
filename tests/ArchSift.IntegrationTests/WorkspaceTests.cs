@@ -274,6 +274,106 @@ public sealed class WorkspaceTests
         var original = File.ReadAllBytes(marker); Assert.Equal(2, (await fixture.Run("init")).Code); Assert.Equal(original, File.ReadAllBytes(marker));
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("{")]
+    [InlineData("{\"kind\":\"untrusted-marker\"}")]
+    public async Task InterruptedMarkerTemporaryIsPreservedAndNeverPromoted(string contents)
+    {
+        using var fixture = new WorkspaceFixture();
+        var snapshot = await PrepareMarkerInterruption(fixture);
+        var temporary = Path.Combine(snapshot.State, "workspace-state.json.1ebd2303d047483cb0bfa2b97d1342d9.tmp");
+        File.WriteAllText(temporary, contents); var retained = File.ReadAllBytes(temporary);
+        var config = File.ReadAllBytes(snapshot.Config);
+        Assert.Equal(0, (await fixture.Run("init")).Code);
+        Assert.Equal(retained, File.ReadAllBytes(temporary));
+        Assert.Equal(snapshot.Marker, File.ReadAllBytes(Path.Combine(snapshot.State, "workspace-state.json")));
+        Assert.Equal(config, File.ReadAllBytes(snapshot.Config));
+        Assert.False(File.Exists(Path.Combine(snapshot.State, "initialization.json")));
+        Assert.Equal(0, (await fixture.Run("doctor")).Code);
+        Assert.Equal(0, (await fixture.Run("init")).Code);
+        Assert.Equal(retained, File.ReadAllBytes(temporary));
+    }
+
+    [Theory]
+    [InlineData("workspace-state.json.not-a-guid.tmp")]
+    [InlineData("workspace-state.json.1EBD2303D047483CB0BFA2B97D1342D9.tmp")]
+    [InlineData("workspace-state.json.1ebd2303d047483cb0bfa2b97d1342d9.tmp.extra")]
+    [InlineData("nested/workspace-state.json.1ebd2303d047483cb0bfa2b97d1342d9.tmp")]
+    [InlineData("operator-notes.txt")]
+    public async Task InterruptedMarkerLookalikesAndUnknownFilesRemainRejected(string relative)
+    {
+        using var fixture = new WorkspaceFixture();
+        var snapshot = await PrepareMarkerInterruption(fixture);
+        var unknown = Path.Combine(snapshot.State, relative);
+        Directory.CreateDirectory(Path.GetDirectoryName(unknown)!); File.WriteAllText(unknown, "retain");
+        var journal = File.ReadAllBytes(Path.Combine(snapshot.State, "initialization.json"));
+        Assert.Equal(2, (await fixture.Run("init")).Code);
+        Assert.Equal("retain", File.ReadAllText(unknown));
+        Assert.Equal(journal, File.ReadAllBytes(Path.Combine(snapshot.State, "initialization.json")));
+        Assert.False(File.Exists(Path.Combine(snapshot.State, "workspace-state.json")));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReservedTemporaryDoesNotBypassTransactionIdentityOrConfigHash(bool changeConfig)
+    {
+        using var fixture = new WorkspaceFixture();
+        var snapshot = await PrepareMarkerInterruption(fixture);
+        var temporary = Path.Combine(snapshot.State, "workspace-state.json.1ebd2303d047483cb0bfa2b97d1342d9.tmp");
+        File.WriteAllText(temporary, "retained-partial");
+        var journalPath = Path.Combine(snapshot.State, "initialization.json");
+        if (changeConfig) File.AppendAllText(snapshot.Config, "changed");
+        else { var journal = JsonNode.Parse(File.ReadAllText(journalPath))!; journal["projectId"] = "other"; File.WriteAllText(journalPath, journal.ToJsonString()); }
+        var beforeJournal = File.ReadAllBytes(journalPath); var beforeConfig = File.ReadAllBytes(snapshot.Config);
+        Assert.Equal(2, (await fixture.Run("init")).Code);
+        Assert.Equal(beforeJournal, File.ReadAllBytes(journalPath)); Assert.Equal(beforeConfig, File.ReadAllBytes(snapshot.Config));
+        Assert.Equal("retained-partial", File.ReadAllText(temporary));
+        Assert.False(File.Exists(Path.Combine(snapshot.State, "workspace-state.json")));
+    }
+
+    [Fact]
+    public async Task MultipleReservedMarkerTemporariesRemainByteExact()
+    {
+        using var fixture = new WorkspaceFixture(); var snapshot = await PrepareMarkerInterruption(fixture);
+        var files = new Dictionary<string, byte[]>();
+        foreach (var bytes in new[] { Array.Empty<byte>(), new byte[] { 0, 255, 123 }, snapshot.Marker })
+        {
+            var path = Path.Combine(snapshot.State, "workspace-state.json." + Guid.NewGuid().ToString("N") + ".tmp");
+            File.WriteAllBytes(path, bytes); files.Add(path, bytes);
+        }
+        Assert.Equal(0, (await fixture.Run("init")).Code);
+        foreach (var file in files) Assert.Equal(file.Value, File.ReadAllBytes(file.Key));
+        Assert.Equal(snapshot.Marker, File.ReadAllBytes(Path.Combine(snapshot.State, "workspace-state.json")));
+    }
+
+    [Fact]
+    public async Task ReservedMarkerTemporaryLinkIsRejectedWithoutTouchingItsTarget()
+    {
+        using var fixture = new WorkspaceFixture(); var snapshot = await PrepareMarkerInterruption(fixture);
+        var outside = Path.Combine(fixture.Root, "outside.txt"); File.WriteAllText(outside, "retain-external");
+        var link = Path.Combine(snapshot.State, "workspace-state.json." + Guid.NewGuid().ToString("N") + ".tmp");
+        File.CreateSymbolicLink(link, outside);
+        var journalPath = Path.Combine(snapshot.State, "initialization.json"); var journal = File.ReadAllBytes(journalPath);
+        Assert.Equal(2, (await fixture.Run("init")).Code);
+        Assert.Equal("retain-external", File.ReadAllText(outside));
+        Assert.Equal(journal, File.ReadAllBytes(journalPath));
+        Assert.NotNull(new FileInfo(link).LinkTarget);
+        Assert.False(File.Exists(Path.Combine(snapshot.State, "workspace-state.json")));
+    }
+    private static async Task<(string State, string Config, byte[] Marker)> PrepareMarkerInterruption(WorkspaceFixture fixture)
+    {
+        var initial = await fixture.Run("init"); Assert.Equal(0, initial.Code);
+        using var value = JsonDocument.Parse(initial.Output);
+        var state = value.RootElement.GetProperty("stateRoot").GetString()!;
+        var config = value.RootElement.GetProperty("startupConfig").GetString()!;
+        var marker = Path.Combine(state, "workspace-state.json"); var bytes = File.ReadAllBytes(marker);
+        File.Copy(marker, Path.Combine(state, "initialization.json")); File.Delete(marker);
+        foreach (var launch in Directory.GetDirectories(Path.Combine(state, "launches")))
+        { File.Delete(Path.Combine(launch, "initialization.json")); Directory.Delete(launch); }
+        return (state, config, bytes);
+    }
     private sealed class WorkspaceFixture : IDisposable
     {
         public string Root { get; } = Path.Combine(Path.GetTempPath(), "archsift-workspace-tests-" + Guid.NewGuid().ToString("N"));

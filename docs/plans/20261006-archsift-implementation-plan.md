@@ -638,3 +638,8 @@ W09-W10 authority 2026-10-07:stage commits/later release/MIT license.W090286b75/
 ## Published consumer qualification, 2026-10-25
 
 NR06.00-NR06.03 authorized: immutable public input freeze, dedicated network consumer harness and exact hosted SDK/runtime compatibility, normal PR/CI/merge. [Scope and evidence contract](20261025-nr06-consumer-qualification.md), [current status](../acceptance/20261025-nr06-consumer-status.json). Actual disconnected and remote Windows human environments remain [proposed for confirmation](20261025-nr06-offline-human-environments.md). No local Guard/dotnet, publishing credential/switch/tag/Release, new installer, persisted host mutation or live IFX policy/runner change. Full NR06 and human acceptance are not complete.
+
+
+## Authorized NR06 correction, 2026-10-27
+
+The user authorized product repair, regression, normal PR/CI/merge, unpublished 0.11.1 candidate preparation and human-operated spare verification. The real 0.11.0 precommit kill was captured, but its atomic-marker temporary prevents recovery; retain the INCONCLUSIVE native receipt and immutable original packages. The narrow repair preserves reserved temporary bytes and rebuilds the marker only after transaction validation. See [scope and evidence](20261027-nr06-marker-recovery-correction.md). CI/candidate/spare qualification remains pending; public publication and author-host Guard/dotnet remain prohibited; Ubuntu offline is deferred and full NR06 is not passed.

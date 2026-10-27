@@ -49,7 +49,7 @@ try{
  & (Join-Path $PSScriptRoot 'New-WebPayloadInventory.ps1') -PayloadRoot $web -ExpectedVersion $version -SourceCommit $commit
  $packages=Join-Path $output 'packages';[IO.Directory]::CreateDirectory($packages)|Out-Null
  foreach($project in @('Contracts','Core','ArchUnit','Testing','Cli')){
-  $arguments=@('pack',('src/ArchSift.'+$project+'/ArchSift.'+$project+'.csproj'),'--no-build','--no-restore','-c','Release','--output',$packages,('-p:SourceRevisionId='+$commit),('-p:ArchSiftWebPayloadRoot='+$web),('-p:ArchSiftPackageReleaseNotes='+(Join-Path $repo 'docs/releases/0.11.0/RELEASE_NOTES.md')))
+  $arguments=@('pack',('src/ArchSift.'+$project+'/ArchSift.'+$project+'.csproj'),'--no-build','--no-restore','-c','Release','--output',$packages,('-p:SourceRevisionId='+$commit),('-p:ArchSiftWebPayloadRoot='+$web),('-p:ArchSiftPackageReleaseNotes='+(Join-Path $repo ('docs/releases/'+$version+'/RELEASE_NOTES.md'))))
   [void](Invoke-Dotnet ('pack-'+$project) $arguments)
  }
  $records=@(Get-ChildItem -LiteralPath $packages -File -Filter '*.nupkg'|ForEach-Object {@{file=$_.Name;length=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
