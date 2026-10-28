@@ -3,7 +3,10 @@ if($env:GITHUB_ACTIONS -cne 'true' -or $env:RUNNER_ENVIRONMENT -cne 'github-host
 . (Join-Path $PSScriptRoot 'HostState.ps1')
 $before=Get-ArchSiftHostHash
 $binding=Get-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'archsift-audit-inputs/binding.json') -Raw|ConvertFrom-Json -AsHashtable
-if($binding.sourceCommit -cne '8b721f44e90a41285fa74a6f72576c7f6996ef7d' -or $binding.sourceTree -cne '2c18d18145beb52a917a3884ddd7f442ec486967' -or $binding.workflowCommit -cne $env:GITHUB_SHA -or $binding.runId -ne [long]$env:GITHUB_RUN_ID){throw 'Audit binding differs.'}
+$version=if($env:RELEASE_VERSION){$env:RELEASE_VERSION}else{'0.11.0'}
+if($version -cnotin @('0.11.0','0.11.2')){throw 'Unreviewed audit version'}
+$reference=Get-Content -LiteralPath (Join-Path $PSScriptRoot ('../docs/releases/'+$version+'/trusted-publishing-reference.json')) -Raw|ConvertFrom-Json
+if($binding.version -cne $version -or $binding.sourceCommit -cne $reference.sourceCommit -or $binding.sourceTree -cne $reference.sourceTree -or $binding.workflowCommit -cne $env:GITHUB_SHA -or $binding.runId -ne [long]$env:GITHUB_RUN_ID){throw 'Audit binding differs.'}
 $root=Join-Path $env:RUNNER_TEMP 'archsift-fresh-audit'
 if(Test-Path -LiteralPath $root){throw 'Fresh owned audit directory required.'}
 [void][IO.Directory]::CreateDirectory($root)
@@ -29,6 +32,7 @@ try{
  $start.Environment['NUGET_EXE_NO_PROMPT']='true'
  $start.Environment['DOTNET_CLI_UI_LANGUAGE']='en-US'
  $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
+ $start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true'
  foreach($key in @('GH_TOKEN','GITHUB_TOKEN','NUGET_API_KEY','ACTIONS_ID_TOKEN_REQUEST_TOKEN','ACTIONS_ID_TOKEN_REQUEST_URL')){[void]$start.Environment.Remove($key)}
  $process=[Diagnostics.Process]::new();$process.StartInfo=$start
  try{

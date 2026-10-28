@@ -1,0 +1,7 @@
+# ArchSift 0.11.2 release preparation
+
+R12-01 is in implementation: correct five package READMEs/release scope, select a separate reviewed 0.11.2 publishing profile, bind source audit to that reference, retain 0.11.0 records and consumers, and replace public data-branch staging with a pinned successful main candidate-workflow artifact for 0.11.2. The immutable artifact digest, run/source/repository and exact archive entry allowlist are checked before package/request/payload checks. No candidate scripts are executed by the artifact reader. Default preflight fails closed until the final reference is frozen; both profile capabilities remain disabled during preparation.
+
+R12-02 awaits this PR's main candidate build and full entry comparison against the accepted candidate. R12-03 awaits final-package consumer, connected MTP and audit evidence plus affected Windows supplement and final human identity acceptance. R12-04 awaits those results and private Trusted Publishing policy readback. A subsequent narrow evidence PR freezes the exact source, packages, payload and acceptance; it must not silently change the package source to its own later workflow commit.
+
+Full disconnected MTP is not verified or claimed. Ubuntu disconnected qualification is deferred. No installer, live IFX adoption or public publication is authorized. Historical public 0.11.0 consumer verification remains a separate lane and is not presented as 0.11.2 qualification.

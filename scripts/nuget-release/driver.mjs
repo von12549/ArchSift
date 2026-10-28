@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { candidateInputs } from './candidate-inputs.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -6,15 +7,19 @@ import { checkReference, checkContext, checkEnvironment, checkCiRun, checkReques
 import { GitHubReader, boundedResponse } from './github.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const policy = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/publishing-activation.json')));
-requireThat(policy.originalReference === 'docs/releases/0.11.0/trusted-publishing-reference.json', 'Original reference path differs');
+const version = process.env.RELEASE_VERSION || '0.11.0';
+requireThat(['0.11.0','0.11.2'].includes(version), 'Unreviewed release profile');
+const policy = JSON.parse(fs.readFileSync(path.join(root, `docs/releases/${version}/publishing-activation.json`)));
+requireThat(policy.version === version && policy.originalReference === `docs/releases/${version}/trusted-publishing-reference.json`, 'Reference/profile differs');
+requireThat(version !== '0.11.2' || policy.state === 'FINAL_IDENTITIES_FROZEN', 'Final 0.11.2 identities not frozen');
 const originalReferenceBytes = fs.readFileSync(path.join(root, policy.originalReference));
 requireThat(sha256(originalReferenceBytes) === policy.originalReferenceSha256, 'Immutable original reference changed');
 const reference = JSON.parse(originalReferenceBytes);
+requireThat(reference.version === version, 'Reference version differs from selected profile');
 const e = process.env;
 const base = 'repos/von12549/ArchSift/';
 const gh = new GitHubReader(e.GH_TOKEN);
-const c = { repository: e.GITHUB_REPOSITORY, repositoryId: e.GITHUB_REPOSITORY_ID, ownerId: e.GITHUB_REPOSITORY_OWNER_ID, ref: e.GITHUB_REF, sha: e.GITHUB_SHA, runId: e.GITHUB_RUN_ID, runAttempt: e.GITHUB_RUN_ATTEMPT, event: e.GITHUB_EVENT_NAME, workflowSha: e.RELEASE_WORKFLOW_SHA ?? '', dataCommit: e.RELEASE_DATA_COMMIT ?? '', requestSha256: e.RELEASE_REQUEST_SHA256 ?? '', releaseSwitch: e.RELEASE_SWITCH ?? '' };
+const c = { version, repository: e.GITHUB_REPOSITORY, repositoryId: e.GITHUB_REPOSITORY_ID, ownerId: e.GITHUB_REPOSITORY_OWNER_ID, ref: e.GITHUB_REF, sha: e.GITHUB_SHA, runId: e.GITHUB_RUN_ID, runAttempt: e.GITHUB_RUN_ATTEMPT, event: e.GITHUB_EVENT_NAME, workflowSha: e.RELEASE_WORKFLOW_SHA ?? '', dataCommit: e.RELEASE_DATA_COMMIT ?? '', requestSha256: e.RELEASE_REQUEST_SHA256 ?? '', releaseSwitch: e.RELEASE_SWITCH ?? '' };
 const mode = e.RELEASE_MODE || 'preflight';
 function output(key, value) {
   requireThat(/^[a-z_]+$/.test(key) && /^[a-zA-Z0-9:_./-]*$/.test(String(value)), 'Unsafe workflow output');
@@ -50,6 +55,7 @@ async function validateContext() {
   checkEnvironment(await gh.json(`${base}environments/${policy.environment}`), await gh.json(`${base}environments/${policy.environment}/deployment-branch-policies`), policy);
 }
 async function stagedInputs() {
+  if (version === '0.11.2') return candidateInputs({ gh, policy, reference, context:c, root });
   const tree = await gh.json(`${base}git/trees/${c.dataCommit}?recursive=1`);
   const names = [...reference.packages.map(p => p.file), 'release-request.json', 'package-payload-manifest.json'].sort();
   requireThat(tree.truncated === false && tree.tree.length === names.length && tree.tree.every(f => f.type === 'blob' && f.mode === '100644') && JSON.stringify(tree.tree.map(f => f.path).sort()) === JSON.stringify(names), 'Data-only tree allowlist differs');
@@ -71,7 +77,7 @@ async function artifactInputs() {
 }
 async function registryMissing() {
   for (const p of reference.packages) {
-    const response = await fetch(`https://api.nuget.org/v3-flatcontainer/${p.id.toLowerCase()}/0.11.0/${p.file.toLowerCase()}`, { method: 'HEAD', redirect: 'error', signal: AbortSignal.timeout(30_000) });
+    const response = await fetch(`https://api.nuget.org/v3-flatcontainer/${p.id.toLowerCase()}/${reference.version}/${p.file.toLowerCase()}`, { method: 'HEAD', redirect: 'error', signal: AbortSignal.timeout(30_000) });
     requireThat(response.status === 404, 'Existing/uncertain server version: stop before login');
   }
 }
@@ -83,7 +89,7 @@ function invokeDotnet(operation, file, key = '') {
   return result.stdout;
 }
 async function servedProof(p, originalFiles, scratch) {
-  const url = `https://api.nuget.org/v3-flatcontainer/${p.id.toLowerCase()}/0.11.0/${p.file.toLowerCase()}`;
+  const url = `https://api.nuget.org/v3-flatcontainer/${p.id.toLowerCase()}/${reference.version}/${p.file.toLowerCase()}`;
   let bytes;
   for (let attempt = 0; attempt < 30; attempt++) {
     const response = await fetch(url, { redirect: 'error', signal: AbortSignal.timeout(30_000) });
@@ -101,7 +107,7 @@ async function servedProof(p, originalFiles, scratch) {
   const file = path.join(scratch, `served-${p.file}`); fs.writeFileSync(file, bytes, { flag: 'wx' });
   const signature = invokeDotnet('Verify', file);
   requireThat(/Signature type:\s*Repository/i.test(signature) && /https:\/\/api\.nuget\.org\/v3\/index\.json/.test(signature), 'Repository signature identity not proven');
-  const page = await boundedResponse(await fetch(`https://www.nuget.org/packages/${p.id}/0.11.0`, { redirect: 'error', signal: AbortSignal.timeout(30_000) }), 2_000_000);
+  const page = await boundedResponse(await fetch(`https://www.nuget.org/packages/${p.id}/${reference.version}`, { redirect: 'error', signal: AbortSignal.timeout(30_000) }), 2_000_000);
   checkOwnerPage(page.toString('utf8'), policy.nugetUser);
   const contentHash = signature.match(/(?:Package content hash|Content hash):\s*(\S+)/i)?.[1];
   requireThat(contentHash && /^[a-zA-Z0-9+/=]+$/.test(contentHash), 'NuGet content hash missing');
@@ -148,7 +154,7 @@ async function main() {
   }
   const auditId=Number(e.RELEASE_AUDIT_ARTIFACT_ID);
   const auditMeta=await gh.json(`${base}actions/artifacts/${auditId}`);
-  requireThat(auditMeta.expired===false && auditMeta.name==='archsift-0.11.0-prepublication-audit' && auditMeta.workflow_run?.id===Number(c.runId) && auditMeta.workflow_run?.head_sha===c.sha && auditMeta.workflow_run?.head_repository_id===Number(c.repositoryId) && auditMeta.digest===`sha256:${e.RELEASE_AUDIT_ARTIFACT_SHA256}`, 'Audit artifact identity differs');
+  requireThat(auditMeta.expired===false && auditMeta.name===`archsift-${version}-prepublication-audit` && auditMeta.workflow_run?.id===Number(c.runId) && auditMeta.workflow_run?.head_sha===c.sha && auditMeta.workflow_run?.head_repository_id===Number(c.repositoryId) && auditMeta.digest===`sha256:${e.RELEASE_AUDIT_ARTIFACT_SHA256}`, 'Audit artifact identity differs');
   const auditZip=await gh.artifact(auditId);
   requireThat(sha256(auditZip)===e.RELEASE_AUDIT_ARTIFACT_SHA256,'Audit ZIP digest differs');
   const auditFiles=await readZip(auditZip,{maxTotal:2_000_000,maxEntries:2});

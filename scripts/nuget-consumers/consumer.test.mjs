@@ -86,3 +86,15 @@ test('Hosted PowerShell entry keeps host APIs read only and never falls through 
  assert.ok(script.includes('ReadToEndAsync')&&script.includes('Check-Host')&&script.includes('Get-ArchSiftHostHash'));
 });
 // Keep small synthetic evidence under the OS temp root until the normal ephemeral job ends.
+
+test('0112 fixtures pin actual library APIs, CLI and MTP without changing historical defaults',()=>{
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'archsift-0112-fixtures-'));
+ try {const f=generateFixtures(directory,source,'10.0.303','0.11.2');
+ for(const item of f.libraries){assert.match(fs.readFileSync(path.join(item.directory,'Consumer.csproj'),'utf8'),/Version="\[0\.11\.2\]"/);}
+ assert.match(fs.readFileSync(path.join(f.libraries[0].directory,'Program.cs'),'utf8'),/Version != "0.11.2"/);
+ assert.equal(JSON.parse(fs.readFileSync(path.join(f.tool,'.config/dotnet-tools.json'))).tools['archsift.cli'].version,'0.11.2');
+ assert.match(fs.readFileSync(path.join(f.mtp,'Portable.Architecture.Tests.csproj'),'utf8'),/Version="\[0\.11\.2\]"/);
+ assert.equal(JSON.parse(fs.readFileSync(f.gate)).toolIdentity,'0.11.2');
+ } finally {fs.rmSync(directory,{recursive:true});}
+});
+

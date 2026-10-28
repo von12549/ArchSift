@@ -11,14 +11,15 @@ export function exactKeys(value, keys) {
   assert.deepEqual(Object.keys(value).sort(), [...keys].sort(), 'Unexpected or missing fields');
 }
 export function checkReference(r) {
-  requireThat(r.schemaVersion === 1 && r.version === '0.11.0' && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
-  requireThat(r.humanAcceptance.status === 'passed-user-confirmed' && r.humanAcceptance.usabilityScore === 4, 'Human acceptance missing');
+  requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
+  requireThat(r.humanAcceptance.status === 'passed-user-confirmed' && (r.version === '0.11.0' ? r.humanAcceptance.usabilityScore === 4 : r.humanAcceptance.finalIdentityConfirmed === true), 'Human acceptance missing');
   requireThat(r.packages.length === 5, 'Exactly five packages required');
-  r.packages.forEach((p, i) => requireThat(p.id === ids[i] && p.file === `${ids[i]}.0.11.0.nupkg` && Number.isSafeInteger(p.bytes) && p.bytes > 0 && sha(p.sha256, 64), 'Invalid package/order'));
+  r.packages.forEach((p, i) => requireThat(p.id === ids[i] && p.file === `${ids[i]}.${r.version}.nupkg` && Number.isSafeInteger(p.bytes) && p.bytes > 0 && sha(p.sha256, 64), 'Invalid package/order'));
   requireThat(r.sourceCi.length === 2 && r.sourceCi[1].headSha === r.sourceCommit, 'Source CI binding missing');
 }
 export function checkContext(c, policy, mode) {
   requireThat(['preflight', 'preview', 'publish'].includes(mode), 'Unknown mode');
+  requireThat(!c.version || c.version === policy.version, 'Wrong release profile context');
   requireThat(c.repository === policy.repository && c.repositoryId === String(policy.repositoryId) && c.ownerId === String(policy.ownerId) && c.ref === 'refs/heads/main', 'Wrong repository or branch');
   requireThat(sha(c.sha, 40) && c.mainSha === c.sha, 'Approved workflow commit is no longer main');
   requireThat(c.runAttempt === '1' && c.event === 'workflow_dispatch', 'Only a fresh manual dispatch is accepted');
@@ -106,11 +107,11 @@ export async function checkPackages(files, reference, payloadManifest, { served 
       requireThat(b && b.length === e.length && sha256(b) === e.sha256, 'Nonsignature payload differs');
     }
     const nuspec = entries.get(`${p.id}.nuspec`)?.toString('utf8');
-    requireThat(nuspec && nuspec.includes(`<id>${p.id}</id>`) && nuspec.includes('<version>0.11.0</version>') && nuspec.includes(reference.sourceCommit), 'Nuspec identity differs');
+    requireThat(nuspec && nuspec.includes(`<id>${p.id}</id>`) && nuspec.includes(`<version>${reference.version}</version>`) && nuspec.includes(reference.sourceCommit), 'Nuspec identity differs');
   }
 }
 export function checkArtifact(a, context) {
-  requireThat(a.expired === false && a.name === 'archsift-0.11.0-reviewed-submissions' && Number.isSafeInteger(a.id) && a.id > 0 && a.size_in_bytes > 0 && a.size_in_bytes <= 10_000_000, 'Artifact unavailable/oversized');
+  requireThat(a.expired === false && a.name === `archsift-${context.version || '0.11.0'}-reviewed-submissions` && Number.isSafeInteger(a.id) && a.id > 0 && a.size_in_bytes > 0 && a.size_in_bytes <= 10_000_000, 'Artifact unavailable/oversized');
   requireThat(a.workflow_run?.id === Number(context.runId) && a.workflow_run?.head_sha === context.sha && a.workflow_run?.head_repository_id === Number(context.repositoryId) && /^sha256:[a-f0-9]{64}$/.test(a.digest), 'Artifact provenance/digest differs');
 }
 export function checkOwnerPage(html, user) {
