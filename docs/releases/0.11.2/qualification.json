@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.2",
+  "status": "ACCEPTED_WINDOWS_SCOPE_WITH_EXPLICIT_REPEAT_WAIVERS",
+  "sourceCommit": "91cd73adc85a4da8f79fffa04ad834c870d78d07",
+  "sourceTree": "6deed2ea55d7a27cfe554b33401cc03d04e78f5d",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.2.nupkg",
+      "bytes": 93351,
+      "sha256": "a3329011c4bbe7a45815b24345fd6109efe81cdb20e7e19478bd13ebd144115d"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.2.nupkg",
+      "bytes": 161212,
+      "sha256": "56b31ccf249546fe57da836ef5ae570703cfd34d3d570c2ae819ee2772acb520"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.2.nupkg",
+      "bytes": 30143,
+      "sha256": "0017a0fa48e94fb9270f941835833ff9f344702b2c93fb1febf6549ba842d1de"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.2.nupkg",
+      "bytes": 25436,
+      "sha256": "d9bf8772c9abc00ac410b3ae40f8cb344577bcab7c93ed043e7dc9989acbdd98"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.2.nupkg",
+      "bytes": 2905423,
+      "sha256": "9879c380565e4dbae132356b818c228d39d8a0ea9110b2da7d749a5e86f794f4"
+    }
+  ],
+  "candidateArtifact": {
+    "artifactId": 12789217420,
+    "artifactSha256": "ef0f91dbb3cb37b281817be36e3ce2149fd334cc285e77b4492f754c8996a3b8",
+    "runId": 40625385124
+  },
+  "evidence": [
+    {
+      "lane": "final-online",
+      "runId": "p01-20261028T032354Z-201c67a5",
+      "sealSha256": "4962c9ac73ea9f5c0125daed567c56a0fa66a0410ce050b6c3b7af9319f6104a",
+      "reviewSha256": "e2b1d49e625184da06734ab05c8312eff353478efddb0c5c317b2f1e69667e63",
+      "reviewStatus": "FINAL_0112_ONLINE_CONSUMERS_MTP_SEVEN_AUDITS_AND_EMBEDDED_COVERAGE_PASS"
+    },
+    {
+      "lane": "final-offline-partial",
+      "runId": "p01-20261028T042454Z-5acf7349",
+      "sealSha256": "cadd79466dd8eb72729041a7ebdd30f814221b51b6296b04231ca4eda4c3eec0",
+      "reviewSha256": "7178f0fe54367659e3aa3d26720c01b7d916ec8e35e24817656b3c6e6b4df641",
+      "reviewStatus": "FINAL_COLD_FIVE_AND_TWO_INTERNAL_CASES_PASS_SIX_CASES_REMAIN"
+    },
+    {
+      "lane": "final-offline-tail",
+      "runId": "p01-20261028T055752Z-dc20e6ea",
+      "sealSha256": "5f106378a8315af1380c027bbeefe35849d5ba0fd1ecdcc36b0763a48d588326",
+      "reviewSha256": "c18836a8102e28eb12e99e9bddbaf5d7349c281e60826aabc81a18fa20782034",
+      "reviewStatus": "FINAL_0112_SCOPED_OFFLINE_CONSUMERS_INTERNAL_AND_NEGATIVES_PASS"
+    },
+    {
+      "lane": "final-recovery",
+      "runId": "p01-20261028T073930Z-d0ffa127",
+      "sealSha256": "99369e3bb3260d05b4a75e2ebb60e63187df55067b51a2456780d340365a8651",
+      "reviewSha256": "3647a0e785b9dbc1884a0a585653ca4e783fa60bfe834cfa040b87b858e1f13c",
+      "reviewStatus": "FINAL_0112_STAGED_AND_REAL_INTERRUPTION_RECOVERY_PASS"
+    },
+    {
+      "lane": "final-launcher-reconstructed",
+      "runId": "p01-20261028T083952Z-85b445fc",
+      "sealSha256": "c39bcf066b4c555c12ab293634b9605edb65deba726cab5fd5cc44751be84ccb",
+      "reviewSha256": "530f8327fdb6b9c590d17b019c4ebc7cffffef6ad4ae0b0ca708a0019c6a17f8",
+      "reviewStatus": "PASS_SCOPED_WITH_EXPLICIT_REPEAT_WAIVERS"
+    },
+    {
+      "lane": "prior-human-offline",
+      "runId": "p01-20261028T010009Z-e5b58673",
+      "sealSha256": "7337cb2477e33591c7a3ad060122c21fb638314d1d24265ae0f5d656cb06fd5b",
+      "reviewSha256": "3d56ca4493222b01c2cea063f1d73c613e2d3a76ee38c8841dc07e8045a92a33",
+      "reviewStatus": "WINDOWS_DISCONNECTED_HUMAN_DISCOVERY_REPORTS_AND_CLOSEOUT_PASS"
+    },
+    {
+      "lane": "prior-both-ui-network",
+      "runId": "p01-20261028T013814Z-fa71148c",
+      "sealSha256": "35f22d20ebfb536f77c18ad15f00dc4feb0314c9b4e47512aca513cd25e1dd72",
+      "reviewSha256": "ac760d784e2afde202915174b57c79c23139d6bc0f2fd559338b69294c30ffa9",
+      "reviewStatus": "WINDOWS_0112_UI_NETWORK_SCOPED_PASS"
+    }
+  ],
+  "repeatWaiver": {
+    "status": "explicit-user-approved-repeat-waiver",
+    "date": "2026-10-28",
+    "scope": [
+      "final-independent-workbench-repeat",
+      "final-human-ui-repeat"
+    ],
+    "finalSourceCommit": "91cd73adc85a4da8f79fffa04ad834c870d78d07",
+    "priorSourceCommit": "08e7e188d0773b0dd0f9873608692091f22ad024",
+    "finalIdentityConfirmed": false,
+    "priorHumanEvidenceRetained": true,
+    "finalByteHumanRerun": false,
+    "reason": "The user accepted closure using prior hands-on acceptance after reviewing unchanged product source/build configuration and third-party payloads, together with final-byte online, offline, recovery and Launcher supplemental evidence.",
+    "residualRisk": "Independent Workbench startup and human usability were not repeated against these exact rebuilt package bytes. Historical answers remain bound to the preceding candidate.",
+    "authorization": "The user accepted the recommendation to waive the two repeat gates and proceed with release preparation and closeout; public publication remains unauthorized."
+  },
+  "finalOnline": {
+    "operations": 29,
+    "libraryApis": 4,
+    "coldConsumers": 5,
+    "lockRechecks": 5,
+    "mtpCases": 4,
+    "freshAuditGroups": 7,
+    "embeddedDependencyBindings": 10
+  },
+  "finalOffline": {
+    "coldConsumers": 5,
+    "lockRechecks": 4,
+    "internalSdkParameters": [
+      "absent",
+      "1",
+      "false",
+      "true"
+    ],
+    "rejectionCases": 4,
+    "acceptedSegments": 15,
+    "calibrations": 2,
+    "reconstructedSegments": 1,
+    "originalStoppedReceiptPreserved": true
+  },
+  "finalRecovery": {
+    "operations": 6,
+    "sealedFiles": 49,
+    "centralAssertions": 99,
+    "stagedTransaction": "PASS",
+    "actualPrecommitKillAndRecovery": "PASS"
+  },
+  "finalLauncher": {
+    "automaticDiscoveryJobs": 1,
+    "reportFormats": [
+      "JSON",
+      "HTML"
+    ],
+    "readerEvents": 211392,
+    "converterAndNativeEvents": 211393,
+    "ownedProcessLifetimes": 22,
+    "unresolvedEvents": 0,
+    "attributedExternalRequestsObserved": 0,
+    "normalExit": true,
+    "originalStoppedReceiptPreserved": true,
+    "independentWorkbenchFinalBytes": "NOT_EXECUTED_WAIVED"
+  },
+  "limits": {
+    "fullDisconnectedMtp": "NOT_VERIFIED_NOT_CLAIMED",
+    "ubuntuDisconnected": "DEFERRED_BY_USER",
+    "freshFinalHumanUi": "WAIVED_NOT_RERUN",
+    "liveIfxAdoption": false,
+    "newInstaller": false,
+    "publicPublication": false
+  }
+}

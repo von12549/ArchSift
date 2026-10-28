@@ -3,7 +3,7 @@ import { candidateInputs } from './candidate-inputs.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { checkReference, checkContext, checkEnvironment, checkCiRun, checkRequest, checkPackages, checkArtifact, checkAuditReport, checkPreviewArtifact, checkOwnerPage, readZip, publishSequential, requireThat, sha256 } from './model.mjs';
+import { checkReference, checkQualification, checkContext, checkEnvironment, checkCiRun, checkRequest, checkPackages, checkArtifact, checkAuditReport, checkPreviewArtifact, checkOwnerPage, readZip, publishSequential, requireThat, sha256 } from './model.mjs';
 import { GitHubReader, boundedResponse } from './github.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -16,6 +16,7 @@ const originalReferenceBytes = fs.readFileSync(path.join(root, policy.originalRe
 requireThat(sha256(originalReferenceBytes) === policy.originalReferenceSha256, 'Immutable original reference changed');
 const reference = JSON.parse(originalReferenceBytes);
 requireThat(reference.version === version, 'Reference version differs from selected profile');
+if (version === '0.11.2') checkQualification(fs.readFileSync(path.join(root, 'docs/releases/0.11.2/qualification.json')), reference);
 const e = process.env;
 const base = 'repos/von12549/ArchSift/';
 const gh = new GitHubReader(e.GH_TOKEN);
