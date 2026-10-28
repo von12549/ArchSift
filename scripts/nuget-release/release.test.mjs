@@ -77,9 +77,9 @@ test('reject non-ZIP bytes',async()=>assert.rejects(readZip(Buffer.from('not zip
 const artifact={id:42,name:'archsift-0.11.0-reviewed-submissions',expired:false,size_in_bytes:123,digest:`sha256:${'a'.repeat(64)}`,workflow_run:{id:100,head_sha:context.sha,head_repository_id:policy.repositoryId}};
 test('artifact must be same-run, same-repository and digest-bearing',()=>checkArtifact(artifact,{...context,runId:'100'}));
 for(const [key,value] of [['expired',true],['digest',''],['size_in_bytes',20_000_000],['name','other'],['workflow_run',{...artifact.workflow_run,id:101}],['workflow_run',{...artifact.workflow_run,head_repository_id:1}]])test(`reject artifact ${key} ${JSON.stringify(value)}`,()=>assert.throws(()=>checkArtifact({...artifact,[key]:value},{...context,runId:'100'})));
-function syntheticPackages({signed=false,tamper=false,extra=false}={}){
- const r=structuredClone(reference), files=new Map();const m={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,packages:[]};
- for(const p of r.packages){const nuspec=Buffer.from(`<package><metadata><id>${p.id}</id><version>0.11.0</version><repository commit="${r.sourceCommit}" /></metadata></package>`);const payload=[[`${p.id}.nuspec`,nuspec],['file.dll',Buffer.from('synthetic payload')]];const original=zip(payload);p.bytes=original.length;p.sha256=sha256(original);m.packages.push({id:p.id,submittedSha256:p.sha256,payload:payload.map(([path,b])=>({path,length:b.length,sha256:sha256(b)}))});const actual=payload.map(([n,b])=>[n,Buffer.from(b)]);if(tamper)actual[1][1][0]^=1;if(signed)actual.push(['.signature.p7s','synthetic signature is not a real certificate']);if(extra)actual.push(['unapproved.txt','bad']);files.set(p.file,zip(actual));}
+function syntheticPackages({signed=false,tamper=false,extra=false,version=reference.version}={}){
+ const r=structuredClone(reference), files=new Map();r.version=version;if(version==='0.11.2'){r.humanAcceptance={status:'passed-user-confirmed',finalIdentityConfirmed:true};for(const p of r.packages)p.file=`${p.id}.${version}.nupkg`;}const m={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,packages:[]};
+ for(const p of r.packages){const nuspec=Buffer.from(`<package><metadata><id>${p.id}</id><version>${r.version}</version><repository commit="${r.sourceCommit}" /></metadata></package>`);const payload=[[`${p.id}.nuspec`,nuspec],['file.dll',Buffer.from('synthetic payload')]];const original=zip(payload);p.bytes=original.length;p.sha256=sha256(original);m.packages.push({id:p.id,submittedSha256:p.sha256,payload:payload.map(([path,b])=>({path,length:b.length,sha256:sha256(b)}))});const actual=payload.map(([n,b])=>[n,Buffer.from(b)]);if(tamper)actual[1][1][0]^=1;if(signed)actual.push(['.signature.p7s','synthetic signature is not a real certificate']);if(extra)actual.push(['unapproved.txt','bad']);files.set(p.file,zip(actual));}
  return {r,files,m};
 }
 test('verify all synthetic unsigned package bytes and payload entries',async()=>{const {r,files,m}=syntheticPackages();await checkPackages(files,r,m);});
@@ -252,3 +252,31 @@ test('0112 preparation profile remains closed and unfrozen',()=>{
  const p=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/publishing-activation.json')));
  assert.equal(p.publicationEnabled,false);assert.equal(p.realAssetTransferEnabled,false);assert.equal(p.versionSwitch,'ARCHSIFT_NUGET_PUBLISH_0112');assert.equal(p.state,'AWAITING_FINAL_IDENTITIES');
 });
+
+async function candidateFixture(change=()=>{}) {
+ const folder=fs.mkdtempSync(path.join(os.tmpdir(),'archsift-candidate-fixture-'));
+ try {
+  const {r,files,m}=syntheticPackages({version:'0.11.2'});
+  const entries=[...files].map(([n,b])=>[`packages/${n}`,b]);const raw=zip(entries);
+  const binding={...candidateBinding,sourceCommit:r.sourceCommit,sha256:sha256(raw),files:entries.map(x=>x[0])};
+  const meta={...structuredClone(candidateMetadata),name:`unpublished-recovery-candidate-${r.sourceCommit}`,digest:`sha256:${binding.sha256}`,size_in_bytes:raw.length};meta.workflow_run.head_sha=r.sourceCommit;
+  const run={...structuredClone(candidateRun),head_sha:r.sourceCommit};
+  const c={...publishing,version:'0.11.2',dataCommit:r.sourceCommit};
+  const manifest=Buffer.from(JSON.stringify(m));const p={...policy,version:'0.11.2',candidateArtifact:binding,payloadManifestSha256:sha256(manifest)};
+  const request={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,sourceTree:r.sourceTree,workflowCommit:c.sha,repositoryId:p.repositoryId,ownerId:p.ownerId,packages:r.packages,payloadManifestSha256:p.payloadManifestSha256,acceptanceSha256:r.acceptedPreview.acceptanceSha256};c.requestSha256=sha256(Buffer.from(JSON.stringify(request,null,2)+'\n'));
+  const dir=path.join(folder,'docs/releases/0.11.2');fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'package-payload-manifest.json'),manifest);
+  const fixture={meta,run,p,r,c,raw};change(fixture);
+  const gh={json:async endpoint=>endpoint.includes('/artifacts/')?fixture.meta:fixture.run,artifact:async()=>fixture.raw};
+  return await candidateInputs({gh,policy:p,reference:r,context:c,root:folder});
+ } finally {fs.rmSync(folder,{recursive:true});}
+}
+test('0112 artifact transport returns exactly seven validated inputs with no public branch',async()=>assert.equal((await candidateFixture()).size,7));
+for(const [name,change] of [
+ ['extra entry',f=>{f.p.candidateArtifact.files.push('unapproved');}],
+ ['request hash',f=>{f.c.requestSha256='0'.repeat(64);}],
+ ['payload hash',f=>{f.p.payloadManifestSha256='0'.repeat(64);}],
+ ['package hash',f=>{f.r.packages[0].sha256='0'.repeat(64);}],
+ ['mixed version',f=>{f.r.packages[0].file='ArchSift.Contracts.0.11.0.nupkg';}],
+ ['different source',f=>{f.c.dataCommit='a'.repeat(40);}]
+])test(`0112 input route rejects ${name}`,async()=>assert.rejects(candidateFixture(change)));
+test('wrong version context cannot select another policy',()=>assert.throws(()=>checkContext({...context,version:'0.11.2'},policy,'preflight')));

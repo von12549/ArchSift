@@ -15,6 +15,7 @@ requireThat(version !== '0.11.2' || policy.state === 'FINAL_IDENTITIES_FROZEN', 
 const originalReferenceBytes = fs.readFileSync(path.join(root, policy.originalReference));
 requireThat(sha256(originalReferenceBytes) === policy.originalReferenceSha256, 'Immutable original reference changed');
 const reference = JSON.parse(originalReferenceBytes);
+requireThat(reference.version === version, 'Reference version differs from selected profile');
 const e = process.env;
 const base = 'repos/von12549/ArchSift/';
 const gh = new GitHubReader(e.GH_TOKEN);

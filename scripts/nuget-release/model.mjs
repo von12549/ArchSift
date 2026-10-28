@@ -19,6 +19,7 @@ export function checkReference(r) {
 }
 export function checkContext(c, policy, mode) {
   requireThat(['preflight', 'preview', 'publish'].includes(mode), 'Unknown mode');
+  requireThat(!c.version || c.version === policy.version, 'Wrong release profile context');
   requireThat(c.repository === policy.repository && c.repositoryId === String(policy.repositoryId) && c.ownerId === String(policy.ownerId) && c.ref === 'refs/heads/main', 'Wrong repository or branch');
   requireThat(sha(c.sha, 40) && c.mainSha === c.sha, 'Approved workflow commit is no longer main');
   requireThat(c.runAttempt === '1' && c.event === 'workflow_dispatch', 'Only a fresh manual dispatch is accepted');
