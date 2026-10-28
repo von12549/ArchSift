@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.2",
+  "status": "EXPLICIT_USER_AUTHORIZED_PUBLIC_NUGET_PUBLICATION",
+  "date": "2026-10-28",
+  "userAuthorization": "The user explicitly authorized public publication after the completed R12-01 through R12-04 approval card.",
+  "preparationApprovalCardSha256": "6fbd9057d1c9ad95692b4dd782667a57c5af9da2107d863e5702d2b3fa09556b",
+  "qualificationSha256": "a8e65b855fa85dee4c4668eed54b8f9353393479cd03aa85d024c1929626168d",
+  "sourceCommit": "91cd73adc85a4da8f79fffa04ad834c870d78d07",
+  "sourceTree": "6deed2ea55d7a27cfe554b33401cc03d04e78f5d",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.2.nupkg",
+      "bytes": 93351,
+      "sha256": "a3329011c4bbe7a45815b24345fd6109efe81cdb20e7e19478bd13ebd144115d"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.2.nupkg",
+      "bytes": 161212,
+      "sha256": "56b31ccf249546fe57da836ef5ae570703cfd34d3d570c2ae819ee2772acb520"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.2.nupkg",
+      "bytes": 30143,
+      "sha256": "0017a0fa48e94fb9270f941835833ff9f344702b2c93fb1febf6549ba842d1de"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.2.nupkg",
+      "bytes": 25436,
+      "sha256": "d9bf8772c9abc00ac410b3ae40f8cb344577bcab7c93ed043e7dc9989acbdd98"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.2.nupkg",
+      "bytes": 2905423,
+      "sha256": "9879c380565e4dbae132356b818c228d39d8a0ea9110b2da7d749a5e86f794f4"
+    }
+  ],
+  "scope": [
+    "normal activation PR and CI/merge",
+    "version-specific operational switch",
+    "fresh bound hosted audit and publishing transaction",
+    "temporary hosted Trusted Publishing credential",
+    "sequential NuGet publication of the five frozen originals",
+    "anonymous served signature owner and payload verification",
+    "close operational switch after completion or stop"
+  ],
+  "requiredHumanEnvironmentApproval": "nuget-release",
+  "excluded": [
+    "rebuilding or substituting packages",
+    "public Git data staging",
+    "tag or GitHub Release",
+    "installer",
+    "live IFX adoption",
+    "author-host Guard or dotnet execution"
+  ],
+  "onUncertainOutcome": "Stop, preserve nonsecret evidence and reconcile registry state before any new publishing transaction."
+}

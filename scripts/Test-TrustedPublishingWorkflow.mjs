@@ -70,6 +70,7 @@ assert.doesNotMatch(preflight, /(?:Invoke-Expression|Start-Process|SetEnvironmen
 const hosted = fs.readFileSync(path.join(root, 'scripts/Invoke-HostedNuGet.ps1'), 'utf8');
 assert.doesNotMatch(hosted, /(?:SetEnvironmentVariable|setx\b|Set-ItemProperty|--api-key|--skip-duplicate)/i);
 assert.match(hosted, /Environment\['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'\]='0'/);
+assert.match(hosted, /Environment\['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE'\]='true'/);
 assert.match(hosted, /Get-ArchSiftHostHash/);
 console.log(`Passed structural YAML release boundary, ${mutations.length + 1} rejected mutations and the closed operational release gates.`);
 

@@ -2,11 +2,18 @@ param([Parameter(Mandatory)][ValidateSet('Push','Verify')][string]$Operation,[Pa
 $ErrorActionPreference='Stop';Set-StrictMode -Version Latest
 # No local entry, even for a help/version probe. All isolation is child-only.
 if($env:GITHUB_ACTIONS -cne 'true' -or $env:RUNNER_ENVIRONMENT -cne 'github-hosted' -or $env:GITHUB_REPOSITORY -cne 'von12549/ArchSift' -or $env:GITHUB_REF -cne 'refs/heads/main' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'Approved hosted main only.'}
-$policy=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../docs/releases/0.11.0/publishing-activation.json') -Raw|ConvertFrom-Json
+$version=if($env:RELEASE_VERSION){$env:RELEASE_VERSION}else{'0.11.0'}
+if($version -cnotin @('0.11.0','0.11.2')){throw 'Unreviewed release version.'}
+$policy=Get-Content -LiteralPath (Join-Path $PSScriptRoot ('../docs/releases/'+$version+'/publishing-activation.json')) -Raw|ConvertFrom-Json
+if($policy.version -cne $version){throw 'Release profile version differs.'}
 if($policy.publicationEnabled -isnot [bool] -or -not $policy.publicationEnabled -or $policy.realAssetTransferEnabled -isnot [bool] -or -not $policy.realAssetTransferEnabled -or $env:RELEASE_SWITCH -cne 'true'){throw 'Committed publication locks remain closed.'}
 $full=[IO.Path]::GetFullPath($PackagePath)
 $temp=[IO.Path]::GetFullPath($env:RUNNER_TEMP)+[IO.Path]::DirectorySeparatorChar
 if(-not $full.StartsWith($temp,[StringComparison]::Ordinal) -or -not $full.EndsWith('.nupkg',[StringComparison]::Ordinal)){throw 'Expected owned runner package.'}
+$allowedNames=@('Contracts','Core','ArchUnit','Testing','Cli')|ForEach-Object {'ArchSift.'+$_+'.'+$version+'.nupkg'}
+$name=[IO.Path]::GetFileName($full)
+if($name.StartsWith('served-',[StringComparison]::Ordinal) -and $Operation -ceq 'Verify'){$name=$name.Substring(7)}
+if($name -cnotin $allowedNames){throw 'Package version or identity differs from selected profile.'}
 . (Join-Path $PSScriptRoot 'HostState.ps1')
 $before=Get-ArchSiftHostHash
 $childRoot=Join-Path $env:RUNNER_TEMP ('archsift-nuget-'+[Guid]::NewGuid().ToString('N'))
@@ -26,6 +33,7 @@ $start.Environment['DOTNET_CLI_UI_LANGUAGE']='en-US'
 $start.Environment['NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT']='1'
 $start.Environment['NUGET_EXE_NO_PROMPT']='true'
 $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
+$start.Environment['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE']='true'
 foreach($key in @('GH_TOKEN','ACTIONS_ID_TOKEN_REQUEST_TOKEN','ACTIONS_ID_TOKEN_REQUEST_URL','NUGET_API_KEY')){[void]$start.Environment.Remove($key)}
 if($Operation -ceq 'Push'){
  if([string]::IsNullOrEmpty($env:NUGET_API_KEY)){throw 'Temporary key required.'}

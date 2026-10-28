@@ -14,3 +14,9 @@ R12-04 private NuGet Trusted Publishing readback passes: the active policy match
 
 
 Full disconnected MTP is not verified or claimed. Ubuntu disconnected qualification is deferred. No installer, live IFX adoption or public publication is authorized. Historical public 0.11.0 consumer verification remains a separate lane and is not presented as 0.11.2 qualification.
+
+## Explicit public publication authorization, 2026-10-28
+
+R12-01 through R12-04 completed with merged PR #40, 13 successful PR and 13 actual-main checks, credential-free preview run `40664800997`, original-byte input artifact `12805038493` and fresh audit artifact `12806380306` (12 projects, 36 package identities). The frozen original source and prior receipts remain immutable. The preparation-only statements above record the earlier authorization boundary.
+
+The user subsequently explicitly authorized public NuGet publication of the exact five originals. The activation PR enables only the 0.11.2 capability, corrects the hosted helper to select the same version profile as the driver, and retains typed locks, host isolation, normal CI, fresh audit and human environment approval. The operational switch is opened only after successful PR/main checks and closed after completion or a stop. No rebuild/substitution, tag/Release, public data branch, installer or live IFX adoption is included. The separate publication authorization records the approved source, package hashes and preparation-card digest. Actual publication and anonymous served verification remain pending at this activation checkpoint; the transaction evidence records their subsequent outcome.

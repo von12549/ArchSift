@@ -3,7 +3,7 @@
   "version": "0.11.2",
   "authorizedPreparation": "R12-01-through-R12-04",
   "realAssetTransferEnabled": true,
-  "publicationEnabled": false,
+  "publicationEnabled": true,
   "repository": "von12549/ArchSift",
   "repositoryId": 1407069697,
   "ownerId": 2306937,
@@ -17,7 +17,7 @@
   "hostedSdk": "10.0.303",
   "originalReference": "docs/releases/0.11.2/trusted-publishing-reference.json",
   "originalReferenceSha256": "66ec0500cbc6b13baf4edaa946abe90e635284c8c2288cb5f0406f70043f05e5",
-  "futureAuthorization": "Authenticated Actions artifact transfer is enabled only for credential-free preview/audit. Public data-branch staging, operational switch activation, credentials, NuGet push and tag/Release require separate explicit publication authorization.",
+  "futureAuthorization": "Public NuGet publication of the five frozen originals is explicitly authorized. Require normal PR/main CI, the version-specific switch, a fresh exact-bound hosted audit, and human nuget-release environment approval. Close the operational switch after completion or stop. No tag/Release, installer, public data branch or live IFX adoption.",
   "localGuardDotnet": "stopped",
   "newInstaller": false,
   "auditMaxAgeHours": 24,
@@ -54,5 +54,7 @@
       "sdk.stderr.log",
       "sdk.stdout.log"
     ]
-  }
+  },
+  "publicationAuthorization": "docs/releases/0.11.2/publication-authorization.json",
+  "publicationAuthorizationSha256": "029acf78b7fcdf321b42464d53ede77ce40fa4e54529c7ea696693ea5f5a2304"
 }
