@@ -248,12 +248,49 @@ test('candidate reader validates raw digest before archive inspection',async()=>
 test('0112 profile cannot inherit historical human acceptance',async()=>{
  const {r,files,m}=syntheticPackages();r.version='0.11.2';await assert.rejects(checkPackages(files,r,m),/Human acceptance missing/);
 });
-test('0112 frozen preparation permits preview but keeps publication closed',()=>{
+test('0112 explicitly authorized profile still requires the exact operational switch',()=>{
  const p=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/publishing-activation.json')));
- assert.equal(p.publicationEnabled,false);assert.equal(p.realAssetTransferEnabled,true);assert.equal(p.versionSwitch,'ARCHSIFT_NUGET_PUBLISH_0112');assert.equal(p.state,'FINAL_IDENTITIES_FROZEN');
+ assert.equal(p.publicationEnabled,true);assert.equal(p.realAssetTransferEnabled,true);assert.equal(p.versionSwitch,'ARCHSIFT_NUGET_PUBLISH_0112');assert.equal(p.state,'FINAL_IDENTITIES_FROZEN');
  const raw=fs.readFileSync(path.join(root,p.originalReference));assert.equal(sha256(raw),p.originalReferenceSha256);
  const r=JSON.parse(raw);checkReference(r);checkQualification(fs.readFileSync(path.join(root,'docs/releases/0.11.2/qualification.json')),r);
- checkContext({...publishing,version:'0.11.2'},p,'preview');assert.throws(()=>checkContext({...publishing,version:'0.11.2'},p,'publish'),/Publication remains closed/);
+ const authorizationBytes=fs.readFileSync(path.join(root,p.publicationAuthorization));assert.equal(sha256(authorizationBytes),p.publicationAuthorizationSha256);
+ const authorization=JSON.parse(authorizationBytes);assert.equal(authorization.status,'EXPLICIT_USER_AUTHORIZED_PUBLIC_NUGET_PUBLICATION');assert.equal(authorization.sourceCommit,r.sourceCommit);assert.equal(authorization.sourceTree,r.sourceTree);assert.equal(authorization.qualificationSha256,r.acceptedPreview.acceptanceSha256);assert.deepEqual(authorization.packages,r.packages);
+ checkContext({...publishing,version:'0.11.2'},p,'preview');checkContext({...publishing,version:'0.11.2'},p,'publish');
+ for(const releaseSwitch of ['','false','True'])assert.throws(()=>checkContext({...publishing,version:'0.11.2',releaseSwitch},p,'publish'),/Publication remains closed/);
+ assert.throws(()=>checkContext({...publishing,version:'0.11.2'},{...p,publicationEnabled:false},'publish'),/Publication remains closed/);
+});
+
+test('hosted NuGet helper enforces the selected profile before any child execution',()=>{
+ const folder=fs.mkdtempSync(path.join(os.tmpdir(),'archsift-hosted-policy-'));
+ try {
+  const original=fs.readFileSync(path.join(root,'scripts/Invoke-HostedNuGet.ps1'),'utf8');
+  const boundary=original.indexOf(". (Join-Path $PSScriptRoot 'HostState.ps1')");assert.ok(boundary>0);
+  const prefix=original.slice(0,boundary);assert.doesNotMatch(prefix,/ProcessStartInfo|Get-Command dotnet|Start-Process|\.Start\(/);
+  fs.mkdirSync(path.join(folder,'scripts'));const probe=path.join(folder,'scripts/policy-probe.ps1');fs.writeFileSync(probe,prefix+"Write-Output 'POLICY_ACCEPTED'\n");
+  const old={version:'0.11.0',publicationEnabled:true,realAssetTransferEnabled:true};const current={...old,version:'0.11.2',publicationEnabled:false};
+  for(const version of ['0.11.0','0.11.2'])fs.mkdirSync(path.join(folder,'docs/releases',version),{recursive:true});
+  const scenarios=[
+   {name:'closed 0112 cannot borrow enabled 0110',version:'0.11.2',policy:current,pass:false},
+   {name:'reviewed enabled 0112',version:'0.11.2',policy:{...current,publicationEnabled:true},pass:true},
+   {name:'wrong embedded profile version',version:'0.11.2',policy:old,pass:false},
+   {name:'string capability',version:'0.11.2',policy:{...current,publicationEnabled:'true'},pass:false},
+   {name:'closed switch',version:'0.11.2',policy:{...current,publicationEnabled:true},switch:'false',pass:false},
+   {name:'mixed package version',version:'0.11.2',policy:{...current,publicationEnabled:true},file:'ArchSift.Core.0.11.0.nupkg',pass:false},
+   {name:'served verification prefix',version:'0.11.2',policy:{...current,publicationEnabled:true},file:'served-ArchSift.Core.0.11.2.nupkg',operation:'Verify',pass:true},
+   {name:'served prefix cannot be pushed',version:'0.11.2',policy:{...current,publicationEnabled:true},file:'served-ArchSift.Core.0.11.2.nupkg',pass:false},
+   {name:'unreviewed version',version:'0.11.1',policy:current,pass:false},
+   {name:'historical default retained',version:'',policy:current,file:'ArchSift.Core.0.11.0.nupkg',pass:true}
+  ];
+  for(const s of scenarios){
+   fs.writeFileSync(path.join(folder,'docs/releases/0.11.0/publishing-activation.json'),JSON.stringify(old));fs.writeFileSync(path.join(folder,'docs/releases/0.11.2/publishing-activation.json'),JSON.stringify(s.policy));
+   const env={...process.env,GITHUB_ACTIONS:'true',RUNNER_ENVIRONMENT:'github-hosted',GITHUB_REPOSITORY:'von12549/ArchSift',GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',RELEASE_VERSION:s.version,RELEASE_SWITCH:s.switch??'true',RUNNER_TEMP:folder};
+   for(const k of ['GH_TOKEN','GITHUB_TOKEN','NUGET_API_KEY','ACTIONS_ID_TOKEN_REQUEST_TOKEN','ACTIONS_ID_TOKEN_REQUEST_URL'])delete env[k];
+   const result=spawnSync('pwsh',['-NoProfile','-NonInteractive','-File',probe,'-Operation',s.operation??'Push','-PackagePath',path.join(folder,s.file??`ArchSift.Core.${s.version}.nupkg`)],{env,encoding:'utf8',windowsHide:true,timeout:15000});
+   assert.equal(result.status===0,s.pass,s.name+': '+(result.error?.message??result.stderr));assert.equal(result.stdout.includes('POLICY_ACCEPTED'),s.pass,s.name);
+  }
+ } finally {
+  assert.ok(fs.realpathSync(folder).startsWith(fs.realpathSync(os.tmpdir())+path.sep));assert.ok(path.basename(folder).startsWith('archsift-hosted-policy-'));fs.rmSync(folder,{recursive:true});
+ }
 });
 
 const scopedReference=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/trusted-publishing-reference.json')));
