@@ -8,7 +8,7 @@ import { parseWorkflow } from './workflow-policy.mjs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { checkContext, checkEnvironment, checkRequest, checkArtifact, checkPackages, checkOwnerPage, checkCiRun, checkAuditReport, checkPreviewArtifact, publishSequential, sha256, readZip, safeEntry } from './model.mjs';
+import { checkReference, checkQualification, checkContext, checkEnvironment, checkRequest, checkArtifact, checkPackages, checkOwnerPage, checkCiRun, checkAuditReport, checkPreviewArtifact, publishSequential, sha256, readZip, safeEntry } from './model.mjs';
 import { GitHubReader } from './github.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const reference = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.0/trusted-publishing-reference.json')));
@@ -248,10 +248,28 @@ test('candidate reader validates raw digest before archive inspection',async()=>
 test('0112 profile cannot inherit historical human acceptance',async()=>{
  const {r,files,m}=syntheticPackages();r.version='0.11.2';await assert.rejects(checkPackages(files,r,m),/Human acceptance missing/);
 });
-test('0112 preparation profile remains closed and unfrozen',()=>{
+test('0112 frozen preparation permits preview but keeps publication closed',()=>{
  const p=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/publishing-activation.json')));
- assert.equal(p.publicationEnabled,false);assert.equal(p.realAssetTransferEnabled,false);assert.equal(p.versionSwitch,'ARCHSIFT_NUGET_PUBLISH_0112');assert.equal(p.state,'AWAITING_FINAL_IDENTITIES');
+ assert.equal(p.publicationEnabled,false);assert.equal(p.realAssetTransferEnabled,true);assert.equal(p.versionSwitch,'ARCHSIFT_NUGET_PUBLISH_0112');assert.equal(p.state,'FINAL_IDENTITIES_FROZEN');
+ const raw=fs.readFileSync(path.join(root,p.originalReference));assert.equal(sha256(raw),p.originalReferenceSha256);
+ const r=JSON.parse(raw);checkReference(r);checkQualification(fs.readFileSync(path.join(root,'docs/releases/0.11.2/qualification.json')),r);
+ checkContext({...publishing,version:'0.11.2'},p,'preview');assert.throws(()=>checkContext({...publishing,version:'0.11.2'},p,'publish'),/Publication remains closed/);
 });
+
+const scopedReference=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/trusted-publishing-reference.json')));
+for(const [name,change] of [
+ ['unapproved waiver',h=>h.status='skipped'],['false final identity claim',h=>h.finalIdentityConfirmed=true],
+ ['broader waiver',h=>h.waivedGates.push('offline-consumers')],['missing qualification binding',h=>h.qualificationSha256='0'.repeat(64)],
+ ['prior identity relabeled',h=>h.priorSourceCommit=scopedReference.sourceCommit]
+])test('0112 waiver rejects '+name,()=>{const r=structuredClone(scopedReference);change(r.humanAcceptance);assert.throws(()=>checkReference(r),/Human acceptance missing/);});
+for(const [name,change] of [
+ ['different source',q=>q.sourceCommit='a'.repeat(40)],['different package bytes',q=>q.packages[0].sha256='0'.repeat(64)],
+ ['fabricated human rerun',q=>q.repeatWaiver.finalByteHumanRerun=true],['broader waived gates',q=>q.repeatWaiver.scope.push('recovery')],
+ ['fabricated Workbench execution',q=>q.finalLauncher.independentWorkbenchFinalBytes='PASS'],['full offline MTP claim',q=>q.limits.fullDisconnectedMtp='PASS']
+])test('0112 qualification rejects '+name+' even with a recomputed digest',()=>{
+ const q=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/qualification.json')));change(q);const bytes=Buffer.from(JSON.stringify(q));const r=structuredClone(scopedReference);r.acceptedPreview.acceptanceSha256=sha256(bytes);assert.throws(()=>checkQualification(bytes,r));
+});
+test('0112 qualification rejects unreviewed changed bytes',()=>assert.throws(()=>checkQualification(Buffer.from('{}'),scopedReference),/Qualification digest differs/));
 
 async function candidateFixture(change=()=>{}) {
  const folder=fs.mkdtempSync(path.join(os.tmpdir(),'archsift-candidate-fixture-'));

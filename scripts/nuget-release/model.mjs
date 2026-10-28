@@ -12,10 +12,26 @@ export function exactKeys(value, keys) {
 }
 export function checkReference(r) {
   requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
-  requireThat(r.humanAcceptance.status === 'passed-user-confirmed' && (r.version === '0.11.0' ? r.humanAcceptance.usabilityScore === 4 : r.humanAcceptance.finalIdentityConfirmed === true), 'Human acceptance missing');
+  const h = r.humanAcceptance;
+  const confirmed = h.status === 'passed-user-confirmed' && (r.version === '0.11.0' ? h.usabilityScore === 4 : h.finalIdentityConfirmed === true);
+  const waived = r.version === '0.11.2' && h.status === 'explicit-user-approved-repeat-waiver' && h.finalIdentityConfirmed === false && sha(h.priorSourceCommit,40) && h.priorSourceCommit !== r.sourceCommit && sha(h.qualificationSha256,64) && h.qualificationSha256 === r.acceptedPreview?.acceptanceSha256 && JSON.stringify(h.waivedGates) === JSON.stringify(['final-independent-workbench-repeat','final-human-ui-repeat']);
+  requireThat(confirmed || waived, 'Human acceptance missing');
   requireThat(r.packages.length === 5, 'Exactly five packages required');
   r.packages.forEach((p, i) => requireThat(p.id === ids[i] && p.file === `${ids[i]}.${r.version}.nupkg` && Number.isSafeInteger(p.bytes) && p.bytes > 0 && sha(p.sha256, 64), 'Invalid package/order'));
   requireThat(r.sourceCi.length === 2 && r.sourceCi[1].headSha === r.sourceCommit, 'Source CI binding missing');
+}
+export function checkQualification(bytes, reference) {
+  requireThat(reference.version === '0.11.2' && sha256(bytes) === reference.acceptedPreview.acceptanceSha256, 'Qualification digest differs');
+  const q = JSON.parse(bytes.toString('utf8'));
+  requireThat(q.schemaVersion === 1 && q.version === reference.version && q.sourceCommit === reference.sourceCommit && q.sourceTree === reference.sourceTree, 'Qualification source differs');
+  assert.deepEqual(q.packages,reference.packages,'Qualification packages differ');
+  if (reference.humanAcceptance.status === 'explicit-user-approved-repeat-waiver') {
+    const w=q.repeatWaiver;
+    requireThat(q.status === 'ACCEPTED_WINDOWS_SCOPE_WITH_EXPLICIT_REPEAT_WAIVERS' && w.status === reference.humanAcceptance.status && w.finalSourceCommit === reference.sourceCommit && w.priorSourceCommit === reference.humanAcceptance.priorSourceCommit && w.finalIdentityConfirmed === false && w.finalByteHumanRerun === false && w.priorHumanEvidenceRetained === true && typeof w.authorization === 'string' && w.authorization.length > 0 && typeof w.residualRisk === 'string' && w.residualRisk.length > 0, 'Explicit scoped waiver binding differs');
+    assert.deepEqual(w.scope,reference.humanAcceptance.waivedGates,'Waiver scope differs');
+    requireThat(q.finalLauncher.independentWorkbenchFinalBytes === 'NOT_EXECUTED_WAIVED' && q.limits.freshFinalHumanUi === 'WAIVED_NOT_RERUN' && q.limits.fullDisconnectedMtp === 'NOT_VERIFIED_NOT_CLAIMED' && q.limits.ubuntuDisconnected === 'DEFERRED_BY_USER', 'Waived/deferred work must not be represented as executed');
+  }
+  return q;
 }
 export function checkContext(c, policy, mode) {
   requireThat(['preflight', 'preview', 'publish'].includes(mode), 'Unknown mode');
