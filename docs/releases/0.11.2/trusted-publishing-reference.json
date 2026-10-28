@@ -23,7 +23,7 @@
   "humanAcceptance": {
     "status": "explicit-user-approved-repeat-waiver",
     "finalIdentityConfirmed": false,
-    "qualificationSha256": "b87e5001e1735883280457ef869ed19688d7340d2e0c52ba9ae97d8a82c8788d",
+    "qualificationSha256": "a8e65b855fa85dee4c4668eed54b8f9353393479cd03aa85d024c1929626168d",
     "waivedGates": [
       "final-independent-workbench-repeat",
       "final-human-ui-repeat"
@@ -31,7 +31,7 @@
     "priorSourceCommit": "08e7e188d0773b0dd0f9873608692091f22ad024"
   },
   "acceptedPreview": {
-    "acceptanceSha256": "b87e5001e1735883280457ef869ed19688d7340d2e0c52ba9ae97d8a82c8788d"
+    "acceptanceSha256": "a8e65b855fa85dee4c4668eed54b8f9353393479cd03aa85d024c1929626168d"
   },
   "sourceCi": [
     {

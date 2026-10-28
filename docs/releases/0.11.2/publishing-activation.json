@@ -16,7 +16,7 @@
   "payloadManifestSha256": "837bac2621b9d1153993f675a09bbdc661e00f292bcbd6a830d74d6af0523749",
   "hostedSdk": "10.0.303",
   "originalReference": "docs/releases/0.11.2/trusted-publishing-reference.json",
-  "originalReferenceSha256": "1b18b40676f3715af4b231e4690fef58b7e8b4f695c0b8b029754e651830dd15",
+  "originalReferenceSha256": "66ec0500cbc6b13baf4edaa946abe90e635284c8c2288cb5f0406f70043f05e5",
   "futureAuthorization": "Authenticated Actions artifact transfer is enabled only for credential-free preview/audit. Public data-branch staging, operational switch activation, credentials, NuGet push and tag/Release require separate explicit publication authorization.",
   "localGuardDotnet": "stopped",
   "newInstaller": false,
