@@ -1,3 +1,4 @@
+import { checkCandidateProvenance, candidateInputs } from './candidate-inputs.mjs';
 import { assertPreviewOnly, createPreviewData, checkStagingRepository } from './stage-preview.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -198,7 +199,7 @@ function runWiredInputVerification({mode='publish',switchValue='true',omitSwitch
   for(const name of ['RELEASE_SWITCH','RELEASE_ARTIFACT_ID','RELEASE_ARTIFACT_SHA256','GH_TOKEN','GITHUB_OUTPUT'])delete child[name];
   const stepEnv={...parseWorkflow(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8')).jobs.preflight.steps[5].env};
   if(omitSwitch)delete stepEnv.RELEASE_SWITCH;
-  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN','${{ vars.ARCHSIFT_NUGET_PUBLISH_0110 }}':switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
+  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN','${{ vars.ARCHSIFT_NUGET_PUBLISH_0112 }}':switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
   for(const [name,expression]of Object.entries(stepEnv)){assert.ok(Object.hasOwn(bindings,expression),'Unknown step binding');child[name]=bindings[expression];}
   changeEnv(child);
   const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-artifact-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),'verify-preview'],{cwd:root,env:child,encoding:'utf8',timeout:20000});
@@ -229,4 +230,25 @@ test('real publish-mode CLI still rejects a different request binding',()=>{
 });
 for(const credential of ['NUGET_API_KEY','ACTIONS_ID_TOKEN_REQUEST_TOKEN'])test('real publish-mode input verification rejects injected '+credential+' without reads or leaks',()=>{
  const {result,metadataRead,bytesRead}=runWiredInputVerification({changeEnv:e=>{e[credential]='FAKE-SENSITIVE-KEY';}});assert.equal(result.status,1);assert.equal(metadataRead,false);assert.equal(bytesRead,false);
+});
+
+const candidateBinding={id:123,runId:456,sourceCommit:'e'.repeat(40),sha256:'f'.repeat(64)};
+const candidateContext={repositoryId:String(policy.repositoryId),dataCommit:candidateBinding.sourceCommit};
+const candidateMetadata={id:123,name:`unpublished-recovery-candidate-${candidateBinding.sourceCommit}`,expired:false,digest:`sha256:${candidateBinding.sha256}`,workflow_run:{id:456,head_sha:candidateBinding.sourceCommit,head_repository_id:policy.repositoryId}};
+const candidateRun={id:456,repository:{full_name:policy.repository},head_repository:{full_name:policy.repository},head_sha:candidateBinding.sourceCommit,head_branch:'main',path:'.github/workflows/recovery-candidate.yml',event:'push',run_attempt:1,status:'completed',conclusion:'success'};
+test('0.11.2 candidate transport accepts exact successful main provenance',()=>checkCandidateProvenance(candidateMetadata,candidateRun,candidateBinding,candidateContext));
+for(const [name,mutate] of [
+ ['fork',r=>{r.head_repository.full_name='fork/ArchSift';}],['PR',r=>{r.event='pull_request';}],['wrong workflow',r=>{r.path='.github/workflows/verify.yml';}],['rerun',r=>{r.run_attempt=2;}],['failed',r=>{r.conclusion='failure';}],['wrong source',r=>{r.head_sha='a'.repeat(40);}],['wrong run',r=>{r.id=1;}],['branch',r=>{r.head_branch='other';}]
+])test(`candidate transport rejects ${name}`,()=>{const r=structuredClone(candidateRun);mutate(r);assert.throws(()=>checkCandidateProvenance(candidateMetadata,r,candidateBinding,candidateContext));});
+for(const [key,value] of [['expired',true],['id',1],['digest','sha256:'+'a'.repeat(64)],['name','other'],['workflow_run',{...candidateMetadata.workflow_run,head_repository_id:1}]])test(`candidate rejects metadata ${key}`,()=>assert.throws(()=>checkCandidateProvenance({...candidateMetadata,[key]:value},candidateRun,candidateBinding,candidateContext)));
+test('candidate reader validates raw digest before archive inspection',async()=>{
+ const gh={json:async endpoint=>endpoint.includes('/artifacts/')?candidateMetadata:candidateRun,artifact:async()=>Buffer.from('changed')};
+ await assert.rejects(candidateInputs({gh,policy:{candidateArtifact:candidateBinding},reference:{sourceCommit:candidateBinding.sourceCommit},context:candidateContext,root}),/raw ZIP differs/);
+});
+test('0112 profile cannot inherit historical human acceptance',async()=>{
+ const {r,files,m}=syntheticPackages();r.version='0.11.2';await assert.rejects(checkPackages(files,r,m),/Human acceptance missing/);
+});
+test('0112 preparation profile remains closed and unfrozen',()=>{
+ const p=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.2/publishing-activation.json')));
+ assert.equal(p.publicationEnabled,false);assert.equal(p.realAssetTransferEnabled,false);assert.equal(p.versionSwitch,'ARCHSIFT_NUGET_PUBLISH_0112');assert.equal(p.state,'AWAITING_FINAL_IDENTITIES');
 });

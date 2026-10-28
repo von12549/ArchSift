@@ -1,14 +1,14 @@
-# ArchSift 0.11.0 NuGet packages
+# ArchSift 0.11.2 NuGet packages
 
-ArchSift provides .NET architecture analysis, an architecture-test gate and a loopback Web Workbench. This version distributes four net10.0 libraries and the `ArchSift.Cli` local tool. The CLI package contains its matching framework-dependent Web payload, workspace schemas and `.archsift/` project template. No separate Web installation, new Setup executable or self-contained Windows ZIP is part of 0.11.0.
+ArchSift provides .NET architecture analysis, an architecture-test gate and a loopback Web Workbench. This version distributes four net10.0 libraries and the `ArchSift.Cli` local tool. The CLI package contains its matching framework-dependent Web payload, workspace schemas and `.archsift/` project template. No separate Web installation, new Setup executable or self-contained Windows ZIP is part of 0.11.2.
 
-Publication and acceptance are recorded separately for the exact final artifacts. A locally qualified package is not proof that version 0.11.0 is available on nuget.org. Consult the release's publication.json and checksums. The previous 0.10.1 installer/assets remain unchanged.
+Publication and acceptance are recorded separately for the exact final artifacts. A locally qualified package is not proof that version 0.11.2 is available on nuget.org. Consult the release's publication.json and checksums. The previous 0.10.1 installer/assets remain unchanged.
 
 ## First use
 
 Use the [complete NuGet adoption recipe](https://github.com/von12549/ArchSift/blob/main/docs/guides/nuget-first-use.md). It verifies the downloaded CLI package, copies the package-owned entry template into `.archsift/`, creates the exact root tool manifest and standard NuGet configuration in a new project, then runs the project entry. No global tool or external startup script is required. `workspace init` initializes external state from existing workspace files; it does not scaffold missing project files.
 
-The project-root `.config/dotnet-tools.json` pins `archsift.cli` to 0.11.0, command `archsift`, with rollForward=false and isRoot=true. Standard NuGet.Config/global.json and existing policies/tests keep their normal locations. Merge into existing projects deliberately, preserving unrelated tools/configuration. A local tool is not a PackageReference that launches a UI during builds.
+The project-root `.config/dotnet-tools.json` pins `archsift.cli` to 0.11.2, command `archsift`, with rollForward=false and isRoot=true. Standard NuGet.Config/global.json and existing policies/tests keep their normal locations. Merge into existing projects deliberately, preserving unrelated tools/configuration. A local tool is not a PackageReference that launches a UI during builds.
 
 After adopting the verified template, run from the project root:
 

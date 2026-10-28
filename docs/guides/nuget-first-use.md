@@ -1,8 +1,8 @@
 # NuGet first use: a new project
 
-This recipe applies to ArchSift 0.11.0's five-package release. Public availability is established only by the matching publication record, not by this source guide. Before public release, use the final review assets supplied by the maintainer and their manifest. The package includes the matching Workbench; no installer or external startup script is needed.
+This recipe applies to ArchSift 0.11.2's five-package release. Public availability is established only by the matching publication record, not by this source guide. Before public release, use the final review assets supplied by the maintainer and their manifest. The package includes the matching Workbench; no installer or external startup script is needed.
 
-The following adoption block is for a **new project integration** with no existing .archsift/ directory, NuGet.Config or tool manifest. For an existing integration, review and merge those files instead of replacing them. Obtain ArchSift.Cli.0.11.0.nupkg from the verified release assets or configured registry, and take its SHA-256 from the matching artifact manifest/checksum channel. Never fill the expected hash by hashing an untrusted download alone. Nuget.org's repository-signed archive may have a different hash from the original submission; use the published served hash for a served archive.
+The following adoption block is for a **new project integration** with no existing .archsift/ directory, NuGet.Config or tool manifest. For an existing integration, review and merge those files instead of replacing them. Obtain ArchSift.Cli.0.11.2.nupkg from the verified release assets or configured registry, and take its SHA-256 from the matching artifact manifest/checksum channel. Never fill the expected hash by hashing an untrusted download alone. Nuget.org's repository-signed archive may have a different hash from the original submission; use the published served hash for a served archive.
 
 Save the block below as an external temporary script, then provide the four mandatory inputs. It performs no dotnet command, installs no global tool and modifies only the explicitly selected project integration files. TargetRoot must be an existing absolute source directory; ProjectId must be a unique stable ID. The template's default external state root is C:/ArchSift-lab; change state.root or use the allowed ignored local override when needed. No cache/feed/runtime directories need global registration.
 
@@ -43,7 +43,7 @@ $workspace.nuget.configFile='../NuGet.Config'
 $workspace.nuget.cacheDirectory=$null
 $workspace|ConvertTo-Json -Depth 20|Set-Content -LiteralPath $workspacePath -Encoding utf8NoBOM
 [IO.Directory]::CreateDirectory((Join-Path $TargetRoot '.config'))|Out-Null
-@{version=1;isRoot=$true;tools=@{'archsift.cli'=@{version='0.11.0';commands=@('archsift');rollForward=$false}}}|
+@{version=1;isRoot=$true;tools=@{'archsift.cli'=@{version='0.11.2';commands=@('archsift');rollForward=$false}}}|
   ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $TargetRoot '.config/dotnet-tools.json') -Encoding utf8NoBOM
 $nuget='<configuration><packageSources><clear/><add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3"/></packageSources><disabledPackageSources><clear/></disabledPackageSources><fallbackPackageFolders><clear/></fallbackPackageFolders><packageSourceMapping><clear/><packageSource key="nuget.org"><package pattern="*"/></packageSource></packageSourceMapping></configuration>'
 [IO.File]::WriteAllText((Join-Path $TargetRoot 'NuGet.Config'),$nuget)
