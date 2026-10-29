@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "exceptions": [
+    {
+      "path": "docs/releases/0.11.3/evidence/agent-ui-authorization.json",
+      "sha256": "9cdda7733afc11936f6f11fa2a02e80b3bcb34b30c9e51ed1c4da7c319336d7f",
+      "classification": "immutable-user-authorization-original-language",
+      "reason": "Exact original user authorization retained verbatim; the interpretation and formal release documentation are English."
+    }
+  ]
+}
