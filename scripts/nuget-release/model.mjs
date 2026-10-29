@@ -6,6 +6,15 @@ export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 export const ids = ['ArchSift.Contracts', 'ArchSift.Core', 'ArchSift.ArchUnit', 'ArchSift.Testing', 'ArchSift.Cli'];
 export const requireThat = (condition, message) => { if (!condition) throw new Error(message); };
 const sha = (value, length) => typeof value === 'string' && new RegExp(`^[a-f0-9]{${length}}$`).test(value);
+function delegatedUi(r) {
+  const a = r.agentUiAcceptance;
+  return r.version === '0.11.3' && r.humanAcceptance?.status === 'skipped-explicit-user-delegation'
+    && r.humanAcceptance.performed === false && r.humanAcceptance.finalIdentityConfirmed === false
+    && a?.status === 'passed-agent-delegated' && a.performedBy === 'Codex'
+    && a.finalIdentityConfirmed === true && a.sourceCommit === r.sourceCommit && a.sourceTree === r.sourceTree
+    && a.packageSetSha256 === sha256(Buffer.from(JSON.stringify(r.packages)))
+    && sha(a.authorizationSha256,64) && sha(a.evidenceSha256,64);
+}
 export function exactKeys(value, keys) {
   requireThat(value && Object.getPrototypeOf(value) === Object.prototype, 'Expected a plain object');
   assert.deepEqual(Object.keys(value).sort(), [...keys].sort(), 'Unexpected or missing fields');
@@ -13,10 +22,11 @@ export function exactKeys(value, keys) {
 export function checkReference(r) {
   requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2','0.11.3'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
   if (r.version === '0.11.3') requireThat(r.sourceDirty === false, 'Final committed 0.11.3 source required');
-  const h = r.humanAcceptance;
+  const h = r.humanAcceptance ?? {};
+  if (r.agentUiAcceptance) requireThat(delegatedUi(r), 'Agent evidence requires explicit final-byte delegation');
   const confirmed = h.status === 'passed-user-confirmed' && (r.version === '0.11.0' ? h.usabilityScore === 4 : h.finalIdentityConfirmed === true);
   const waived = r.version === '0.11.2' && h.status === 'explicit-user-approved-repeat-waiver' && h.finalIdentityConfirmed === false && sha(h.priorSourceCommit,40) && h.priorSourceCommit !== r.sourceCommit && sha(h.qualificationSha256,64) && h.qualificationSha256 === r.acceptedPreview?.acceptanceSha256 && JSON.stringify(h.waivedGates) === JSON.stringify(['final-independent-workbench-repeat','final-human-ui-repeat']);
-  requireThat(confirmed || waived, 'Human acceptance missing');
+  requireThat(confirmed || waived || delegatedUi(r), 'Human acceptance missing or explicit agent delegation invalid');
   requireThat(r.packages.length === 5, 'Exactly five packages required');
   r.packages.forEach((p, i) => requireThat(p.id === ids[i] && p.file === `${ids[i]}.${r.version}.nupkg` && Number.isSafeInteger(p.bytes) && p.bytes > 0 && sha(p.sha256, 64), 'Invalid package/order'));
   requireThat(r.sourceCi.length === 2 && r.sourceCi[1].headSha === r.sourceCommit, 'Source CI binding missing');
@@ -29,7 +39,14 @@ export function checkQualification(bytes, reference) {
   if (reference.version === '0.11.3') {
     checkReference(reference);
     requireThat(q.status === 'ACCEPTED_0113_FINAL_SOURCE_AND_PACKAGE_SCOPE' && q.sourceDirty === false && q.finalPackageIdentityConfirmed === true, 'Final 0.11.3 qualification incomplete');
-    requireThat(q.humanAcceptance?.status === 'passed-user-confirmed' && q.humanAcceptance.finalIdentityConfirmed === true && sha(q.humanAcceptance.evidenceSha256,64), 'Final-byte human acceptance missing');
+    if (reference.humanAcceptance.status === 'skipped-explicit-user-delegation') {
+      requireThat(delegatedUi(q), 'Final-byte delegated agent UI acceptance missing');
+      assert.deepEqual(q.humanAcceptance, reference.humanAcceptance, 'Human delegation status differs');
+      assert.deepEqual(q.agentUiAcceptance, reference.agentUiAcceptance, 'Agent UI identity/evidence binding differs');
+    } else {
+      requireThat(!q.agentUiAcceptance && !reference.agentUiAcceptance, 'Agent evidence must use the explicit delegation route');
+      requireThat(q.humanAcceptance?.status === 'passed-user-confirmed' && q.humanAcceptance.finalIdentityConfirmed === true && sha(q.humanAcceptance.evidenceSha256,64), 'Final-byte human acceptance missing');
+    }
     requireThat(!q.repeatWaiver, 'Prior release waivers do not authorize 0.11.3');
     for (const lane of ['release-regression','package-integrity','consumer-lifecycle']) {
       const evidence = q.evidence?.filter(e => e.lane === lane) ?? [];

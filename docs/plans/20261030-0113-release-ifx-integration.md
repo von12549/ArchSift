@@ -1,5 +1,19 @@
 # ArchSift 0.11.3 and IFX integration preparation
 
+## Actual-main package and delegated Agent UI checkpoint, 2026-10-30
+
+This checkpoint supersedes the pending CI/package/UI statements below without changing their historical results. PR 43 merged at `af25bed0da8b3cedf5706a404dd3f33a8f7b45df` (tree `8d862be384a63806ec76c23c5c4ee604f94321e9`). All 13 jobs in its five main workflows passed. Candidate run `40922246528`, artifact `12918368591`, produced the five reviewed 0.11.3 packages. The prior wrong-README artifact remains rejected.
+
+The user explicitly skipped independent human UI acceptance and delegated this final-candidate UI scope to Codex. Record human acceptance as `skipped-explicit-user-delegation`, performed false; record actual Agent coverage separately. No human score or prior-release waiver is borrowed. See [the machine-authoritative record](../acceptance/20261030-0113-final-package-agent-ui.json) and [coverage and limitations](../acceptance/20261030-0113-final-package-agent-ui.md).
+
+Exact main packages passed a fresh isolated synthetic packaged consumer (four cases), tool restore, installed-host/configured-source workspace Init/Doctor, Launcher and child Workbench first/repeat, and direct Workbench first/repeat. All four product lifecycle closeouts exited 0 with host equality. The same target/state/startup paths were reused, three configuration hashes remained equal, and all recorded processes exited. No real IFX target or architecture gate ran. SDK 10.0.303 and installed Core/ASP.NET 10.0.11 were observed.
+
+The generic package-owned startup template still requires exact/offline preparation for IFX metadata. Its rejected probe is preserved. The accepted IFX integration contract restores/verifies the pinned package and dispatches `CLI workspace` directly; this qualification follows that contract. Do not advertise generic-template IFX host/configured support.
+
+R13-03 final-source package/integrity and the scoped consumer/UI lane have passing evidence. R13-04 remains incomplete: the follow-up release guard models explicit Agent delegation independently of human acceptance, with source/tree/package-set, authorization and evidence hashes. All 242 release-safety simulations passed. These tooling/documentation edits are uncommitted and do not alter the tested product packages. Normal review/CI, final reference/qualification binding, a fresh dependency audit and credential-free preview remain next. Publication capabilities remain false and final qualification/reference files remain absent. R13-05/R13-06, public-only cold clone, signed served-byte verification and IFX activation remain pending. Active IFX 0.11.0 and the accepted RC delivery remain unchanged.
+
+Optional offline delivery remains skipped. The local feed used to test unpublished packages is qualification infrastructure, not a required end-user delivery layout. Human nuget-release environment approval and separate publication authorization are unchanged by UI delegation.
+
 ## Source commit and CI correction, 2026-10-30
 
 The authorized continuation committed the first freeze as `73e95f429035b13eb6d047bfea1a9c7369a82271` and opened [draft PR 43](https://github.com/von12549/ArchSift/pull/43). Its clean PR package build passed, but independent ZIP inspection found the shared 0.11.2 README in all five 0.11.3 packages. That artifact is rejected and retained. R13-03 therefore remains incomplete despite successful compilation.
