@@ -78,7 +78,7 @@ const artifact={id:42,name:'archsift-0.11.0-reviewed-submissions',expired:false,
 test('artifact must be same-run, same-repository and digest-bearing',()=>checkArtifact(artifact,{...context,runId:'100'}));
 for(const [key,value] of [['expired',true],['digest',''],['size_in_bytes',20_000_000],['name','other'],['workflow_run',{...artifact.workflow_run,id:101}],['workflow_run',{...artifact.workflow_run,head_repository_id:1}]])test(`reject artifact ${key} ${JSON.stringify(value)}`,()=>assert.throws(()=>checkArtifact({...artifact,[key]:value},{...context,runId:'100'})));
 function syntheticPackages({signed=false,tamper=false,extra=false,version=reference.version}={}){
- const r=structuredClone(reference), files=new Map();r.version=version;if(version==='0.11.2'){r.humanAcceptance={status:'passed-user-confirmed',finalIdentityConfirmed:true};for(const p of r.packages)p.file=`${p.id}.${version}.nupkg`;}const m={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,packages:[]};
+ const r=structuredClone(reference), files=new Map();r.version=version;if(['0.11.2','0.11.3'].includes(version)){r.humanAcceptance={status:'passed-user-confirmed',finalIdentityConfirmed:true};for(const p of r.packages)p.file=`${p.id}.${version}.nupkg`;}if(version==='0.11.3')r.sourceDirty=false;const m={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,packages:[]};
  for(const p of r.packages){const nuspec=Buffer.from(`<package><metadata><id>${p.id}</id><version>${r.version}</version><repository commit="${r.sourceCommit}" /></metadata></package>`);const payload=[[`${p.id}.nuspec`,nuspec],['file.dll',Buffer.from('synthetic payload')]];const original=zip(payload);p.bytes=original.length;p.sha256=sha256(original);m.packages.push({id:p.id,submittedSha256:p.sha256,payload:payload.map(([path,b])=>({path,length:b.length,sha256:sha256(b)}))});const actual=payload.map(([n,b])=>[n,Buffer.from(b)]);if(tamper)actual[1][1][0]^=1;if(signed)actual.push(['.signature.p7s','synthetic signature is not a real certificate']);if(extra)actual.push(['unapproved.txt','bad']);files.set(p.file,zip(actual));}
  return {r,files,m};
 }
@@ -243,7 +243,7 @@ for(const [name,mutate] of [
 for(const [key,value] of [['expired',true],['id',1],['digest','sha256:'+'a'.repeat(64)],['name','other'],['workflow_run',{...candidateMetadata.workflow_run,head_repository_id:1}]])test(`candidate rejects metadata ${key}`,()=>assert.throws(()=>checkCandidateProvenance({...candidateMetadata,[key]:value},candidateRun,candidateBinding,candidateContext)));
 test('candidate reader validates raw digest before archive inspection',async()=>{
  const gh={json:async endpoint=>endpoint.includes('/artifacts/')?candidateMetadata:candidateRun,artifact:async()=>Buffer.from('changed')};
- await assert.rejects(candidateInputs({gh,policy:{candidateArtifact:candidateBinding},reference:{sourceCommit:candidateBinding.sourceCommit},context:candidateContext,root}),/raw ZIP differs/);
+ await assert.rejects(candidateInputs({gh,policy:{version:'0.11.2',candidateArtifact:candidateBinding},reference:{version:'0.11.2',sourceCommit:candidateBinding.sourceCommit},context:{...candidateContext,version:'0.11.2'},root}),/raw ZIP differs/);
 });
 test('0112 profile cannot inherit historical human acceptance',async()=>{
  const {r,files,m}=syntheticPackages();r.version='0.11.2';await assert.rejects(checkPackages(files,r,m),/Human acceptance missing/);
@@ -308,18 +308,18 @@ for(const [name,change] of [
 });
 test('0112 qualification rejects unreviewed changed bytes',()=>assert.throws(()=>checkQualification(Buffer.from('{}'),scopedReference),/Qualification digest differs/));
 
-async function candidateFixture(change=()=>{}) {
+async function candidateFixture(change=()=>{},version='0.11.2') {
  const folder=fs.mkdtempSync(path.join(os.tmpdir(),'archsift-candidate-fixture-'));
  try {
-  const {r,files,m}=syntheticPackages({version:'0.11.2'});
+  const {r,files,m}=syntheticPackages({version});
   const entries=[...files].map(([n,b])=>[`packages/${n}`,b]);const raw=zip(entries);
   const binding={...candidateBinding,sourceCommit:r.sourceCommit,sha256:sha256(raw),files:entries.map(x=>x[0])};
   const meta={...structuredClone(candidateMetadata),name:`unpublished-recovery-candidate-${r.sourceCommit}`,digest:`sha256:${binding.sha256}`,size_in_bytes:raw.length};meta.workflow_run.head_sha=r.sourceCommit;
   const run={...structuredClone(candidateRun),head_sha:r.sourceCommit};
-  const c={...publishing,version:'0.11.2',dataCommit:r.sourceCommit};
-  const manifest=Buffer.from(JSON.stringify(m));const p={...policy,version:'0.11.2',candidateArtifact:binding,payloadManifestSha256:sha256(manifest)};
+  const c={...publishing,version,dataCommit:r.sourceCommit};
+  const manifest=Buffer.from(JSON.stringify(m));const p={...policy,version,candidateArtifact:binding,payloadManifestSha256:sha256(manifest)};
   const request={schemaVersion:1,version:r.version,sourceCommit:r.sourceCommit,sourceTree:r.sourceTree,workflowCommit:c.sha,repositoryId:p.repositoryId,ownerId:p.ownerId,packages:r.packages,payloadManifestSha256:p.payloadManifestSha256,acceptanceSha256:r.acceptedPreview.acceptanceSha256};c.requestSha256=sha256(Buffer.from(JSON.stringify(request,null,2)+'\n'));
-  const dir=path.join(folder,'docs/releases/0.11.2');fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'package-payload-manifest.json'),manifest);
+  const dir=path.join(folder,`docs/releases/${version}`);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'package-payload-manifest.json'),manifest);
   const fixture={meta,run,p,r,c,raw};change(fixture);
   const gh={json:async endpoint=>endpoint.includes('/artifacts/')?fixture.meta:fixture.run,artifact:async()=>fixture.raw};
   return await candidateInputs({gh,policy:p,reference:r,context:c,root:folder});
@@ -335,3 +335,7 @@ for(const [name,change] of [
  ['different source',f=>{f.c.dataCommit='a'.repeat(40);}]
 ])test(`0112 input route rejects ${name}`,async()=>assert.rejects(candidateFixture(change)));
 test('wrong version context cannot select another policy',()=>assert.throws(()=>checkContext({...context,version:'0.11.2'},policy,'preflight')));
+test('0113 artifact transport uses its own manifest and validated seven-input set',async()=>assert.equal((await candidateFixture(()=>{},'0.11.3')).size,7));
+test('0113 artifact transport rejects a historical policy',async()=>assert.rejects(candidateFixture(f=>{f.p.version='0.11.2';},'0.11.3'),/profile differs/));
+test('0113 artifact transport rejects a historical context',async()=>assert.rejects(candidateFixture(f=>{f.c.version='0.11.2';},'0.11.3'),/profile differs/));
+test('0113 artifact transport rejects dirty package source',async()=>assert.rejects(candidateFixture(f=>{f.r.sourceDirty=true;},'0.11.3'),/committed 0.11.3 source/));

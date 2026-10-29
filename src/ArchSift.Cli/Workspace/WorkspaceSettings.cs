@@ -119,11 +119,21 @@ internal sealed record WorkspaceSettings(string File, string ProjectRoot, string
         if (settings.Cache is { } cache) { PathSafety.EnsureDisjoint(root, cache); PathSafety.EnsureDisjoint(state, cache); }
         if (System.IO.File.Exists(Path.Combine(root, "architecture", "portable-gate.json")) || config.Gate is not null)
         {
-            if (config.Gate?.Kind != "ifx" || config.Runtime.Mode != "approvedExact" || config.Nuget.Mode != "offline" || config.Nuget.AllowNetwork ||
-                settings.GateFile != Canonical(Path.Combine(root, "architecture", "portable-gate.json")) ||
-                settings.RuntimeApproval != Canonical(Path.Combine(root, "architecture", "runtime-approval.json")) ||
-                settings.SourceApproval != Canonical(Path.Combine(root, "architecture", "package-source.json")))
-                throw new ConfigurationException("IFX workspace must retain exact runtime, offline source and original policy/gate paths.");
+            if (config.Gate?.Kind != "ifx" ||
+                settings.GateFile != Canonical(Path.Combine(root, "architecture", "portable-gate.json")))
+                throw new ConfigurationException("IFX workspace must retain its original gate identity and metadata path.");
+            var exactOffline = config.Runtime.Mode == "approvedExact" && config.Nuget.Mode == "offline";
+            var hostConfigured = config.Runtime.Mode == "host" && config.Nuget.Mode == "configured";
+            if (!exactOffline && !hostConfigured)
+                throw new ConfigurationException("IFX supports host/configured or approvedExact/offline; no automatic mode fallback.");
+            if (exactOffline &&
+                (settings.RuntimeApproval != Canonical(Path.Combine(root, "architecture", "runtime-approval.json")) ||
+                 settings.SourceApproval != Canonical(Path.Combine(root, "architecture", "package-source.json"))))
+                throw new ConfigurationException("Exact offline IFX workspace must retain its original runtime/source approval paths.");
+            if (hostConfigured && (settings.RuntimeApproval is not null || settings.SourceApproval is not null))
+                throw new ConfigurationException("Host/configured IFX workspace requires null runtime/source approvals; exact approvals cannot be ignored.");
+            if (hostConfigured && (settings.NugetConfig is null || !System.IO.File.Exists(settings.NugetConfig)))
+                throw new ConfigurationException("Host/configured IFX workspace requires an explicit existing NuGet.Config; restore pinned dependencies before startup.");
         }
         return settings;
     }

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-ifx-source-freeze-review",
+  "date": "2026-10-30",
+  "freezeId": "0113-source-review-20261030-01",
+  "status": "reviewed-for-source-snapshot-not-release-qualified",
+  "sourceBaseCommit": "68f225172ebd2fafd056587015ec37573652b6b3",
+  "sourceDirty": true,
+  "reviewScope": ["installed-host/configured-source IFX workspace repair", "0.11.3 version and project-reference locks", "closed release driver, qualification, proposed workflow and helpers", "isolated IFX metadata guards and CI configuration", "qualification evidence and documentation consistency"],
+  "openCodeFindings": [],
+  "resolvedDocumentationFindings": [{"priority": 3, "path": "docs/releases/0.11.3/RELEASE_NOTES.md", "finding": "The current release note incorrectly described implemented version-aware pipeline support as future work.", "resolution": "Updated the current source explanation before freezing; existing package bytes and historical evidence were preserved."}],
+  "reviewObservations": [
+    "Architecture restore explicitly supplies --source LocalFeed and offline-architecture disables NuGet audit. The repository's online NuGet.Config does not by itself enable online architecture restore.",
+    "Normal IFX workspace initialization cannot manufacture a daily architecture gate in configured-source mode.",
+    "The active publish workflow remains unchanged; the proposed 0.11.3 workflow is outside active discovery and both publication capabilities are false.",
+    "IFX stable target metadata is planning-only; executable pins still select 0.11.3-rc.1. The active IFX checkout remains at 0.11.0."
+  ],
+  "currentStaticChecks": {"passed": 16, "failed": 0, "qualificationEvidenceFilesRehashed": 73, "acceptedRcFilesRehashed": 1513, "isolatedIfxChangedPathsRehashed": 18, "localPackagesRehashed": 5, "builtRuntimeAndTestInputsUnchanged": true, "gitIndexUnchangedAtReview": true},
+  "priorEvidenceNotRerun": {"productSyntheticTestsPassed": 93, "releaseSafetySimulationsPassed": 226, "workflowStructuralMutationsRejected": 51, "httpBoundaryMutationsRejected": 2, "ifxMetadataSimulationsPassed": 19, "scope": "Previously recorded local build and synthetic qualification; no final committed-source package or real architecture acceptance inferred."},
+  "freeze": {"type": "external-byte-inventory-and-source-archive", "artifactDirectory": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\source-freeze-review-20261030", "receipt": "freeze-receipt.json", "productManifest": "product-source-manifest.json", "ifxManifest": "ifx-preparation-source-manifest.json", "proposedCommitScope": "commit-scope.json", "checksums": "SHA256SUMS.txt", "gitCommitOrTag": null, "rule": "Any added, removed or changed source path requires review and a new freeze identity; do not overwrite frozen archives. The external receipt binds the final bytes, including this record, without a self-referential hash."},
+  "pendingReleaseConditions": ["explicit source commit and remote CI execution scope", "clean committed-source build with new exact source/tree and package identities", "final package regression, integrity, consumer lifecycle and human acceptance", "final CI/artifact binding and fresh release audit", "separate publication authority and final served package verification", "atomic IFX stable package/provenance/lock binding", "configured architecture runner/feed and separately authorized real CI", "fresh clone and public-source-only acceptance without CandidateSource or overlay", "separate existing-machine activation decision"],
+  "limitations": {"remoteMainRefreshedDuringReview": false, "completeSolutionTestSuiteRun": false, "finalPublicCloneReady": false, "releaseQualified": false, "reviewIsProofOfNoDefects": false},
+  "actionsThisReview": {"productCodeModified": false, "releaseExplanationCorrected": true, "realRestoreExecuted": false, "productExecuted": false, "integrationTestsExecuted": false, "architectureTestsExecuted": false, "ifxConfigurationSwitched": false, "gitIndexStaged": false, "commitCreated": false, "tagCreated": false, "pushed": false, "published": false}
+}

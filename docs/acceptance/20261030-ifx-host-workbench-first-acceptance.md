@@ -1,0 +1,7 @@
+# IFX 0.11.3-rc.1 first direct Workbench acceptance
+
+Recorded 2026-10-30 (Australia/Sydney). The new-machine operator completed direct Workbench First with exit 0 and all 15 checks true. Nine original evidence files were copied with SHA-256 verification. Outer mode=Workbench and product mode=workbench; both report host equality, product exit is 0 and activationPerformed=false. Restore-stage receipts passed. The initialization binds the accepted version, target, host, state and startup configuration, with null dailyTestConfig.
+
+All four configuration/marker hashes match before/after, the prior verified Launcher archive and the Doctor baseline. Source/package/runtime inputs have not been upgraded. The user confirmed page version/project/configuration and Safe shutdown. The original result.json humanPageReview=pending-operator-report is preserved verbatim; a separate operator-confirmation.json records the later confirmation. No independent agent UI inspection is claimed.
+
+Next: run the existing Workbench acceptance script with Cycle Repeat in the same revision and Windows account. Before invocation, compare current local/startup/NuGet/marker hashes to the accepted First after.json; stop if changed. Open the complete printed loopback URL, inspect paths without editing or starting analysis/build/audit/tests, use Safe shutdown, and review the new evidence before any negative scenario. No real Repeat result is recorded yet. Architecture tests, configuration switching, migration, commits and publication remain excluded.

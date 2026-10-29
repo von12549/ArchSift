@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-0113-local-qualification",
+  "date": "2026-10-30",
+  "status": "local-build-93-synthetic-regressions-and-closed-pipeline-preparation-passed",
+  "version": "0.11.3",
+  "sourceBaseCommit": "68f225172ebd2fafd056587015ec37573652b6b3",
+  "sourceDirty": true,
+  "finalCommittedSource": null,
+  "releaseQualified": false,
+  "publiclyPublishedByThisTask": false,
+  "build": {
+    "sdk": "10.0.303",
+    "configuration": "Release",
+    "targetFramework": "net10.0",
+    "lockedOfflineRestore": true,
+    "stagesPassed": 9,
+    "warnings": 0,
+    "errors": 0,
+    "packageOutput": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\archsift-0.11.3-qualification-20261030\\package-build-02\\packages"
+  },
+  "productSyntheticRegression": {
+    "passed": 93,
+    "failedAfterApprovedRetry": 0,
+    "skipped": 0,
+    "uniqueTests": 93,
+    "lanes": {
+      "Policy-BuildSession-02": {
+        "passed": 31,
+        "failed": 0,
+        "skipped": 0,
+        "trxSha256": "5a7034444014fcad138f6bc8d02b2147f1c9c6c2d7da9442ff92436fabcb87c5",
+        "receiptSha256": "61b01027f690858ead40e6497ed4402649b1cd80ee518f15d3081f7aae2258fb"
+      },
+      "Workspace-BuildSession-02": {
+        "passed": 37,
+        "failed": 0,
+        "skipped": 0,
+        "trxSha256": "f98deb4bcbc1de82d0d80c8c397a1afa2f0d5884b8004368f740991d043e9b6f",
+        "receiptSha256": "362a5d27b30a9ad52cf3e659e47f22b9e4a097b295a626205d8282cdecebd95c"
+      },
+      "Safety-BuildSession-02": {
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "trxSha256": "c592a2f2fc3a8654e1a2f13854b3241edbcc36262c9f31f791197f0654800a1f",
+        "receiptSha256": "2c93881875d304f11a1c5183d345f9c10edf5b86395386adb3d46cf74395fd0e"
+      },
+      "Link-Elevated-02": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "trxSha256": "0b58b3d84bb5013c09ea255730a584eda97f0e591349ced71a298cdb761bef90",
+        "receiptSha256": "8affdb94941d97338b5500ca4c31800f33282039b8c5d6900be972dde87f4f27"
+      }
+    },
+    "fullSolutionTestSuiteExecuted": false,
+    "actualIfxOrArchitectureTestsExecuted": false
+  },
+  "packageReview": {
+    "schemaVersion": 1,
+    "kind": "archsift-0113-local-package-review",
+    "status": "passed-local-package-integrity-not-release-qualified",
+    "version": "0.11.3",
+    "sourceBaseCommit": "68f225172ebd2fafd056587015ec37573652b6b3",
+    "sourceDirty": true,
+    "sourceInputManifestSha256": "5c32682d632f46baabbd888159cedbf9133d73327008cd2d82aa4d8bd1bee0d5",
+    "sourceSnapshotSha256": "8212551d4b0dca5d07c8b341299247ac3eda8f445a5932774cb0e81b5d2843aa",
+    "sourceFiles": 884,
+    "packages": [
+      {
+        "id": "ArchSift.ArchUnit",
+        "version": "0.11.3",
+        "file": "ArchSift.ArchUnit.0.11.3.nupkg",
+        "bytes": 28336,
+        "submissionSha256": "ec2d7dc4d00cd9511adf0921f82fbdea19738ca3d2c1cd455d6169a53e2a937f",
+        "unsignedArchiveSha512": "urHGk4juTDsb5+U13Z9fnjc4S8RMMucLy2KCMPC4TZ8/VLTDzIJdgiIclVyFo7EKVqLmRug3cnJa26BOH660tw==",
+        "dependencies": [
+          {
+            "id": "ArchSift.Core",
+            "version": "[0.11.3]",
+            "exclude": "Build,Analyzers"
+          },
+          {
+            "id": "TngTech.ArchUnitNET",
+            "version": "[0.13.4]",
+            "exclude": "Build,Analyzers"
+          }
+        ],
+        "repositorySignatureVerified": false,
+        "publiclyPublished": false
+      },
+      {
+        "id": "ArchSift.Cli",
+        "version": "0.11.3",
+        "file": "ArchSift.Cli.0.11.3.nupkg",
+        "bytes": 2906035,
+        "submissionSha256": "7a2d7915ae53a51d53168c390fbe0dc6bdcb65982c86db1f2d7267395625ae3d",
+        "unsignedArchiveSha512": "38/MWmaPT41D89lamMqv5u5URE6rgWSaAySyHQGj5uBfaG3F51HEWiGm+EAxkNm8WYx/lZ1v/XIzyOBAqYNR/A==",
+        "dependencies": [],
+        "repositorySignatureVerified": false,
+        "publiclyPublished": false
+      },
+      {
+        "id": "ArchSift.Contracts",
+        "version": "0.11.3",
+        "file": "ArchSift.Contracts.0.11.3.nupkg",
+        "bytes": 91529,
+        "submissionSha256": "6c2541119c8aff1e0135dcacb677f5030e77bc70342ea7ca4af0be056f2b75ec",
+        "unsignedArchiveSha512": "2+b33EsPfWeNH5wRTMTKOVNurjkOPMOHrVXbRpjIJVjrpNI17p94h9exM3OX7Ig+RZOr1oh5DukdhKso0poBJg==",
+        "dependencies": [],
+        "repositorySignatureVerified": false,
+        "publiclyPublished": false
+      },
+      {
+        "id": "ArchSift.Core",
+        "version": "0.11.3",
+        "file": "ArchSift.Core.0.11.3.nupkg",
+        "bytes": 159399,
+        "submissionSha256": "67ce59c0fe40265cf6a0735780210972930eb050c5219e89cf5711b1b13780c6",
+        "unsignedArchiveSha512": "uzFVtBS6Ozb9SrcJmTxJbl1gdyaoQts/HF/iEDQU1YgBRcEesQPDGItyScY2ZgFhouJgkRpHSUKnaOdp38U5xA==",
+        "dependencies": [
+          {
+            "id": "ArchSift.Contracts",
+            "version": "[0.11.3]",
+            "exclude": "Build,Analyzers"
+          }
+        ],
+        "repositorySignatureVerified": false,
+        "publiclyPublished": false
+      },
+      {
+        "id": "ArchSift.Testing",
+        "version": "0.11.3",
+        "file": "ArchSift.Testing.0.11.3.nupkg",
+        "bytes": 23621,
+        "submissionSha256": "5022f7d00ede1149a0189718c11c6a6232b01fb9ade437cdb74c1d5538fad624",
+        "unsignedArchiveSha512": "JKluKAxHlBdNLDwOLIJX8jqT3SMho6G86y+D0j9Z3hFG5WP4KR3XzjqKQyeXYsRnBbn2ukBkaVo9d4AtkPVr0A==",
+        "dependencies": [
+          {
+            "id": "ArchSift.ArchUnit",
+            "version": "[0.11.3]",
+            "exclude": "Build,Analyzers"
+          }
+        ],
+        "repositorySignatureVerified": false,
+        "publiclyPublished": false
+      }
+    ],
+    "webPayloadFiles": 69,
+    "packageBuildStagesPassed": 9,
+    "publiclyPublished": false,
+    "releaseQualified": false,
+    "realIfxIntegrationExecuted": false,
+    "architectureTestsExecuted": false,
+    "finalCommittedSourceMissing": true
+  },
+  "trustedPublisher": {
+    "schemaVersion": 1,
+    "kind": "user-supplied-nuget-publisher-policy",
+    "evidence": "nuget-trusted-publishing-policy.png",
+    "sha256": "06a2c98ddb38bbdc73edf61a5af7518f2854f42cc65cd58e26bbfe35e22ba3ed",
+    "statusShown": "Active",
+    "packageOwner": "XiaolongFeng",
+    "scopeShown": "Push new packages and package versions",
+    "glob": "ArchSift.*",
+    "publisher": "GitHubActions",
+    "repositoryOwner": "von12549",
+    "repositoryOwnerId": 2306937,
+    "repository": "ArchSift",
+    "repositoryId": 1407069697,
+    "workflow": "publish-nuget.yml",
+    "environment": "nuget-release",
+    "liveServiceIndependentlyVerified": false,
+    "publicationAuthorizationInferredFromImage": false
+  },
+  "releasePipeline": {
+    "versionSupportPrepared": true,
+    "syntheticTestsPassed": 226,
+    "failed": 0,
+    "structuralRejectedMutations": 51,
+    "childHttpRejectedMutations": 2,
+    "hostedHelperScriptsParsed": 2,
+    "proposedWorkflow": "docs/releases/0.11.3/publish-nuget.proposed.yml",
+    "activePublishWorkflowChanged": false,
+    "publicationEnabled": false,
+    "realAssetTransferEnabled": false,
+    "finalReferencePresent": false,
+    "finalQualificationPresent": false,
+    "credentialsAcquired": false,
+    "networkUsedInSimulations": false
+  },
+  "host": {
+    "normalFinalEqual": true,
+    "buildSessionFinalEqual": true,
+    "administratorFinalEqual": true,
+    "postPipelineEqual": true,
+    "persistentAndProfilesEqualAcrossSessions": true,
+    "persistentEnvironmentRepaired": false
+  },
+  "retainedFailures": [
+    {
+      "stage": "Pack-Normal",
+      "exitCode": 1,
+      "reason": "SDK workload verification failed in sandbox; exact root cause not traced. Unsandboxed identical offline build succeeded in a fresh output.",
+      "hostEqual": true
+    },
+    {
+      "stage": "Link-BuildSession-02",
+      "exitCode": 1,
+      "reason": "Synthetic link fixture lacked SeCreateSymbolicLinkPrivilege before product assertion; administrator retry passed.",
+      "hostEqual": true
+    },
+    {
+      "stage": "release-pipeline-tests-01",
+      "passed": 221,
+      "failed": 1,
+      "reason": "Existing raw-digest test fixture omitted newly required version fields; fixture was completed without relaxing the production guard. All 226 final cases pass."
+    }
+  ],
+  "postBuildChanges": {
+    "scope": "release-pipeline and documentation only; built product/runtime/template inputs unchanged",
+    "changedCapturedPathsAtCloseout": [
+      ".github/workflows/trusted-publishing-checks.yml",
+      "docs/plans/20261006-archsift-implementation-plan.md",
+      "docs/plans/20261029-ifx-host-online-repair.md",
+      "docs/plans/20261030-0113-release-ifx-integration.md",
+      "docs/releases/0.11.3/publishing-activation.json",
+      "scripts/Invoke-HostedNuGet.ps1",
+      "scripts/Invoke-HostedReleaseAudit.ps1",
+      "scripts/nuget-release/candidate-inputs.mjs",
+      "scripts/nuget-release/driver.mjs",
+      "scripts/nuget-release/model.mjs",
+      "scripts/nuget-release/package.json",
+      "scripts/nuget-release/release.test.mjs",
+      "scripts/nuget-release/workflow-policy.mjs"
+    ],
+    "sourceSnapshotPreserved": true,
+    "subsequentCleanBuildMustHaveNewIdentity": true
+  },
+  "remaining": [
+    "review-and-authorize-source-freeze-commit-and-remote-CI",
+    "clean-committed-source-package-build-and-exact-identity-qualification",
+    "final-package-consumer-lifecycle-and-human-acceptance-or-separate-explicit-scope-decision",
+    "final-source-CI-artifact-reference-and-fresh-official-audit",
+    "separate-publication-authorization-and-human-environment-approval",
+    "final-served-package-signature-owner-payload-binding-for-IFX",
+    "separately-authorized-real-CI-and-public-source-only-clone-acceptance",
+    "separate-existing-machine-activation"
+  ],
+  "boundaries": {
+    "actualIfxIntegrationExecuted": false,
+    "architectureTestsExecuted": false,
+    "ifxConfigurationSwitched": false,
+    "commitCreated": false,
+    "pullRequestCreated": false,
+    "published": false
+  },
+  "evidenceRoot": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\archsift-0.11.3-qualification-20261030"
+}

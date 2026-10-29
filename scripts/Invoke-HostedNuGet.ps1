@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop';Set-StrictMode -Version Latest
 # No local entry, even for a help/version probe. All isolation is child-only.
 if($env:GITHUB_ACTIONS -cne 'true' -or $env:RUNNER_ENVIRONMENT -cne 'github-hosted' -or $env:GITHUB_REPOSITORY -cne 'von12549/ArchSift' -or $env:GITHUB_REF -cne 'refs/heads/main' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'Approved hosted main only.'}
 $version=if($env:RELEASE_VERSION){$env:RELEASE_VERSION}else{'0.11.0'}
-if($version -cnotin @('0.11.0','0.11.2')){throw 'Unreviewed release version.'}
+if($version -cnotin @('0.11.0','0.11.2','0.11.3')){throw 'Unreviewed release version.'}
 $policy=Get-Content -LiteralPath (Join-Path $PSScriptRoot ('../docs/releases/'+$version+'/publishing-activation.json')) -Raw|ConvertFrom-Json
 if($policy.version -cne $version){throw 'Release profile version differs.'}
 if($policy.publicationEnabled -isnot [bool] -or -not $policy.publicationEnabled -or $policy.realAssetTransferEnabled -isnot [bool] -or -not $policy.realAssetTransferEnabled -or $env:RELEASE_SWITCH -cne 'true'){throw 'Committed publication locks remain closed.'}

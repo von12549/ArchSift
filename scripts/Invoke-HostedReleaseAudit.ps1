@@ -4,7 +4,7 @@ if($env:GITHUB_ACTIONS -cne 'true' -or $env:RUNNER_ENVIRONMENT -cne 'github-host
 $before=Get-ArchSiftHostHash
 $binding=Get-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'archsift-audit-inputs/binding.json') -Raw|ConvertFrom-Json -AsHashtable
 $version=if($env:RELEASE_VERSION){$env:RELEASE_VERSION}else{'0.11.0'}
-if($version -cnotin @('0.11.0','0.11.2')){throw 'Unreviewed audit version'}
+if($version -cnotin @('0.11.0','0.11.2','0.11.3')){throw 'Unreviewed audit version'}
 $reference=Get-Content -LiteralPath (Join-Path $PSScriptRoot ('../docs/releases/'+$version+'/trusted-publishing-reference.json')) -Raw|ConvertFrom-Json
 if($binding.version -cne $version -or $binding.sourceCommit -cne $reference.sourceCommit -or $binding.sourceTree -cne $reference.sourceTree -or $binding.workflowCommit -cne $env:GITHUB_SHA -or $binding.runId -ne [long]$env:GITHUB_RUN_ID){throw 'Audit binding differs.'}
 $root=Join-Path $env:RUNNER_TEMP 'archsift-fresh-audit'

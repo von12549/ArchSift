@@ -18,6 +18,17 @@ export function parseWorkflow(text) {
   requireThat(!/[&*][A-Za-z_]|!!|!<|^\s*<<:/m.test(text), 'YAML indirection is prohibited');
   return doc.toJS({ maxAliasCount: 0 });
 }
+// Validate a proposed future file without selecting it as the active workflow.
+export function checkWorkflowForVersion(text, version) {
+  requireThat(['0.11.2','0.11.3'].includes(version), 'Unreviewed workflow version');
+  const workflow = parseWorkflow(text);
+  requireThat(workflow.env?.RELEASE_VERSION === version, 'Workflow version differs');
+  if (version === '0.11.3') {
+    requireThat(!text.includes('0.11.2') && !text.includes('PUBLISH_0112'), 'Mixed historical workflow identity');
+    checkWorkflow(text.replaceAll('0.11.3','0.11.2').replaceAll('PUBLISH_0113','PUBLISH_0112'));
+  } else checkWorkflow(text);
+  return workflow;
+}
 export function checkWorkflow(text) {
   const w = parseWorkflow(text);
   exactKeys(w, ['name','on','permissions','concurrency','env','jobs']);

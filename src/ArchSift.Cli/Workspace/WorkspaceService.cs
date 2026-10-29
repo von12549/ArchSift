@@ -75,7 +75,6 @@ internal static class WorkspaceService
     private static void VerifyIfx(WorkspaceSettings settings, string? feed)
     {
         if (settings.GateFile is null) return;
-        if (feed is null) throw new ConfigurationException("IFX requires an approved local source.");
         using var manifest = WorkspaceSettings.Read(Path.Combine(settings.ProjectRoot, ".config", "dotnet-tools.json"));
         var tool = manifest.RootElement.GetProperty("tools").GetProperty("archsift.cli");
         if (!manifest.RootElement.GetProperty("isRoot").GetBoolean() || tool.GetProperty("version").GetString() != RuntimeInfo.ProductVersion ||
@@ -87,10 +86,38 @@ internal static class WorkspaceService
         foreach (var pair in new[] { ("policyFile", "policySha256"), ("requiredCases", "requiredCasesSha256") })
             if (AssemblyArtifacts.FileHash(PathSafety.Under(settings.ProjectRoot, value.GetProperty(pair.Item1).GetString()!)) != value.GetProperty(pair.Item2).GetString())
                 throw new ConfigurationException("IFX policy/case approval differs.");
-        var archive = Path.Combine(feed, "ArchSift.Cli." + RuntimeInfo.ProductVersion + ".nupkg");
+        var archive = ResolveIfxArchive(settings, feed);
         if (AssemblyArtifacts.FileHash(archive) != value.GetProperty("cliPackageSha256").GetString())
             throw new ConfigurationException("CLI package archive differs from IFX approval.");
         var payload = WorkspaceSettings.Canonical(AppContext.BaseDirectory);
+        VerifyArchivePayload(archive, payload);
+        ArchSift.Hosting.WebPayload.Verify(Path.Combine(payload, "web"), RuntimeInfo.ProductVersion);
+    }
+    private static string ResolveIfxArchive(WorkspaceSettings settings, string? feed)
+    {
+        string archive;
+        if (settings.Configuration.Nuget.Mode == "offline")
+        {
+            if (feed is null) throw new ConfigurationException("Offline IFX requires an approved local source.");
+            archive = PathSafety.Under(feed, "ArchSift.Cli." + RuntimeInfo.ProductVersion + ".nupkg");
+        }
+        else
+        {
+            var cacheText = settings.Cache ?? Environment.GetEnvironmentVariable("NUGET_PACKAGES");
+            if (string.IsNullOrWhiteSpace(cacheText) || !Path.IsPathFullyQualified(cacheText))
+                throw new ConfigurationException("Configured IFX requires an explicit resolved external NuGet cache; restore pinned dependencies before startup.");
+            var cache = WorkspaceSettings.Canonical(cacheText);
+            PathSafety.EnsureDisjoint(settings.ProjectRoot, cache);
+            PathSafety.EnsureDisjoint(settings.StateRoot, cache);
+            archive = PathSafety.Under(cache, "archsift.cli/" + RuntimeInfo.ProductVersion.ToLowerInvariant() +
+                "/archsift.cli." + RuntimeInfo.ProductVersion.ToLowerInvariant() + ".nupkg");
+        }
+        if (!File.Exists(archive))
+            throw new ConfigurationException("The pinned IFX CLI archive is missing; restore the exact version into the selected cache/source before startup. No alternate cache or global tool is searched.");
+        return archive;
+    }
+    private static void VerifyArchivePayload(string archive, string payload)
+    {
         using var zip = ZipFile.OpenRead(archive);
         var expected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var entry in zip.Entries.Where(e => e.FullName.StartsWith("tools/net10.0/any/", StringComparison.Ordinal) && !e.FullName.EndsWith('/')))
@@ -104,8 +131,11 @@ internal static class WorkspaceService
         }
         if (expected.Count == 0 || Directory.GetFiles(payload, "*", SearchOption.AllDirectories).Length != expected.Count)
             throw new ConfigurationException("Restored package has missing or unapproved extra payload files.");
-        ArchSift.Hosting.WebPayload.Verify(Path.Combine(payload, "web"), RuntimeInfo.ProductVersion);
     }
+    private static string? DailyUnavailableReason(WorkspaceSettings settings) =>
+        settings.GateFile is not null && settings.Configuration.Nuget.Mode == "configured"
+            ? "The IFX daily architecture gate requires explicit approved offline preparation. Normal workspace initialization does not run architecture tests."
+            : null;
     internal static async Task<int> RunAsync(string action, string file, string? localFile, string mode, bool noBrowser,
         string? migration, CancellationToken cancellation)
     {
@@ -149,6 +179,7 @@ internal static class WorkspaceService
                 Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, kind = "archsift-workspace-diagnostic", status = busy ? "busy" : "ready", busy, productVersion = RuntimeInfo.ProductVersion,
                     settings.ProjectRoot, settings.StateRoot, startupConfig = configPath, initialized = File.Exists(markerPath), host,
                     nugetConfig = settings.NugetConfig, cache = settings.Cache ?? Environment.GetEnvironmentVariable("NUGET_PACKAGES") }, JsonContract.Options));
+                if (DailyUnavailableReason(settings) is { } doctorReason) Console.Error.WriteLine(doctorReason);
                 return 0;
             }
             if (action is not ("init" or "start")) throw new ConfigurationException("Use workspace init, doctor or start.");
@@ -158,6 +189,7 @@ internal static class WorkspaceService
             var launch = Path.Combine(settings.StateRoot, "launches", Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(launch);
             var daily = Daily(settings, launch, feed);
+            if (DailyUnavailableReason(settings) is { } dailyReason) Console.Error.WriteLine(dailyReason);
             var result = new WorkspaceResult("initialized", RuntimeInfo.ProductVersion, settings.ProjectRoot, settings.StateRoot,
                 configPath, Path.Combine(settings.StateRoot, "launcher"), daily, host);
             WriteNew(Path.Combine(launch, "initialization.json"), result);
@@ -276,13 +308,15 @@ internal static class WorkspaceService
     private static string? Daily(WorkspaceSettings settings, string launch, string? feed)
     {
         if (settings.GateFile is null) return null;
+        if (settings.Configuration.Nuget.Mode == "configured") return null;
+        if (feed is null) throw new ConfigurationException("Offline IFX daily gate requires an approved local source.");
         using var gate = WorkspaceSettings.Read(settings.GateFile); var value = gate.RootElement;
         var cache = settings.Cache ?? Environment.GetEnvironmentVariable("NUGET_PACKAGES") ?? throw new ConfigurationException("IFX needs the resolved external NuGet cache.");
         cache = WorkspaceSettings.Canonical(cache); PathSafety.EnsureDisjoint(settings.ProjectRoot, cache); PathSafety.EnsureDisjoint(settings.StateRoot, cache);
         var run = Path.Combine(settings.StateRoot, "runs", Path.GetFileName(launch));
         var config = new TestGateConfig { SchemaVersion = 2, TargetRoot = settings.ProjectRoot,
             TestProject = value.GetProperty("testProject").GetString()!, TestExecutableName = value.GetProperty("testExecutableName").GetString()!,
-            TargetFramework = "net10.0", Configuration = "Release", NuGetConfig = "NuGet.Config", LocalFeed = feed!, PackageCache = cache,
+            TargetFramework = "net10.0", Configuration = "Release", NuGetConfig = "NuGet.Config", LocalFeed = feed, PackageCache = cache,
             Rulesets = value.GetProperty("rulesets").Deserialize<string[]>()!, RequiredCases = value.GetProperty("requiredCases").GetString(),
             RequiredCasesSha256 = value.GetProperty("requiredCasesSha256").GetString(), PolicyFile = value.GetProperty("policyFile").GetString(),
             PolicySha256 = value.GetProperty("policySha256").GetString(), ToolIdentity = RuntimeInfo.ProductVersion,
