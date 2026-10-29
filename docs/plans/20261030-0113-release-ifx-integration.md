@@ -1,5 +1,11 @@
 # ArchSift 0.11.3 and IFX integration preparation
 
+## Authorized evidence binding and preview CI, 2026-10-30
+
+The user authorized commits, pushes, PRs, CI, merges and necessary scoped fixes. PR 44 carries the explicit Agent delegation contract and final evidence binding. Original source `af25bed0da8b3cedf5706a404dd3f33a8f7b45df` and candidate artifact `12918368591` remain immutable; follow-up workflow commits do not redefine package source. Final qualification binds successful original-source PR/main CI, package integrity and the scoped consumer/lifecycle review; its documented exclusions remain applicable.
+
+The 0.11.3 reference, payload manifest and qualification are now hash-bound. The active manual workflow selects 0.11.3. Authenticated Actions artifact transfer is enabled only to perform the authorized credential-free preview and fresh hosted dependency audit. `publicationEnabled` remains false; no publishing switch or OIDC credential is authorized. The versioned workflow validator and full structural mutation suite remain in force. Real IFX gates and adoption remain separate. CI, merge, fresh audit and preview results will be recorded after execution, not inferred from these configuration changes.
+
 ## Actual-main package and delegated Agent UI checkpoint, 2026-10-30
 
 This checkpoint supersedes the pending CI/package/UI statements below without changing their historical results. PR 43 merged at `af25bed0da8b3cedf5706a404dd3f33a8f7b45df` (tree `8d862be384a63806ec76c23c5c4ee604f94321e9`). All 13 jobs in its five main workflows passed. Candidate run `40922246528`, artifact `12918368591`, produced the five reviewed 0.11.3 packages. The prior wrong-README artifact remains rejected.
