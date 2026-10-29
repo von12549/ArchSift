@@ -8,17 +8,13 @@ import { checkReleaseProfile } from './profile.mjs';
 import { checkReference, checkQualification, checkContext, sha256 } from './model.mjs';
 import { checkWorkflowForVersion } from './workflow-policy.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const draft = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.3/publishing-activation.json')));
+const actualProfile = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.3/publishing-activation.json')));
+const draft = {...actualProfile,state:'AWAITING_FINAL_IDENTITIES',realAssetTransferEnabled:false,publicationEnabled:false,originalReferenceSha256:null,payloadManifestSha256:null};
 const frozen = { ...draft, state: 'FINAL_IDENTITIES_FROZEN', originalReferenceSha256: 'a'.repeat(64), payloadManifestSha256: 'b'.repeat(64) };
 
-test('0113 unbound draft rejects even preflight before any reference or network read', () => {
-  assert.throws(() => checkReleaseProfile(draft, '0.11.3'), /identities not frozen/);
-  const child = { ...process.env, RELEASE_VERSION: '0.11.3', RELEASE_MODE: 'preflight', RELEASE_SWITCH: 'true', NUGET_API_KEY: '', ACTIONS_ID_TOKEN_REQUEST_TOKEN: '' };
-  const result = spawnSync(process.execPath, ['--import', pathToFileURL(path.join(root, 'scripts/nuget-release/test-fetch.mjs')).href, path.join(root, 'scripts/nuget-release/driver.mjs'), 'prepare'], { cwd: root, env: child, encoding: 'utf8', timeout: 15000, windowsHide: true });
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /Final 0.11.3 identities not frozen/);
-  assert.doesNotMatch(result.stderr + result.stdout, /FORBIDDEN-TRANSPORT|ENOENT/);
-});
+test('0113 unbound draft rejects before reference or network access', () => assert.throws(() => checkReleaseProfile(draft, '0.11.3'), /identities not frozen/));
+test('0113 actual preview profile binds reviewed evidence with publication closed',()=>{checkReleaseProfile(actualProfile,'0.11.3');assert.equal(actualProfile.publicationEnabled,false);const ref=JSON.parse(fs.readFileSync(path.join(root,actualProfile.originalReference)));checkQualification(fs.readFileSync(path.join(root,'docs/releases/0.11.3/qualification.json')),ref);});
+
 test('0113 typed closed frozen profile can be checked without enabling publication', () => checkReleaseProfile(frozen, '0.11.3'));
 for (const [name, change] of [
   ['wrong reference', p => { p.originalReference = 'docs/releases/0.11.2/trusted-publishing-reference.json'; }],
@@ -64,9 +60,38 @@ for (const [name, mutate] of [
 ]) test(`0113 qualification rejects ${name}`, () => { const f=fixture(); mutate(f); assert.throws(() => verify(f)); });
 test('0113 reference cannot omit final-byte human confirmation', () => { const {reference}=fixture(); reference.humanAcceptance.finalIdentityConfirmed=false; assert.throws(() => checkReference(reference)); });
 
+function delegatedFixture() {
+  const f=fixture();
+  const h={status:'skipped-explicit-user-delegation',performed:false,finalIdentityConfirmed:false};
+  const a={status:'passed-agent-delegated',performedBy:'Codex',finalIdentityConfirmed:true,
+    sourceCommit:f.reference.sourceCommit,sourceTree:f.reference.sourceTree,
+    packageSetSha256:sha256(Buffer.from(JSON.stringify(f.reference.packages))),
+    authorizationSha256:'3'.repeat(64),evidenceSha256:'4'.repeat(64)};
+  for(const x of [f.reference,f.qualification]) {x.humanAcceptance=structuredClone(h);x.agentUiAcceptance=structuredClone(a);}
+  return f;
+}
+test('0113 accepts explicit source/package-bound agent UI delegation without claiming human execution',()=>verify(delegatedFixture()));
+for(const [name,mutate] of [
+  ['missing authorization',f=>{delete f.reference.agentUiAcceptance.authorizationSha256;}],
+  ['missing UI evidence',f=>{delete f.qualification.agentUiAcceptance.evidenceSha256;}],
+  ['different evidence',f=>{f.qualification.agentUiAcceptance.evidenceSha256='5'.repeat(64);}],
+  ['different authorization',f=>{f.qualification.agentUiAcceptance.authorizationSha256='5'.repeat(64);}],
+  ['prior source',f=>{f.reference.agentUiAcceptance.sourceCommit='f'.repeat(40);}],
+  ['prior tree',f=>{f.reference.agentUiAcceptance.sourceTree='f'.repeat(40);}],
+  ['different package set',f=>{f.reference.agentUiAcceptance.packageSetSha256='f'.repeat(64);}],
+  ['unconfirmed final bytes',f=>{f.reference.agentUiAcceptance.finalIdentityConfirmed=false;}],
+  ['human execution claim',f=>{f.reference.humanAcceptance.performed=true;}],
+  ['human confirmation claim',f=>{f.reference.humanAcceptance.finalIdentityConfirmed=true;}],
+  ['human pass disguise',f=>{f.reference.humanAcceptance.status='passed-user-confirmed';f.reference.humanAcceptance.finalIdentityConfirmed=true;}],
+  ['failed agent review',f=>{f.reference.agentUiAcceptance.status='failed';}],
+  ['unknown reviewer',f=>{f.reference.agentUiAcceptance.performedBy='unknown';}],
+  ['missing agent evidence object',f=>{delete f.reference.agentUiAcceptance;}],
+  ['earlier release',f=>{f.reference.version='0.11.2';}],
+]) test(`0113 delegated review rejects ${name}`,()=>{const f=delegatedFixture();mutate(f);assert.throws(()=>verify(f));});
+
 const proposed=fs.readFileSync(path.join(root,'docs/releases/0.11.3/publish-nuget.proposed.yml'),'utf8');
 test('0113 proposed workflow retains strict approval/audit/integrity structure', () => checkWorkflowForVersion(proposed,'0.11.3'));
-test('0112 active workflow remains the selected unchanged profile', () => checkWorkflowForVersion(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'),'0.11.2'));
+test('0113 active workflow selects the reviewed preview profile', () => checkWorkflowForVersion(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'),'0.11.3'));
 for (const [name, change] of [
   ['old switch', s=>s.replace('PUBLISH_0113','PUBLISH_0112')],
   ['old artifact', s=>s.replace('archsift-0.11.3-reviewed-submissions','archsift-0.11.2-reviewed-submissions')],

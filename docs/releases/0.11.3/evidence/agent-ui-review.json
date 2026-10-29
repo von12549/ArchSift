@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-final-package-agent-ui-review",
+  "status": "passed-agent-delegated-scoped-lifecycle",
+  "version": "0.11.3",
+  "sourceCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+  "sourceTree": "8d862be384a63806ec76c23c5c4ee604f94321e9",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.3.nupkg",
+      "bytes": 91512,
+      "sha256": "f5dc838fc9f31a339e038e2add5d1772edef030ece0aaca58a20e27657660d25"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.3.nupkg",
+      "bytes": 159383,
+      "sha256": "2c25bb52e31144c2522fef5fe69481cba4967dbca68e63ceedf709eb74ebba6a"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.3.nupkg",
+      "bytes": 28316,
+      "sha256": "7646ba899d00bd27c59c178bf683a638e634c6c4d3d4bab0621abaf9eb10ff56"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.3.nupkg",
+      "bytes": 23600,
+      "sha256": "d1e9bfa0e4f57698c5c8c25220fbbb1ba65257fd315b9dceeb3b4ef375ddffe1"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.3.nupkg",
+      "bytes": 2904574,
+      "sha256": "03fb1080052c66f207847376604602d57f01964d9a680f7365c56f3369536255"
+    }
+  ],
+  "candidateRunId": 40922246528,
+  "candidateArtifactId": 12918368591,
+  "candidateArtifactSha256": "a9a153660aef63569c57e68af39376ee060fd5a2c577e96b25cc9321e850dc32",
+  "humanAcceptance": {
+    "status": "skipped-explicit-user-delegation",
+    "performed": false,
+    "finalIdentityConfirmed": false
+  },
+  "performedBy": "Codex",
+  "authorizationSha256": "c7cf412ca7ae669666521ff9318dde0beb352a26d2590f6f71bcda8804ad413a",
+  "checks": {
+    "exactMainPackageArchives": true,
+    "syntheticConsumerFourCases": true,
+    "installedHostConfiguredSourcesInit": true,
+    "doctorReady": true,
+    "launcherFirstAndRepeat": true,
+    "launcherChildWorkbenchFirstAndRepeat": true,
+    "directWorkbenchFirstAndRepeat": true,
+    "versionAndTargetPathsCorrect": true,
+    "externalConfigAndStatePathsReused": true,
+    "threeConfigurationHashesUnchanged": true,
+    "fourProductCloseoutsSuccessful": true,
+    "noDailyTestConfigurationGenerated": true,
+    "allOwnedProcessesExited": true,
+    "persistentAndSessionHostEqual": true,
+    "releaseSafetySimulations242Passed": true
+  },
+  "host": {
+    "dotnet": "C:\\Program Files\\dotnet\\dotnet.exe",
+    "sdk": "10.0.303",
+    "coreRuntime": "10.0.11",
+    "aspNetRuntime": "10.0.11"
+  },
+  "fixture": "Owned synthetic package consumer with IFX-shaped metadata; no real IFX target execution.",
+  "uiCoverage": [
+    "version and long path rendering",
+    "target and external configuration display",
+    "read-only ruleset page",
+    "empty history without stale success",
+    "Launcher opens the selected Workbench",
+    "safe Workbench shutdown",
+    "Close launcher confirmation and shutdown",
+    "Launcher and direct Workbench repeats"
+  ],
+  "limitations": [
+    "No human usability score or independent human UI claim.",
+    "No real IFX architecture test, state migration or activation.",
+    "No final public-only cold clone/restore or signature verification; candidate packages are unpublished.",
+    "No new full disconnected or Ubuntu qualification.",
+    "No fresh release dependency audit in this package.",
+    "Generic packaged startup template still rejects IFX host/configured mode; the supported IFX integration restores/verifies packages then dispatches CLI workspace directly. WorkspaceInit-01 is retained as a rejected template probe.",
+    "UI editing, chain execution, exports and all-language/accessibility coverage are outside this scoped UI review."
+  ],
+  "historicalAttempts": {
+    "WorkspaceInit-01": "Rejected by unchanged generic-template exact/offline IFX guard, exit 1, host equal; no fallback or product patch.",
+    "feed-preflight": "Initial raw SHA-512 versus NuGet lock-content-hash comparison was incorrect; preserved first feed, then compared raw cache archive identity and declared content hash separately before fresh locked restore."
+  },
+  "publicationPerformed": false,
+  "activationPerformed": false,
+  "releaseQualified": false
+}

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.3",
+  "status": "ACCEPTED_0113_FINAL_SOURCE_AND_PACKAGE_SCOPE",
+  "sourceCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+  "sourceTree": "8d862be384a63806ec76c23c5c4ee604f94321e9",
+  "sourceDirty": false,
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.3.nupkg",
+      "bytes": 91512,
+      "sha256": "f5dc838fc9f31a339e038e2add5d1772edef030ece0aaca58a20e27657660d25"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.3.nupkg",
+      "bytes": 159383,
+      "sha256": "2c25bb52e31144c2522fef5fe69481cba4967dbca68e63ceedf709eb74ebba6a"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.3.nupkg",
+      "bytes": 28316,
+      "sha256": "7646ba899d00bd27c59c178bf683a638e634c6c4d3d4bab0621abaf9eb10ff56"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.3.nupkg",
+      "bytes": 23600,
+      "sha256": "d1e9bfa0e4f57698c5c8c25220fbbb1ba65257fd315b9dceeb3b4ef375ddffe1"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.3.nupkg",
+      "bytes": 2904574,
+      "sha256": "03fb1080052c66f207847376604602d57f01964d9a680f7365c56f3369536255"
+    }
+  ],
+  "finalPackageIdentityConfirmed": true,
+  "humanAcceptance": {
+    "status": "skipped-explicit-user-delegation",
+    "performed": false,
+    "finalIdentityConfirmed": false
+  },
+  "agentUiAcceptance": {
+    "status": "passed-agent-delegated",
+    "performedBy": "Codex",
+    "finalIdentityConfirmed": true,
+    "sourceCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+    "sourceTree": "8d862be384a63806ec76c23c5c4ee604f94321e9",
+    "packageSetSha256": "306ef492472503de3aeaf539de942f1abcb70accabfc6e876d4bbb0347b677f4",
+    "authorizationSha256": "c7cf412ca7ae669666521ff9318dde0beb352a26d2590f6f71bcda8804ad413a",
+    "evidenceSha256": "6ba0e03db104360581d7b7f650155e633162e75d73a6f9c759649d72f5729109"
+  },
+  "evidence": [
+    {
+      "lane": "release-regression",
+      "status": "passed",
+      "review": "docs/releases/0.11.3/evidence/main-ci-closeout.json",
+      "reviewSha256": "bd42479b4aaf07c64a0fb28343397c430d27c5233a69112de3037dc633e989ad"
+    },
+    {
+      "lane": "package-integrity",
+      "status": "passed",
+      "review": "docs/releases/0.11.3/evidence/main-package-review.json",
+      "reviewSha256": "b09ba7a82828c839879615598a3fc6c4662d441cb437f73891ecf02ff96171ea"
+    },
+    {
+      "lane": "consumer-lifecycle",
+      "status": "passed",
+      "review": "docs/releases/0.11.3/evidence/agent-ui-review.json",
+      "reviewSha256": "be382a8807472739e83ccaba2b873ce882d37adc1b61a0e26fbc621664005da1"
+    }
+  ],
+  "limits": [
+    "No human usability score or independent human UI claim.",
+    "No real IFX architecture test, state migration or activation.",
+    "No final public-only cold clone/restore or signature verification; candidate packages are unpublished.",
+    "No new full disconnected or Ubuntu qualification.",
+    "No fresh release dependency audit in this package.",
+    "Generic packaged startup template still rejects IFX host/configured mode; the supported IFX integration restores/verifies packages then dispatches CLI workspace directly. WorkspaceInit-01 is retained as a rejected template probe.",
+    "UI editing, chain execution, exports and all-language/accessibility coverage are outside this scoped UI review."
+  ],
+  "publicationAuthorized": false,
+  "activationAuthorized": false
+}

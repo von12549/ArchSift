@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-main-candidate-integrity-review",
+  "status": "passed-main-candidate-integrity-not-release-qualified",
+  "version": "0.11.3",
+  "pullRequest": 43,
+  "runId": 40922246528,
+  "artifactId": 12918368591,
+  "artifactSha256": "a9a153660aef63569c57e68af39376ee060fd5a2c577e96b25cc9321e850dc32",
+  "headCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+  "sourceCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+  "sourceTree": "8d862be384a63806ec76c23c5c4ee604f94321e9",
+  "sourceTreeMatchesFrozenCommit": true,
+  "sourceDirty": false,
+  "packages": [
+    {
+      "id": "ArchSift.ArchUnit",
+      "version": "0.11.3",
+      "file": "ArchSift.ArchUnit.0.11.3.nupkg",
+      "bytes": 28316,
+      "submissionSha256": "7646ba899d00bd27c59c178bf683a638e634c6c4d3d4bab0621abaf9eb10ff56",
+      "unsignedArchiveSha512": "326CM+Ssva6rgv/ZHWWTr4wODKIUdAHZgCAL6cV93VhDqhyyxasXZIlIq6m7YQfVydgggyRJxiXQ5HxYzhb/yA==",
+      "dependencies": [
+        {
+          "id": "ArchSift.Core",
+          "version": "[0.11.3]",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "TngTech.ArchUnitNET",
+          "version": "[0.13.4]",
+          "exclude": "Build,Analyzers"
+        }
+      ],
+      "repositorySignatureVerified": false,
+      "publiclyPublished": false
+    },
+    {
+      "id": "ArchSift.Cli",
+      "version": "0.11.3",
+      "file": "ArchSift.Cli.0.11.3.nupkg",
+      "bytes": 2904574,
+      "submissionSha256": "03fb1080052c66f207847376604602d57f01964d9a680f7365c56f3369536255",
+      "unsignedArchiveSha512": "FePDexfqXLA4coaGJuiWfP6vWwNr7RqKjYZYMeq9u8qBf+m7TKRT85UnijABlyN3pceAcA4MAZpmhHJk50gdXQ==",
+      "dependencies": [],
+      "repositorySignatureVerified": false,
+      "publiclyPublished": false
+    },
+    {
+      "id": "ArchSift.Contracts",
+      "version": "0.11.3",
+      "file": "ArchSift.Contracts.0.11.3.nupkg",
+      "bytes": 91512,
+      "submissionSha256": "f5dc838fc9f31a339e038e2add5d1772edef030ece0aaca58a20e27657660d25",
+      "unsignedArchiveSha512": "Rfx/J8pIVTwH+keYjKhaLBTnBxgpmmy5IOQciWMp7ah8cjtNPSKNAxAjgP+T99Pm8pmQPBL/pYw1y6O/sqvMEg==",
+      "dependencies": [],
+      "repositorySignatureVerified": false,
+      "publiclyPublished": false
+    },
+    {
+      "id": "ArchSift.Core",
+      "version": "0.11.3",
+      "file": "ArchSift.Core.0.11.3.nupkg",
+      "bytes": 159383,
+      "submissionSha256": "2c25bb52e31144c2522fef5fe69481cba4967dbca68e63ceedf709eb74ebba6a",
+      "unsignedArchiveSha512": "BYxoWKI+JIKKSCAqO9WDGA5h70ysmTnDkv7sGzDhNTGndLMd/aHIyaOcLBsXhSLwrmyS/uwbuDXE8QfJ8rwY7g==",
+      "dependencies": [
+        {
+          "id": "ArchSift.Contracts",
+          "version": "[0.11.3]",
+          "exclude": "Build,Analyzers"
+        }
+      ],
+      "repositorySignatureVerified": false,
+      "publiclyPublished": false
+    },
+    {
+      "id": "ArchSift.Testing",
+      "version": "0.11.3",
+      "file": "ArchSift.Testing.0.11.3.nupkg",
+      "bytes": 23600,
+      "submissionSha256": "d1e9bfa0e4f57698c5c8c25220fbbb1ba65257fd315b9dceeb3b4ef375ddffe1",
+      "unsignedArchiveSha512": "fQBlqYNrnVGDt85f7CXm0KUUJPfF0f+7QAlrKiUaNeUQLBtTRKPCwufurti/jsgArn/mcgI+8X7eBrQ6o6Xg7g==",
+      "dependencies": [
+        {
+          "id": "ArchSift.ArchUnit",
+          "version": "[0.11.3]",
+          "exclude": "Build,Analyzers"
+        }
+      ],
+      "repositorySignatureVerified": false,
+      "publiclyPublished": false
+    }
+  ],
+  "webPayloadFiles": 69,
+  "packageBuildStagesPassed": 9,
+  "publiclyPublished": false,
+  "releaseQualified": false,
+  "hostEqual": true,
+  "productExecutedLocally": false,
+  "note": "Actual-main push candidate integrity is verified. Exact final-byte consumer lifecycle, human acceptance, fresh audit and publication authorization remain pending."
+}

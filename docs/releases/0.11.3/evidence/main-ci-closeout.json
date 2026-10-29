@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-0113-main-ci-closeout",
+  "status": "merged-main-ci-and-main-candidate-integrity-passed",
+  "pullRequest": "https://github.com/von12549/ArchSift/pull/43",
+  "merged": true,
+  "sourceCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+  "sourceTree": "8d862be384a63806ec76c23c5c4ee604f94321e9",
+  "sourceDirty": false,
+  "sourceFreeze": "0113-source-review-20261030-02",
+  "frozenBytesUnchanged": true,
+  "gitClean": true,
+  "ci": {
+    "passed": 13,
+    "failed": 0,
+    "pending": 0,
+    "workflowRuns": [
+      {
+        "id": 40922246305,
+        "name": "ArchSift verification",
+        "path": ".github/workflows/verify.yml",
+        "event": "push",
+        "head_sha": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+        "head_branch": "main",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/40922246305"
+      },
+      {
+        "id": 40922246496,
+        "name": "Session PATH baseline checks",
+        "path": ".github/workflows/session-baseline-checks.yml",
+        "event": "push",
+        "head_sha": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+        "head_branch": "main",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/40922246496"
+      },
+      {
+        "id": 40922246570,
+        "name": "Trusted Publishing activation safety checks",
+        "path": ".github/workflows/trusted-publishing-checks.yml",
+        "event": "push",
+        "head_sha": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+        "head_branch": "main",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/40922246570"
+      },
+      {
+        "id": 40922246528,
+        "name": "Unpublished recovery correction candidate",
+        "path": ".github/workflows/recovery-candidate.yml",
+        "event": "push",
+        "head_sha": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+        "head_branch": "main",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/40922246528"
+      },
+      {
+        "id": 40922246440,
+        "name": "Published NuGet consumer acceptance",
+        "path": ".github/workflows/verify-nuget-consumers.yml",
+        "event": "push",
+        "head_sha": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+        "head_branch": "main",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/von12549/ArchSift/actions/runs/40922246440"
+      }
+    ],
+    "consumerCompatibilityLaneVersion": "0.11.0",
+    "final0113ConsumerLifecycleAccepted": false
+  },
+  "candidate": {
+    "runId": 40922246528,
+    "artifactId": 12918368591,
+    "artifactSha256": "a9a153660aef63569c57e68af39376ee060fd5a2c577e96b25cc9321e850dc32",
+    "provenance": "successful-first-attempt-main-push",
+    "files": 25,
+    "packageCount": 5,
+    "webPayloadFiles": 69,
+    "buildStagesPassed": 9,
+    "hostEqual": true,
+    "embeddedVersionDocumentsVerified": true,
+    "sourceCommit": "af25bed0da8b3cedf5706a404dd3f33a8f7b45df",
+    "sourceTree": "8d862be384a63806ec76c23c5c4ee604f94321e9"
+  },
+  "releaseQualification": {
+    "releaseRegression": "source-CI-passed-exact-final-package-lifecycle-pending",
+    "packageIntegrity": "passed-for-this-exact-main-artifact",
+    "consumerLifecycle": "pending-for-exact-0.11.3-bytes",
+    "humanAcceptance": "pending-not-carried-from-RC",
+    "freshReleaseAudit": "pending",
+    "releaseQualified": false,
+    "qualificationFileCreated": false,
+    "publicationAuthorityEnabled": false
+  },
+  "preservation": {
+    "activeIfxVersion": "0.11.0",
+    "activeIfxTrackedSourceClean": true,
+    "isolatedIfxPreparationUnchanged": true,
+    "prCandidatesRetained": true,
+    "existingNuGetVersionsUnchanged": true
+  },
+  "actions": {
+    "merged": true,
+    "localWorktreeFastForwarded": true,
+    "localProductExecuted": false,
+    "realIfxArchitectureTestsRun": false,
+    "ifxActivated": false,
+    "published": false,
+    "tagOrGitHubReleaseCreated": false
+  },
+  "next": [
+    "Qualify these exact five main candidate packages in isolated consumer/lifecycle fixtures and record host baselines",
+    "Obtain independent human Launcher/Workbench acceptance for these exact bytes; no prior-version waiver is inherited",
+    "Bind completed qualification, source CI and candidate identities through a reviewed follow-up change; preserve original candidate bytes",
+    "Obtain a fresh audit and separate publication authorization before enabling any release capability",
+    "After served-package verification, atomically bind IFX stable identities and run public-source-only clone acceptance; keep activation separate"
+  ]
+}

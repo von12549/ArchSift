@@ -2,10 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkWorkflow, parseWorkflow, stringify } from './nuget-release/workflow-policy.mjs';
+import { checkWorkflow, checkWorkflowForVersion, parseWorkflow, stringify } from './nuget-release/workflow-policy.mjs';
 import { sha256 } from './nuget-release/model.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const workflow = fs.readFileSync(path.join(root, '.github/workflows/publish-nuget.yml'), 'utf8');
+const activeWorkflow = fs.readFileSync(path.join(root, '.github/workflows/publish-nuget.yml'), 'utf8');
+checkWorkflowForVersion(activeWorkflow,'0.11.3');
+// Reuse the full mutation suite against the canonical version-normalized structure.
+const workflow=activeWorkflow.replaceAll('0.11.3','0.11.2').replaceAll('PUBLISH_0113','PUBLISH_0112');
 checkWorkflow(workflow);
 const mutations = [
  w => { delete w.jobs.preflight.steps[5].env.RELEASE_SWITCH; },

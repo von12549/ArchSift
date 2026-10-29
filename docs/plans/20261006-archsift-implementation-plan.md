@@ -1,3 +1,9 @@
+## 0.11.3 exact-main package and delegated Agent UI acceptance, 2026-10-30
+
+PR 43 merged at `af25bed0da8b3cedf5706a404dd3f33a8f7b45df`; all 13 main CI jobs passed. Exact main candidate artifact `12918368591` passed package integrity, a four-case synthetic consumer, installed-host/configured-source Init/Doctor, Launcher/Workbench first and repeated startup, safe shutdown and host/configuration reuse checks. The user explicitly delegated UI acceptance to Codex and skipped independent human UI review. Human execution remains false; no human score is claimed. [Authoritative acceptance](../acceptance/20261030-0113-final-package-agent-ui.json) and [updated release plan](20261030-0113-release-ifx-integration.md) retain the generic IFX startup-template limitation and all scope exclusions.
+
+The local release-tooling follow-up adds source/package-bound Agent evidence as a distinct 0.11.3 acceptance route; 242 safety simulations pass. It does not change package bytes, release environment approval, publication switches or active IFX. Final reference binding, review/CI of this follow-up, fresh audit and credential-free preview remain pending. No public publication, IFX activation or real IFX architecture test occurred. Historical checkpoints below retain their original identities and outcomes.
+
 ## 0.11.3 source commit and CI packaging correction, 2026-10-30
 
 The user authorized continuation. Frozen source was committed as `73e95f429035b13eb6d047bfea1a9c7369a82271` with preserved human authorship and Codex attribution, pushed on an isolated branch, and submitted as [draft PR 43](https://github.com/von12549/ArchSift/pull/43). The 58-file commit matches the frozen source after Git normalization. CI produced a clean unpublished PR candidate; its merge-preview tree matches the reviewed head.

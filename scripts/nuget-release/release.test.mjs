@@ -199,7 +199,7 @@ function runWiredInputVerification({mode='publish',switchValue='true',omitSwitch
   for(const name of ['RELEASE_SWITCH','RELEASE_ARTIFACT_ID','RELEASE_ARTIFACT_SHA256','GH_TOKEN','GITHUB_OUTPUT'])delete child[name];
   const stepEnv={...parseWorkflow(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8')).jobs.preflight.steps[5].env};
   if(omitSwitch)delete stepEnv.RELEASE_SWITCH;
-  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN','${{ vars.ARCHSIFT_NUGET_PUBLISH_0112 }}':switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
+  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN','${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}':switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
   for(const [name,expression]of Object.entries(stepEnv)){assert.ok(Object.hasOwn(bindings,expression),'Unknown step binding');child[name]=bindings[expression];}
   changeEnv(child);
   const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-artifact-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),'verify-preview'],{cwd:root,env:child,encoding:'utf8',timeout:20000});
