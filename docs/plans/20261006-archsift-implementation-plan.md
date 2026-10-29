@@ -1,3 +1,9 @@
+## 0.11.3 source commit and CI packaging correction, 2026-10-30
+
+The user authorized continuation. Frozen source was committed as `73e95f429035b13eb6d047bfea1a9c7369a82271` with preserved human authorship and Codex attribution, pushed on an isolated branch, and submitted as [draft PR 43](https://github.com/von12549/ArchSift/pull/43). The 58-file commit matches the frozen source after Git normalization. CI produced a clean unpublished PR candidate; its merge-preview tree matches the reviewed head.
+
+Independent archive review then rejected that candidate: its five 0.11.3 packages contain the shared 0.11.2 README. The workspace package builder now selects version-specific README and notes and verifies both embedded hashes before recording build success. Syntax and four actual-guard simulations pass. Product freeze `0113-source-review-20261030-02` replaces the first product freeze for this scoped correction; original source/package evidence and isolated IFX preparation remain preserved. Corrected CI/artifact acceptance is pending. See [the correction record](../acceptance/20261030-0113-source-ci-documentation-correction.json). No main merge, NuGet publication, real IFX gate or configuration activation is performed by this checkpoint.
+
 ## 0.11.3 source freeze and review, 2026-10-30
 
 The user authorized source freeze and review. The scoped review identified no new blocking code defect and corrected one stale release-note statement. Sixteen static consistency/preservation checks passed; prior qualification evidence, five local packages, accepted RC inputs and the isolated IFX preparation were rehashed. Separate external source archives, inventories and a proposed commit path scope define freeze `0113-source-review-20261030-01`. This is a byte snapshot of uncommitted source, not a Git commit/tag or release qualification. See [the review record](../acceptance/20261030-0113-source-freeze-review.json).

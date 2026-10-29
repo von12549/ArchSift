@@ -1,5 +1,11 @@
 # ArchSift 0.11.3 and IFX integration preparation
 
+## Source commit and CI correction, 2026-10-30
+
+The authorized continuation committed the first freeze as `73e95f429035b13eb6d047bfea1a9c7369a82271` and opened [draft PR 43](https://github.com/von12549/ArchSift/pull/43). Its clean PR package build passed, but independent ZIP inspection found the shared 0.11.2 README in all five 0.11.3 packages. That artifact is rejected and retained. R13-03 therefore remains incomplete despite successful compilation.
+
+The package builder now requires and passes both version-specific documents and verifies their embedded hashes before recording success. Four simulations using the actual guard pass; syntax passes. The scoped correction is captured in replacement product freeze `0113-source-review-20261030-02`; the original freeze and isolated IFX source remain unchanged. See [the correction record](../acceptance/20261030-0113-source-ci-documentation-correction.json). Corrected PR CI and artifact review come next, followed by a distinct merge/main-build decision. The PR preview artifact is not an eligible actual-main publication artifact. Publication, final IFX binding, real IFX/architecture gates and activation remain pending.
+
 ## Source freeze and review, 2026-10-30
 
 Freeze `0113-source-review-20261030-01` captures the reviewed uncommitted product source and the separate IFX preparation. No new blocking code defect was identified; a stale pipeline-support statement in the current release notes was corrected before capture. Sixteen static consistency/preservation checks pass. The external freeze receipt binds complete source ZIPs, per-file SHA-256 inventories and the proposed commit path scope. See [the authoritative review](../acceptance/20261030-0113-source-freeze-review.json).

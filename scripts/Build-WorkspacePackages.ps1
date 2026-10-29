@@ -20,6 +20,9 @@ $commit=(& git -C $repo rev-parse HEAD).Trim();$tree=(& git -C $repo rev-parse '
 [xml]$props=Get-Content -LiteralPath (Join-Path $repo 'Directory.Build.props') -Raw
 $version=$props.SelectSingleNode('/Project/PropertyGroup/ArchSiftReleaseVersion').InnerText.Trim()
 if($version -notmatch '^\d+\.\d+\.\d+(?:-rc\.\d+)?$'){throw 'Explicit reviewed package version required.'}
+$readme=Join-Path $repo ('docs/releases/'+$version+'/README.md')
+$notes=Join-Path $repo ('docs/releases/'+$version+'/RELEASE_NOTES.md')
+foreach($document in @($readme,$notes)){if(-not(Test-Path -LiteralPath $document -PathType Leaf)){throw 'Version-specific package documentation is missing.'}}
 $dotnet=[IO.Path]::GetFullPath($DotnetPath)
 if(-not(Test-Path -LiteralPath $dotnet -PathType Leaf)){throw 'Explicit dotnet host missing.'}
 [IO.Directory]::CreateDirectory($output)|Out-Null
@@ -49,10 +52,20 @@ try{
  & (Join-Path $PSScriptRoot 'New-WebPayloadInventory.ps1') -PayloadRoot $web -ExpectedVersion $version -SourceCommit $commit
  $packages=Join-Path $output 'packages';[IO.Directory]::CreateDirectory($packages)|Out-Null
  foreach($project in @('Contracts','Core','ArchUnit','Testing','Cli')){
-  $arguments=@('pack',('src/ArchSift.'+$project+'/ArchSift.'+$project+'.csproj'),'--no-build','--no-restore','-c','Release','--output',$packages,('-p:SourceRevisionId='+$commit),('-p:ArchSiftWebPayloadRoot='+$web),('-p:ArchSiftPackageReleaseNotes='+(Join-Path $repo ('docs/releases/'+$version+'/RELEASE_NOTES.md'))))
+  $arguments=@('pack',('src/ArchSift.'+$project+'/ArchSift.'+$project+'.csproj'),'--no-build','--no-restore','-c','Release','--output',$packages,('-p:SourceRevisionId='+$commit),('-p:ArchSiftWebPayloadRoot='+$web),('-p:ArchSiftPackageReadme='+$readme),('-p:ArchSiftPackageReleaseNotes='+$notes))
   [void](Invoke-Dotnet ('pack-'+$project) $arguments)
  }
  $records=@(Get-ChildItem -LiteralPath $packages -File -Filter '*.nupkg'|ForEach-Object {@{file=$_.Name;length=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
  if($records.Count -ne 5){throw 'Expected the five matching product packages.'}
+ foreach($record in $records){
+  $archive=[IO.Compression.ZipFile]::OpenRead((Join-Path $packages $record.file))
+  try{
+   foreach($document in @(@{entry='README.md';path=$readme},@{entry='RELEASE_NOTES.md';path=$notes})){
+    $entry=$archive.GetEntry($document.entry);if($null -eq $entry){throw ('Package documentation is missing: '+$record.file+'/'+$document.entry)}
+    $stream=$entry.Open()
+    try{$actual=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream));$expected=(Get-FileHash -LiteralPath $document.path -Algorithm SHA256).Hash;if($actual -cne $expected){throw ('Package documentation differs from selected version: '+$record.file+'/'+$document.entry)}}finally{$stream.Dispose()}
+   }
+  }finally{$archive.Dispose()}
+ }
  Save 'package-build.json' @{schemaVersion=1;status=$(if($Development){'development-unqualified'}else{'built-qualification-pending'});version=$version;sourceCommit=$commit;sourceTree=$tree;sourceDirty=$dirty;sdk=$sdk;frameworkDependent=$true;distribution='NuGet-with-embedded-Web-and-project-template';publiclyPublished=$false;hostEqual=$true;packages=$records}
 }finally{Check-Host}
