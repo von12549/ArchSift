@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import { candidateInputs } from './candidate-inputs.mjs';
+import { checkReleaseProfile } from './profile.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -8,15 +9,14 @@ import { GitHubReader, boundedResponse } from './github.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const version = process.env.RELEASE_VERSION || '0.11.0';
-requireThat(['0.11.0','0.11.2'].includes(version), 'Unreviewed release profile');
+requireThat(['0.11.0','0.11.2','0.11.3'].includes(version), 'Unreviewed release profile');
 const policy = JSON.parse(fs.readFileSync(path.join(root, `docs/releases/${version}/publishing-activation.json`)));
-requireThat(policy.version === version && policy.originalReference === `docs/releases/${version}/trusted-publishing-reference.json`, 'Reference/profile differs');
-requireThat(version !== '0.11.2' || policy.state === 'FINAL_IDENTITIES_FROZEN', 'Final 0.11.2 identities not frozen');
+checkReleaseProfile(policy, version);
 const originalReferenceBytes = fs.readFileSync(path.join(root, policy.originalReference));
 requireThat(sha256(originalReferenceBytes) === policy.originalReferenceSha256, 'Immutable original reference changed');
 const reference = JSON.parse(originalReferenceBytes);
 requireThat(reference.version === version, 'Reference version differs from selected profile');
-if (version === '0.11.2') checkQualification(fs.readFileSync(path.join(root, 'docs/releases/0.11.2/qualification.json')), reference);
+if (version !== '0.11.0') checkQualification(fs.readFileSync(path.join(root, `docs/releases/${version}/qualification.json`)), reference);
 const e = process.env;
 const base = 'repos/von12549/ArchSift/';
 const gh = new GitHubReader(e.GH_TOKEN);
@@ -56,7 +56,7 @@ async function validateContext() {
   checkEnvironment(await gh.json(`${base}environments/${policy.environment}`), await gh.json(`${base}environments/${policy.environment}/deployment-branch-policies`), policy);
 }
 async function stagedInputs() {
-  if (version === '0.11.2') return candidateInputs({ gh, policy, reference, context:c, root });
+  if (version !== '0.11.0') return candidateInputs({ gh, policy, reference, context:c, root });
   const tree = await gh.json(`${base}git/trees/${c.dataCommit}?recursive=1`);
   const names = [...reference.packages.map(p => p.file), 'release-request.json', 'package-payload-manifest.json'].sort();
   requireThat(tree.truncated === false && tree.tree.length === names.length && tree.tree.every(f => f.type === 'blob' && f.mode === '100644') && JSON.stringify(tree.tree.map(f => f.path).sort()) === JSON.stringify(names), 'Data-only tree allowlist differs');

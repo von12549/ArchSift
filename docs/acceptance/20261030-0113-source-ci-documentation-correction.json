@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-0113-source-ci-documentation-correction",
+  "date": "2026-10-30",
+  "status": "correction-reviewed-and-refrozen-ci-rebuild-pending",
+  "pullRequest": "https://github.com/von12549/ArchSift/pull/43",
+  "initialSourceCommit": "73e95f429035b13eb6d047bfea1a9c7369a82271",
+  "initialSourceTree": "848e9ee86a441e415a721c5b227c8e4a780533c4",
+  "initialFreezeId": "0113-source-review-20261030-01",
+  "replacementProductFreezeId": "0113-source-review-20261030-02",
+  "finding": {
+    "priority": 1,
+    "scope": "package documentation, not runtime behavior",
+    "runId": 40919491177,
+    "artifactId": 12918315635,
+    "artifactSha256": "0e8369eaf4ba9bb8a8e4be1c7c7f7acce5c1d4cccb88c2895aac480bb2d9300b",
+    "buildSourceCommit": "1d615e492edb2c78dd509e1c3e074779156a892d",
+    "buildSourceTreeMatchesReviewedHead": true,
+    "description": "The clean PR candidate build succeeded but packed the shared 0.11.2 README into the five 0.11.3 packages. Build-WorkspacePackages selected version-specific release notes but omitted ArchSiftPackageReadme. Independent artifact review rejected the candidate.",
+    "disposition": "Rejected for release qualification; preserve original artifact and build records."
+  },
+  "correction": {
+    "file": "scripts/Build-WorkspacePackages.ps1",
+    "changes": ["Require version-specific README and release notes before SDK execution", "Pass both exact documentation paths to every pack invocation", "Verify the embedded README and release notes hashes in all five packages before writing a successful package-build receipt"],
+    "runtimeCodeChanged": false,
+    "validation": {"powershellSyntax": "passed", "actualGuardSimulationsPassed": 4, "positiveCases": ["exact version-specific documents"], "negativeCases": ["old-version README", "missing README", "changed release notes"], "guardExtractedFromCurrentBuildScript": true, "newCiCandidateVerification": "pending"}
+  },
+  "authorization": "The user authorized continuation after source freeze, including source commit and source CI. The discovered packaging defect is corrected within that scope; publication, real IFX gates and activation remain separate.",
+  "preservation": {"originalFreezePreserved": true, "originalCandidateArtifactPreserved": true, "acceptedRcUnchanged": true, "isolatedIfxPreparationUnchanged": true, "activeIfxVersion": "0.11.0", "publicationCapabilitiesClosed": true},
+  "evidenceRoot": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\source-ci-0113-20261030",
+  "remaining": ["corrected PR source CI and package artifact review", "merge decision and fresh actual-main CI/candidate build", "final package qualification and human review", "fresh audit and separate publication authorization", "final IFX public bindings and clone acceptance", "separate existing-machine activation"],
+  "releaseQualified": false,
+  "publiclyPublished": false
+}

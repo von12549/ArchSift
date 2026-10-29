@@ -1,0 +1,11 @@
+# N01 missing explicit host: retained-evidence review
+
+Recorded 2026-10-30 (Australia/Sydney). **N01 passes on retained evidence after correcting the acceptance harness.** The original harness attempt remains failed-checks and is not rewritten as a successful runner execution.
+
+The disposable IFX entry exited 1 with `Selected dotnet executable is missing; no fallback.` The checker incorrectly expected `Selected .NET host is missing; no fallback.` Seven other checks were true: nonzero rejection, missing executable still absent, disposable storage empty, no prepared-success output, unchanged original/copied inputs, unchanged accepted configuration and host equality. This discrepancy was introduced by the agent-authored checker. The delivered source/hash and raw stderr confirm the actual rejection is correct.
+
+A separate v2 script changes only the expected-message regex to match the hash-bound delivered entry. The original v1 script (b9ee2877f90fbfdc578652e3cc27d4c72d63a937ab243c6add7d7f6bf33c0ad6) and all six original evidence files are preserved. V2 SHA-256 is fed94885601db2207e5170e66d7cd3d92dc96b1d1ef1734b23bceeb7579bef76. Syntax validation and seven retained-log/string regression cases passed: actual stderr, exact literal and wrapped literal match; obsolete wording, unrelated package failure, generic child failure and empty log do not. This is not a weakened any-error criterion.
+
+The review records all eight acceptance conditions satisfied by the original attempt. No new IFX entry, dotnet, restore, product or architecture test was executed; no fixture reset, source repair, package/configuration change, activation, commit or publication was needed. State/hash checks remain original operator-generated evidence; the agent did not inspect the remote filesystem live. No ordinary operation closeout is expected because rejection precedes revision initialization.
+
+N01 is closed; do not rerun merely to replace failed historical evidence. Use v2 only for a separately needed future repetition. Other negative cases, including missing/tampered packages and state/configuration/occupancy failures, remain pending and must retain the disposable-fixture boundary. The accepted Launcher/Doctor/Workbench evidence is unaffected.

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-0113-release-ifx-preparation",
+  "date": "2026-10-30",
+  "status": "source-synchronized-and-CI-metadata-prepared-static-and-simulation-passed",
+  "formalAdoptionReady": false,
+  "publicReleaseReady": false,
+  "product": {
+    "sourceVersion": "0.11.3",
+    "head": "68f225172ebd2fafd056587015ec37573652b6b3",
+    "sourceDirty": true,
+    "sourceCommitForFinalPackages": null,
+    "synchronization": {
+      "status": "fast-forwarded-with-local-repairs-preserved",
+      "head": "68f225172ebd2fafd056587015ec37573652b6b3",
+      "base": "91cd73adc85a4da8f79fffa04ad834c870d78d07",
+      "unchangedLocalFiles": [
+        "Directory.Build.props",
+        "docs/acceptance/20261029-ifx-host-online-repair.json",
+        "docs/acceptance/20261030-ifx-formal-adoption-readiness.json",
+        "docs/acceptance/20261030-ifx-formal-adoption-readiness.md",
+        "docs/acceptance/20261030-ifx-host-N01-harness-correction.md",
+        "docs/acceptance/20261030-ifx-host-N02-acceptance.md",
+        "docs/acceptance/20261030-ifx-host-N02-preparation.md",
+        "docs/acceptance/20261030-ifx-host-N03-acceptance.md",
+        "docs/acceptance/20261030-ifx-host-N03-preparation.md",
+        "docs/acceptance/20261030-ifx-host-N04-N06-acceptance.md",
+        "docs/acceptance/20261030-ifx-host-N04-N06-preparation.md",
+        "docs/acceptance/20261030-ifx-host-archive-verification.md",
+        "docs/acceptance/20261030-ifx-host-doctor-acceptance.md",
+        "docs/acceptance/20261030-ifx-host-two-machine-acceptance.md",
+        "docs/acceptance/20261030-ifx-host-workbench-first-acceptance.md",
+        "docs/acceptance/20261030-ifx-host-workbench-repeat-acceptance.md",
+        "docs/guides/ifx-host-configured-workspace.md",
+        "docs/plans/20261029-ifx-host-online-repair.md",
+        "docs/releases/0.11.3-rc.1/IFX_ACCEPTANCE_PLAN.md",
+        "docs/releases/0.11.3-rc.1/README.md",
+        "docs/releases/0.11.3-rc.1/RELEASE_NOTES.md",
+        "src/ArchSift.ArchUnit/packages.lock.json",
+        "src/ArchSift.Cli/Workspace/WorkspaceService.cs",
+        "src/ArchSift.Cli/Workspace/WorkspaceSettings.cs",
+        "src/ArchSift.Cli/packages.lock.json",
+        "src/ArchSift.Setup/packages.lock.json",
+        "src/ArchSift.TestGate/packages.lock.json",
+        "src/ArchSift.Testing/packages.lock.json",
+        "src/ArchSift.Web/packages.lock.json",
+        "tests/ArchSift.ArchitectureTests/packages.lock.json",
+        "tests/ArchSift.IntegrationTests/IfxWorkspacePolicyTests.cs",
+        "tests/ArchSift.IntegrationTests/packages.lock.json",
+        "tests/ArchSift.Testing.Tests/packages.lock.json",
+        "tests/ArchSift.UnitTests/packages.lock.json"
+      ],
+      "planMergedFromBackedUpPrefix": true,
+      "commitCreated": false,
+      "hooksExecuted": false
+    },
+    "versionEdits": {
+      "sourceVersion": "0.11.3",
+      "built": false,
+      "method": "static-project-reference-edge-update-only",
+      "lockChanges": [
+        {
+          "path": "src/ArchSift.ArchUnit/packages.lock.json",
+          "projectVersionEdges": 1
+        },
+        {
+          "path": "src/ArchSift.Cli/packages.lock.json",
+          "projectVersionEdges": 4
+        },
+        {
+          "path": "src/ArchSift.Setup/packages.lock.json",
+          "projectVersionEdges": 1
+        },
+        {
+          "path": "src/ArchSift.TestGate/packages.lock.json",
+          "projectVersionEdges": 3
+        },
+        {
+          "path": "src/ArchSift.Testing/packages.lock.json",
+          "projectVersionEdges": 2
+        },
+        {
+          "path": "src/ArchSift.Web/packages.lock.json",
+          "projectVersionEdges": 5
+        },
+        {
+          "path": "tests/ArchSift.ArchitectureTests/packages.lock.json",
+          "projectVersionEdges": 2
+        },
+        {
+          "path": "tests/ArchSift.IntegrationTests/packages.lock.json",
+          "projectVersionEdges": 10
+        },
+        {
+          "path": "tests/ArchSift.Testing.Tests/packages.lock.json",
+          "projectVersionEdges": 4
+        },
+        {
+          "path": "tests/ArchSift.UnitTests/packages.lock.json",
+          "projectVersionEdges": 2
+        }
+      ],
+      "thirdPartyPackageIdentitiesChanged": false,
+      "realRestoreExecuted": false
+    },
+    "releaseProfile": "docs/releases/0.11.3/publishing-activation.json",
+    "activePublishingWorkflowChanged": false,
+    "newDriverProfileEnabled": false
+  },
+  "ifx": {
+    "preparationRoot": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\ifx-0.11.3-integration-preparation",
+    "preservedRcRoot": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\ifx-host-0.11.3-rc.1-candidate",
+    "cloneBaseline": "3e330fd9d651b2b43fe4d4e2f27099a141705892",
+    "targetVersion": "0.11.3",
+    "executableVersion": "0.11.3-rc.1",
+    "finalPublicIdentities": null,
+    "ciStaticVersionConflictResolved": true,
+    "completeOfflineSourceQualified": false,
+    "runnerConfigured": false,
+    "actualCiExecuted": false,
+    "defaultHostRuntimePolicyChanged": false,
+    "active0110Changed": false
+  },
+  "validation": {
+    "staticChecks": 31,
+    "staticPassed": true,
+    "metadataSimulationCases": 19,
+    "simulationPassed": true,
+    "powershellFilesParsed": 6,
+    "syntaxPassed": true,
+    "scope": "metadata, source hashes, lock structure, YAML and PowerShell parsing only"
+  },
+  "previousAcceptance": {
+    "rcLifecycleAndN01N06": "preserved-for-original-inputs",
+    "newFinalBytesQualified": false,
+    "negativeGroupsReopened": false
+  },
+  "remaining": [
+    "final-source-build-and-package-identity",
+    "synthetic-product-regression-for-final-source",
+    "0113-release-pipeline-profile-review",
+    "final-identity-qualification-and-audit",
+    "separate-publication-authorization",
+    "public-served-package-binding-in-IFX",
+    "runner-resource-configuration-and-separately-authorized-CI",
+    "fresh-clone-public-source-acceptance",
+    "separate-existing-machine-activation-decision"
+  ],
+  "execution": {
+    "gitFetchExecuted": true,
+    "gitFastForwardExecuted": true,
+    "hooksExecuted": false,
+    "dotnetExecuted": false,
+    "restoreExecuted": false,
+    "buildExecuted": false,
+    "packagesBuilt": false,
+    "productExecuted": false,
+    "realIntegrationExecuted": false,
+    "architectureTestsExecuted": false,
+    "configurationSwitched": false,
+    "commitCreated": false,
+    "pullRequestCreated": false,
+    "published": false
+  },
+  "evidenceRoot": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\release-0.11.3-preparation-20261030"
+}

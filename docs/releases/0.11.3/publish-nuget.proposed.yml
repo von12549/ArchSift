@@ -1,0 +1,208 @@
+name: ArchSift NuGet release (manual approval required)
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Preflight by default; preview is credential-free; publish needs switch and human approval
+        type: choice
+        options:
+          - preflight
+          - preview
+          - publish
+        default: preflight
+      workflow_sha:
+        description: Future reviewed main commit (empty for preflight)
+        type: string
+        default: ""
+      data_commit:
+        description: Future immutable data-only commit (empty for preflight)
+        type: string
+        default: ""
+      request_sha256:
+        description: Future approved request digest (empty for preflight)
+        type: string
+        default: ""
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+concurrency:
+  group: archsift-nuget-0.11.3
+  cancel-in-progress: false
+env:
+  RELEASE_VERSION: '0.11.3'
+  RELEASE_MODE: ${{ inputs.mode }}
+  RELEASE_WORKFLOW_SHA: ${{ inputs.workflow_sha }}
+  RELEASE_DATA_COMMIT: ${{ inputs.data_commit }}
+  RELEASE_REQUEST_SHA256: ${{ inputs.request_sha256 }}
+jobs:
+  preflight:
+    if: github.repository == 'von12549/ArchSift' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      publish_ready: ${{ steps.prepare.outputs.publish_ready }}
+      has_inputs: ${{ steps.prepare.outputs.has_inputs }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+      artifact_sha256: ${{ steps.upload.outputs.artifact-digest }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install locked release parsers without lifecycle scripts
+        run: npm ci --prefix scripts/nuget-release --ignore-scripts --no-audit --no-fund
+      - name: Verify source, CI, protected environment and closed authority
+        id: prepare
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SWITCH: ${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          . ./scripts/HostState.ps1
+          $before = Get-ArchSiftHostHash
+          try {
+            & node ./scripts/nuget-release/driver.mjs prepare
+            if ($LASTEXITCODE -ne 0) { throw 'Release preparation gate failed' }
+          } finally {
+            if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift; no repair performed' }
+          }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        id: upload
+        if: steps.prepare.outputs.has_inputs == 'true'
+        with:
+          name: archsift-0.11.3-reviewed-submissions
+          path: ${{ runner.temp }}/archsift-release-inputs
+          if-no-files-found: error
+          retention-days: 7
+      - name: Record immutable artifact identity for operator review
+        if: steps.prepare.outputs.has_inputs == 'true'
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          ARTIFACT_SHA256: ${{ steps.upload.outputs.artifact-digest }}
+        run: printf '%s\n' "Artifact ID=$ARTIFACT_ID SHA256=$ARTIFACT_SHA256" >> "$GITHUB_STEP_SUMMARY"
+      - name: Independently verify reviewed input ZIP before any approval
+        if: steps.prepare.outputs.has_inputs == 'true'
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          RELEASE_ARTIFACT_SHA256: ${{ steps.upload.outputs.artifact-digest }}
+          RELEASE_SWITCH: ${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          . ./scripts/HostState.ps1
+          $before = Get-ArchSiftHostHash
+          try {
+            & node ./scripts/nuget-release/driver.mjs verify-preview
+            if ($LASTEXITCODE -ne 0) { throw 'Preview artifact verification failed' }
+          } finally {
+            if ((Get-ArchSiftHostHash) -cne $before) { throw 'Host drift; no repair performed' }
+          }
+  audit:
+    needs: preflight
+    if: needs.preflight.outputs.has_inputs == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      artifact_id: ${{ steps.audit-upload.outputs.artifact-id }}
+      artifact_sha256: ${{ steps.audit-upload.outputs.artifact-digest }}
+    env:
+      RELEASE_ARTIFACT_ID: ${{ needs.preflight.outputs.artifact_id }}
+      RELEASE_ARTIFACT_SHA256: ${{ needs.preflight.outputs.artifact_sha256 }}
+      RELEASE_SWITCH: ${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install locked release parsers without lifecycle scripts
+        run: npm ci --prefix scripts/nuget-release --ignore-scripts --no-audit --no-fund
+      - name: Bind verified original inputs to credential-free audit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node ./scripts/nuget-release/driver.mjs prepare-audit
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: |
+            10.0.303
+            10.0.402
+            9.0.314
+            8.0.x
+      - name: Audit original package source with fresh official advisory data
+        shell: pwsh -NoProfile -NonInteractive -File {0}
+        run: "& ./scripts/Invoke-HostedReleaseAudit.ps1"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        id: audit-upload
+        if: always()
+        with:
+          name: archsift-0.11.3-prepublication-audit
+          path: ${{ runner.temp }}/archsift-audit-report
+          if-no-files-found: warn
+          retention-days: 7
+  publish:
+    needs:
+      - preflight
+      - audit
+    if: github.repository == 'von12549/ArchSift' && github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.mode == 'publish' && needs.preflight.outputs.publish_ready == 'true' && vars.ARCHSIFT_NUGET_PUBLISH_0113 == 'true' && needs.audit.result == 'success'
+    environment: nuget-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      id-token: write
+    env:
+      RELEASE_ARTIFACT_ID: ${{ needs.preflight.outputs.artifact_id }}
+      RELEASE_ARTIFACT_SHA256: ${{ needs.preflight.outputs.artifact_sha256 }}
+      RELEASE_SWITCH: ${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}
+      RELEASE_AUDIT_ARTIFACT_ID: ${{ needs.audit.outputs.artifact_id }}
+      RELEASE_AUDIT_ARTIFACT_SHA256: ${{ needs.audit.outputs.artifact_sha256 }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install locked release parsers without lifecycle scripts
+        run: npm ci --prefix scripts/nuget-release --ignore-scripts --no-audit --no-fund
+      - name: Revalidate exact artifact, main, rules and version absence before login
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node ./scripts/nuget-release/driver.mjs validate-artifact
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 10.0.303
+      - uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841
+        id: login
+        with:
+          user: XiaolongFeng
+          audience: https://www.nuget.org
+          token-service-url: https://www.nuget.org/api/v2/token
+      - name: Publish original submissions sequentially; stop on uncertain outcome
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: node ./scripts/nuget-release/driver.mjs publish
+  public-verification:
+    needs:
+      - preflight
+      - publish
+    if: needs.publish.result == 'success' && inputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_ARTIFACT_ID: ${{ needs.preflight.outputs.artifact_id }}
+      RELEASE_ARTIFACT_SHA256: ${{ needs.preflight.outputs.artifact_sha256 }}
+      RELEASE_SWITCH: ${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install locked release parsers without lifecycle scripts
+        run: npm ci --prefix scripts/nuget-release --ignore-scripts --no-audit --no-fund
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 10.0.303
+      - name: Verify anonymous served signatures, owners and all payload bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node ./scripts/nuget-release/driver.mjs verify-public

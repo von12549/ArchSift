@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "kind": "ifx-formal-adoption-readiness-review",
+  "date": "2026-10-30",
+  "timezone": "Australia/Sydney",
+  "status": "not-ready-for-formal-adoption",
+  "technicalCandidateAcceptedWithinReviewedScope": true,
+  "formalAdoptionReady": false,
+  "publicSourceOnlyCloneReady": false,
+  "candidateVersion": "0.11.3-rc.1",
+  "suggestedStableVersion": "0.11.3",
+  "stableVersionAssignedByThisReview": false,
+  "ifxRemoteMain": "3e330fd9d651b2b43fe4d4e2f27099a141705892",
+  "productRepairBase": "91cd73adc85a4da8f79fffa04ad834c870d78d07",
+  "productRemoteMain": "68f225172ebd2fafd056587015ec37573652b6b3",
+  "sourceMetadataIsPointInTime": true,
+  "inputHashChecks": {
+    "passed": true,
+    "count": 23,
+    "evidence": "static-input-review.json"
+  },
+  "publicPackageAvailability": {
+    "kind": "read-only-NuGet-version-probe",
+    "results": [
+      {
+        "packageId": "ArchSift.Cli",
+        "url": "https://api.nuget.org/v3-flatcontainer/archsift.cli/index.json",
+        "checkedUtc": "2026-10-29T15:56:53.717839+00:00",
+        "httpStatus": 200,
+        "versions": [
+          "0.11.0",
+          "0.11.2"
+        ]
+      },
+      {
+        "packageId": "ArchSift.Contracts",
+        "url": "https://api.nuget.org/v3-flatcontainer/archsift.contracts/index.json",
+        "checkedUtc": "2026-10-29T15:56:53.718334+00:00",
+        "httpStatus": 200,
+        "versions": [
+          "0.11.0",
+          "0.11.2"
+        ]
+      },
+      {
+        "packageId": "ArchSift.Core",
+        "url": "https://api.nuget.org/v3-flatcontainer/archsift.core/index.json",
+        "checkedUtc": "2026-10-29T15:56:53.718666+00:00",
+        "httpStatus": 200,
+        "versions": [
+          "0.11.0",
+          "0.11.2"
+        ]
+      },
+      {
+        "packageId": "ArchSift.ArchUnit",
+        "url": "https://api.nuget.org/v3-flatcontainer/archsift.archunit/index.json",
+        "checkedUtc": "2026-10-29T15:56:53.735367+00:00",
+        "httpStatus": 200,
+        "versions": [
+          "0.11.0",
+          "0.11.2"
+        ]
+      },
+      {
+        "packageId": "ArchSift.Testing",
+        "url": "https://api.nuget.org/v3-flatcontainer/archsift.testing/index.json",
+        "checkedUtc": "2026-10-29T15:56:53.750533+00:00",
+        "httpStatus": 200,
+        "versions": [
+          "0.11.0",
+          "0.11.2"
+        ]
+      }
+    ]
+  },
+  "negativeScope": {
+    "groups": [
+      "N01",
+      "N02",
+      "N03",
+      "N04",
+      "N05",
+      "N06"
+    ],
+    "completeWithinReviewedScope": true,
+    "remainingGroupCount": 0,
+    "limits": [
+      "N01 checker-correction history retained",
+      "N05 covers IFX operation lock",
+      "N06 uses reconstructed caches"
+    ]
+  },
+  "offlineQualification": "optional-skipped-not-a-readiness-blocker",
+  "migrationRequiredForFreshClone": false,
+  "existingMachineActivation": "separate-future-decision",
+  "blockers": [
+    {
+      "id": "R01",
+      "category": "qualified-public-product-version",
+      "status": "open",
+      "closure": "Stabilize the repaired source against current upstream, prepare a new release profile and qualify all five final public packages."
+    },
+    {
+      "id": "R02",
+      "category": "ifx-git-integration-and-public-identity",
+      "status": "open",
+      "closure": "Integrate repository-carried configuration and bind exact public package identities, hashes, signatures and locks without CandidateSource."
+    },
+    {
+      "id": "R03",
+      "category": "architecture-ci-input-compatibility",
+      "status": "open",
+      "closure": "Resolve the strict 0.11.2 offline source manifest versus 0.11.3-rc.1 gate mismatch and review required CI qualification separately."
+    },
+    {
+      "id": "R04",
+      "category": "current-default-documentation",
+      "status": "open",
+      "closure": "Document installed-host online startup and prerequisites; distinguish historical offline architecture workflows and acceptance checkpoints."
+    },
+    {
+      "id": "R05",
+      "category": "final-public-source-only-clone-acceptance",
+      "status": "open",
+      "closure": "Validate a fresh clone against final served packages with empty state/cache and no overlay or external candidate source."
+    }
+  ],
+  "ciCompatibility": {
+    "kind": "ifx-static-architecture-ci-compatibility-review",
+    "status": "incompatible-approved-package-inputs",
+    "gateVersion": "0.11.3-rc.1",
+    "requiredCliFile": "ArchSift.Cli.0.11.3-rc.1.nupkg",
+    "requiredCliInApprovedSource": false,
+    "approvedPackageCount": 251,
+    "approvedArchSiftFiles": [
+      "ArchSift.ArchUnit.0.11.2.nupkg",
+      "ArchSift.Cli.0.11.2.nupkg",
+      "ArchSift.Contracts.0.11.2.nupkg",
+      "ArchSift.Core.0.11.2.nupkg",
+      "ArchSift.Testing.0.11.2.nupkg"
+    ],
+    "extraPackagesRejected": true,
+    "workflowTriggers": [
+      "pull_request:main",
+      "push:main"
+    ],
+    "staticInferenceOnly": true,
+    "ciExecuted": false,
+    "runnerContentsInspected": false,
+    "branchProtectionInspected": false,
+    "inputs": [
+      {
+        "path": ".github/workflows/fa05-candidate.yml",
+        "sha256": "da92dc22eaca65cd0bd12e825219c205b74142a14e4d07dbc8100608dbcc7d2f"
+      },
+      {
+        "path": "eng/Invoke-Sp04CandidateCi.ps1",
+        "sha256": "48452cc5e202693ab0ac1c3f8c8173fab8b37f9e81d35bc8c093b7b8444b7a3b"
+      },
+      {
+        "path": "eng/New-PackageSourceConfig.ps1",
+        "sha256": "5c3dcf4f9d9a4ebdf20cf40df478ba803db1d32521970ab323d21744d4e85b9b"
+      },
+      {
+        "path": "eng/Test-Architecture.ps1",
+        "sha256": "3385fd2f4ec2bcef11ddffd3bb5d243374798006c0b6066c5d93111d3d30ab90"
+      },
+      {
+        "path": "architecture/package-source.json",
+        "sha256": "1232e78c39fdb93b0c5f5618520a294bf84e46ae513612260838e18d30600f57"
+      },
+      {
+        "path": "architecture/portable-gate.json",
+        "sha256": "c7598a519921d2656192f73ac59d193c973be33c401b13fcbb74d3ab7eae37c0"
+      }
+    ]
+  },
+  "recommendedNextPackage": "product-release-and-IFX-integration-preparation",
+  "nextPackageAuthorizedByThisReview": false,
+  "evidenceRoot": "C:\\Users\\von12\\.codex\\visualizations\\2026\\10\\27\\01a17b40-c2aa-76b3-9ad8-af61e115451f\\ifx-adoption-readiness-20261030",
+  "evidenceManifest": "evidence-manifest.json",
+  "execution": {
+    "readOnlySourceAndPackageInspection": true,
+    "remoteMetadataRead": true,
+    "documentationAndEvidenceWritten": true,
+    "dotnetExecuted": false,
+    "restoreExecuted": false,
+    "productExecuted": false,
+    "realIntegrationExecuted": false,
+    "architectureTestsExecuted": false,
+    "configurationSwitched": false,
+    "migrationExecuted": false,
+    "activationPerformed": false,
+    "commitCreated": false,
+    "pullRequestCreated": false,
+    "published": false
+  }
+}

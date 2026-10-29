@@ -11,7 +11,8 @@ export function exactKeys(value, keys) {
   assert.deepEqual(Object.keys(value).sort(), [...keys].sort(), 'Unexpected or missing fields');
 }
 export function checkReference(r) {
-  requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
+  requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2','0.11.3'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
+  if (r.version === '0.11.3') requireThat(r.sourceDirty === false, 'Final committed 0.11.3 source required');
   const h = r.humanAcceptance;
   const confirmed = h.status === 'passed-user-confirmed' && (r.version === '0.11.0' ? h.usabilityScore === 4 : h.finalIdentityConfirmed === true);
   const waived = r.version === '0.11.2' && h.status === 'explicit-user-approved-repeat-waiver' && h.finalIdentityConfirmed === false && sha(h.priorSourceCommit,40) && h.priorSourceCommit !== r.sourceCommit && sha(h.qualificationSha256,64) && h.qualificationSha256 === r.acceptedPreview?.acceptanceSha256 && JSON.stringify(h.waivedGates) === JSON.stringify(['final-independent-workbench-repeat','final-human-ui-repeat']);
@@ -21,10 +22,20 @@ export function checkReference(r) {
   requireThat(r.sourceCi.length === 2 && r.sourceCi[1].headSha === r.sourceCommit, 'Source CI binding missing');
 }
 export function checkQualification(bytes, reference) {
-  requireThat(reference.version === '0.11.2' && sha256(bytes) === reference.acceptedPreview.acceptanceSha256, 'Qualification digest differs');
+  requireThat(['0.11.2','0.11.3'].includes(reference.version) && sha256(bytes) === reference.acceptedPreview.acceptanceSha256, 'Qualification digest differs');
   const q = JSON.parse(bytes.toString('utf8'));
   requireThat(q.schemaVersion === 1 && q.version === reference.version && q.sourceCommit === reference.sourceCommit && q.sourceTree === reference.sourceTree, 'Qualification source differs');
   assert.deepEqual(q.packages,reference.packages,'Qualification packages differ');
+  if (reference.version === '0.11.3') {
+    checkReference(reference);
+    requireThat(q.status === 'ACCEPTED_0113_FINAL_SOURCE_AND_PACKAGE_SCOPE' && q.sourceDirty === false && q.finalPackageIdentityConfirmed === true, 'Final 0.11.3 qualification incomplete');
+    requireThat(q.humanAcceptance?.status === 'passed-user-confirmed' && q.humanAcceptance.finalIdentityConfirmed === true && sha(q.humanAcceptance.evidenceSha256,64), 'Final-byte human acceptance missing');
+    requireThat(!q.repeatWaiver, 'Prior release waivers do not authorize 0.11.3');
+    for (const lane of ['release-regression','package-integrity','consumer-lifecycle']) {
+      const evidence = q.evidence?.filter(e => e.lane === lane) ?? [];
+      requireThat(evidence.length === 1 && evidence[0].status === 'passed' && sha(evidence[0].reviewSha256,64), `Missing final qualification lane: ${lane}`);
+    }
+  }
   if (reference.humanAcceptance.status === 'explicit-user-approved-repeat-waiver') {
     const w=q.repeatWaiver;
     requireThat(q.status === 'ACCEPTED_WINDOWS_SCOPE_WITH_EXPLICIT_REPEAT_WAIVERS' && w.status === reference.humanAcceptance.status && w.finalSourceCommit === reference.sourceCommit && w.priorSourceCommit === reference.humanAcceptance.priorSourceCommit && w.finalIdentityConfirmed === false && w.finalByteHumanRerun === false && w.priorHumanEvidenceRetained === true && typeof w.authorization === 'string' && w.authorization.length > 0 && typeof w.residualRisk === 'string' && w.residualRisk.length > 0, 'Explicit scoped waiver binding differs');
