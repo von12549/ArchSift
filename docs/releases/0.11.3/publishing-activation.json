@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "version": "0.11.3",
   "state": "FINAL_IDENTITIES_FROZEN",
-  "authorizedPreparation": "User-authorized CI, final evidence binding, fresh audit and credential-free preview",
+  "authorizedPreparation": "Explicit user authorization for the five exact original 0.11.3 submissions, reviewed activation and fresh bound hosted transaction",
   "realAssetTransferEnabled": true,
-  "publicationEnabled": false,
+  "publicationEnabled": true,
   "repository": "von12549/ArchSift",
   "repositoryId": 1407069697,
   "ownerId": 2306937,
@@ -53,5 +53,5 @@
   },
   "auditMaxAgeHours": 24,
   "newInstaller": false,
-  "futureAuthorization": "Preview/audit transfer only. Public publication requires separate explicit authorization and protected environment approval. No operational switch is enabled."
+  "futureAuthorization": "Public publication authorized only for the hash-bound original packages through protected nuget-release approval and a fresh hosted transaction/audit. Restore the version-specific operational switch to its original absent state on completion or stop. IFX activation and tag/Release remain excluded."
 }
