@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using ArchSift.Contracts;
 using ArchSift.Core;
+using ArchSift.Testing;
 
 namespace ArchSift.Workspaces;
 
@@ -41,6 +42,38 @@ internal sealed record WorkspaceSettings(string File, string ProjectRoot, string
         if (string.IsNullOrWhiteSpace(path)) throw new ConfigurationException("An explicit nonempty path is required.");
         var full = Path.TrimEndingDirectorySeparator(relativeTo is null ? Path.GetFullPath(path) : Path.GetFullPath(path, relativeTo));
         PathSafety.EnsureNoLinks(full); return full;
+    }
+    internal static string[] RulePaths(WorkspaceSettings settings)
+    {
+        if (settings.Configuration.Workbench.PolicyFile is not { } policy)
+            return settings.Configuration.Workbench.Rulesets.Select(p => Canonical(p, Path.GetDirectoryName(settings.File))).ToArray();
+        if (settings.Configuration.Workbench.Rulesets.Length != 0)
+            throw new ConfigurationException("Choose a policy file or explicit rulesets, not both.");
+        var policyPath = Canonical(policy, Path.GetDirectoryName(settings.File));
+        if (!PathSafety.IsUnder(policyPath, settings.ProjectRoot))
+            throw new ConfigurationException("Project rules policy must be inside the project root.");
+        using var document = Read(policyPath);
+        var manifest = document.RootElement;
+        if (manifest.ValueKind != JsonValueKind.Object || !manifest.TryGetProperty("schemaVersion", out var schema) ||
+            schema.ValueKind != JsonValueKind.Number || !schema.TryGetInt32(out var schemaVersion) || schemaVersion != 1 ||
+            !manifest.TryGetProperty("rulesets", out var entries) || entries.ValueKind != JsonValueKind.Array || entries.GetArrayLength() == 0)
+            throw new ConfigurationException("Unsupported or empty project rules policy.");
+        var paths = new List<string>();
+        var seen = new HashSet<string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        foreach (var entry in entries.EnumerateArray())
+        {
+            if (entry.ValueKind != JsonValueKind.Object || !entry.TryGetProperty("path", out var pathValue) || pathValue.ValueKind != JsonValueKind.String ||
+                !entry.TryGetProperty("sha256", out var hashValue) || hashValue.ValueKind != JsonValueKind.String)
+                throw new ConfigurationException("Project rules policy requires path and sha256 for every ruleset.");
+            var relative = pathValue.GetString()!;
+            var expected = hashValue.GetString();
+            var resolved = PathSafety.Under(settings.ProjectRoot, relative);
+            if (!seen.Add(resolved) || expected is null || expected.Length != 64 || AssemblyArtifacts.FileHash(resolved) != expected)
+                throw new ConfigurationException("Duplicate project ruleset or project ruleset hash changed.");
+            paths.Add(resolved);
+        }
+        _ = ArchitectureTestAdapter.LoadCases(paths);
+        return paths.ToArray();
     }
     internal static WorkspaceSettings Load(string file, string? localFile = null)
     {
@@ -104,15 +137,26 @@ internal sealed record WorkspaceSettings(string File, string ProjectRoot, string
             throw new ConfigurationException("Use offline/allowNetwork=false or explicitly configured/allowNetwork=true.");
         if (config.Runtime.Mode is not ("host" or "approvedExact") || !Version.TryParse(config.Runtime.MinimumSdkVersion, out var minimum) || minimum < new Version(10, 0, 0))
             throw new ConfigurationException("Workspace requires a stable SDK >= 10.0.0; the minimum cannot weaken that floor.");
+        if (config.Runtime.MaximumSdkVersionExclusive is { } maximumText &&
+            (!Version.TryParse(maximumText, out var maximum) || maximum <= minimum))
+            throw new ConfigurationException("Workspace SDK maximum must exceed the minimum.");
         if (config.Workbench.Build.Mode != "existing" || config.Workbench.Build.AllowNetwork || config.Workbench.Build.Sources.Length != 0)
             throw new ConfigurationException("Workspace initialization uses existing-build mode; target build/restore is a separate explicit operation.");
         string? Resolve(string? path) => path is null ? null : Canonical(path, directory);
         var user = ContentHash.Text(Environment.UserDomainName + "\\" + Environment.UserName)[..16];
-        var stateBase = Canonical(config.State.Root, directory);
+        var localData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        if (config.State.Root is null && string.IsNullOrWhiteSpace(localData))
+            throw new ConfigurationException("Local application data is unavailable; supply an explicit external state root.");
+        var defaultState = Path.Combine(localData, "ArchSift", "state");
+        var stateBase = Canonical(config.State.Root ?? defaultState, directory);
         PathSafety.EnsureDisjoint(root, stateBase);
         var state = Canonical(Path.Combine(stateBase, "users", user, "projects", config.Project.Id!));
         foreach (var protectedRoot in ArchSift.Hosting.WebPayload.ProtectedHostRoots()) PathSafety.EnsureDisjoint(state, protectedRoot);
-        var settings = new WorkspaceSettings(file, root, state, ContentHash.Text(AssemblyArtifacts.FileHash(file) + "/" + localIdentity),
+        if (config.Workbench.PolicyFile is not null && config.Workbench.Rulesets.Length != 0)
+            throw new ConfigurationException("Choose a policy file or explicit rulesets, not both.");
+        var policyIdentity = config.Workbench.PolicyFile is { } policyFile
+            ? AssemblyArtifacts.FileHash(Canonical(policyFile, directory)) : "none";
+        var settings = new WorkspaceSettings(file, root, state, ContentHash.Text(AssemblyArtifacts.FileHash(file) + "/" + localIdentity + "/" + policyIdentity),
             config, Resolve(config.Nuget.ConfigFile), Resolve(config.Nuget.CacheDirectory), Resolve(config.Runtime.ApprovalFile),
             Resolve(config.Nuget.SourceApprovalFile), config.Gate is null ? null : Resolve(config.Gate.MetadataFile));
         foreach (var path in new[] { settings.Cache, settings.NugetConfig, settings.RuntimeApproval, settings.SourceApproval, settings.GateFile }.OfType<string>()) PathSafety.EnsureNoLinks(path);
@@ -135,6 +179,9 @@ internal sealed record WorkspaceSettings(string File, string ProjectRoot, string
             if (hostConfigured && (settings.NugetConfig is null || !System.IO.File.Exists(settings.NugetConfig)))
                 throw new ConfigurationException("Host/configured IFX workspace requires an explicit existing NuGet.Config; restore pinned dependencies before startup.");
         }
-        return settings;
+        var rules = RulePaths(settings);
+        var inputs = rules.Select(path => AssemblyArtifacts.FileHash(path)).Prepend(settings.ConfigIdentity)
+            .Append(settings.GateFile is { } gateIdentity ? AssemblyArtifacts.FileHash(gateIdentity) : "no-gate");
+        return settings with { ConfigIdentity = ContentHash.Text(string.Join("/", inputs)) };
     }
 }

@@ -16,7 +16,9 @@ public sealed record TestGateConfig
     public required string TargetFramework { get; init; }
     public required string Configuration { get; init; }
     public required string NuGetConfig { get; init; }
-    public required string LocalFeed { get; init; }
+    public string LocalFeed { get; init; } = "";
+    public string RestoreMode { get; init; } = "offline";
+    public string? DotnetPath { get; init; }
     public required string PackageCache { get; init; }
     public required string[] Rulesets { get; init; }
     public string OriginalBaseline { get; init; } = "";
@@ -36,6 +38,8 @@ public sealed record TestGateConfig
     public string? CaseMappingSha256 { get; init; }
     public string? RequiredCases { get; init; }
     public string? RequiredCasesSha256 { get; init; }
+    public string? MinimumSdkVersion { get; init; }
+    public string? MaximumSdkVersionExclusive { get; init; }
 }
 
 public sealed record GateStage(string Status, int? ExitCode, string? LogPath);
@@ -72,9 +76,24 @@ public static class TestGateService
         var runId = Guid.NewGuid().ToString("N");
         Validate(config);
         var root = Path.GetFullPath(config.TargetRoot);
+        if (config.DotnetPath is { } dotnetPath)
+        {
+            PathSafety.EnsureNoLinks(dotnetPath);
+            if (!File.Exists(dotnetPath)) throw new ConfigurationException("Explicit gate dotnet host is missing; no fallback.");
+            PathSafety.EnsureDisjoint(root, Path.GetDirectoryName(dotnetPath)!);
+        }
         if (config.ToolRoot is not null) PathSafety.EnsureDisjoint(root, config.ToolRoot);
         var project = Under(root, config.TestProject);
-        var nugetConfig = Under(root, config.NuGetConfig);
+        var nugetConfig = config.RestoreMode == "configured" ? Path.GetFullPath(config.NuGetConfig) : Under(root, config.NuGetConfig);
+        if (config.RestoreMode == "configured")
+        {
+            PathSafety.EnsureNoLinks(nugetConfig);
+            if (!File.Exists(nugetConfig) || new FileInfo(nugetConfig).Length > RuleLoader.MaximumJsonBytes)
+                throw new ConfigurationException("Configured NuGet.Config is missing or too large.");
+            var sources = System.Xml.Linq.XDocument.Load(nugetConfig).Root?.Element("packageSources");
+            if (sources?.Element("clear") is null || !sources.Elements("add").Any())
+                throw new ConfigurationException("Configured gate restore requires an explicit NuGet.Config with cleared, declared sources.");
+        }
         var portable = config.SchemaVersion == 2 ? RequiredCases.Load(config) : null;
         var baseline = portable is null ? Path.GetFullPath(config.OriginalBaseline) : Under(root, config.RequiredCases!);
         var runDirectory = Path.GetFullPath(config.RunDirectory);
@@ -101,9 +120,9 @@ public static class TestGateService
         }
         if (Directory.Exists(runDirectory) || File.Exists(runDirectory))
             throw new ConfigurationException("Run directory already exists.");
-        if (!Directory.Exists(config.LocalFeed)) throw new ConfigurationException("Offline package source is missing.");
+        if (config.RestoreMode == "offline" && !Directory.Exists(config.LocalFeed)) throw new ConfigurationException("Offline package source is missing.");
         if (!Directory.Exists(config.PackageCache)) throw new ConfigurationException("Package cache is missing.");
-        PathSafety.EnsureNoLinks(config.LocalFeed);
+        if (config.RestoreMode == "offline") PathSafety.EnsureNoLinks(config.LocalFeed);
         PathSafety.EnsureNoLinks(config.PackageCache);
         var baselineBytes = File.ReadAllBytes(baseline);
         if (ContentHash.Bytes(baselineBytes) != (portable is null ? config.OriginalBaselineSha256 : config.RequiredCasesSha256))
@@ -141,8 +160,9 @@ public static class TestGateService
             if (mapping is not null || portable is not null)
             {
                 var sdk = await Execute("sdk", "dotnet", ["--version"], root, runDirectory, config, configPath, token);
-                if (sdk.ExitCode != 0 || File.ReadAllText(sdk.LogPath!).Trim() != (portable?.Sdk ?? mapping!.Sdk))
-                    return Complete(Finish(4, "SDK does not match the approved case mapping."));
+                if (sdk.ExitCode != 0 || !AcceptsSelectedSdk(config, portable?.Sdk ?? mapping!.Sdk,
+                    File.ReadAllText(sdk.LogPath!).Trim()))
+                    return Complete(Finish(4, "Selected SDK does not satisfy the test gate SDK policy."));
             }
             restore = await Execute("restore", "dotnet",
                 restoreArguments, root, runDirectory, config, configPath, token);
@@ -272,7 +292,7 @@ public static class TestGateService
         string workdir, string runDirectory, TestGateConfig config, string configPath, CancellationToken token)
     {
         var hostBefore = config.SchemaVersion == 2 ? GateHostSafety.Capture() : null;
-        var start = new ProcessStartInfo(executable)
+        var start = new ProcessStartInfo(executable == "dotnet" && config.DotnetPath is not null ? config.DotnetPath : executable)
         {
             WorkingDirectory = workdir,
             UseShellExecute = false,
@@ -281,6 +301,16 @@ public static class TestGateService
             CreateNoWindow = true
         };
         foreach (var arg in args) start.ArgumentList.Add(arg);
+        if (config.DotnetPath is { } selectedHost)
+        {
+            var runtimeRoot = Path.GetDirectoryName(selectedHost)!;
+            start.Environment["DOTNET_HOST_PATH"] = selectedHost;
+            start.Environment["DOTNET_ROOT"] = runtimeRoot;
+            start.Environment["DOTNET_ROOT_X64"] = runtimeRoot;
+            start.Environment["DOTNET_MULTILEVEL_LOOKUP"] = "0";
+            start.Environment["PATH"] = runtimeRoot + Path.PathSeparator + start.Environment["PATH"];
+        }
+        start.Environment["NUGET_PACKAGES"] = config.PackageCache;
         if (stage == "build" && config.ToolRoot is not null)
             start.ArgumentList.Add("-p:ArchSiftToolRoot=" + Path.GetFullPath(config.ToolRoot));
         start.Environment["IFX_UPDATE_SNAPSHOTS"] = "0";
@@ -336,7 +366,7 @@ public static class TestGateService
     internal static void Validate(TestGateConfig config)
     {
         var paths = new[] { config.TargetRoot, config.TestProject, config.TestExecutableName,
-            config.TargetFramework, config.Configuration, config.NuGetConfig, config.LocalFeed,
+            config.TargetFramework, config.Configuration, config.NuGetConfig,
             config.PackageCache, config.RunDirectory };
         if (paths.Any(string.IsNullOrWhiteSpace) || config.Rulesets is null ||
             config.Rulesets.Any(string.IsNullOrWhiteSpace))
@@ -344,6 +374,8 @@ public static class TestGateService
         if (config.ToolRoot is not null && (!Path.IsPathFullyQualified(config.ToolRoot) ||
             config.ToolRoot.IndexOfAny([';', ',', '%', '"']) >= 0))
             throw new ConfigurationException("Tool root must be absolute and contain no MSBuild property syntax.");
+        if (config.DotnetPath is not null && !Path.IsPathFullyQualified(config.DotnetPath))
+            throw new ConfigurationException("Gate dotnetPath must be absolute.");
         if (config.SchemaVersion is not (1 or 2) || config.TargetFramework != "net10.0" ||
             config.AuditMode is not ("inherit" or "offline-architecture") ||
             config.RunnerFormat is not ("xunit-json" or "mtp-ctrf") ||
@@ -351,7 +383,10 @@ public static class TestGateService
             config.Rulesets is not { Length: > 0 } ||
             Path.GetFileName(config.TestExecutableName) != config.TestExecutableName ||
             config.TestExecutableName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ||
-            !Path.IsPathFullyQualified(config.TargetRoot) || !Path.IsPathFullyQualified(config.LocalFeed) ||
+            !Path.IsPathFullyQualified(config.TargetRoot) || config.RestoreMode is not ("offline" or "configured") ||
+            (config.RestoreMode == "offline" && !Path.IsPathFullyQualified(config.LocalFeed)) ||
+            (config.RestoreMode == "configured" && (config.SchemaVersion != 2 || config.LocalFeed.Length != 0 ||
+                !Path.IsPathFullyQualified(config.NuGetConfig) || config.AuditMode != "offline-architecture")) ||
             !Path.IsPathFullyQualified(config.PackageCache) ||
             !Path.IsPathFullyQualified(config.RunDirectory) ||
             (config.SchemaVersion == 1 && (!Path.IsPathFullyQualified(config.OriginalBaseline) ||
@@ -362,8 +397,29 @@ public static class TestGateService
                 config.CaseMapping is not null || config.CaseMappingSha256 is not null || config.ToolRoot is not null ||
                 config.OriginalBaseline.Length != 0 || config.OriginalBaselineSha256.Length != 0 ||
                 config.RunnerFormat != "mtp-ctrf" || config.PolicyFile is null || config.PolicySha256 is null ||
-                config.ToolIdentity != RuntimeInfo.ProductVersion)))
+                config.ToolIdentity != RuntimeInfo.ProductVersion)) ||
+            ((config.MinimumSdkVersion is null) != (config.MaximumSdkVersionExclusive is null)) ||
+            (config.MinimumSdkVersion is not null && (config.SchemaVersion != 2 ||
+                !StableSdk(config.MinimumSdkVersion, out var lower) ||
+                !StableSdk(config.MaximumSdkVersionExclusive!, out var upper) || lower >= upper)))
             throw new ConfigurationException("Unsupported or incomplete test gate config.");
+    }
+
+    internal static bool AcceptsSelectedSdk(TestGateConfig config, string approvedBaseline, string selected)
+    {
+        if (config.MinimumSdkVersion is null) return selected == approvedBaseline;
+        return StableSdk(selected, out var actual) &&
+            actual >= Version.Parse(config.MinimumSdkVersion) &&
+            actual < Version.Parse(config.MaximumSdkVersionExclusive!);
+    }
+
+    private static bool StableSdk(string value, out Version version)
+    {
+        version = new Version(0, 0);
+        if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"^\d+\.\d+\.\d+$") ||
+            !Version.TryParse(value, out var parsed)) return false;
+        version = parsed;
+        return true;
     }
 
     private static string Under(string root, string relative)

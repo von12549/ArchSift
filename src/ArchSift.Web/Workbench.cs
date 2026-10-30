@@ -16,6 +16,8 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
     private volatile bool dirty;
     private HistoryStore? historyStore;
     private TestWorkbench? testWorkbench;
+    // Analysis and daily-test jobs retain this lease until their final evidence and cleanup finish.
+    private bool HasRunningJobs => gate.CurrentCount == 0 || jobs.Values.Any(job => !job.Finalized);
     private HistoryStore StoredHistory => historyStore ??= new(current);
     public string Token { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
 
@@ -50,7 +52,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         app.UseDefaultFiles(); app.UseStaticFiles();
         testWorkbench.Map(app);
         app.MapGet("/api/config", () => Results.Json(new { config = current with { RulesDirectory = rulesDirectory }, rulesDirectory, toolVersion = ToolIdentity.Version, profile }, JsonContract.Options));
-        app.MapGet("/api/session", () => Results.Json(new { processId = Environment.ProcessId, running = jobs.Values.Any(j => j.State == "running"), dirty }));
+        app.MapGet("/api/session", () => Results.Json(new { processId = Environment.ProcessId, running = HasRunningJobs, dirty }));
         app.MapPost("/api/session/dirty", async (HttpContext context) =>
         {
             using var doc = await JsonDocument.ParseAsync(context.Request.Body);
@@ -433,7 +435,7 @@ public sealed class Workbench(RunConfiguration initial, string rulesDirectory, S
         });
         app.MapPost("/api/shutdown", async (HttpContext context) =>
         {
-            if (jobs.Values.Any(job => !job.Finalized))
+            if (HasRunningJobs)
                 return Results.Conflict(new { error = "A job is running. Cancel it or wait for completion." });
             if (dirty)
             {

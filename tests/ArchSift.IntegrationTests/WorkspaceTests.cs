@@ -40,9 +40,8 @@ public sealed class WorkspaceTests
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
         try { await process.WaitForExitAsync(timeout.Token); Assert.NotEqual(0, process.ExitCode); var diagnostic = await output + await error;
             Assert.Contains("Pinned tool is not restored", diagnostic);
-            var closeout = Assert.Single(Directory.GetFiles(fixture.State, "closeout.json", SearchOption.AllDirectories));
-            using var record = JsonDocument.Parse(File.ReadAllBytes(closeout));
-            Assert.Equal(Path.Combine(callerHome, ".nuget", "packages"), record.RootElement.GetProperty("cacheDirectory").GetString());
+            Assert.Contains(Path.Combine(callerHome, ".nuget", "packages"), diagnostic);
+            Assert.False(Directory.Exists(fixture.State));
             Assert.False(Directory.Exists(callerHome)); }
         finally { if (!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(CancellationToken.None); } }
     }
@@ -77,7 +76,7 @@ public sealed class WorkspaceTests
         try { await process.WaitForExitAsync(timeout.Token); Assert.NotEqual(0, process.ExitCode); Assert.Contains("dotnet candidate is unavailable", await output + await error); }
         finally { if (!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(CancellationToken.None); } }
         var selectedState = section == "state" ? Path.Combine(fixture.Root, "alternate-state") : fixture.State;
-        Assert.Empty(Directory.GetFiles(selectedState, "workspace-state.json", SearchOption.AllDirectories));
+        Assert.False(Directory.Exists(selectedState));
     }
     [Fact]
     public async Task DoctorResolvesHostWithoutInitializingState()
@@ -89,6 +88,29 @@ public sealed class WorkspaceTests
         Assert.False(Directory.Exists(value.RootElement.GetProperty("stateRoot").GetString()));
         Assert.Equal(fixture.Target, value.RootElement.GetProperty("projectRoot").GetString());
         Assert.Equal("ready", value.RootElement.GetProperty("status").GetString());
+        Assert.False(value.RootElement.GetProperty("hostProbed").GetBoolean());
+    }
+    [Fact]
+    public async Task DoctorDoesNotExecuteTheConfiguredHost()
+    {
+        using var fixture = new WorkspaceFixture();
+        var fakeHost = Path.Combine(fixture.Root, "unexecutable-host.exe");
+        File.WriteAllText(fakeHost, "This file must never be executed by Doctor.");
+        fixture.Edit(node => node["runtime"]!["dotnetPath"] = fakeHost);
+        var result = await fixture.Run("doctor");
+        Assert.Equal(0, result.Code);
+        Assert.False(Directory.Exists(fixture.State));
+    }
+    [Fact]
+    public async Task DoctorResolvesPerUserDefaultStateWithoutCreatingIt()
+    {
+        using var fixture = new WorkspaceFixture();
+        fixture.Edit(node => node["state"]!.AsObject().Remove("root"));
+        var result = await fixture.Run("doctor"); Assert.Equal(0, result.Code);
+        using var value = JsonDocument.Parse(result.Output);
+        var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ArchSift", "state");
+        Assert.StartsWith(root + Path.DirectorySeparatorChar, value.RootElement.GetProperty("stateRoot").GetString());
+        Assert.False(value.RootElement.GetProperty("initialized").GetBoolean());
     }
     [Fact]
     public async Task InitializationIsExternalAndIdempotent()
@@ -115,6 +137,121 @@ public sealed class WorkspaceTests
         var result = await fixture.Run("init"); Assert.Equal(0, result.Code);
         using var value = JsonDocument.Parse(result.Output);
         Assert.StartsWith(alternate + Path.DirectorySeparatorChar, value.RootElement.GetProperty("stateRoot").GetString());
+    }
+    [Fact]
+    public async Task ProjectPolicyLoadsTrackedRulesAndRejectsChangedBytes()
+    {
+        using var fixture = new WorkspaceFixture();
+        var rules = Path.Combine(fixture.Target, "project-rules.json");
+        var source = new DirectoryInfo(AppContext.BaseDirectory);
+        while (source is not null && !File.Exists(Path.Combine(source.FullName, "ArchSift.slnx"))) source = source.Parent;
+        Assert.NotNull(source);
+        File.Copy(Path.Combine(source.FullName, "tests", "ArchSift.Testing.Tests", "rules.json"), rules);
+        var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(rules))).ToLowerInvariant();
+        File.WriteAllText(Path.Combine(fixture.Target, "policy.json"), JsonSerializer.Serialize(new
+        {
+            schemaVersion = 1, version = "project-v1", rulesets = new[] { new { path = "project-rules.json", sha256 = hash } },
+            sources = Array.Empty<object>()
+        }));
+        fixture.Edit(node => node["workbench"]!["policyFile"] = "../policy.json");
+        var first = await fixture.Run("init"); Assert.Equal(0, first.Code);
+        using var result = JsonDocument.Parse(first.Output);
+        using var startup = JsonDocument.Parse(File.ReadAllBytes(result.RootElement.GetProperty("startupConfig").GetString()!));
+        Assert.Equal(rules, Assert.Single(startup.RootElement.GetProperty("rulesets").EnumerateArray()).GetString());
+        File.AppendAllText(rules, " ");
+        var changed = await fixture.Run("init"); Assert.Equal(2, changed.Code);
+        Assert.Contains("hash changed", changed.Error);
+    }
+    [Fact]
+    public async Task ProjectPolicyAndExplicitRuleListCannotBeCombined()
+    {
+        using var fixture = new WorkspaceFixture();
+        fixture.Edit(node => { node["workbench"]!["policyFile"] = "../policy.json";
+            node["workbench"]!["rulesets"] = new JsonArray("../rules.json"); });
+        var result = await fixture.Run("init");
+        Assert.Equal(2, result.Code);
+        Assert.Contains("not both", result.Error);
+    }
+    [Theory]
+    [InlineData("{}")]
+    [InlineData("[]")]
+    [InlineData("{\"schemaVersion\":1,\"rulesets\":[{\"path\":\"missing.json\"}]}")]
+    public async Task ProjectPolicyShapeErrorsAreConfigurationFailures(string json)
+    {
+        using var fixture = new WorkspaceFixture();
+        File.WriteAllText(Path.Combine(fixture.Target, "policy.json"), json);
+        fixture.Edit(node => node["workbench"]!["policyFile"] = "../policy.json");
+        var result = await fixture.Run("doctor");
+        Assert.Equal(2, result.Code);
+        Assert.Contains("policy", result.Error);
+        Assert.False(Directory.Exists(fixture.State));
+    }
+    [Fact]
+    public async Task ProjectPolicyCannotBeBorrowedFromOutsideTheProject()
+    {
+        using var fixture = new WorkspaceFixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "external-policy.json"), "{}");
+        fixture.Edit(node => node["workbench"]!["policyFile"] = "../../external-policy.json");
+        var result = await fixture.Run("doctor");
+        Assert.Equal(2, result.Code);
+        Assert.Contains("inside the project", result.Error);
+    }
+    [Fact]
+    public async Task RuntimeDirectoryCannotBeUsedAsThePackageCache()
+    {
+        using var fixture = new WorkspaceFixture();
+        var runtimeRoot = Path.GetFullPath(Path.Combine(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(), "..", "..", ".."));
+        fixture.Edit(node => { node["runtime"]!["dotnetPath"] = Path.Combine(runtimeRoot, OperatingSystem.IsWindows() ? "dotnet.exe" : "dotnet");
+            node["nuget"]!["cacheDirectory"] = runtimeRoot; });
+        var result = await fixture.Run("init");
+        Assert.Equal(2, result.Code);
+        Assert.Contains("disjoint", result.Error);
+        Assert.False(Directory.Exists(fixture.State));
+    }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task InterruptedConfigurationRefreshRecoversOnlyForTheBoundInputs(bool changeInputs)
+    {
+        using var fixture = new WorkspaceFixture();
+        var first = await fixture.Run("init"); Assert.Equal(0, first.Code);
+        using var initial = JsonDocument.Parse(first.Output);
+        var state = initial.RootElement.GetProperty("stateRoot").GetString()!;
+        var config = initial.RootElement.GetProperty("startupConfig").GetString()!;
+        var marker = Path.Combine(state, "workspace-state.json"); var oldMarker = File.ReadAllBytes(marker);
+        using var previous = JsonDocument.Parse(oldMarker);
+        var retained = Path.Combine(state, "reports", "retained.txt"); File.WriteAllText(retained, "preserve-history");
+        fixture.Edit(node => node["workbench"]!["build"]!["configuration"] = "Release");
+        Assert.Equal(0, (await fixture.Run("init")).Code);
+        var expectedConfig = File.ReadAllBytes(config);
+        using var updated = JsonDocument.Parse(File.ReadAllBytes(marker));
+        var journal = Path.Combine(state, "configuration-refresh.json");
+        File.WriteAllText(journal, JsonSerializer.Serialize(new { schemaVersion = 1, kind = "archsift-workspace-refresh",
+            projectId = "test-project", targetRoot = fixture.Target, stateRoot = state,
+            configurationIdentity = updated.RootElement.GetProperty("configurationIdentity").GetString(),
+            previousConfigurationSha256 = previous.RootElement.GetProperty("generatedConfigurationSha256").GetString(),
+            expectedConfigurationSha256 = updated.RootElement.GetProperty("generatedConfigurationSha256").GetString() }, JsonContract.Options));
+        File.WriteAllBytes(marker, oldMarker);
+        if (changeInputs) fixture.Edit(node => node["workbench"]!["build"]!["configuration"] = "Debug");
+        var recovered = await fixture.Run("init");
+        Assert.Equal(changeInputs ? 2 : 0, recovered.Code);
+        Assert.Equal(expectedConfig, File.ReadAllBytes(config));
+        Assert.Equal("preserve-history", File.ReadAllText(retained));
+        Assert.Equal(changeInputs, File.Exists(journal));
+        if (changeInputs) Assert.Equal(oldMarker, File.ReadAllBytes(marker));
+    }
+    [Fact]
+    public async Task WorkspaceSdkRangeBoundsSelectedHost()
+    {
+        using var fixture = new WorkspaceFixture();
+        fixture.Edit(node => { node["runtime"]!["minimumSdkVersion"] = "10.0.300";
+            node["runtime"]!["maximumSdkVersionExclusive"] = "10.1.0"; });
+        var selected = await fixture.Run("doctor");
+        Assert.Equal(0, selected.Code);
+        fixture.Edit(node => node["runtime"]!["maximumSdkVersionExclusive"] = "10.0.300");
+        var invalid = await fixture.Run("doctor");
+        Assert.Equal(2, invalid.Code);
+        Assert.Contains("maximum", invalid.Error);
     }
     [Theory]
     [InlineData("nuget", "allowNetwork", "true")]
@@ -349,18 +486,31 @@ public sealed class WorkspaceTests
     }
 
     [Fact]
-    public async Task ReservedMarkerTemporaryLinkIsRejectedWithoutTouchingItsTarget()
+    public async Task ReservedMarkerTemporaryReparsePointIsRejectedWithoutTouchingItsTarget()
     {
         using var fixture = new WorkspaceFixture(); var snapshot = await PrepareMarkerInterruption(fixture);
         var outside = Path.Combine(fixture.Root, "outside.txt"); File.WriteAllText(outside, "retain-external");
         var link = Path.Combine(snapshot.State, "workspace-state.json." + Guid.NewGuid().ToString("N") + ".tmp");
-        File.CreateSymbolicLink(link, outside);
-        var journalPath = Path.Combine(snapshot.State, "initialization.json"); var journal = File.ReadAllBytes(journalPath);
-        Assert.Equal(2, (await fixture.Run("init")).Code);
-        Assert.Equal("retain-external", File.ReadAllText(outside));
-        Assert.Equal(journal, File.ReadAllBytes(journalPath));
-        Assert.NotNull(new FileInfo(link).LinkTarget);
-        Assert.False(File.Exists(Path.Combine(snapshot.State, "workspace-state.json")));
+        if (OperatingSystem.IsWindows())
+        {
+            var directory = Path.Combine(fixture.Root, "junction-target"); Directory.CreateDirectory(directory);
+            var start = new ProcessStartInfo("pwsh") { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
+            foreach (var argument in new[] { "-NoProfile", "-NonInteractive", "-Command", "New-Item -ItemType Junction -Path '" + link.Replace("'", "''") + "' -Target '" + directory.Replace("'", "''") + "' | Out-Null" }) start.ArgumentList.Add(argument);
+            using var process = Process.Start(start)!;
+            await process.WaitForExitAsync();
+            Assert.Equal(0, process.ExitCode);
+        }
+        else File.CreateSymbolicLink(link, outside);
+        try
+        {
+            var journalPath = Path.Combine(snapshot.State, "initialization.json"); var journal = File.ReadAllBytes(journalPath);
+            Assert.Equal(2, (await fixture.Run("init")).Code);
+            Assert.Equal("retain-external", File.ReadAllText(outside));
+            Assert.Equal(journal, File.ReadAllBytes(journalPath));
+            Assert.True((File.GetAttributes(link) & FileAttributes.ReparsePoint) != 0);
+            Assert.False(File.Exists(Path.Combine(snapshot.State, "workspace-state.json")));
+        }
+        finally { if (OperatingSystem.IsWindows()) Directory.Delete(link); else File.Delete(link); }
     }
     private static async Task<(string State, string Config, byte[] Marker)> PrepareMarkerInterruption(WorkspaceFixture fixture)
     {

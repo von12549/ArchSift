@@ -41,7 +41,8 @@ public static class ConfigLoader
                     CacheDirectory = config.Build.CacheDirectory is { } c ? Resolve(c) : null
                 },
                 Output = config.Output with { Directory = Resolve(config.Output.Directory) },
-                RulesDirectory = config.RulesDirectory is { } r ? Resolve(r) : null
+                RulesDirectory = config.RulesDirectory is { } r ? Resolve(r) : null,
+                DailyTestConfig = config.DailyTestConfig is { } daily ? Resolve(daily) : null
             };
     }
 }

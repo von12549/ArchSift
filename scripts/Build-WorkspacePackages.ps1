@@ -27,6 +27,14 @@ $dotnet=[IO.Path]::GetFullPath($DotnetPath)
 if(-not(Test-Path -LiteralPath $dotnet -PathType Leaf)){throw 'Explicit dotnet host missing.'}
 [IO.Directory]::CreateDirectory($output)|Out-Null
 function Save([string]$name,$value){$value|ConvertTo-Json -Depth 35|Set-Content -LiteralPath (Join-Path $output $name) -Encoding utf8NoBOM}
+function Source-Inputs {
+ $paths=@(& git -C $repo ls-files --cached --others --exclude-standard)
+ if($LASTEXITCODE -ne 0){throw 'Source inventory failed.'}
+ @($paths|Sort-Object -Unique|ForEach-Object {$path=Join-Path $repo $_;if(Test-Path -LiteralPath $path -PathType Leaf){[ordered]@{path=$_;bytes=(Get-Item -LiteralPath $path).Length;sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()}}})
+}
+$sourceInputs=Source-Inputs
+Save 'source-inputs.json' @{schemaVersion=1;sourceCommit=$commit;sourceTree=$tree;sourceDirty=$dirty;files=$sourceInputs}
+$sourceInputHash=(Get-FileHash -LiteralPath (Join-Path $output 'source-inputs.json') -Algorithm SHA256).Hash.ToLowerInvariant()
 $checks=[Collections.Generic.List[object]]::new()
 function Invoke-Dotnet([string]$name,[string[]]$arguments){
  Check-Host
@@ -67,5 +75,6 @@ try{
    }
   }finally{$archive.Dispose()}
  }
- Save 'package-build.json' @{schemaVersion=1;status=$(if($Development){'development-unqualified'}else{'built-qualification-pending'});version=$version;sourceCommit=$commit;sourceTree=$tree;sourceDirty=$dirty;sdk=$sdk;frameworkDependent=$true;distribution='NuGet-with-embedded-Web-and-project-template';publiclyPublished=$false;hostEqual=$true;packages=$records}
+ if(($sourceInputs|ConvertTo-Json -Depth 5 -Compress) -cne ((Source-Inputs)|ConvertTo-Json -Depth 5 -Compress)){throw 'Source inputs changed during package build; preserve the attempt.'}
+ Save 'package-build.json' @{schemaVersion=1;status=$(if($Development){'development-unqualified'}else{'built-qualification-pending'});version=$version;sourceCommit=$commit;sourceTree=$tree;sourceDirty=$dirty;sourceInputsSha256=$sourceInputHash;sdk=$sdk;frameworkDependent=$true;distribution='NuGet-with-embedded-Web-and-project-template';publiclyPublished=$false;hostEqual=$true;packages=$records}
 }finally{Check-Host}

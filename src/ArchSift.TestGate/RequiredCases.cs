@@ -30,7 +30,8 @@ public static class RequiredCases
     public static void Validate(RequiredCasesDocument manifest)
     {
         if (manifest.SchemaVersion != 1 || manifest.Kind != "archsift-required-cases" ||
-            manifest.Sdk != "10.0.303" || manifest.Runner != "mtp-ctrf/xunit-v3-4.0.1" ||
+            !System.Text.RegularExpressions.Regex.IsMatch(manifest.Sdk ?? "", @"^\d+\.\d+\.\d+$") ||
+            !Version.TryParse(manifest.Sdk, out _) || manifest.Runner != "mtp-ctrf/xunit-v3-4.0.1" ||
             manifest.TargetFramework != "net10.0" || string.IsNullOrWhiteSpace(manifest.PackageVersion) ||
             manifest.Cases is not { Length: > 0 } || manifest.Cases.Any(item =>
                 item is null || string.IsNullOrWhiteSpace(item.Group) || item.Identity is null))

@@ -18,6 +18,14 @@ public sealed class TestWorkbench(Func<RunConfiguration> context, string rulesDi
 
     public void Map(WebApplication app)
     {
+        if (context().DailyTestConfig is { } initialPath)
+        {
+            var initial = TestGateService.Load(initialPath);
+            CheckTarget(initial);
+            _ = ReadCaseInventory(initial);
+            selected = initial;
+            selectedPath = initialPath;
+        }
         app.Lifetime.ApplicationStopping.Register(Cancel);
         app.MapPost("/api/test-workbench/config", async (HttpContext request) =>
         {

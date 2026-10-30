@@ -3,7 +3,9 @@ param(
     [Parameter(Mandatory)][string]$FixtureRoot,
     [Parameter(Mandatory)][string]$LocalFeed,
     [Parameter(Mandatory)][string]$PackageCache,
-    [ValidateSet('Debug','Release')][string]$Configuration='Release'
+    [ValidateSet('Debug','Release')][string]$Configuration='Release',
+    [string]$DotnetPath='', [string]$CliPath='', [switch]$Packaged,
+    [switch]$CompatibleSdk, [switch]$ConfiguredRestore
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
@@ -19,7 +21,8 @@ if($root.Equals($repo,$comparison) -or $root.StartsWith($repo+[IO.Path]::Directo
     throw 'A fresh synthetic fixture directory outside the repository is required.'
 }
 if(-not(Test-Path -LiteralPath $feed -PathType Container)){throw 'Explicit offline feed is missing.'}
-$cli=Join-Path $repo "src/ArchSift.Cli/bin/$Configuration/net10.0/archsift.dll"
+$cli=if($CliPath){[IO.Path]::GetFullPath($CliPath)}else{Join-Path $repo "src/ArchSift.Cli/bin/$Configuration/net10.0/archsift.dll"}
+$dotnet=if($DotnetPath){[IO.Path]::GetFullPath($DotnetPath)}else{(Get-Command dotnet -ErrorAction Stop).Source}
 if(-not(Test-Path -LiteralPath $cli)){throw 'Build the current CLI before preparing the synthetic fixture.'}
 $source=Join-Path $root 'source'
 $state=Join-Path $root 'state'
@@ -29,7 +32,8 @@ $state=Join-Path $root 'state'
 function Save([string]$Path,$Value){ConvertTo-Json -InputObject $Value -Depth 35|Set-Content -LiteralPath $Path -Encoding utf8NoBOM}
 function Hash([string]$Path){(Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()}
 function Invoke-FixtureDotnet([string]$Name,[string[]]$Arguments){
-    $start=[Diagnostics.ProcessStartInfo]::new((Get-Command dotnet -ErrorAction Stop).Source)
+    if((Get-ArchSiftHostHash) -cne $baseline){throw 'Host drift before fixture child.'}
+    $start=[Diagnostics.ProcessStartInfo]::new($dotnet)
     $start.WorkingDirectory=$source;$start.UseShellExecute=$false;$start.CreateNoWindow=$true
     $start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
     foreach($arg in $Arguments){$start.ArgumentList.Add($arg)}
@@ -40,6 +44,12 @@ function Invoke-FixtureDotnet([string]$Name,[string[]]$Arguments){
     $start.Environment['DOTNET_GENERATE_ASPNET_CERTIFICATE']='false'
     $start.Environment['DOTNET_NOLOGO']='1'
     $start.Environment['NUGET_CERT_REVOCATION_MODE']='offline'
+    $start.Environment['NUGET_PACKAGES']=$cache
+    $start.Environment['DOTNET_HOST_PATH']=$dotnet
+    $start.Environment['DOTNET_ROOT']=Split-Path $dotnet
+    $start.Environment['DOTNET_ROOT_X64']=Split-Path $dotnet
+    $start.Environment['DOTNET_MULTILEVEL_LOOKUP']='0'
+    $start.Environment['PATH']=(Split-Path $dotnet)+[IO.Path]::PathSeparator+$start.Environment['PATH']
     $start.Environment['ARCHSIFT_PROFILE_PATHS'] = ConvertTo-Json -InputObject @($PROFILE.AllUsersAllHosts, $PROFILE.AllUsersCurrentHost, $PROFILE.CurrentUserAllHosts, $PROFILE.CurrentUserCurrentHost) -Compress
     foreach($key in @('ARCHSIFT_SP02_REPORT_FIXTURE','ARCHSIFT_TEST_GATE_CONFIG','ARCHSIFT_LT01_NEGATIVE','IFX_UPDATE_SNAPSHOTS')){[void]$start.Environment.Remove($key)}
     $process=[Diagnostics.Process]::Start($start)
@@ -56,16 +66,17 @@ function Invoke-FixtureDotnet([string]$Name,[string[]]$Arguments){
 }
 try{
     Save (Join-Path $root 'host-before.json') @{sha256=$baseline}
-    Save (Join-Path $source 'global.json') @{sdk=@{version='10.0.303';rollForward='disable';allowPrerelease=$false}}
-    '<configuration><packageSources><clear /></packageSources></configuration>'|Set-Content (Join-Path $source 'NuGet.Config') -Encoding utf8NoBOM
+    Save (Join-Path $source 'global.json') @{sdk=@{version=$(if($CompatibleSdk){'10.0.300'}else{'10.0.303'});rollForward=$(if($CompatibleSdk){'latestFeature'}else{'disable'});allowPrerelease=$false}}
+    ('<configuration><packageSources><clear /><add key="owned-local" value="'+[Security.SecurityElement]::Escape($feed)+'" /></packageSources></configuration>')|Set-Content (Join-Path $source 'NuGet.Config') -Encoding utf8NoBOM
     $version=(Invoke-FixtureDotnet 'tool-version' @($cli,'--version')) -replace '^archsift ',''
     if($version -notmatch '^\d+\.\d+\.\d+[-+A-Za-z0-9.]*$'){throw 'Unexpected current CLI version.'}
     $reference=[Security.SecurityElement]::Escape((Join-Path $repo 'src/ArchSift.Testing/ArchSift.Testing.csproj'))
+    $testingReference=if($Packaged){'<PackageReference Include="ArchSift.Testing" Version="['+$version+']"/>'}else{'<ProjectReference Include="'+$reference+'"/>'}
     $project=Join-Path $source 'Portable.Architecture.Tests.csproj'
     @"
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><RestorePackagesWithLockFile>true</RestorePackagesWithLockFile><UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner><NuGetAudit>false</NuGetAudit><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup>
-  <ItemGroup><PackageReference Include="xunit.v3" Version="[4.0.1]"/><ProjectReference Include="$reference"/></ItemGroup>
+  <ItemGroup><PackageReference Include="xunit.v3" Version="[4.0.1]"/>$testingReference</ItemGroup>
 </Project>
 "@|Set-Content -LiteralPath $project -Encoding utf8NoBOM
     Copy-Item -LiteralPath (Join-Path $repo 'samples/portable-verification/PortableTests.cs') -Destination $source
@@ -80,7 +91,10 @@ try{
     [void](Invoke-FixtureDotnet 'seed-lock' @('restore',$project,'--configfile',(Join-Path $source 'NuGet.Config'),'--source',$feed,'--packages',$cache,'--disable-parallel','--disable-build-servers','-p:NuGetAudit=false'))
     $configPath=Join-Path $state 'config/full.json'
     $run=Join-Path $state 'runs/full'
-    Save $configPath @{schemaVersion=2;targetRoot=$source;testProject='Portable.Architecture.Tests.csproj';testExecutableName='Portable.Architecture.Tests';targetFramework='net10.0';configuration=$Configuration;nuGetConfig='NuGet.Config';localFeed=$feed;packageCache=$cache;rulesets=@('rules.json');runDirectory=$run;dotnetCliHome=(Join-Path $run 'cli-home');runnerFormat='mtp-ctrf';auditMode='offline-architecture';toolIdentity=$version;policyFile='policy.json';policySha256=(Hash (Join-Path $source 'policy.json'));requiredCases='required-cases.json';requiredCasesSha256=(Hash (Join-Path $source 'required-cases.json'))}
+    $gateConfig=@{schemaVersion=2;targetRoot=$source;testProject='Portable.Architecture.Tests.csproj';testExecutableName='Portable.Architecture.Tests';targetFramework='net10.0';configuration=$Configuration;nuGetConfig='NuGet.Config';localFeed=$feed;packageCache=$cache;rulesets=@('rules.json');runDirectory=$run;dotnetCliHome=(Join-Path $run 'cli-home');runnerFormat='mtp-ctrf';auditMode='offline-architecture';toolIdentity=$version;policyFile='policy.json';policySha256=(Hash (Join-Path $source 'policy.json'));requiredCases='required-cases.json';requiredCasesSha256=(Hash (Join-Path $source 'required-cases.json'));dotnetPath=$dotnet}
+    if($CompatibleSdk){$gateConfig.minimumSdkVersion='10.0.300';$gateConfig.maximumSdkVersionExclusive='10.1.0'}
+    if($ConfiguredRestore){$gateConfig.restoreMode='configured';$gateConfig.nuGetConfig=Join-Path $source 'NuGet.Config';$gateConfig.localFeed=''}
+    Save $configPath $gateConfig
     [void](Invoke-FixtureDotnet 'portable-gate' @($cli,'test-gate','--config',$configPath))
     $report=Get-Content (Join-Path $run 'architecture-test-run.json') -Raw|ConvertFrom-Json
     $ctrf=Get-Content (Join-Path $run 'test-results.ctrf.json') -Raw|ConvertFrom-Json
@@ -88,7 +102,7 @@ try{
         $ctrf.results.summary.tests -ne 3 -or $ctrf.results.summary.passed -ne 3 -or
         $ctrf.results.summary.failed -ne 0 -or $ctrf.results.summary.skipped -ne 0 -or
         $report.process.audit.status -cne 'not-run'){throw 'Synthetic fixture coverage/audit contract differs.'}
-    Save (Join-Path $root 'fixture.json') @{kind='archsift-owned-source-archive-synthetic';sdk='10.0.303';configuration=$Configuration;toolVersion=$version;actualNativeCases=3;passed=3;failed=0;skipped=0;coverageComplete=$true;policyAdoption=$false;report=@{path=(Join-Path $run 'architecture-test-run.json');sha256=(Hash (Join-Path $run 'architecture-test-run.json'))};hostHash=$baseline}
+    Save (Join-Path $root 'fixture.json') @{kind=$(if($Packaged){'archsift-owned-packaged-consumer'}else{'archsift-owned-source-archive-synthetic'});sdk=$report.target.sdk;dotnet=$dotnet;compatibleSdk=[bool]$CompatibleSdk;configuredRestore=[bool]$ConfiguredRestore;configuration=$Configuration;toolVersion=$version;actualNativeCases=3;passed=3;failed=0;skipped=0;coverageComplete=$true;policyAdoption=$false;report=@{path=(Join-Path $run 'architecture-test-run.json');sha256=(Hash (Join-Path $run 'architecture-test-run.json'))};hostHash=$baseline}
     Write-Output "Synthetic portable fixture ready: 3 passed / 0 failed / 0 skipped; $root"
 }finally{
     $after=Get-ArchSiftHostHash

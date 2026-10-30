@@ -4,6 +4,7 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "dailyTestConfig": { "type": "string", "minLength": 1 },
     "schemaVersion": {
       "const": 1
     },

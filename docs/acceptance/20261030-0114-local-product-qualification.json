@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "kind": "archsift-0114-local-product-qualification",
+  "status": "LOCAL_PRODUCT_SCOPE_PASSED",
+  "version": "0.11.4",
+  "date": "2026-10-30",
+  "source": {
+    "baseCommit": "944c3ff7697d5d2dc7cbd11beefbd0bd268b898f",
+    "dirty": true,
+    "archiveSha256": "fd709027afece9e6f60eaf0ce5336dd9f6ff5a530dfe075a94e6413bbaffa324",
+    "baseTree": "599e38941655035d32af454f996585a346de9abe",
+    "archiveFiles": 910,
+    "inputsSha256": "9483a8e787571566179355fb2de9c57f46b8f9cc9505282499bf58b3aa4583ad"
+  },
+  "packages": [
+    {
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "sha256": "b02e965eed4dc1fad7fddf466b73138a48478ba81547152c983760d5b9adf338",
+      "length": 28364
+    },
+    {
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "sha256": "b4b467ab530632c9cf9b713d95aa6fa74ec4c2f2dcc7c7e30c9a1c9c287d0a87",
+      "length": 2914578
+    },
+    {
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "sha256": "ad24ec356aebde2c6ebfef7e678841f94b025dfefec86a01080c6d3adf963a53",
+      "length": 91817
+    },
+    {
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "sha256": "a8fa9e56a227d3e057b0e9a99a59a94c16920b60acf275138c5f8cbb5f80dc27",
+      "length": 159533
+    },
+    {
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "sha256": "394637437bef319c329f98e7811d52460e207b671146b152982ecae9302af8be",
+      "length": 23649
+    }
+  ],
+  "tests": {
+    "skipped": 0,
+    "independentDependencyAudit": "NOT RUN",
+    "failed": 0,
+    "finalWorkspace": 50,
+    "separateMachine": "NOT RUN",
+    "exactBaselineSdk": "10.0.303",
+    "packagedSyntheticCasesPerLane": 3,
+    "integrationBeforeFinalFocusedFixes": 206,
+    "mtp": 58,
+    "actualSdkMatrix": [
+      "10.0.300",
+      "10.0.303",
+      "10.0.403"
+    ],
+    "packageChecks": [
+      {
+        "exitCode": 4,
+        "expected": 4,
+        "name": "exact-mismatch",
+        "hostEqual": true
+      },
+      {
+        "exitCode": 5,
+        "expected": 5,
+        "name": "missing-host",
+        "hostEqual": true
+      },
+      {
+        "exitCode": 5,
+        "expected": 5,
+        "name": "unknown-field",
+        "hostEqual": true
+      },
+      {
+        "exitCode": 0,
+        "expected": 0,
+        "name": "tool-restore",
+        "hostEqual": true
+      },
+      {
+        "exitCode": 0,
+        "expected": 0,
+        "name": "doctor-before-init",
+        "hostEqual": true
+      },
+      {
+        "exitCode": 0,
+        "expected": 0,
+        "name": "default-init",
+        "hostEqual": true
+      },
+      {
+        "name": "ui-7-workbench",
+        "exitCode": 0,
+        "mode": "workbench",
+        "automaticInventory": true,
+        "hostEqual": true,
+        "listenerClosed": true
+      },
+      {
+        "name": "ui-8-launcher",
+        "exitCode": 0,
+        "mode": "launcher",
+        "automaticInventory": true,
+        "hostEqual": true,
+        "listenerClosed": true
+      },
+      {
+        "name": "ui-9-workbench",
+        "exitCode": 0,
+        "mode": "workbench",
+        "automaticInventory": true,
+        "hostEqual": true,
+        "listenerClosed": true
+      },
+      {
+        "name": "ui-10-launcher",
+        "exitCode": 0,
+        "mode": "launcher",
+        "automaticInventory": true,
+        "hostEqual": true,
+        "listenerClosed": true
+      }
+    ],
+    "realIfx493": "NOT RUN",
+    "unit": 157,
+    "architecture": 2
+  },
+  "agentUi": {
+    "finalExactMinimumSdkStartupAndInventory": true,
+    "webContentFilesEqual": 69,
+    "runReports": [
+      {
+        "evidence": "agent-ui-run-10.0.403.json",
+        "coverageComplete": true,
+        "gate": "allow",
+        "sha256": "846e49c44683f1f187caf1e2903d4fa9d5811bc8f5dc0f1a1302774846a7f566",
+        "sdk": "10.0.403",
+        "cases": 3
+      },
+      {
+        "evidence": "agent-ui-run-10.0.300.json",
+        "coverageComplete": true,
+        "gate": "allow",
+        "sha256": "954b0c5aa59aba8c67b63cd1445eefaab030e43b78e1689d426b2555d682cd4e",
+        "sdk": "10.0.300",
+        "cases": 3
+      }
+    ],
+    "launcherAndRunObservations": "Launcher opens child Workbench; inventory auto-selected; rules expanded; full synthetic run returns allow/0 and 3 passed; Safe shutdown and Close launcher confirmed",
+    "finalPackageAutomatedLifecyclePassed": true,
+    "finalHostEquality": true,
+    "screenshots": "Rendered screenshots inspected through browser tool; no exported PNG is claimed",
+    "priorWebPackageBuild": "0114-package-20261030-03",
+    "inventorySerializationOrderOnlyDifference": true,
+    "status": "passed-delegated-product-scope"
+  },
+  "retainedFailures": [
+    "Earlier source compile inference error corrected",
+    "Earlier link-privilege fixture replaced with actual Windows junction and protection broadened",
+    "Earlier package harness expected code 2 instead of CLI configuration code 5; corrected",
+    "Earlier harness used reserved PowerShell PROFILE variable; corrected and successful matrices revalidated for scoped resume",
+    "Native-window approval timed out; browser extension used; expired service attempt retained",
+    "Configured-source UI wording corrected and package rebuilt"
+  ],
+  "limits": [
+    "Uncommitted development source; clean committed-source/CI qualification pending",
+    "Real IFX version binding, 493-case matrix and independent audit remain later stages",
+    "Final release workflow/profile and public served identities pending",
+    "No separate-machine or old-user live activation claim"
+  ],
+  "hostEqual": true,
+  "published": false,
+  "publicationReady": false,
+  "evidence": {
+    "directory": "D:\\ArchSift-lab\\archives\\0114-review-20261030-02",
+    "sourceArchiveSha256": "fd709027afece9e6f60eaf0ce5336dd9f6ff5a530dfe075a94e6413bbaffa324",
+    "sha256": "284b555bc3a2521c745d542fca0cdec6a9d960c0ca16764aaecafaa4ad21e71a",
+    "verifiedMembers": 44,
+    "manifestSha256": "9125ebf00926d40e1624c1a443e645be63de9e2671d0ffef56db804b01896902",
+    "bundle": "local-product-evidence-final.zip",
+    "sourceArchive": "source-snapshot.zip"
+  }
+}

@@ -17,7 +17,7 @@ public sealed record WorkspaceProject
     public string Root { get; init; } = "..";
     public string? Entry { get; init; }
 }
-public sealed record WorkspaceState { public string Root { get; init; } = "C:/ArchSift-lab"; }
+public sealed record WorkspaceState { public string? Root { get; init; } }
 public sealed record WorkspaceNuGet
 {
     public string Mode { get; init; } = "offline";
@@ -31,12 +31,14 @@ public sealed record WorkspaceRuntime
     public string Mode { get; init; } = "host";
     public string? DotnetPath { get; init; }
     public string MinimumSdkVersion { get; init; } = "10.0.0";
+    public string? MaximumSdkVersionExclusive { get; init; }
     public bool AllowPrerelease { get; init; }
     public string? ApprovalFile { get; init; }
 }
 public sealed record WorkspaceWorkbench
 {
     public string[] Rulesets { get; init; } = [];
+    public string? PolicyFile { get; init; }
     public BuildSettings Build { get; init; } = new();
 }
 public sealed record WorkspaceGate { public required string Kind { get; init; } public required string MetadataFile { get; init; } }

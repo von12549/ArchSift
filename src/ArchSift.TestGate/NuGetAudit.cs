@@ -14,9 +14,10 @@ public sealed record GateAudit(string Mode, string Status, AuditCompletion Compl
 public static class NuGetAudit
 {
     public static string[] RestoreArguments(TestGateConfig config, string project, string nugetConfig) =>
-        new[] { "restore", project, "--configfile", nugetConfig, "--source", Path.GetFullPath(config.LocalFeed),
+        new[] { "restore", project, "--configfile", nugetConfig,
             "--packages", Path.GetFullPath(config.PackageCache), "--disable-parallel", "--disable-build-servers",
             "-m:1", "-v:minimal" }
+        .Concat(config.RestoreMode == "offline" ? new[] { "--source", Path.GetFullPath(config.LocalFeed) } : [])
         .Concat(config.AuditMode == "offline-architecture" ? ["-p:NuGetAudit=false"] : Array.Empty<string>())
         .Concat(config.ToolRoot is null ? [] : new[] { "-p:ArchSiftToolRoot=" + Path.GetFullPath(config.ToolRoot) })
         .Concat(config.SchemaVersion == 2 ? new[] { "--locked-mode" } : [])

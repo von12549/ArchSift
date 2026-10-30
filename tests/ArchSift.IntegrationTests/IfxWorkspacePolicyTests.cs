@@ -106,14 +106,17 @@ public sealed class IfxWorkspacePolicyTests
     }
 
     [Fact]
-    public void ConfiguredModeDoesNotEmitInvalidDailyGate()
+    public void ConfiguredModeEmitsLockedExplicitDailyGateWithoutRunningIt()
     {
         using var fixture = new Fixture(); var settings = fixture.Load();
         var launch = Path.Combine(fixture.State, "launch");
-        Assert.Null(Call("WorkspaceService", "Daily", settings, launch, null));
-        Assert.Contains("requires explicit approved offline preparation",
-            Assert.IsType<string>(Call("WorkspaceService", "DailyUnavailableReason", settings)));
-        Assert.False(Directory.Exists(fixture.State));
+        Directory.CreateDirectory(launch);
+        var path = Assert.IsType<string>(Call("WorkspaceService", "Daily", settings, launch, null));
+        using var config = JsonDocument.Parse(File.ReadAllText(path));
+        Assert.Equal("configured", config.RootElement.GetProperty("restoreMode").GetString());
+        Assert.Equal("", config.RootElement.GetProperty("localFeed").GetString());
+        Assert.Equal(Path.Combine(fixture.Target, "NuGet.Config"), config.RootElement.GetProperty("nuGetConfig").GetString());
+        Assert.False(Directory.Exists(config.RootElement.GetProperty("runDirectory").GetString()));
     }
 
     [Fact]
@@ -128,7 +131,6 @@ public sealed class IfxWorkspacePolicyTests
         Assert.Equal(2, config.RootElement.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(fixture.Feed, config.RootElement.GetProperty("localFeed").GetString());
         Assert.Equal("offline-architecture", config.RootElement.GetProperty("auditMode").GetString());
-        Assert.Null(Call("WorkspaceService", "DailyUnavailableReason", settings));
     }
 
     [Theory]

@@ -116,7 +116,7 @@
       "archsift.archunit": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Core": "[0.11.3, )",
+          "ArchSift.Core": "[0.11.4, )",
           "TngTech.ArchUnitNET": "[0.13.4, 0.13.4]"
         }
       },
@@ -126,35 +126,35 @@
       "archsift.core": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Contracts": "[0.11.3, )"
+          "ArchSift.Contracts": "[0.11.4, )"
         }
       },
       "archsift.setup": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Core": "[0.11.3, )"
+          "ArchSift.Core": "[0.11.4, )"
         }
       },
       "archsift.testgate": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.Testing": "[0.11.3, )"
+          "ArchSift.Testing": "[0.11.4, )"
         }
       },
       "archsift.testing": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.ArchUnit": "[0.11.3, )"
+          "ArchSift.ArchUnit": "[0.11.4, )"
         }
       },
       "archsift.web": {
         "type": "Project",
         "dependencies": {
-          "ArchSift.ArchUnit": "[0.11.3, )",
-          "ArchSift.Core": "[0.11.3, )",
-          "ArchSift.Setup": "[0.11.3, )",
-          "ArchSift.TestGate": "[0.11.3, )",
-          "ArchSift.Testing": "[0.11.3, )"
+          "ArchSift.ArchUnit": "[0.11.4, )",
+          "ArchSift.Core": "[0.11.4, )",
+          "ArchSift.Setup": "[0.11.4, )",
+          "ArchSift.TestGate": "[0.11.4, )",
+          "ArchSift.Testing": "[0.11.4, )"
         }
       },
       "TngTech.ArchUnitNET": {

@@ -26,6 +26,29 @@ public sealed class PortableCasesTests
         Assert.Contains(RequiredCases.Assess(expected,run with {Tests=[original with {Identity=null}]},json,0).Reasons,reason=>reason.Contains("projection",StringComparison.Ordinal));
         Assert.Throws<InvalidDataException>(()=>RequiredCases.Validate(expected with {Cases=[..expected.Cases,..expected.Cases]}));
         Assert.Throws<InvalidDataException>(()=>RequiredCases.Validate(expected with {SchemaVersion=9}));
+        Assert.Throws<InvalidDataException>(()=>RequiredCases.Validate(expected with {Sdk="10.0.401-preview.1"}));
     }
     private static void Row(string value) { }
+
+    [Fact]
+    public void DailySdkPolicyRetainsExactBaselineAndBoundsCompatibleSelection()
+    {
+        var exact = new TestGateConfig { TargetRoot = "C:/source", TestProject = "tests/Tests.csproj",
+            TestExecutableName = "Tests", TargetFramework = "net10.0", Configuration = "Release",
+            NuGetConfig = "NuGet.Config", LocalFeed = "C:/feed", PackageCache = "C:/cache",
+            Rulesets = ["rules.json"], RunDirectory = "C:/state/run" };
+        Assert.True(TestGateService.AcceptsSelectedSdk(exact, "10.0.303", "10.0.303"));
+        Assert.False(TestGateService.AcceptsSelectedSdk(exact, "10.0.303", "10.0.401"));
+        var daily = exact with { MinimumSdkVersion = "10.0.300", MaximumSdkVersionExclusive = "10.1.0" };
+        foreach (var sdk in new[] { "10.0.300", "10.0.303", "10.0.401" })
+            Assert.True(TestGateService.AcceptsSelectedSdk(daily, "10.0.303", sdk));
+        foreach (var sdk in new[] { "10.0.299", "10.1.0", "11.0.100", "10.0.401-preview.1" })
+            Assert.False(TestGateService.AcceptsSelectedSdk(daily, "10.0.303", sdk));
+        var configured = daily with { RestoreMode = "configured", LocalFeed = "", AuditMode = "offline-architecture" };
+        var arguments = NuGetAudit.RestoreArguments(configured with { SchemaVersion = 2 }, "Tests.csproj", "explicit.config");
+        Assert.DoesNotContain("--source", arguments);
+        Assert.Contains("--locked-mode", arguments);
+        Assert.Contains("explicit.config", arguments);
+        Assert.Contains("-p:NuGetAudit=false", arguments);
+    }
 }

@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "kind": "ifx-archsift-0114-local-isolated-qualification",
+  "status": "LOCAL_ISOLATED_SCOPE_PASSED",
+  "startedLocalDate": "2026-10-30",
+  "completedLocalDate": "2026-10-31",
+  "completedUtc": "2026-10-30T13:08:00.6025321+00:00",
+  "actor": "agent",
+  "agent": "Codex",
+  "humanPerformed": false,
+  "separateMachine": false,
+  "machine": {
+    "powershell": "7.6.9",
+    "architecture": "X64",
+    "os": "Microsoft Windows NT 10.0.26300.0"
+  },
+  "productVersion": "0.11.4",
+  "publiclyPublished": false,
+  "sourceDirty": true,
+  "committed": false,
+  "ciQualified": false,
+  "source": {
+    "ifx": {
+      "archiveSha256": "14929e91d861d185317dd22bab4ccce4b239e04387694c507ad29d3f0f132f0d",
+      "kind": "ifx-development-source-snapshot",
+      "sourceInputsSha256": "2c6309cb600ba0bab5b42437eaffba1c8bd9abe582a00833543642be9691a83a",
+      "dirty": true,
+      "baseCommit": "7eaa50b5e63c74eb666f75cb430fd78d7983cbc0",
+      "files": 963,
+      "allMembersVerified": true
+    },
+    "archsift": {
+      "sourceInputsSha256": "03a89f5df40727995ce3274fcedb64283fe775323439b2f5f412d01652fc4dfd",
+      "files": 912,
+      "archiveSha256": "6fd80c90f9c6ebf05638119f4c81aec2466feeddbdc2d60dce274f01e0e36231",
+      "baseCommit": "944c3ff7697d5d2dc7cbd11beefbd0bd268b898f"
+    }
+  },
+  "packages": [
+    {
+      "hashRole": "Unpublished local archive; servedSha256 retained for host contract compatibility",
+      "publiclyPublished": false,
+      "contentHashEvidence": "Real replacement package restore .nupkg.sha512",
+      "repositorySignatureVerified": false,
+      "id": "ArchSift.ArchUnit",
+      "payloadVerified": true,
+      "submissionSha256": "c3300fd53963e41363696ba54829fa3dfa18c3aa114c7b006dfc10062805b7b4",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "servedBytes": 28455,
+      "version": "0.11.4",
+      "contentHash": "ZxIDW1CECFZW2Z2A94wKyBVF3Q6vkz1HzLbuwsjCnE3EGdNRmekDhOLTIpn1DrEWkPpFSegvj5aSz9HmhgKy+Q==",
+      "servedSha256": "c3300fd53963e41363696ba54829fa3dfa18c3aa114c7b006dfc10062805b7b4"
+    },
+    {
+      "hashRole": "Unpublished local archive; servedSha256 retained for host contract compatibility",
+      "publiclyPublished": false,
+      "contentHashEvidence": "Real replacement package restore .nupkg.sha512",
+      "repositorySignatureVerified": false,
+      "id": "ArchSift.Cli",
+      "payloadVerified": true,
+      "submissionSha256": "9eef661e5c2b5a2384db6d3b53170848357d59dbfeb644c15c8775c9e7b4f8ec",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "servedBytes": 2914713,
+      "version": "0.11.4",
+      "contentHash": "04HS8/vNMKB0B6zCVMNxQtSil0KzdZ2NHhPG2itDZrH235a1ruvDnReUFA09kgRY6rNYDHUwf5xSSbe4goPrEA==",
+      "servedSha256": "9eef661e5c2b5a2384db6d3b53170848357d59dbfeb644c15c8775c9e7b4f8ec"
+    },
+    {
+      "hashRole": "Unpublished local archive; servedSha256 retained for host contract compatibility",
+      "publiclyPublished": false,
+      "contentHashEvidence": "Real replacement package restore .nupkg.sha512",
+      "repositorySignatureVerified": false,
+      "id": "ArchSift.Contracts",
+      "payloadVerified": true,
+      "submissionSha256": "e9cc9dab8176b508fcbcc90ab2b6786d2e95a716749d87a4fc64cef14eef44f1",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "servedBytes": 91901,
+      "version": "0.11.4",
+      "contentHash": "Fd36Hv66CuONOX+EtBqTrrAxJ4V35DcHmfL+KAIOW8GJ5gGp+cBjwWlEJnbIsRuPF3fG93VCVVuOHNl2q82fSw==",
+      "servedSha256": "e9cc9dab8176b508fcbcc90ab2b6786d2e95a716749d87a4fc64cef14eef44f1"
+    },
+    {
+      "hashRole": "Unpublished local archive; servedSha256 retained for host contract compatibility",
+      "publiclyPublished": false,
+      "contentHashEvidence": "Real replacement package restore .nupkg.sha512",
+      "repositorySignatureVerified": false,
+      "id": "ArchSift.Core",
+      "payloadVerified": true,
+      "submissionSha256": "26041f9bb764bce29247560fa59b8e565becf780bec41365f5e235ebd0af823a",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "servedBytes": 159617,
+      "version": "0.11.4",
+      "contentHash": "xzW0FqBws924QDNrfAdKi4KlkFC4AADSyNWjBFtcEecHUjaYP9svXlmjpX4TEEgnwGgMJ5DWQKE6TdX7a9yDQQ==",
+      "servedSha256": "26041f9bb764bce29247560fa59b8e565becf780bec41365f5e235ebd0af823a"
+    },
+    {
+      "hashRole": "Unpublished local archive; servedSha256 retained for host contract compatibility",
+      "publiclyPublished": false,
+      "contentHashEvidence": "Real replacement package restore .nupkg.sha512",
+      "repositorySignatureVerified": false,
+      "id": "ArchSift.Testing",
+      "payloadVerified": true,
+      "submissionSha256": "743df88ebf3dc36a78ffcbfe5ca820938683882dd1139730f4b680cfc343af83",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "servedBytes": 23739,
+      "version": "0.11.4",
+      "contentHash": "FXOEEvJVtp9WfBRfPL0D4u/ZcMD5okb31RmdQeTexkKAxGTfe48i+iwFlXJPL4dvEOnKvs+ecOSqtWq1a1yxxw==",
+      "servedSha256": "743df88ebf3dc36a78ffcbfe5ca820938683882dd1139730f4b680cfc343af83"
+    }
+  ],
+  "approvedFeedPackages": 251,
+  "unchangedThirdPartyArchives": 246,
+  "sdkPolicy": {
+    "formalSdk": "10.0.303",
+    "futureEligibleBandsAlreadyTested": false,
+    "allowPrerelease": false,
+    "actualDailyOrder": [
+      "10.0.303",
+      "10.0.300",
+      "10.0.403"
+    ],
+    "minimumInclusive": "10.0.300",
+    "maximumExclusive": "10.1.0",
+    "formalRuntime": "10.0.13"
+  },
+  "verification": {
+    "actor": "agent",
+    "failure": null,
+    "status": "PASSED",
+    "humanPerformed": false,
+    "finishedUtc": "2026-10-30T12:42:46.8954872+00:00",
+    "schemaVersion": 1,
+    "publicationPerformed": false,
+    "ui": "separate Agent interaction required",
+    "failedStage": null,
+    "stages": [
+      {
+        "name": "daily303",
+        "elapsedMs": 166360,
+        "validation": {
+          "status": "passed",
+          "sdk": "10.0.303",
+          "dotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+          "cases": 493,
+          "csharp": 92,
+          "json": 401,
+          "skipped": 0,
+          "reportSha256": "7c854104c3021dd8fa42a9108994c042d417a6848a20dc090c106f01aa76a4d2",
+          "nativeSha256": "df8288a3939c34405c6ea9a182bb500e6f5fff101368c4f7eb27cfe457005a9c",
+          "actor": "agent",
+          "agent": "Codex",
+          "humanPerformed": false
+        },
+        "timedOut": false,
+        "hostEqual": true,
+        "exitCode": 0,
+        "status": "passed"
+      },
+      {
+        "name": "daily300",
+        "elapsedMs": 156788,
+        "validation": {
+          "status": "passed",
+          "sdk": "10.0.300",
+          "dotnet": "D:\\ArchSift-lab\\runs\\0114-resources-20261030-01\\sdk-10.0.300\\dotnet.exe",
+          "cases": 493,
+          "csharp": 92,
+          "json": 401,
+          "skipped": 0,
+          "reportSha256": "4ab894249231f20e5503721de7aeeb5c7c7f1ebc0ea84456ffa42082ef50f611",
+          "nativeSha256": "6f340d83941c57e90bb599782dcfb97c1b7ec165f788a09c1b81867994438ffe",
+          "actor": "agent",
+          "agent": "Codex",
+          "humanPerformed": false
+        },
+        "timedOut": false,
+        "hostEqual": true,
+        "exitCode": 0,
+        "status": "passed"
+      },
+      {
+        "name": "daily403",
+        "elapsedMs": 157877,
+        "validation": {
+          "status": "passed",
+          "sdk": "10.0.403",
+          "dotnet": "D:\\ArchSift-lab\\runs\\0114-resources-20261030-01\\sdk-10.0.403\\dotnet.exe",
+          "cases": 493,
+          "csharp": 92,
+          "json": 401,
+          "skipped": 0,
+          "reportSha256": "dcc32223c80a7e679ebc55f5efeb9d86ad41dbfe6c4232172719e23d8b443ad2",
+          "nativeSha256": "5a413460183f658d2f8b7fe0b9ffb7c1f7aad4c7b37d4eaedca9d963e27cce5f",
+          "actor": "agent",
+          "agent": "Codex",
+          "humanPerformed": false
+        },
+        "timedOut": false,
+        "hostEqual": true,
+        "exitCode": 0,
+        "status": "passed"
+      },
+      {
+        "name": "formal303",
+        "elapsedMs": 158148,
+        "validation": {
+          "status": "passed",
+          "sdk": "10.0.303",
+          "dotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+          "cases": 493,
+          "csharp": 92,
+          "json": 401,
+          "skipped": 0,
+          "reportSha256": "4dbfd5c1e602eff899c8e59cba17e86d38bf98dea35e99ea7fab0c6b6ddc357e",
+          "nativeSha256": "7c39ee5124b7d39cab8228a060b0e18efc4bfdcf2e86d3c0182b0dbcb31c5b3e",
+          "actor": "agent",
+          "agent": "Codex",
+          "humanPerformed": false
+        },
+        "timedOut": false,
+        "hostEqual": true,
+        "exitCode": 0,
+        "status": "passed"
+      },
+      {
+        "name": "independent-audit",
+        "elapsedMs": 23421,
+        "timedOut": false,
+        "hostEqual": true,
+        "audit": {
+          "run": "independent",
+          "expectedIfxProjects": 105,
+          "cliExternalPackages": [
+            "CycleDetection/2.0.0",
+            "JetBrains.Annotations/2026.2.0",
+            "Mono.Cecil/0.11.6",
+            "Newtonsoft.Json/13.0.4",
+            "TngTech.ArchUnitNET/0.13.4"
+          ],
+          "status": "passed",
+          "officialDataFetched": true,
+          "actualAuditedProjects": 105,
+          "scopeRecomputed": true,
+          "hostEqual": true,
+          "packageNetworkFallback": false,
+          "sdk": "10.0.303",
+          "expectedToolSourceProjects": 0,
+          "cliDistributionAuditProjects": 1,
+          "audit": {
+            "mode": "all",
+            "enabled": true,
+            "level": "moderate"
+          },
+          "targetRoot": "C:\\Users\\von12\\.codex\\worktrees\\ifx-daily-portability\\IFX-New",
+          "skipped": 0
+        },
+        "exitCode": 0,
+        "status": "passed"
+      }
+    ],
+    "kind": "ifx-archsift-local-sdk-qualification",
+    "separateMachine": false,
+    "agent": "Codex",
+    "startedUtc": "2026-10-30T12:31:41.1637098+00:00",
+    "hostEqual": true
+  },
+  "uiFullGate": {
+    "status": "passed",
+    "sdk": "10.0.303",
+    "dotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+    "cases": 493,
+    "csharp": 92,
+    "json": 401,
+    "skipped": 0,
+    "reportSha256": "aedf065e7dfb90f4302f042cd6a29a1ef5f150ea51188a2be6124b88264241c0",
+    "nativeSha256": "aff4371a8c04ef400e1ca17e9c51ba97cd12e066156e96bb9bcf3f6f01deff79",
+    "actor": "agent",
+    "agent": "Codex",
+    "humanPerformed": false
+  },
+  "uiObservations": [
+    {
+      "fullUiGate": "493 passed, allow/0",
+      "rootExitCode": 0,
+      "declaredProjectDiscovery": {
+        "complianceConclusion": false,
+        "projects": 105,
+        "outcome": "partial",
+        "reason": "Existing Debug artifacts absent; recorded separately from the complete Release daily gate",
+        "assemblies": 0
+      },
+      "humanPerformed": false,
+      "defaultRootCreated": true,
+      "csharp": 92,
+      "rulesExpanded": true,
+      "ownedPids": [
+        42604,
+        1644
+      ],
+      "ownedProcessesExited": true,
+      "listenersClosed": true,
+      "directBusyClose": "refused",
+      "historyReviewed": true,
+      "mode": "launcher-first",
+      "json": 401,
+      "inventoryAutomatic": true,
+      "hostCloseoutsVerified": true,
+      "rulesets": 13,
+      "launcherBusyClose": "refused",
+      "schemaVersion": 1,
+      "actor": "agent",
+      "agent": "Codex"
+    },
+    {
+      "mode": "launcher-repeat",
+      "json": 401,
+      "csharp": 92,
+      "historyRetained": true,
+      "hostCloseoutsVerified": true,
+      "ownedProcessesExitedByStoragePath": true,
+      "childClosedFromLauncher": true,
+      "listenersClosed": true,
+      "humanPerformed": false,
+      "schemaVersion": 1,
+      "rootExitCode": 0,
+      "actor": "agent",
+      "inventoryAutomatic": true,
+      "agent": "Codex",
+      "rulesets": 13,
+      "historyCurrentComplianceClaimed": false
+    },
+    {
+      "agent": "Codex",
+      "inventoryAutomatic": true,
+      "actor": "agent",
+      "rootExitCode": 0,
+      "dirtyConfigChange": "Debug to Release, session only",
+      "schemaVersion": 1,
+      "json": 401,
+      "explicitDiscardClose": true,
+      "humanPerformed": false,
+      "ownedProcessesExitedByStoragePath": true,
+      "listenersClosed": true,
+      "csharp": 92,
+      "dirtyClosePrompt": true,
+      "cancelCloseRetainedEdit": true,
+      "hostCloseoutsVerified": true,
+      "mode": "workbench-first",
+      "rulesets": 13
+    },
+    {
+      "listenersClosed": true,
+      "mode": "workbench-repeat",
+      "discardedEditNotPersisted": true,
+      "ownedProcessesExitedByStoragePath": true,
+      "rulesets": 13,
+      "inventoryAutomatic": true,
+      "defaultConfiguration": "Debug",
+      "schemaVersion": 1,
+      "rootExitCode": 0,
+      "json": 401,
+      "agent": "Codex",
+      "hostCloseoutsVerified": true,
+      "historyCurrentComplianceClaimed": false,
+      "chineseUiReviewed": true,
+      "humanPerformed": false,
+      "historyRetained": true,
+      "csharp": 92,
+      "actor": "agent",
+      "localeRestored": true
+    }
+  ],
+  "uiLifecycle": {
+    "sourceFilesModifiedByUi": false,
+    "allLeasesReleased": true,
+    "productStarts": [
+      {
+        "schemaVersion": 1,
+        "exitCode": 0,
+        "hostEqual": true,
+        "productVersion": "0.11.4",
+        "targetRoot": "C:\\Users\\von12\\.codex\\worktrees\\ifx-daily-portability\\IFX-New",
+        "mode": "launcher"
+      },
+      {
+        "schemaVersion": 1,
+        "exitCode": 0,
+        "hostEqual": true,
+        "productVersion": "0.11.4",
+        "targetRoot": "C:\\Users\\von12\\.codex\\worktrees\\ifx-daily-portability\\IFX-New",
+        "mode": "workbench"
+      },
+      {
+        "schemaVersion": 1,
+        "exitCode": 0,
+        "hostEqual": true,
+        "productVersion": "0.11.4",
+        "targetRoot": "C:\\Users\\von12\\.codex\\worktrees\\ifx-daily-portability\\IFX-New",
+        "mode": "workbench"
+      },
+      {
+        "schemaVersion": 1,
+        "exitCode": 0,
+        "hostEqual": true,
+        "productVersion": "0.11.4",
+        "targetRoot": "C:\\Users\\von12\\.codex\\worktrees\\ifx-daily-portability\\IFX-New",
+        "mode": "launcher"
+      }
+    ],
+    "agent": "Codex",
+    "ownedProcessesRemaining": 0,
+    "listenersRemaining": 0,
+    "schemaVersion": 1,
+    "storageRoot": "C:\\Users\\von12\\AppData\\Local\\IFX\\ArchSiftHost",
+    "exclusiveLockReopenCount": 6,
+    "status": "passed",
+    "hostStarts": [
+      {
+        "hostEqual": true,
+        "workspaceInitialized": true,
+        "selectedDotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+        "mode": "Launcher",
+        "inputIdentity": "e4059308ad8eb7dcac5cabb9f90582e7981e434d5ec40eb1bb20f516b8b871a5",
+        "action": "Start",
+        "success": true,
+        "failedStage": null,
+        "productDispatchAttempted": true,
+        "activationPerformed": false,
+        "version": "0.11.4"
+      },
+      {
+        "workspaceInitialized": true,
+        "failedStage": null,
+        "mode": "Launcher",
+        "inputIdentity": "e4059308ad8eb7dcac5cabb9f90582e7981e434d5ec40eb1bb20f516b8b871a5",
+        "action": "Start",
+        "hostEqual": true,
+        "selectedDotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+        "productDispatchAttempted": true,
+        "success": true,
+        "activationPerformed": false,
+        "version": "0.11.4"
+      },
+      {
+        "productDispatchAttempted": true,
+        "success": true,
+        "mode": "Workbench",
+        "inputIdentity": "e4059308ad8eb7dcac5cabb9f90582e7981e434d5ec40eb1bb20f516b8b871a5",
+        "workspaceInitialized": true,
+        "selectedDotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+        "activationPerformed": false,
+        "hostEqual": true,
+        "version": "0.11.4",
+        "failedStage": null,
+        "action": "Start"
+      },
+      {
+        "productDispatchAttempted": true,
+        "version": "0.11.4",
+        "hostEqual": true,
+        "activationPerformed": false,
+        "workspaceInitialized": true,
+        "failedStage": null,
+        "success": true,
+        "selectedDotnet": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-01\\sdk-10.0.303\\dotnet.exe",
+        "action": "Start",
+        "mode": "Workbench",
+        "inputIdentity": "e4059308ad8eb7dcac5cabb9f90582e7981e434d5ec40eb1bb20f516b8b871a5"
+      }
+    ],
+    "actor": "agent",
+    "checkedPorts": [
+      8029,
+      2425,
+      3744,
+      7500,
+      10505,
+      10065
+    ],
+    "humanPerformed": false
+  },
+  "sourceRegression": {
+    "architecturePassed": 2,
+    "earlierMisconfiguredRunsRetained": true,
+    "heldRestoreBusyShutdownRegression": "passed",
+    "unitPassed": 157,
+    "skipped": 0,
+    "integrationPassed": 214,
+    "focusedPassed": 2
+  },
+  "sourceAndPackageRecheck": {
+    "packageInputs": {
+      "status": "package-inputs-consistent",
+      "version": "0.11.4",
+      "packageCount": 251,
+      "metadataOnly": true,
+      "packageSourceQualified": false,
+      "runtimeQualified": false,
+      "restoreExecuted": false,
+      "productExecuted": false,
+      "architectureTestsExecuted": false
+    },
+    "feed": {
+      "status": "passed",
+      "packages": 251,
+      "packageSource": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-02\\feed",
+      "configPath": null,
+      "manifestSha256": "5888c74c3f6a6d17afef6f1d1ee74cf77e011fed7c746050e9dbc5a0729d202a",
+      "packageNetworkFallback": false,
+      "persistentConfigChanged": false
+    },
+    "checkedUtc": "2026-10-30T13:00:59.4843239+00:00",
+    "sources": [
+      {
+        "files": 963,
+        "allFrozenFileHashesEqual": true,
+        "source": "ifx"
+      },
+      {
+        "files": 912,
+        "allFrozenFileHashesEqual": true,
+        "source": "archsift"
+      }
+    ],
+    "status": "passed"
+  },
+  "negativeSdkGuards": [
+    {
+      "scenario": "wrong-selected-sdk",
+      "exitCode": 1,
+      "rejectedBeforeRestoreBuildTest": true,
+      "status": "passed"
+    },
+    {
+      "scenario": "below-minimum-sdk",
+      "exitCode": 1,
+      "rejectedBeforeRestoreBuildTest": true,
+      "status": "passed"
+    }
+  ],
+  "nativeIdentitySubstitution": {
+    "message": "Gate evidence rejected: executed native C# cases identity mismatch",
+    "rejected": true,
+    "scenario": "Native CTRF substitution retains 493 passing counts and declared report scope but changes one actual logical C# identity",
+    "status": "passed"
+  },
+  "workflow": {
+    "humanAnswersFilled": 0,
+    "finalSdkAndAuditInvocations": 1,
+    "uiActor": "agent",
+    "crossMachineDeveloperRoundTrips": 0,
+    "cloneDriverReadyForOperatorHandoff": false
+  },
+  "retainedFindings": [
+    {
+      "acceptanceReused": false,
+      "kind": "incorrect initial SDK selection",
+      "status": "resolved by exact isolated SDK root and expected-SDK preflight"
+    },
+    {
+      "safetyBypassed": false,
+      "kind": "initial source-watch build block",
+      "status": "retained; not reproduced in hash-equal diagnostic rebuild and subsequent full lanes; cause not conclusively identified"
+    },
+    {
+      "kind": "Launcher closed an active daily gate",
+      "cancelledRunCountedAsPass": false,
+      "status": "fixed through shared job lease; replacement packages and all affected scopes rerun"
+    }
+  ],
+  "pending": [
+    "Final source commit and commit-exact CI/release qualification",
+    "Publication approval, public submission and served signature/payload verification",
+    "Final public IFX binding and public-only restore",
+    "Complete the integrated clean-clone driver and execute it on a separate Windows machine",
+    "Historical 0.11.3 migration/rollback on owned state copies; no live activation",
+    "Actual disconnected/cold-offline acceptance is not claimed"
+  ],
+  "publicationPerformed": false,
+  "liveActivationPerformed": false,
+  "evidenceBundle": {
+    "schemaVersion": 1,
+    "status": "verified",
+    "humanPerformed": false,
+    "sha256": "1308d0e59ff39a0567fcf787cd7b8b4ee9e0335ada9366965bc4b7e7314bdc5e",
+    "agent": "Codex",
+    "bundle": "D:\\ArchSift-lab\\runs\\ifx-0114-qualification-20261030-02\\ifx-0114-local-qualification.zip",
+    "actor": "agent",
+    "allMemberHashesVerified": true,
+    "manifestSha256": "cce4e11eedc679961f348a59cf862518ac23b70a7de1cd622c387a672144de31",
+    "members": 220
+  },
+  "closeoutDocumentNote": "Frozen tested source archives remain immutable. These acceptance records and subsequent plan status updates are post-run documentation; no runtime code or packaged release documents changed after the final freeze."
+}

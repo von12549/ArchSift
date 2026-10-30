@@ -1,0 +1,99 @@
+# ArchSift 0.11.4 daily portability release plan
+
+Date: 2026-10-30 (Australia/Sydney).
+
+Status: repaired local product and the requested isolated real IFX SDK/audit/Agent-UI scope passed on build `0114-package-20261030-07`, completed 2026-10-31. Source remains uncommitted and packages unpublished. The [final local qualification](../acceptance/20261031-0114-ifx-local-qualification.md) and JSON supersede the earlier scoped product checkpoint for current candidate identity. Version **0.11.4** was absent from the official CLI index at the earlier check; recheck before publication and never replace an existing public version.
+
+## Local product execution checkpoint
+
+During authorized real IFX qualification, all three 493-case SDK lanes and the pinned formal lane passed on package build `0114-package-20261030-05`, and an independent audit passed for 105 IFX projects plus the CLI/Web distribution. Agent UI testing then found that session busy status and shutdown checked analysis jobs but omitted the shared daily-test lease. A Launcher close consequently cancelled an active daily gate. That cancelled run remains evidence and is not a pass. A narrow shared-lease repair and a real held-restore HTTP regression are being prepared; replacement candidate bytes and all affected acceptance results must be requalified before publication. No publication or existing daily-installation activation occurred.
+
+The shared-lease repair now passes its real held-restore/cancellation HTTP regression (2 focused cases), architecture tests (2), unit tests (157) and the complete integration suite (214), with zero skipped cases and host equality. The initially misconfigured held-restore fixture and the broad run with unmet historical Launcher/SDK/PATH prerequisites remain failed records. The prepared broad run uses an explicitly synthetic current-source 0.11.0 Launcher payload and the existing isolated SDK 9/10 root; it is not a historical package qualification. A fresh package build is required to bind the corrected regression source before repeating package and real IFX qualification.
+
+The user authorized ArchSift repairs, new-package builds and Agent tests, with confirmation before publication. The earlier [local product closeout](../acceptance/20261030-0114-local-product-qualification.md) remains historical build-05 scoped evidence. The final record binds 912 ArchSift and 963 IFX frozen source files, all five build-07 archives and a 220-member verified bundle. The requested real SDK/formal/audit/UI scope has now executed successfully. Final committed-source CI, public binding, historical migration/rollback and separate-machine clean-clone stages remain open.
+
+## Outcome and authority
+
+Deliver a newly versioned ArchSift package set and matching IFX integration that supports daily stable SDK selection in `10.0.300 <= SDK < 10.1.0`, automatically initializes external default storage and loads project rules from Git. Daily verification must execute the same complete 92 C# plus 401 JSON cases as the approved IFX scope. A separately pinned formal lane continues to validate its exact SDK/runtime artifacts.
+
+On 2026-10-30 the user requested this new-version plan in the previously recommended order and explicitly delegated tests that otherwise need a human to the Agent. For this release scope, that delegation covers actual IFX architecture execution, independent dependency audit, Launcher/direct Workbench/child Workbench interaction, visual and hands-on review, lifecycle, recovery and migration tests, and accessible clean-machine acceptance. Keep sequential stage inspection and host safety. Do not ask for the same test delegation again.
+
+Record UI acceptance as `agent-delegated`, with the actual agent, environment, actions, observations and artifact identities; retain `humanPerformed=false` when no human performed it. Adapt legacy release validators and driver prompts to this route. Do not fabricate human answers, human scores or independent-human acceptance. A requirement for another physical/virtual Windows machine still requires actual access to such a machine. If unavailable, identify that stage and required access explicitly; local simulation does not satisfy it.
+
+The initial request authorized planning; the later execution request authorized ArchSift repairs, new-package builds and Agent tests, with publication requiring another confirmation. The earlier portability implementation authorization remains applicable. Test delegation does not itself authorize commits, pushes, PR/merge operations, release-environment approval, tags, installers or activation of an existing daily installation. Prepare concrete source/package/evidence and approval cards before those boundaries. Prior version-specific publication switches and waivers do not apply to this version.
+
+## Bound starting points
+
+- Published 0.11.3 package source: `af25bed0da8b3cedf5706a404dd3f33a8f7b45df`, as recorded by the IFX provenance manifest. Published package bytes and historical evidence remain immutable.
+- ArchSift portability worktree base: `944c3ff`; resolve and record its full commit/tree and current source hashes at execution start. Candidate edits already exist in Contracts, Workspace settings/host/service, TestGate, schemas, template, tests and plan.
+- IFX portability worktree base: `7eaa50b`; resolve and record full commit/tree, remote head and scoped changes before adoption. The existing companion target remains at public 0.11.3.
+- Existing evidence: ArchSift build and five focused Workspace tests passed under SDK 10.0.303; two focused required-case/SDK-policy tests passed. Wider suites retain a link-privilege failure and two missing-fixture failures. IFX host simulations passed 30 checks. These results do not establish package, SDK-matrix, migration or clean-machine acceptance.
+- The current IFX acceptance driver and evidence validator are drafts. They still require full success/failure qualification, bounded child lifecycle, source/evidence identity checks, complete receipts and an Agent acceptance route.
+
+## Versioned product contract
+
+| Contract | Required new-version behavior | Compatibility evidence |
+| --- | --- | --- |
+| Gate SDK policy | Schema-2 gate configuration supports explicit stable `minimumSdkVersion` and `maximumSdkVersionExclusive`; both bounds must be present together and ordered. Record the policy and actual selected SDK in the report | New configuration loads in the new package; old configurations still use their exact baseline comparison; malformed/preview/out-of-range selections fail before restore/build/tests |
+| Required-case provenance | Preserve existing approved logical identities and historical baseline SDK. Remove the product's literal 10.0.303 dependency from generic manifest validation; exact mode still compares actual SDK against its manifest | Keep original manifests/reports immutable; any new IFX packageVersion/hash update is a separately bound versioned artifact |
+| Workspace selection | Optional exclusive SDK upper bound; respect project global.json and explicit executable; no fallback after an invalid explicit path | Actual minimum, baseline and later feature-band selections; multi-SDK/external-current-directory cases; required Core/ASP.NET frameworks |
+| Storage | Generic per-user LocalApplicationData default; IFX owns its namespace and override precedence; Init/Start create absent valid roots | Standard-user, no pre-created root, no developer drive, spaces/non-ASCII, repeat/two-clone isolation, link/overlap/access failures; observational Doctor behavior from the portability contract |
+| Project rules | Generic `workbench.policyFile` loads project-relative hash-bound rule entries; reject simultaneous direct rulesets and policy reference | IFX uses its existing policy as authority; 13/401 inventory loads without personal-library data; reviewed source updates refresh safely and stale results remain distinguishable |
+| Daily inventory | Automatically select a matching daily-test configuration when verified inputs are available; give a precise not-ready reason otherwise | Public/configured acquisition and verified local package material must have a defined bridge; test configuration generation alone must not execute IFX tests |
+| Frozen run inputs | Validated policy/rules and relevant source inputs cannot change unnoticed within one report | Content-bound snapshots or equivalent immutable representation; mid-run edits fail safely; reports retain original identity |
+| Agent acceptance | Explicit actor metadata and delegated UI acceptance supported by release/IFX validators | Agent execution is accepted under this authorization without asserting human execution |
+
+Keep generic ArchSift contracts independent of IFX package counts and individual business rules. IFX-specific scope assertions belong to IFX integration/acceptance. Do not solve new fields by globally accepting unknown JSON properties or by disabling SDK checks.
+
+## Ordered delivery stages
+
+| Stage | Owner and work | Required result before proceeding | Current state |
+| --- | --- | --- | --- |
+| N0 baseline and freeze contract | ArchSift + IFX: inventory source changes, current heads, package graph, SDK/framework archives, rules/state mappings and artifact access; check proposed version availability | Full input inventory, version decision, test actor authority and explicit file scope | Partial source discovery; release inventory pending |
+| N1 product completion | ArchSift: finish contracts above, templates and automatic daily inventory; keep old configs/exact mode; update package notes/schema | Meaningful product regressions pass with owned fixtures, including all previously missing fixture/privilege cases | Local scoped repairs/tests passed; see closeout |
+| N2 immutable package candidate | ArchSift: version and build the aligned five packages: Contracts, Core, ArchUnit, Testing, Cli; CLI includes matching TestGate/Web/schema/template payloads | Exact source identity, locked restore, Release build, package/dependency/license/Web verification, manifest and hashes; no mixed 0.11.3 internal edges | Local development package/source archives and consumer tests passed; clean committed-source/CI qualification pending |
+| N3 isolated IFX candidate qualification | IFX: create a temporary reviewed binding to N2's exact local candidate packages; update complete version/lock/approval/provenance graph in an isolated qualification checkout | Real SDK matrix and 493-case gate, pinned lane, independent audit and Agent UI/lifecycle/recovery pass on those exact packages | Requested local matrix/formal/audit/UI passed on build 07; historical migration/rollback remains pending |
+| N4 release readiness and public package | ArchSift: bind qualifying source/CI/evidence; prepare a version-specific publication request; after publication authorization, submit frozen packages and verify served signatures/owner/payloads | Independently verified served package identities; submission and served hashes recorded separately; stopped publication retains evidence without rebuilding/retrying silently | Not started; publication authority pending |
+| N5 final IFX binding | IFX: replace temporary candidate-source binding with final public served identities; update all dependent pins/locks/digests atomically | Clean committed-source CI and public-only consumer acquisition; no overlay/private developer source or CandidateSource required | Not started |
+| N6 integrated clean-clone acceptance | IFX + ArchSift: run the qualified driver on an accessible separate Windows environment, including normal default startup, Agent UI, full selected-SDK gate, independent audit, restart and declared offline scenario | One primary execution and one independently verified evidence bundle; all required stages and actual actors recorded | Not started |
+| N7 migration and closeout | IFX: exercise version/state refresh, preserved drafts/history, failure and rollback on owned copies; bind all final evidence and prepare activation card | Matching old/new version-state rollback verified; explicit supported/unrun environments and final delivery instructions | Not started; live activation remains a later decision |
+
+N3 is intentionally an isolated candidate binding before public adoption: real IFX qualification needs the new package, and publication needs qualification. It uses locally available exact candidate bytes and explicitly records `publiclyPublished=false`. N5 is the later public binding. A source archive of uncommitted edits may support development tests; it cannot be represented as final commit-exact CI/package qualification. Obtain applicable source/remote-operation authority at the concrete boundary rather than transferring old release authority.
+
+Any source change after package freeze invalidates affected package and acceptance evidence. Before signing/publication, rebuild and requalify a changed candidate; after publication, use a new package version. The final public IFX binding must use actual served identities rather than assuming NuGet's signed archive hash equals the original submission hash.
+
+## Test allocation and execution
+
+| Batch | Environment/actor | Coverage | Exit evidence |
+| --- | --- | --- | --- |
+| A product and development lab | Agent, owned fixtures and isolated SDK roots | Syntax/schema/unknown-field compatibility; valid and invalid policy bounds; exact backward compatibility; path/storage/rule failures; interrupt/cleanup; snapshot/refresh; package and consumer closure; driver success/failure/tamper cases | Source/package-bound logs, structured results and environment/Profile equality |
+| A real integration | Agent, isolated IFX qualification checkout and approved complete feed | Actual stable 10.0.300, 10.0.303 and an available representative 10.0.4xx SDK; each daily lane restores/builds and runs all 92+401 cases with zero missing/duplicate/skipped cases; exact .303 runtime lane separately | Actual executable/root, SDK/host/frameworks, policy/package hashes, coverage and lane; independently validated reports |
+| A audit and UI | Agent, same exact candidate | Fresh independent dependency audit; Launcher-to-child Workbench and direct Workbench first/repeat, rule visibility/usability, dirty edits, safe shutdown; copied-state migration/rollback | Actual audit scope and fresh advisory data; Agent actions/observations, readiness and owned PID/listener/lease closeouts |
+| B clean-clone | Agent when separate-machine access exists | Clone exact final IFX commit, complete tracked inputs, public acquisition, automatic absent default storage, project/daily inventory, selected-SDK full gate and independent audit, UI and repeat startup | One validated bundle and digest; real environment and actor identity; no main-machine substitution |
+| C scoped follow-up | Agent or minimal local operator action when access cannot be automated | Only unresolved machine-specific failure or an explicitly required unavailable scenario | A consolidated correction/resume instruction with fresh stage evidence |
+
+Stable future feature bands are policy-eligible, not already tested. If the exact minimum or later-band SDK cannot be obtained, record the missing input and do not substitute a version-string mock for real compatibility. Use verified official SDK/runtime archives in external owned roots and child-only selection instead of installing/uninstalling global SDKs. Required runtime frameworks are checked independently of SDK feature-band numbers.
+
+Reconcile separate architecture and audit restore requirements. Reuse verifiable unchanged acquisition/build outputs within a run where supported; do not skip discovery/assertions or count audit-not-run as an audit pass. Preserve the pinned formal SDK/runtime approval and validate that it still rejects altered artifact bytes.
+
+## One-batch acceptance driver requirements
+
+Use the tracked IFX `eng/Accept-ArchSiftClone.ps1`, tracked scenario/input metadata, `Test-ArchSiftCloneInputs.ps1` and `Test-ArchSiftCloneEvidence.ps1`, with root-entry dispatch and documented necessary inputs. All transitive helpers/fixtures must appear in the eventual candidate commit's `git ls-files` and work in a fresh clone.
+
+Before delivery, finish the current drafts: replace mandatory `Read-Host` pass answers with a declared `agent-delegated` path and actual evidence; retain optional human observations only when supplied. Bound child/stage duration and owned cleanup, record pending work without assuming timeout is approval, verify actual SDK/package/rule/source identities and coverage, preserve stage failures and validate the full bundle. Check manifest/member uniqueness and hashes, required records, closeout counts, child/lifecycle cleanup and successful-report consistency. Test malformed/missing/tampered evidence and interrupted finalization. A shell exit code or self-written PASS alone is insufficient.
+
+The healthy B scenario requires one reviewed launch and one returned bundle, with no developer response between internal stages. Supply prerequisite/artifact discovery in that launch; no manual StorageRoot creation, generated path copying, JSON editing or undocumented feed/SDK dependency. Run lab SDK matrices and destructive simulations in A. If strict network disconnection is required, acquire/audit first and perform one necessary local disconnect/resume action; distinguish an actual disconnected scenario from a warm-cache restart. An optional cold-offline claim requires its own verified bundle and fresh state. Missing offline evidence must not block the normal online scope by inventing offline support.
+
+Preserve failed runs. Resume revalidates identities/dependencies and reruns only invalidated stages; cold-first-use evidence requires fresh owned state. Record duration, operator actions, cross-machine exchanges and waiting to check the user's effort requirement.
+
+## Evidence and completion
+
+Prepare a versioned acceptance JSON contract before execution. Required fields include source commit/tree or explicitly dirty development archive, original/submission/served package identities, SDK policy and selected toolchain, rules/case identities, stage status, actor and delegation reference, machine identity, host equality, cleanup, indexed file hashes, required follow-up and final bundle digest. Use PASS, FAIL, BLOCKED, NOT RUN and PENDING REVIEW explicitly.
+
+Capture hashed environment/Profile baselines before installation/dotnet-capable work, compare after each relevant child and at cleanup/completion, and stop immediately on drift without automatic repair or further product/dotnet work. Keep real test state/feed/cache/artifacts external to target repositories. Never run IFX business application entry points. Network use for public acquisition/audit and strict-offline tests must follow the declared scenario; credentials/raw environment values are excluded from evidence.
+
+Release/adoption completion requires all mandatory stages evidenced on the exact final identities, usable public artifact access, no unfinished required human-only test, and verified rollback. Agent-delegated UI fulfills the user's delegated test route; it is never reported as independent human execution. Existing 0.11.3 CI, startup acceptance and published package hashes cannot stand in for 0.11.4 results.
+
+## Next execution package
+
+Continue with N3's isolated IFX candidate binding using the exact locally tested package identities. Prepare the complete matching approvals/feed/locks and Agent acceptance driver, then execute the actual IFX matrix and independent audit. Complete clean committed-source/CI package qualification and the new publishing profile before a concrete publication confirmation. The local product checkpoint performs no real IFX test, remote Git action, publication or live switch.

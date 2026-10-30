@@ -75,8 +75,9 @@ internal sealed class WorkspaceHost
                 PathSafety.EnsureNoLinks(candidate);
                 var sdkText = (await Probe(candidate, settings.ProjectRoot, ["--version"], cancellation)).Trim();
                 if ((!settings.Configuration.Runtime.AllowPrerelease && sdkText.Contains('-')) ||
-                    !Version.TryParse(sdkText.Split('-')[0], out var sdk) || sdk < Version.Parse(settings.Configuration.Runtime.MinimumSdkVersion))
-                    throw new ConfigurationException("The selected SDK must be stable and >= " + settings.Configuration.Runtime.MinimumSdkVersion + ".");
+                    !Version.TryParse(sdkText.Split('-')[0], out var sdk) || sdk < Version.Parse(settings.Configuration.Runtime.MinimumSdkVersion) ||
+                    settings.Configuration.Runtime.MaximumSdkVersionExclusive is { } maximum && sdk >= Version.Parse(maximum))
+                    throw new ConfigurationException("The selected SDK is outside the workspace SDK range.");
                 var info = await Probe(candidate, settings.ProjectRoot, ["--info"], cancellation);
                 if (OperatingSystem.IsWindows() && !Regex.IsMatch(info, @"(?m)^\s*Architecture:\s*x64\s*$"))
                     throw new ConfigurationException("The interactive Windows host must be x64.");
@@ -91,6 +92,8 @@ internal sealed class WorkspaceHost
                 }
                 var runtimeRoot = WorkspaceSettings.Canonical(Path.GetDirectoryName(candidate)!);
                 PathSafety.EnsureDisjoint(settings.ProjectRoot, runtimeRoot); PathSafety.EnsureDisjoint(settings.StateRoot, runtimeRoot);
+                if ((settings.Cache ?? Environment.GetEnvironmentVariable("NUGET_PACKAGES")) is { } selectedCache && Path.IsPathFullyQualified(selectedCache))
+                    PathSafety.EnsureDisjoint(runtimeRoot, selectedCache);
                 if (settings.RuntimeApproval is { } approvalPath)
                 {
                     using var approval = WorkspaceSettings.Read(approvalPath); var value = approval.RootElement;

@@ -437,7 +437,7 @@
     el("test-subset-picker").hidden = !subset;
     const hint = subset ?
       "Subset mode runs one discovered case and cannot allow the daily gate. Snapshot updates remain disabled." :
-      "Complete mode runs every original and JSON case. Snapshot updates are disabled; offline restore, build and tests run in sequence.";
+      "Complete mode runs every original and JSON case. Snapshot updates are disabled; restore uses the declared package sources before build and tests.";
     el("test-mode-hint").setAttribute("data-i18n", hint);
     el("test-mode-hint").textContent = t(hint);
     if (subset && !discovery) refreshDiscovery().catch(error =>

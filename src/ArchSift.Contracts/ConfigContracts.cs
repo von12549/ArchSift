@@ -41,4 +41,6 @@ public sealed record RunConfiguration
     public required OutputSettings Output { get; init; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? RulesDirectory { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? DailyTestConfig { get; init; }
 }

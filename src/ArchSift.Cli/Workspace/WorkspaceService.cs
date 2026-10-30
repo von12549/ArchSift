@@ -9,6 +9,8 @@ namespace ArchSift.Workspaces;
 
 internal sealed record WorkspaceMarker(int SchemaVersion, string Kind, string ProjectId, string TargetRoot,
     string StateRoot, string ConfigurationIdentity, string GeneratedConfigurationSha256);
+internal sealed record WorkspaceRefresh(int SchemaVersion, string Kind, string ProjectId, string TargetRoot,
+    string StateRoot, string ConfigurationIdentity, string PreviousConfigurationSha256, string ExpectedConfigurationSha256);
 internal sealed record WorkspaceResult(string Status, string ProductVersion, string TargetRoot, string StateRoot,
     string StartupConfig, string LauncherRoot, string? DailyTestConfig, WorkspaceHostSelection Host)
 {
@@ -132,10 +134,6 @@ internal static class WorkspaceService
         if (expected.Count == 0 || Directory.GetFiles(payload, "*", SearchOption.AllDirectories).Length != expected.Count)
             throw new ConfigurationException("Restored package has missing or unapproved extra payload files.");
     }
-    private static string? DailyUnavailableReason(WorkspaceSettings settings) =>
-        settings.GateFile is not null && settings.Configuration.Nuget.Mode == "configured"
-            ? "The IFX daily architecture gate requires explicit approved offline preparation. Normal workspace initialization does not run architecture tests."
-            : null;
     internal static async Task<int> RunAsync(string action, string file, string? localFile, string mode, bool noBrowser,
         string? migration, CancellationToken cancellation)
     {
@@ -154,7 +152,6 @@ internal static class WorkspaceService
             if (action is not ("init" or "doctor" or "start")) throw new ConfigurationException("Use workspace init, doctor or start.");
             if (action == "start" && mode is not ("launcher" or "workbench")) throw new ConfigurationException("Workspace mode must be launcher or workbench.");
             var settings = WorkspaceSettings.Load(file, localFile);
-            var host = await guard.Resolve(settings, cancellation);
             var feed = VerifySources(settings); VerifyIfx(settings, feed); guard.Verify();
             var webDirectory = Path.Combine(AppContext.BaseDirectory, "web");
             var distributed = File.Exists(Path.Combine(AppContext.BaseDirectory, "DotnetToolSettings.xml"));
@@ -166,6 +163,9 @@ internal static class WorkspaceService
             if (action == "doctor")
             {
                 if (migration is not null) throw new ConfigurationException("doctor never migrates state.");
+                if (settings.Configuration.Runtime.DotnetPath is { } configuredHost &&
+                    !File.Exists(WorkspaceSettings.Canonical(configuredHost, Path.GetDirectoryName(settings.File))))
+                    throw new ConfigurationException("Selected dotnet executable is missing.");
                 if (File.Exists(markerPath)) ValidateMarker(settings, markerPath);
                 else if (Directory.Exists(settings.StateRoot) && !EmptyOrAbandonedLease(settings.StateRoot))
                     throw new ConfigurationException("Unrecognized nonempty workspace state; preserve it and review initialization recovery.");
@@ -177,24 +177,25 @@ internal static class WorkspaceService
                     catch (IOException) { busy = true; }
                 }
                 Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, kind = "archsift-workspace-diagnostic", status = busy ? "busy" : "ready", busy, productVersion = RuntimeInfo.ProductVersion,
-                    settings.ProjectRoot, settings.StateRoot, startupConfig = configPath, initialized = File.Exists(markerPath), host,
+                    settings.ProjectRoot, settings.StateRoot, startupConfig = configPath, initialized = File.Exists(markerPath), hostProbed = false,
                     nugetConfig = settings.NugetConfig, cache = settings.Cache ?? Environment.GetEnvironmentVariable("NUGET_PACKAGES") }, JsonContract.Options));
-                if (DailyUnavailableReason(settings) is { } doctorReason) Console.Error.WriteLine(doctorReason);
                 return 0;
             }
             if (action is not ("init" or "start")) throw new ConfigurationException("Use workspace init, doctor or start.");
+            var host = await guard.Resolve(settings, cancellation);
+            settings = settings with { Configuration = settings.Configuration with {
+                Runtime = settings.Configuration.Runtime with { DotnetPath = host.Dotnet } },
+                ConfigIdentity = ContentHash.Text(settings.ConfigIdentity + "/" + host.Dotnet + "/" + host.Sdk) };
             using var workspaceLease = OpenLease(settings, markerPath);
             Initialize(settings, markerPath, configPath);
             if (migration is not null) Import(settings, migration);
             var launch = Path.Combine(settings.StateRoot, "launches", Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(launch);
             var daily = Daily(settings, launch, feed);
-            if (DailyUnavailableReason(settings) is { } dailyReason) Console.Error.WriteLine(dailyReason);
             var result = new WorkspaceResult("initialized", RuntimeInfo.ProductVersion, settings.ProjectRoot, settings.StateRoot,
                 configPath, Path.Combine(settings.StateRoot, "launcher"), daily, host);
             WriteNew(Path.Combine(launch, "initialization.json"), result);
             Console.WriteLine(JsonSerializer.Serialize(result, JsonContract.Options));
-            if (daily is not null) Console.WriteLine("Daily-test configuration: " + daily);
             if (action == "init") return 0;
             var web = ArchSift.Hosting.WebPayload.Resolve(Path.Combine(AppContext.BaseDirectory, "web"), RuntimeInfo.ProductVersion);
             var arguments = mode == "launcher" ? new[] { "--launcher", result.LauncherRoot, "--config", result.StartupConfig }
@@ -221,6 +222,12 @@ internal static class WorkspaceService
     private static FileStream OpenLease(WorkspaceSettings settings, string markerPath)
     {
         var root = settings.StateRoot;
+        if (Directory.Exists(root))
+            foreach (var entry in Directory.EnumerateFileSystemEntries(root, "workspace-state.json.*.tmp"))
+            {
+                PathSafety.EnsureNoLinks(entry);
+                if (Directory.Exists(entry)) throw new ConfigurationException("Reserved marker temporary is a directory; preserve it for review.");
+            }
         if (Directory.Exists(root) && !File.Exists(markerPath) && !File.Exists(Path.Combine(root, "initialization.json")) && !EmptyOrAbandonedLease(root))
             throw new ConfigurationException("Workspace initialization requires an empty/absent or verified owned root; unknown files are preserved.");
         Directory.CreateDirectory(root);
@@ -263,12 +270,28 @@ internal static class WorkspaceService
     private static void Initialize(WorkspaceSettings settings, string markerPath, string configPath)
     {
         var root = settings.StateRoot; var journalPath = Path.Combine(root, "initialization.json");
+        PathSafety.EnsureNoLinks(configPath);
         var expected = new RunConfiguration { SchemaVersion = 1, Target = new() { Root = settings.ProjectRoot, Entry = settings.Configuration.Project.Entry },
-            Rulesets = settings.Configuration.Workbench.Rulesets.Select(p => WorkspaceSettings.Canonical(p, Path.GetDirectoryName(settings.File))).ToArray(),
+            Rulesets = WorkspaceSettings.RulePaths(settings),
+            DailyTestConfig = settings.GateFile is null ? null : DailyTemplatePath(settings),
             Build = settings.Configuration.Workbench.Build, RulesDirectory = Path.Combine(root, "library"),
             Output = new() { Directory = Path.Combine(root, "reports") } };
         var bytes = JsonSerializer.SerializeToUtf8Bytes(expected, JsonContract.Options); var expectedHash = ContentHash.Bytes(bytes);
         WorkspaceMarker? marker = File.Exists(markerPath) ? ValidateMarker(settings, markerPath) : null;
+        var refreshPath = Path.Combine(root, "configuration-refresh.json");
+        PathSafety.EnsureNoLinks(refreshPath);
+        WorkspaceRefresh? refresh = null;
+        if (File.Exists(refreshPath))
+        {
+            using var pending = WorkspaceSettings.Read(refreshPath);
+            refresh = pending.RootElement.Deserialize<WorkspaceRefresh>(JsonContract.Options);
+            if (marker is null || refresh is null || refresh.SchemaVersion != 1 || refresh.Kind != "archsift-workspace-refresh" ||
+                refresh.ProjectId != settings.Configuration.Project.Id || refresh.TargetRoot != settings.ProjectRoot || refresh.StateRoot != root ||
+                refresh.ConfigurationIdentity != settings.ConfigIdentity || refresh.ExpectedConfigurationSha256 != expectedHash ||
+                marker.GeneratedConfigurationSha256 != refresh.PreviousConfigurationSha256 && marker.GeneratedConfigurationSha256 != expectedHash ||
+                !File.Exists(configPath) || AssemblyArtifacts.FileHash(configPath) is var actual && actual != refresh.PreviousConfigurationSha256 && actual != expectedHash)
+                throw new ConfigurationException("Interrupted configuration refresh differs from current inputs; preserve it for review.");
+        }
         if (marker is null && File.Exists(journalPath))
         {
             using var journal = WorkspaceSettings.Read(journalPath);
@@ -288,17 +311,21 @@ internal static class WorkspaceService
         {
             var current = ConfigLoader.Load(configPath);
             if (!current.Target.Root.Equals(settings.ProjectRoot, PathSafety.Comparison)) throw new ConfigurationException("Existing startup config targets another project.");
-            if (marker is not null && marker.GeneratedConfigurationSha256 != expectedHash)
+            if (marker is not null && (marker.GeneratedConfigurationSha256 != expectedHash || refresh is not null))
             {
-                if (AssemblyArtifacts.FileHash(configPath) != marker.GeneratedConfigurationSha256)
+                if (refresh is null && AssemblyArtifacts.FileHash(configPath) != marker.GeneratedConfigurationSha256)
                     throw new ConfigurationException("Workspace settings and externally edited startup config both changed; reconcile without overwriting edits.");
-                Atomic(configPath, expected);
+                if (refresh is null)
+                    WriteNew(refreshPath, new WorkspaceRefresh(1, "archsift-workspace-refresh", settings.Configuration.Project.Id,
+                        settings.ProjectRoot, root, settings.ConfigIdentity, marker.GeneratedConfigurationSha256, expectedHash));
+                if (AssemblyArtifacts.FileHash(configPath) != expectedHash) Atomic(configPath, expected);
             }
         }
         else WriteNew(configPath, expected);
         Atomic(markerPath, new WorkspaceMarker(1, "archsift-workspace-state", settings.Configuration.Project.Id, settings.ProjectRoot, root,
-            settings.ConfigIdentity, marker is not null && marker.ConfigurationIdentity == settings.ConfigIdentity ? marker.GeneratedConfigurationSha256 : expectedHash));
+            settings.ConfigIdentity, expectedHash));
         if (File.Exists(journalPath)) File.Delete(journalPath);
+        if (File.Exists(refreshPath)) File.Delete(refreshPath);
         void WriteOrCheckJournal()
         {
             if (!File.Exists(journalPath)) WriteNew(journalPath, new WorkspaceMarker(1, "archsift-workspace-state", settings.Configuration.Project.Id,
@@ -308,21 +335,39 @@ internal static class WorkspaceService
     private static string? Daily(WorkspaceSettings settings, string launch, string? feed)
     {
         if (settings.GateFile is null) return null;
-        if (settings.Configuration.Nuget.Mode == "configured") return null;
-        if (feed is null) throw new ConfigurationException("Offline IFX daily gate requires an approved local source.");
+        var configured = settings.Configuration.Nuget.Mode == "configured";
+        if (!configured && feed is null) throw new ConfigurationException("Offline IFX daily gate requires an approved local source.");
+        if (configured && settings.NugetConfig is null) throw new ConfigurationException("Configured daily gate requires an explicit NuGet.Config.");
         using var gate = WorkspaceSettings.Read(settings.GateFile); var value = gate.RootElement;
         var cache = settings.Cache ?? Environment.GetEnvironmentVariable("NUGET_PACKAGES") ?? throw new ConfigurationException("IFX needs the resolved external NuGet cache.");
         cache = WorkspaceSettings.Canonical(cache); PathSafety.EnsureDisjoint(settings.ProjectRoot, cache); PathSafety.EnsureDisjoint(settings.StateRoot, cache);
         var run = Path.Combine(settings.StateRoot, "runs", Path.GetFileName(launch));
         var config = new TestGateConfig { SchemaVersion = 2, TargetRoot = settings.ProjectRoot,
             TestProject = value.GetProperty("testProject").GetString()!, TestExecutableName = value.GetProperty("testExecutableName").GetString()!,
-            TargetFramework = "net10.0", Configuration = "Release", NuGetConfig = "NuGet.Config", LocalFeed = feed, PackageCache = cache,
+            TargetFramework = "net10.0", Configuration = "Release", NuGetConfig = configured ? settings.NugetConfig! : "NuGet.Config",
+            RestoreMode = configured ? "configured" : "offline", LocalFeed = feed ?? "", PackageCache = cache,
+            DotnetPath = settings.Configuration.Runtime.DotnetPath is { } selectedHost ? WorkspaceSettings.Canonical(selectedHost, Path.GetDirectoryName(settings.File)) : null,
             Rulesets = value.GetProperty("rulesets").Deserialize<string[]>()!, RequiredCases = value.GetProperty("requiredCases").GetString(),
             RequiredCasesSha256 = value.GetProperty("requiredCasesSha256").GetString(), PolicyFile = value.GetProperty("policyFile").GetString(),
             PolicySha256 = value.GetProperty("policySha256").GetString(), ToolIdentity = RuntimeInfo.ProductVersion,
-            RunDirectory = run, DotnetCliHome = Path.Combine(run, "cli-home"), RunnerFormat = "mtp-ctrf", AuditMode = "offline-architecture" };
+            RunDirectory = run, DotnetCliHome = Path.Combine(run, "cli-home"), RunnerFormat = "mtp-ctrf", AuditMode = "offline-architecture",
+            MinimumSdkVersion = configured && settings.Configuration.Runtime.MaximumSdkVersionExclusive is not null ? settings.Configuration.Runtime.MinimumSdkVersion : null,
+            MaximumSdkVersionExclusive = configured ? settings.Configuration.Runtime.MaximumSdkVersionExclusive : null };
+        var templateRun = Path.Combine(settings.StateRoot, "runs", "template-" + settings.ConfigIdentity);
+        var template = config with { RunDirectory = templateRun, DotnetCliHome = Path.Combine(templateRun, "cli-home") };
+        var templatePath = DailyTemplatePath(settings);
+        PathSafety.EnsureNoLinks(templatePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(templatePath)!);
+        if (File.Exists(templatePath))
+        {
+            if (!File.ReadAllBytes(templatePath).AsSpan().SequenceEqual(JsonSerializer.SerializeToUtf8Bytes(template, JsonContract.Options)))
+                throw new ConfigurationException("Generated daily-test template changed; preserve existing edits.");
+        }
+        else WriteNew(templatePath, template);
         var path = Path.Combine(launch, "test-gate.json"); WriteNew(path, config); return path;
     }
+    private static string DailyTemplatePath(WorkspaceSettings settings) =>
+        Path.Combine(settings.StateRoot, "config", "daily-" + settings.ConfigIdentity + ".json");
     private static void Import(WorkspaceSettings settings, string migrationFile)
     {
         using var document = WorkspaceSettings.Read(WorkspaceSettings.Canonical(migrationFile)); var migration = document.RootElement;

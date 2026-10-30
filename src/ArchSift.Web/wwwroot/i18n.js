@@ -524,7 +524,7 @@ Object.assign(zhTranslations,{
   "Complete: all original and JSON cases":"完整：全部原案例与 JSON 案例","Subset: one case, cannot allow":"局部：单个案例，不可放行",
   "Discovered case UID":"发现案例 UID","Choose a discovered case":"选择已发现案例","Search case name or UID":"搜索案例名称或 UID",
   "Run architecture tests":"启动架构测试","Cancel this run":"取消本次运行",
-  "Complete mode runs every original and JSON case. Snapshot updates are disabled; offline restore, build and tests run in sequence.":"完整模式运行全部原案例和 JSON 案例。快照更新已禁用；离线恢复、构建、测试依次执行。",
+  "Complete mode runs every original and JSON case. Snapshot updates are disabled; restore uses the declared package sources before build and tests.":"完整模式运行全部原案例和 JSON 案例。快照更新已禁用；先按声明的包源恢复，再执行构建和测试。",
   "Subset mode runs one discovered case and cannot allow the daily gate. Snapshot updates remain disabled.":"局部模式仅运行一个已发现案例，不能让日常门禁放行。快照更新仍已禁用。",
   "View test result in Results":"在结果页查看测试","View test runs in History":"在历史页查看测试",
   "Result source":"结果来源","Analysis results":"分析结果","Architecture test results":"架构测试结果",

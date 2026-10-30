@@ -63,9 +63,9 @@ if($LocalConfig){
 $root=Canonical $settings.project.root $configDirectory
 Need (Test-Path -LiteralPath $root -PathType Container) 'Project root is missing.'
 Need ($settings.project.id -cmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$') 'Invalid stable project ID.'
-if(-not $settings.Contains('state')){$settings.state=@{root='C:/ArchSift-lab'}}
+if(-not $settings.Contains('state')){$settings.state=@{}}
 Need ($settings.state -is [Collections.IDictionary]) 'Workspace state settings must be an object.'
-if(-not $settings.state.Contains('root')){$settings.state.root='C:/ArchSift-lab'}
+if(-not $settings.state.Contains('root')){$localData=[Environment]::GetFolderPath('LocalApplicationData');Need (-not [string]::IsNullOrWhiteSpace($localData)) 'Local application data is unavailable; supply an explicit state root.';$settings.state.root=Join-Path $localData 'ArchSift/state'}
 if(-not $settings.Contains('runtime')){$settings.runtime=@{mode='host';minimumSdkVersion='10.0.0';allowPrerelease=$false}}
 if(-not $settings.Contains('nuget')){$settings.nuget=@{mode='offline';allowNetwork=$false}}
 Need ($settings.runtime -is [Collections.IDictionary] -and $settings.nuget -is [Collections.IDictionary]) 'Runtime/NuGet settings must be objects.'
@@ -79,6 +79,7 @@ $offline=$settings.nuget.mode -ceq 'offline'
 Need (($offline -and -not $settings.nuget.allowNetwork) -or ($settings.nuget.mode -ceq 'configured' -and $settings.nuget.allowNetwork)) 'Select offline/allowNetwork=false or explicitly configured/allowNetwork=true.'
 $minimum=if($settings.runtime.Contains('minimumSdkVersion')){$settings.runtime.minimumSdkVersion}else{'10.0.0'}
 Need ([version]$minimum -ge [version]'10.0.0') 'SDK minimum cannot weaken the 10.0.0 floor.'
+if($settings.runtime.Contains('maximumSdkVersionExclusive') -and $null -ne $settings.runtime.maximumSdkVersionExclusive){Need ([version]$settings.runtime.maximumSdkVersionExclusive -gt [version]$minimum) 'SDK maximum must exceed the minimum.'}
 $stateBase=Canonical $settings.state.root $configDirectory;Disjoint $root $stateBase
 $userKey=(HashText ([Environment]::UserDomainName+'\'+[Environment]::UserName)).Substring(0,16)
 $bootstrap=Canonical (Join-Path $stateBase ('bootstrap/'+$userKey+'/'+$settings.project.id+'/'+[Guid]::NewGuid().ToString('N')))
@@ -103,16 +104,36 @@ if($offline){
 }
 $ifx=Test-Path -LiteralPath (Join-Path $root 'architecture/portable-gate.json') -PathType Leaf
 if($ifx){
- Need ($settings.Contains('gate') -and $settings.gate.kind -ceq 'ifx' -and $settings.runtime.mode -ceq 'approvedExact' -and $offline -and $sourceNodes.Count -eq 1) 'IFX retains exact runtime and approved offline source policy.'
- foreach($binding in @(@($settings.gate.metadataFile,'architecture/portable-gate.json'),@($settings.runtime.approvalFile,'architecture/runtime-approval.json'),@($settings.nuget.sourceApprovalFile,'architecture/package-source.json'))){Need ((Canonical $binding[0] $configDirectory) -ieq (Canonical (Join-Path $root $binding[1]))) 'IFX policy/approval paths must remain unchanged.'}
+ Need ($settings.Contains('gate') -and $settings.gate.kind -ceq 'ifx') 'IFX requires its original gate identity.'
+ Need ((Canonical $settings.gate.metadataFile $configDirectory) -ieq (Canonical (Join-Path $root 'architecture/portable-gate.json'))) 'IFX gate path must remain unchanged.'
+ if($offline){
+ Need ($settings.runtime.mode -ceq 'approvedExact' -and $sourceNodes.Count -eq 1) 'Offline IFX retains exact runtime and approved source policy.'
+ foreach($binding in @(@($settings.runtime.approvalFile,'architecture/runtime-approval.json'),@($settings.nuget.sourceApprovalFile,'architecture/package-source.json'))){Need ((Canonical $binding[0] $configDirectory) -ieq (Canonical (Join-Path $root $binding[1]))) 'IFX policy/approval paths must remain unchanged.'}
+ }else{
+ Need ($settings.runtime.mode -ceq 'host' -and [bool]$nugetConfig) 'Configured IFX requires a host and explicit NuGet.Config.'
+ Need ((-not $settings.runtime.Contains('approvalFile') -or $null -eq $settings.runtime.approvalFile) -and (-not $settings.nuget.Contains('sourceApprovalFile') -or $null -eq $settings.nuget.sourceApprovalFile)) 'Configured IFX cannot discard exact approvals.'
+ }
  $gate=Read-Json (Join-Path $root 'architecture/portable-gate.json')
  Need ($gate.schemaVersion -eq 1 -and $gate.version -ceq $version) 'Tool manifest differs from IFX gate approval.'
  foreach($pair in @(@('policyFile','policySha256'),@('requiredCases','requiredCasesSha256'))){Need ((Hash (Canonical (Join-Path $root $gate[$pair[0]]))) -ceq $gate[$pair[1]]) 'IFX case/policy bytes differ.'}
+ if($offline){
  $approval=Read-Json (Join-Path $root 'architecture/package-source.json');$expected=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
  Need ($approval.schemaVersion -eq 1 -and $approval.kind -ceq 'archsift-approved-offline-source') 'Unsupported source approval.'
  foreach($package in $approval.packages){Need ($package.file -cmatch '^[A-Za-z0-9_.+-]+\.nupkg$' -and $expected.Add($package.file)) 'Unsafe/duplicate source package.';Need ((Hash (Canonical (Join-Path $feed $package.file))) -ceq $package.sha256) 'Approved feed bytes differ.'}
  Need (@(Get-ChildItem -LiteralPath $feed -File -Filter '*.nupkg').Count -eq $expected.Count) 'Offline feed has unapproved extra packages.'
  Need ((Hash (Join-Path $feed ('ArchSift.Cli.'+$version+'.nupkg'))) -ceq $gate.cliPackageSha256) 'CLI archive is unapproved.'
+ }
+}
+if($Action -ceq 'Doctor'){
+ Need (-not $InteractiveRestore -and -not $Migration) 'Doctor never restores, prompts or migrates.'
+ if($settings.runtime.Contains('dotnetPath') -and $settings.runtime.dotnetPath){Need (Test-Path -LiteralPath (Canonical $settings.runtime.dotnetPath $configDirectory) -PathType Leaf) 'dotnet candidate is unavailable.'}
+ $diagnosticCache=if($settings.nuget.Contains('cacheDirectory') -and $settings.nuget.cacheDirectory){Canonical $settings.nuget.cacheDirectory $configDirectory}elseif($env:NUGET_PACKAGES){Canonical $env:NUGET_PACKAGES}else{Canonical (Join-Path $consumerNuGetHome '.nuget/packages')}
+ if($nugetConfig -and -not ($settings.nuget.Contains('cacheDirectory') -and $settings.nuget.cacheDirectory) -and -not $env:NUGET_PACKAGES){$diagnosticXml=[xml](Get-Content -LiteralPath $nugetConfig -Raw);$cacheSetting=$diagnosticXml.SelectSingleNode('/configuration/config/add[@key="globalPackagesFolder"]');if($null -ne $cacheSetting){$diagnosticCache=Canonical ([Environment]::ExpandEnvironmentVariables([string]$cacheSetting.value)) (Split-Path $nugetConfig)}}
+ Disjoint $root $diagnosticCache;Disjoint $projectState $diagnosticCache
+ Need (Test-Path -LiteralPath (Join-Path $diagnosticCache ('archsift.cli/'+$version+'/tools/net10.0/any/archsift.dll')) -PathType Leaf) ('Pinned tool is not restored in '+$diagnosticCache+'. Run Init; Doctor does not install tools.')
+ Check-Host
+ @{schemaVersion=1;status='ready';stateRoot=$projectState;cacheDirectory=$diagnosticCache;hostProbed=$false;packageVerified=$false;initialized=(Test-Path -LiteralPath (Join-Path $projectState 'workspace-state.json'))}|ConvertTo-Json
+ exit 0
 }
 [IO.Directory]::CreateDirectory($bootstrap)|Out-Null
 $child=@{DOTNET_CLI_HOME=(Join-Path $bootstrap 'cli-home');DOTNET_ADD_GLOBAL_TOOLS_TO_PATH='0';DOTNET_CLI_TELEMETRY_OPTOUT='1';DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE='true';DOTNET_GENERATE_ASPNET_CERTIFICATE='false';DOTNET_NOLOGO='1';DOTNET_CLI_UI_LANGUAGE='en-US';DOTNET_ROLL_FORWARD='LatestPatch';GIT_REDIRECT_STDIN='off';MSBUILDDISABLENODEREUSE='1';ARCHSIFT_PROFILE_PATHS=(ConvertTo-Json -Compress -InputObject @($PROFILE.AllUsersAllHosts,$PROFILE.AllUsersCurrentHost,$PROFILE.CurrentUserAllHosts,$PROFILE.CurrentUserCurrentHost))}
@@ -169,6 +190,7 @@ try{
    Need ([IO.Path]::IsPathFullyQualified($candidate) -and (Test-Path -LiteralPath $candidate -PathType Leaf)) 'dotnet candidate is unavailable.'
    $candidate=Canonical $candidate;$sdk=(Child $candidate @('--version') ('sdk-'+$attempt)).Trim()
    Need (($settings.runtime.allowPrerelease -or -not $sdk.Contains('-')) -and [version]($sdk.Split('-')[0]) -ge [version]$minimum) 'Selected SDK does not satisfy the workspace floor/global.json.'
+   if($settings.runtime.Contains('maximumSdkVersionExclusive') -and $null -ne $settings.runtime.maximumSdkVersionExclusive){Need ([version]($sdk.Split('-')[0]) -lt [version]$settings.runtime.maximumSdkVersionExclusive) 'Selected SDK exceeds the exclusive maximum.'}
    $info=Child $candidate @('--info') ('info-'+$attempt);$runtimes=Child $candidate @('--list-runtimes') ('frameworks-'+$attempt)
    if($IsWindows){Need ($info -match '(?m)^\s*Architecture:\s*x64\s*$') 'Windows interactive host must be x64.'}
    foreach($framework in @('Microsoft.NETCore.App','Microsoft.AspNetCore.App')){Need ($runtimes -match ('(?m)^'+[regex]::Escape($framework)+' 10\.0\.\d+ \[')) ('Missing required framework: '+$framework+' 10.0')}
@@ -206,7 +228,9 @@ try{
  $payload=Canonical (Join-Path $cache ('archsift.cli/'+$version+'/tools/net10.0/any'))
  Need (Test-Path -LiteralPath (Join-Path $payload 'archsift.dll') -PathType Leaf) ('Pinned tool is not restored in '+$cache+'. Run this entry with -Action Init; doctor does not install tools.')
  if($ifx){
-  $zip=[IO.Compression.ZipFile]::OpenRead((Join-Path $feed ('ArchSift.Cli.'+$version+'.nupkg')));$expected=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+  $approvedArchive=if($offline){Join-Path $feed ('ArchSift.Cli.'+$version+'.nupkg')}else{Join-Path $cache ('archsift.cli/'+$version+'/archsift.cli.'+$version+'.nupkg')}
+  Need ((Hash $approvedArchive) -ceq $gate.cliPackageSha256) 'CLI archive differs from IFX approval.'
+  $zip=[IO.Compression.ZipFile]::OpenRead($approvedArchive);$expected=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   try{foreach($entry in $zip.Entries|Where-Object {$_.FullName.StartsWith('tools/net10.0/any/') -and -not $_.FullName.EndsWith('/')}){$relative=$entry.FullName.Substring('tools/net10.0/any/'.Length);Need ($relative -notmatch '(^|/)\.\.(/|$)|\\|:' -and $expected.Add($relative)) 'Unsafe/duplicate package payload.';$stream=$entry.Open();try{$hash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream)).ToLowerInvariant()}finally{$stream.Dispose()};Need ((Hash (Canonical (Join-Path $payload $relative))) -ceq $hash) 'Restored package/Web differs from approved bytes.'};Need (@(Get-ChildItem -LiteralPath $payload -File -Recurse -Force).Count -eq $expected.Count) 'Extra restored tool/Web files.'}finally{$zip.Dispose()}
  }
  $actualVersion=(Child $dotnet @((Join-Path $payload 'archsift.dll'),'--version') 'tool-version').Trim()

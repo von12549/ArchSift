@@ -16,15 +16,15 @@
     },
     "runtime": {
       "type": "object", "additionalProperties": false,
-      "properties": { "mode": { "enum": ["host", "approvedExact"] }, "dotnetPath": { "$ref": "#/definitions/optionalPath" }, "minimumSdkVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "allowPrerelease": { "type": "boolean" }, "approvalFile": { "$ref": "#/definitions/optionalPath" } }
+      "properties": { "mode": { "enum": ["host", "approvedExact"] }, "dotnetPath": { "$ref": "#/definitions/optionalPath" }, "minimumSdkVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "maximumSdkVersionExclusive": { "$ref": "#/definitions/optionalSdkVersion" }, "allowPrerelease": { "type": "boolean" }, "approvalFile": { "$ref": "#/definitions/optionalPath" } }
     },
     "workbench": {
       "type": "object", "additionalProperties": false,
-      "properties": { "rulesets": { "type": "array", "items": { "$ref": "#/definitions/path" }, "uniqueItems": true },
+      "properties": { "rulesets": { "type": "array", "items": { "$ref": "#/definitions/path" }, "uniqueItems": true }, "policyFile": { "$ref": "#/definitions/optionalPath" },
         "build": { "type": "object", "additionalProperties": false, "properties": { "mode": { "const": "existing" }, "configuration": { "$ref": "#/definitions/path" }, "targetFramework": { "$ref": "#/definitions/optionalPath" }, "assemblyManifest": { "$ref": "#/definitions/optionalPath" }, "assemblyPaths": { "type": "array", "items": { "$ref": "#/definitions/path" } }, "allowNetwork": { "const": false }, "sources": { "type": "array", "maxItems": 0 }, "localFeed": { "$ref": "#/definitions/optionalPath" }, "cacheDirectory": { "$ref": "#/definitions/optionalPath" } } }
       }
     },
     "gate": { "type": ["object", "null"], "additionalProperties": false, "required": ["kind", "metadataFile"], "properties": { "kind": { "const": "ifx" }, "metadataFile": { "$ref": "#/definitions/path" } } }
   },
-  "definitions": { "path": { "type": "string", "minLength": 1 }, "optionalPath": { "type": ["string", "null"], "minLength": 1 } }
+  "definitions": { "path": { "type": "string", "minLength": 1 }, "optionalPath": { "type": ["string", "null"], "minLength": 1 }, "optionalSdkVersion": { "type": ["string", "null"], "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" } }
 }

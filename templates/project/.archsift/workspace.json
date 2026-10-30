@@ -2,7 +2,7 @@
   "kind": "archsift-workspace",
   "schemaVersion": 1,
   "project": { "id": "example-project", "root": "..", "entry": null },
-  "state": { "root": "C:/ArchSift-lab" },
+  "state": {},
   "nuget": { "mode": "configured", "allowNetwork": true, "configFile": null, "cacheDirectory": null },
   "runtime": { "mode": "host", "dotnetPath": null, "minimumSdkVersion": "10.0.0", "allowPrerelease": false },
   "workbench": { "rulesets": [], "build": { "mode": "existing" } }
