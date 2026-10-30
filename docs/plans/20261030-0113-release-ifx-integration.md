@@ -1,5 +1,11 @@
 # ArchSift 0.11.3 and IFX integration preparation
 
+## Explicit 0.11.3 public publication authorization, 2026-10-30
+
+PR 44 merged at `94740173dff2e4128c5bb4d7aeb6fe03e39bfe30`; PR and actual-main CI passed 13/13 each. Credential-free preview/audit run `40962973691` succeeded and its downloaded artifacts passed independent production guard verification. The fresh official audit covered 12 projects and 36 package identities. Its original artifacts and host-equality evidence remain retained.
+
+The user explicitly authorized the exact publication approval card after those results. Enable only the reviewed 0.11.3 publication capability through normal PR/CI/merge. The original package source `af25bed0da8b3cedf5706a404dd3f33a8f7b45df`, source tree, five submission hashes, qualification and candidate artifact `12918368591` remain unchanged. Use a fresh exact hosted publish request/audit and the existing human `nuget-release` environment approval before acquiring temporary credentials. Submit sequentially, verify signed served packages, ownership and original payloads, preserve transaction evidence and stop on failure without automatic retry. Restore `ARCHSIFT_NUGET_PUBLISH_0113` to its original absent state on completion or stop. Public publication is pending at this activation checkpoint. IFX activation/real architecture execution, tags, GitHub Release and installers remain outside this authorization.
+
 ## Authorized evidence binding and preview CI, 2026-10-30
 
 The user authorized commits, pushes, PRs, CI, merges and necessary scoped fixes. PR 44 carries the explicit Agent delegation contract and final evidence binding. Original source `af25bed0da8b3cedf5706a404dd3f33a8f7b45df` and candidate artifact `12918368591` remain immutable; follow-up workflow commits do not redefine package source. Final qualification binds successful original-source PR/main CI, package integrity and the scoped consumer/lifecycle review; its documented exclusions remain applicable.
