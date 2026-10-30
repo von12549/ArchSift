@@ -1,5 +1,11 @@
 # ArchSift 0.11.3 and IFX integration preparation
 
+## Public publication completed, 2026-10-30
+
+R13-03/R13-04 are complete for the recorded scope. PR 45 merged as `cde8fbaf4048d7ec6f9807ac0a339315a5acfc65`; activation PR and actual-main CI passed 13/13 each. The explicitly authorized [transaction 40980841068](https://github.com/von12549/ArchSift/actions/runs/40980841068) passed preflight, fresh official audit, human environment approval, sequential publication and independent public signature/owner/payload verification. The audit covered 12 projects and 36 package identities. Independent anonymous downloads matched the frozen nonsignature payloads and owners for all five original submissions. The version-specific switch was restored to its original absent state and verified by readback. Local host/Profile equality passed; no local dotnet command was executed for publication.
+
+See the [publication record](../releases/0.11.3/PUBLICATION.md) and its final submission/served identities. Original package source `af25bed0da8b3cedf5706a404dd3f33a8f7b45df`, artifact `12918368591`, qualification and historical evidence remain immutable. The user-delegated Agent UI review remains distinct from skipped human UI acceptance. R13-05/R13-06 remain next: separately prepare atomic IFX bindings to the actual signed served identities and review fresh-clone acceptance. Existing-machine activation, real IFX architecture execution, tag/Release and installers remain excluded. Active IFX stays at 0.11.0; optional offline user delivery remains skipped. Earlier pending statements are retained as dated checkpoints.
+
 ## Explicit 0.11.3 public publication authorization, 2026-10-30
 
 PR 44 merged at `94740173dff2e4128c5bb4d7aeb6fe03e39bfe30`; PR and actual-main CI passed 13/13 each. Credential-free preview/audit run `40962973691` succeeded and its downloaded artifacts passed independent production guard verification. The fresh official audit covered 12 projects and 36 package identities. Its original artifacts and host-equality evidence remain retained.
