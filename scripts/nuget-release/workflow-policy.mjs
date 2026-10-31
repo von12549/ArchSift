@@ -20,12 +20,14 @@ export function parseWorkflow(text) {
 }
 // Validate a proposed future file without selecting it as the active workflow.
 export function checkWorkflowForVersion(text, version) {
-  requireThat(['0.11.2','0.11.3'].includes(version), 'Unreviewed workflow version');
+  requireThat(['0.11.2','0.11.3','0.11.4'].includes(version), 'Unreviewed workflow version');
   const workflow = parseWorkflow(text);
   requireThat(workflow.env?.RELEASE_VERSION === version, 'Workflow version differs');
-  if (version === '0.11.3') {
-    requireThat(!text.includes('0.11.2') && !text.includes('PUBLISH_0112'), 'Mixed historical workflow identity');
-    checkWorkflow(text.replaceAll('0.11.3','0.11.2').replaceAll('PUBLISH_0113','PUBLISH_0112'));
+  if (version !== '0.11.2') {
+    for (const old of ['0.11.2','0.11.3','0.11.4'].filter(v => v !== version)) {
+      requireThat(!text.includes(old) && !text.includes(`PUBLISH_${old.replaceAll('.', '')}`), 'Mixed historical workflow identity');
+    }
+    checkWorkflow(text.replaceAll(version,'0.11.2').replaceAll(`PUBLISH_${version.replaceAll('.', '')}`,'PUBLISH_0112'));
   } else checkWorkflow(text);
   return workflow;
 }

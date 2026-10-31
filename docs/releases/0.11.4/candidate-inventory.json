@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "CANDIDATE_QUALIFIED_MAIN_FREEZE_PENDING",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "sourceDirty": false,
+  "sourceInputsSha256": "8fbbe249ea0b500f243a683f52367d940f36ba3a7e083fb303c4313569edce61",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "bytes": 91908,
+      "sha256": "045666b4023eafc3370601a79f05988e858dbbe79c8232aaf80386ad49040189"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "bytes": 159630,
+      "sha256": "ca2fea3a4d05dd4dd6675a13f3259446106c5778a962ef314d1007169a95ea3b"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "bytes": 28462,
+      "sha256": "8a771969b52b14f55bd693fc79c38ff3acfcfc5f61bc41515ed9c938b6dad63f"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "bytes": 23746,
+      "sha256": "6958f40870ae7de9fbea409088b8a3ff4e10d4fe6f60eb0ff7829d89cc31db15"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "bytes": 2914810,
+      "sha256": "0b695adcdbdaab2d709b4a15da8b6bc75516d3af28992148a8dc009d5ddc7727"
+    }
+  ],
+  "candidatePayloadManifest": "docs/releases/0.11.4/candidate-payload-manifest.json",
+  "candidatePayloadManifestSha256": "a02929e7ac3220add8e87860aeb71ab93fab7617e4eb18854dcb5f1175d2c5af",
+  "candidatePackageBuildReviewSha256": "493ec7a314d55e87fafcb1ef3d238650820bca64cfa9193285d69c405a35aa8e",
+  "candidatePackageTestsReviewSha256": "fcb96c417356b48680080a58417b431a58d0644f0c1b6978e6d2d2dabc5963f8",
+  "ifxSdkMatrixReviewSha256": "3705b0562dd096243125d04557409f91ea78c267429f61bc86bec830e4ed4dea",
+  "secondaryMachineReview": "docs/releases/0.11.4/evidence/secondary-machine-candidate-review.json",
+  "secondaryMachineReviewSha256": "72756eddf20a2cf8c60b5a1efbf5822574bc81a27b7fc1cac35a67a96ec76c72",
+  "ifxCurrentCommit": "9fd3e267533988a948359b2d3c3b2ad502f9a86a",
+  "ifxCiRun": 41157989728,
+  "qualifiedSdks": [
+    "10.0.303",
+    "10.0.300",
+    "10.0.403"
+  ],
+  "formalSdk": "10.0.303",
+  "mainSourceCandidateFrozen": false,
+  "publicationAuthorized": false,
+  "activationAuthorized": false
+}

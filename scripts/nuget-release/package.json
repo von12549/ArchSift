@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=22" },
-  "scripts": { "test": "node --test release.test.mjs release-0113.test.mjs" },
+  "scripts": { "test": "node --test release.test.mjs release-0113.test.mjs release-0114.test.mjs" },
   "dependencies": { "yaml": "2.9.1", "yauzl": "3.4.0" }
 }

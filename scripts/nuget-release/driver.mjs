@@ -9,7 +9,7 @@ import { GitHubReader, boundedResponse } from './github.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const version = process.env.RELEASE_VERSION || '0.11.0';
-requireThat(['0.11.0','0.11.2','0.11.3'].includes(version), 'Unreviewed release profile');
+requireThat(['0.11.0','0.11.2','0.11.3','0.11.4'].includes(version), 'Unreviewed release profile');
 const policy = JSON.parse(fs.readFileSync(path.join(root, `docs/releases/${version}/publishing-activation.json`)));
 checkReleaseProfile(policy, version);
 const originalReferenceBytes = fs.readFileSync(path.join(root, policy.originalReference));

@@ -2,6 +2,8 @@
 
 Date: 2026-10-30 (Australia/Sydney).
 
+Current prepublication checkpoint (2026-10-31): clean product candidate `b7dd87f`, immutable build-08 packages, three real SDK lanes/formal audit, owned-copy migration, head-specific CI and actual secondary-machine IFX `9fd3e26` acceptance are complete within their recorded scopes. The [prepublication card](../releases/0.11.4/PREPUBLICATION.md) and machine-readable candidate inventory supersede the old pending status statements below. New 0.11.4 publishing support is prepared with both capabilities closed; the active historical workflow and operational switches are unchanged. Fresh main-source candidate identity, final preview/audit and source-integration/publication approvals remain pending. The dated build-07 history below remains immutable evidence, not current source identity.
+
 Status: repaired local product and the requested isolated real IFX SDK/audit/Agent-UI scope passed on build `0114-package-20261030-07`, completed 2026-10-31. Source remains uncommitted and packages unpublished. The [final local qualification](../acceptance/20261031-0114-ifx-local-qualification.md) and JSON supersede the earlier scoped product checkpoint for current candidate identity. Version **0.11.4** was absent from the official CLI index at the earlier check; recheck before publication and never replace an existing public version.
 
 ## Local product execution checkpoint

@@ -10,7 +10,7 @@ export function checkCandidateProvenance(meta, run, binding, context) {
   requireThat(context.dataCommit === binding.sourceCommit, 'Candidate source input differs');
 }
 export async function candidateInputs({ gh, policy, reference, context, root }) {
-  requireThat(['0.11.2','0.11.3'].includes(reference.version) && policy.version === reference.version && context.version === reference.version, 'Candidate release profile differs');
+  requireThat(['0.11.2','0.11.3','0.11.4'].includes(reference.version) && policy.version === reference.version && context.version === reference.version, 'Candidate release profile differs');
   const b = policy.candidateArtifact;
   requireThat(b && b.sourceCommit === reference.sourceCommit, 'Candidate/reference source differs');
   const meta = await gh.json(`repos/von12549/ArchSift/actions/artifacts/${b.id}`);

@@ -1,0 +1,773 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceDirty": false,
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "submittedSha256": "045666b4023eafc3370601a79f05988e858dbbe79c8232aaf80386ad49040189",
+      "payload": [
+        {
+          "path": "ArchSift.Contracts.nuspec",
+          "length": 777,
+          "sha256": "11927c84320d528d9e2b929002de493ab0da1ad2df108c8a7aefdfb0c7d8db6a"
+        },
+        {
+          "path": "LICENSE",
+          "length": 1070,
+          "sha256": "9680635963696945b7711778b3ba7b45798ee0ae8b26f14c2464842d9306bc70"
+        },
+        {
+          "path": "README.md",
+          "length": 1621,
+          "sha256": "8bb511a6b4075691fac049f33021b18ebd19b702b586381e2beb23aa7629f5b1"
+        },
+        {
+          "path": "RELEASE_NOTES.md",
+          "length": 1605,
+          "sha256": "b47ce5acaeeb3783b8e0f97c5cbb4c6ae9819d33ee6bbc887e79264bb935bf60"
+        },
+        {
+          "path": "[Content_Types].xml",
+          "length": 596,
+          "sha256": "cff0794468a67cc205de79ce4d16387be04ad54aebadafc777fab0765bd64a38"
+        },
+        {
+          "path": "_rels/.rels",
+          "length": 512,
+          "sha256": "78da5041a28924001e3d2627ec3d46a7e743e44d69652e2a365da54bda4b8eb7"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.Contracts.dll",
+          "length": 264192,
+          "sha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66"
+        },
+        {
+          "path": "package/services/metadata/core-properties/191b531b974e40ebb360dc26454c6d76.psmdcp",
+          "length": 678,
+          "sha256": "77e881c1d9c24664cda422fe4d8a5fd0bac79a34065ded7cbabfa6d110d01254"
+        }
+      ]
+    },
+    {
+      "id": "ArchSift.Core",
+      "submittedSha256": "ca2fea3a4d05dd4dd6675a13f3259446106c5778a962ef314d1007169a95ea3b",
+      "payload": [
+        {
+          "path": "ArchSift.Core.nuspec",
+          "length": 879,
+          "sha256": "01e65239d6bc99fdafbc65764e67366ecd996681e6a51c2d5ba22d051447d3e1"
+        },
+        {
+          "path": "LICENSE",
+          "length": 1070,
+          "sha256": "9680635963696945b7711778b3ba7b45798ee0ae8b26f14c2464842d9306bc70"
+        },
+        {
+          "path": "README.md",
+          "length": 1621,
+          "sha256": "8bb511a6b4075691fac049f33021b18ebd19b702b586381e2beb23aa7629f5b1"
+        },
+        {
+          "path": "RELEASE_NOTES.md",
+          "length": 1605,
+          "sha256": "b47ce5acaeeb3783b8e0f97c5cbb4c6ae9819d33ee6bbc887e79264bb935bf60"
+        },
+        {
+          "path": "[Content_Types].xml",
+          "length": 596,
+          "sha256": "cff0794468a67cc205de79ce4d16387be04ad54aebadafc777fab0765bd64a38"
+        },
+        {
+          "path": "_rels/.rels",
+          "length": 507,
+          "sha256": "018c3a44fe791f092ed3171ea29e2b2d22d65c7c9cd57bf5ee9c70771687959e"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.Core.dll",
+          "length": 482816,
+          "sha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca"
+        },
+        {
+          "path": "package/services/metadata/core-properties/db20675d1f9f4746b24275a4f5a62fe6.psmdcp",
+          "length": 673,
+          "sha256": "97c471ec9fbfe867113f8168489b9debbd36f0ed233bde7b3e568eb8f0101e93"
+        }
+      ]
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "submittedSha256": "8a771969b52b14f55bd693fc79c38ff3acfcfc5f61bc41515ed9c938b6dad63f",
+      "payload": [
+        {
+          "path": "ArchSift.ArchUnit.nuspec",
+          "length": 972,
+          "sha256": "fa73d2b7f0b28a29d15211c4a384fd4b06d6a399b6c338f6899f2916521d84a4"
+        },
+        {
+          "path": "LICENSE",
+          "length": 1070,
+          "sha256": "9680635963696945b7711778b3ba7b45798ee0ae8b26f14c2464842d9306bc70"
+        },
+        {
+          "path": "README.md",
+          "length": 1621,
+          "sha256": "8bb511a6b4075691fac049f33021b18ebd19b702b586381e2beb23aa7629f5b1"
+        },
+        {
+          "path": "RELEASE_NOTES.md",
+          "length": 1605,
+          "sha256": "b47ce5acaeeb3783b8e0f97c5cbb4c6ae9819d33ee6bbc887e79264bb935bf60"
+        },
+        {
+          "path": "[Content_Types].xml",
+          "length": 596,
+          "sha256": "cff0794468a67cc205de79ce4d16387be04ad54aebadafc777fab0765bd64a38"
+        },
+        {
+          "path": "_rels/.rels",
+          "length": 511,
+          "sha256": "894e36c747dc07783b3c80e2bea2c34d6b3edb6f6b444e872cbdf7e5f0d48a32"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.ArchUnit.dll",
+          "length": 51712,
+          "sha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6"
+        },
+        {
+          "path": "package/services/metadata/core-properties/cf92fc111a18456a83a72373b9c5545e.psmdcp",
+          "length": 677,
+          "sha256": "5c64489d02b86afb9979860f31fc4838de6af1bf505079ace3db1329086ba8b7"
+        }
+      ]
+    },
+    {
+      "id": "ArchSift.Testing",
+      "submittedSha256": "6958f40870ae7de9fbea409088b8a3ff4e10d4fe6f60eb0ff7829d89cc31db15",
+      "payload": [
+        {
+          "path": "ArchSift.Testing.nuspec",
+          "length": 881,
+          "sha256": "0ecfe8c147657f005ef80e4ece194b030d5cac9420925b25fbe597d7f88dc7f6"
+        },
+        {
+          "path": "LICENSE",
+          "length": 1070,
+          "sha256": "9680635963696945b7711778b3ba7b45798ee0ae8b26f14c2464842d9306bc70"
+        },
+        {
+          "path": "README.md",
+          "length": 1621,
+          "sha256": "8bb511a6b4075691fac049f33021b18ebd19b702b586381e2beb23aa7629f5b1"
+        },
+        {
+          "path": "RELEASE_NOTES.md",
+          "length": 1605,
+          "sha256": "b47ce5acaeeb3783b8e0f97c5cbb4c6ae9819d33ee6bbc887e79264bb935bf60"
+        },
+        {
+          "path": "[Content_Types].xml",
+          "length": 596,
+          "sha256": "cff0794468a67cc205de79ce4d16387be04ad54aebadafc777fab0765bd64a38"
+        },
+        {
+          "path": "_rels/.rels",
+          "length": 510,
+          "sha256": "851d4c5ba368a0c3534ea93fcb87c6269abd03d4e55a4c8cbeb85e878618c58e"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.Testing.dll",
+          "length": 43520,
+          "sha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1"
+        },
+        {
+          "path": "package/services/metadata/core-properties/cea0870f4adc4815814a8ac2061378c0.psmdcp",
+          "length": 676,
+          "sha256": "65ae02468b160b86b86bbc703d8bbfe5504da2d8bcef861f9e12c04ee8886b81"
+        }
+      ]
+    },
+    {
+      "id": "ArchSift.Cli",
+      "submittedSha256": "0b695adcdbdaab2d709b4a15da8b6bc75516d3af28992148a8dc009d5ddc7727",
+      "payload": [
+        {
+          "path": "ArchSift.Cli.nuspec",
+          "length": 769,
+          "sha256": "36462fac06f06b6575105fcec0e398bfb6a1e3c313e4b0c519b3e40d38504475"
+        },
+        {
+          "path": "LICENSE",
+          "length": 1070,
+          "sha256": "9680635963696945b7711778b3ba7b45798ee0ae8b26f14c2464842d9306bc70"
+        },
+        {
+          "path": "README.md",
+          "length": 1621,
+          "sha256": "8bb511a6b4075691fac049f33021b18ebd19b702b586381e2beb23aa7629f5b1"
+        },
+        {
+          "path": "RELEASE_NOTES.md",
+          "length": 1605,
+          "sha256": "b47ce5acaeeb3783b8e0f97c5cbb4c6ae9819d33ee6bbc887e79264bb935bf60"
+        },
+        {
+          "path": "[Content_Types].xml",
+          "length": 1296,
+          "sha256": "d644e48c074fd920086ba1e3b83b068726381aa7354be7bd150613e08f589a74"
+        },
+        {
+          "path": "_rels/.rels",
+          "length": 506,
+          "sha256": "4525d3cd880f01780443f09a16c078538171699fae1b7687485e9fc057210355"
+        },
+        {
+          "path": "package/services/metadata/core-properties/d6996f2160de4242bb6343d2d9e80f0d.psmdcp",
+          "length": 672,
+          "sha256": "954688212dd79a3687bbcd6602e6369f3841152fd5839ca244a1d4ed6f4d3131"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.ArchUnit.dll",
+          "length": 51712,
+          "sha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.ArchUnit.pdb",
+          "length": 21916,
+          "sha256": "aa00479d40495cd6ac5b74e4a5f5f70999ef1f03a608b1b3c2a0af2b712f5194"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Contracts.dll",
+          "length": 264192,
+          "sha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Contracts.pdb",
+          "length": 55584,
+          "sha256": "51347cf1908cdaf299c7a7c7aea363b2ab810ff18f7db15a24d8258d0335e782"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Core.dll",
+          "length": 482816,
+          "sha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Core.pdb",
+          "length": 78372,
+          "sha256": "8271813e3f4356896f81941ff2f89399b16d1401028bd56cf0b7f70a6a1f1507"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.TestGate.dll",
+          "length": 416768,
+          "sha256": "4c2e8b21dcfd10065242a1b721882f5f9b2dd5f9cb46953fa487a7932170aaff"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.TestGate.pdb",
+          "length": 42104,
+          "sha256": "b6ce9abe275321ec0bc0b5fb522a3b9f791c3871f7c7e5e8e759c1847bdc548b"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Testing.dll",
+          "length": 43520,
+          "sha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Testing.pdb",
+          "length": 18668,
+          "sha256": "a80c82516380943c43f3fcb6180d619b5681ea10bafca6179e569e1346aceefd"
+        },
+        {
+          "path": "tools/net10.0/any/ArchUnitNET.dll",
+          "length": 507392,
+          "sha256": "fec2214fb07829e78701cc771b84524c75f9c156888b2696dff11f7fc78eba57"
+        },
+        {
+          "path": "tools/net10.0/any/DotnetToolSettings.xml",
+          "length": 192,
+          "sha256": "6d210d3e18e27d796d8a0b429ec323c57c04ebb0fa8ab96206473dd4879d0723"
+        },
+        {
+          "path": "tools/net10.0/any/JetBrains.Annotations.dll",
+          "length": 133504,
+          "sha256": "0295966b8d44522eec6a3c560fbe4efcfa878d3e16ff1ab0fb3478ab17001381"
+        },
+        {
+          "path": "tools/net10.0/any/Mono.Cecil.Mdb.dll",
+          "length": 39936,
+          "sha256": "28cb367972bdc1cd43e4006306af2fd96d37f4ed4b239ee90e1dc7237a93af7f"
+        },
+        {
+          "path": "tools/net10.0/any/Mono.Cecil.Pdb.dll",
+          "length": 90112,
+          "sha256": "a332332633fbcb20e8d50e49b4db7bd1557721417122cf0c5f4c42f2332391d0"
+        },
+        {
+          "path": "tools/net10.0/any/Mono.Cecil.Rocks.dll",
+          "length": 27136,
+          "sha256": "bf992f3dce364ebcc3200fa7832ef07e20b4e2dbc3a8a6213ce44e3d239db984"
+        },
+        {
+          "path": "tools/net10.0/any/Mono.Cecil.dll",
+          "length": 361472,
+          "sha256": "831dca77470d85cb6ffbea3072daa7a3df5b7c9fcfd9c3f43674a9be99d4bfcf"
+        },
+        {
+          "path": "tools/net10.0/any/Newtonsoft.Json.dll",
+          "length": 723368,
+          "sha256": "a28c251dfe36d881e9e2462e171441b8b0ec156fe3f452602c9149b1b9efe05b"
+        },
+        {
+          "path": "tools/net10.0/any/StronglyConnectedComponents.dll",
+          "length": 31744,
+          "sha256": "5ae636b7d2646db86128d86717c46b46702e98f6f9a4a3aed855ce9c98d1edd8"
+        },
+        {
+          "path": "tools/net10.0/any/archsift.deps.json",
+          "length": 5961,
+          "sha256": "29accb5beeda658708e39c6555ccfce0c47461669db480df553fcb6255c0cf37"
+        },
+        {
+          "path": "tools/net10.0/any/archsift.dll",
+          "length": 128000,
+          "sha256": "7fc124b06ed35993a907ee6cc643964469682393cefbd15198cff0a8d2669e41"
+        },
+        {
+          "path": "tools/net10.0/any/archsift.pdb",
+          "length": 30472,
+          "sha256": "a2f4f200a78d679b715cb7afcc09e74cf4d0604fa7f5884def46ad9e3397ef2e"
+        },
+        {
+          "path": "tools/net10.0/any/archsift.runtimeconfig.json",
+          "length": 342,
+          "sha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/ArchUnitNET-0.13.4-LICENSE.txt",
+          "length": 11310,
+          "sha256": "3fac029624560e27e757cf190dce14ad5ef4ebaa776862ed36f23cb8f663ecdb"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/ArchUnitNET-0.13.4-NOTICE.txt",
+          "length": 352,
+          "sha256": "fefd14704df1591a043a6b784e784eed736bcdfef52a9abf4d9291a2706768c3"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/CycleDetection-2.0.0-MIT.txt",
+          "length": 1036,
+          "sha256": "e46ac04a9b77256bbae7739147f52bbf505d224b20ef10f8470e68e9700abb48"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/JetBrains.Annotations-2026.2.0-LICENSE.txt",
+          "length": 1078,
+          "sha256": "ea1de68a2f9808d881ddf35961271b87fef99dcff4c7339d45c768f35ad8adfb"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/Mono.Cecil-0.11.6-LICENSE.txt",
+          "length": 1098,
+          "sha256": "13d58ecbed676511c0c4c4009bff107025e50007ff5e7901dc562700ec62509e"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/Newtonsoft.Json-13.0.4-LICENSE.txt",
+          "length": 1084,
+          "sha256": "d7f83bbea3264a8e23d7739e44d9db1a4994b357274df6f00876eb2e623827ad"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/System.Collections.Immutable-1.5.0-LICENSE.txt",
+          "length": 1116,
+          "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/System.Collections.Immutable-1.5.0-THIRD-PARTY-NOTICES.txt",
+          "length": 15525,
+          "sha256": "1a5672a24e701dbb080be65bb273f40417f5093512fa51091f62a168beaaee73"
+        },
+        {
+          "path": "tools/net10.0/any/notices/licenses/System.ValueTuple-4.6.2-LICENSE.txt",
+          "length": 1116,
+          "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+        },
+        {
+          "path": "tools/net10.0/any/notices/third-party-notices.md",
+          "length": 6440,
+          "sha256": "ee02bcc4add591c849ab4ae152cfd21dba35c06bcd7f67f7accede21da401ccb"
+        },
+        {
+          "path": "tools/net10.0/any/schemas/workspace-local.schema.json",
+          "length": 790,
+          "sha256": "6da87f970b9296f68624e836a207367a6930029474c8a2b91a267f766885089a"
+        },
+        {
+          "path": "tools/net10.0/any/schemas/workspace.schema.json",
+          "length": 2826,
+          "sha256": "1d0c2712011150d8f3412af39e5762d95ce7751612533f9b8a7235a9dc3ab632"
+        },
+        {
+          "path": "tools/net10.0/any/templates/project/.archsift/README.md",
+          "length": 3680,
+          "sha256": "5e21b6503d5def76f7791ea591f4b1b341e6b549f22ffd1cfe40c2ea4bee156d"
+        },
+        {
+          "path": "tools/net10.0/any/templates/project/.archsift/start.ps1.template",
+          "length": 27446,
+          "sha256": "03447fb5fa138984429d5ac561233c663a33406b945618c8e22d65d0c53d892d"
+        },
+        {
+          "path": "tools/net10.0/any/templates/project/.archsift/workspace.json",
+          "length": 424,
+          "sha256": "001ff349de8584690f439661c94eed44b359f534a6c5160400e55f622abd5fb2"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.ArchUnit.dll",
+          "length": 51712,
+          "sha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.ArchUnit.pdb",
+          "length": 21916,
+          "sha256": "aa00479d40495cd6ac5b74e4a5f5f70999ef1f03a608b1b3c2a0af2b712f5194"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Contracts.dll",
+          "length": 264192,
+          "sha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Contracts.pdb",
+          "length": 55584,
+          "sha256": "51347cf1908cdaf299c7a7c7aea363b2ab810ff18f7db15a24d8258d0335e782"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Core.dll",
+          "length": 482816,
+          "sha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Core.pdb",
+          "length": 78372,
+          "sha256": "8271813e3f4356896f81941ff2f89399b16d1401028bd56cf0b7f70a6a1f1507"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Setup.deps.json",
+          "length": 1250,
+          "sha256": "a284732d212a4d632d1f09f48edee4f1d91c55ed6ea59a4857c55e346494a0b9"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Setup.dll",
+          "length": 144896,
+          "sha256": "0c84caf155ca8fe79565a3d58378cafc0bff959f7d37e47ead55f6755df516da"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Setup.pdb",
+          "length": 34660,
+          "sha256": "64454266fb08082908d5f1e3a6c86ad81bdeeb94792f149810987a7e130aaa86"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Setup.runtimeconfig.json",
+          "length": 342,
+          "sha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.TestGate.dll",
+          "length": 416768,
+          "sha256": "4c2e8b21dcfd10065242a1b721882f5f9b2dd5f9cb46953fa487a7932170aaff"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.TestGate.pdb",
+          "length": 42104,
+          "sha256": "b6ce9abe275321ec0bc0b5fb522a3b9f791c3871f7c7e5e8e759c1847bdc548b"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Testing.dll",
+          "length": 43520,
+          "sha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Testing.pdb",
+          "length": 18668,
+          "sha256": "a80c82516380943c43f3fcb6180d619b5681ea10bafca6179e569e1346aceefd"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.deps.json",
+          "length": 6452,
+          "sha256": "dc2a15569eb62a3a5976024091ee90ed00e0232c984fb54e40d2c3788888c21c"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.dll",
+          "length": 188928,
+          "sha256": "4e26735288b2a606c414ada98942e8f2534f3ca3fd633b665821136ab5d186d6"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.pdb",
+          "length": 49296,
+          "sha256": "c2481440879e5027367b44749a962edb345abd1c21f62e196f612f47a7fbfcb5"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.runtimeconfig.json",
+          "length": 491,
+          "sha256": "41442586a8262bc96a1c80f82f4d9384c03bfd465d221cbf01fb3563170f9e65"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.staticwebassets.endpoints.json",
+          "length": 66280,
+          "sha256": "20a927b29a1aacca6c4553206a6d0d5cbe9625f7425d5f21695eb5e7917e5e59"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchUnitNET.dll",
+          "length": 507392,
+          "sha256": "fec2214fb07829e78701cc771b84524c75f9c156888b2696dff11f7fc78eba57"
+        },
+        {
+          "path": "tools/net10.0/any/web/JetBrains.Annotations.dll",
+          "length": 133504,
+          "sha256": "0295966b8d44522eec6a3c560fbe4efcfa878d3e16ff1ab0fb3478ab17001381"
+        },
+        {
+          "path": "tools/net10.0/any/web/Mono.Cecil.Mdb.dll",
+          "length": 39936,
+          "sha256": "28cb367972bdc1cd43e4006306af2fd96d37f4ed4b239ee90e1dc7237a93af7f"
+        },
+        {
+          "path": "tools/net10.0/any/web/Mono.Cecil.Pdb.dll",
+          "length": 90112,
+          "sha256": "a332332633fbcb20e8d50e49b4db7bd1557721417122cf0c5f4c42f2332391d0"
+        },
+        {
+          "path": "tools/net10.0/any/web/Mono.Cecil.Rocks.dll",
+          "length": 27136,
+          "sha256": "bf992f3dce364ebcc3200fa7832ef07e20b4e2dbc3a8a6213ce44e3d239db984"
+        },
+        {
+          "path": "tools/net10.0/any/web/Mono.Cecil.dll",
+          "length": 361472,
+          "sha256": "831dca77470d85cb6ffbea3072daa7a3df5b7c9fcfd9c3f43674a9be99d4bfcf"
+        },
+        {
+          "path": "tools/net10.0/any/web/Newtonsoft.Json.dll",
+          "length": 723368,
+          "sha256": "a28c251dfe36d881e9e2462e171441b8b0ec156fe3f452602c9149b1b9efe05b"
+        },
+        {
+          "path": "tools/net10.0/any/web/StronglyConnectedComponents.dll",
+          "length": 31744,
+          "sha256": "5ae636b7d2646db86128d86717c46b46702e98f6f9a4a3aed855ce9c98d1edd8"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/ArchUnitNET-0.13.4-LICENSE.txt",
+          "length": 11310,
+          "sha256": "3fac029624560e27e757cf190dce14ad5ef4ebaa776862ed36f23cb8f663ecdb"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/ArchUnitNET-0.13.4-NOTICE.txt",
+          "length": 352,
+          "sha256": "fefd14704df1591a043a6b784e784eed736bcdfef52a9abf4d9291a2706768c3"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/CycleDetection-2.0.0-MIT.txt",
+          "length": 1036,
+          "sha256": "e46ac04a9b77256bbae7739147f52bbf505d224b20ef10f8470e68e9700abb48"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/JetBrains.Annotations-2026.2.0-LICENSE.txt",
+          "length": 1078,
+          "sha256": "ea1de68a2f9808d881ddf35961271b87fef99dcff4c7339d45c768f35ad8adfb"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/Mono.Cecil-0.11.6-LICENSE.txt",
+          "length": 1098,
+          "sha256": "13d58ecbed676511c0c4c4009bff107025e50007ff5e7901dc562700ec62509e"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/Newtonsoft.Json-13.0.4-LICENSE.txt",
+          "length": 1084,
+          "sha256": "d7f83bbea3264a8e23d7739e44d9db1a4994b357274df6f00876eb2e623827ad"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/System.Collections.Immutable-1.5.0-LICENSE.txt",
+          "length": 1116,
+          "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/System.Collections.Immutable-1.5.0-THIRD-PARTY-NOTICES.txt",
+          "length": 15525,
+          "sha256": "1a5672a24e701dbb080be65bb273f40417f5093512fa51091f62a168beaaee73"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/licenses/System.ValueTuple-4.6.2-LICENSE.txt",
+          "length": 1116,
+          "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+        },
+        {
+          "path": "tools/net10.0/any/web/notices/third-party-notices.md",
+          "length": 6440,
+          "sha256": "ee02bcc4add591c849ab4ae152cfd21dba35c06bcd7f67f7accede21da401ccb"
+        },
+        {
+          "path": "tools/net10.0/any/web/packages.win-x64.lock.json",
+          "length": 2466,
+          "sha256": "ce62f311ba23ae2766810b923669b127bde28a254c06c43b147d333191c945e6"
+        },
+        {
+          "path": "tools/net10.0/any/web/web-payload.json",
+          "length": 11611,
+          "sha256": "131c9a6a7a44483861a03582206603b9feaa063f54d2375109c4b70b1de4adb7"
+        },
+        {
+          "path": "tools/net10.0/any/web/web.config",
+          "length": 498,
+          "sha256": "619fedfdb49d425f5b57638329c47bdb14053f4c11a75371e93615faa3395cbe"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/app.js",
+          "length": 70684,
+          "sha256": "24dbab6be16ec35785b688962b1867522a6acaa02539b82a0934d7603e8761ac"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/app.js.br",
+          "length": 16163,
+          "sha256": "4e451468c7ddbfe989e54523caddcee1d04195705e54825b071911c478e102bf"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/app.js.gz",
+          "length": 18727,
+          "sha256": "8e371acc780dec28ab221e64e6077ea53b5c640a96263fc78748a139a1c351e4"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/i18n.js",
+          "length": 42726,
+          "sha256": "730608c5581e459af8934ced7dc9ff03dc87e65d913fbb89aa80c23ebacba46c"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/i18n.js.br",
+          "length": 12919,
+          "sha256": "025da536d9259ac6741c4c4d87800b2458d7875d5329c471bf08ecc6480a5239"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/i18n.js.gz",
+          "length": 15833,
+          "sha256": "ff1e0f024b295edad6830c47bb4f00b717a2a67961d3f8c2f97e11d296522bd0"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/index.html",
+          "length": 27319,
+          "sha256": "a985b6adaa4b43068af87f3d140178c0520698123c9fd3e7ab3b708c6d8a4141"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/index.html.br",
+          "length": 4858,
+          "sha256": "eb0426096170ff218433fcf091f856d0f1feaa5d4077e86d6c6890b906eea3e5"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/index.html.gz",
+          "length": 5941,
+          "sha256": "e877447f1430a8c816c73dda0fa53cfa72b83d8afc3fa9d0e46e128be777380a"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.css",
+          "length": 934,
+          "sha256": "0632b6ad3f50ce1783374b64952bf8eff11721b02d6164bbf6d560d13233d7a0"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.css.br",
+          "length": 353,
+          "sha256": "8ec2f4c481c0ad34489e7c2d504f16c322b3805abd6d900d23fd968cf58685f4"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.css.gz",
+          "length": 453,
+          "sha256": "6079b0e76416746346fac28fc7c56b0822e1069079c12125fa5282ec8e04260d"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.html",
+          "length": 4255,
+          "sha256": "cf096d03699b9ddda555373c5727c4d2783e4b37b8efa0885832d7c837c04ce1"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.html.br",
+          "length": 975,
+          "sha256": "0b3f1769e6e4726d253828232458f75f884cdc553cd3813d564090a87692eef7"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.html.gz",
+          "length": 1359,
+          "sha256": "3d82d2f3fd1490a74c76c62903290e0aad9c9fda208f55c4bc7889288bd29499"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.js",
+          "length": 13635,
+          "sha256": "f309c99204a95e92596ff9096a07140f5ef70e574f22db3b21ee02299bcf51d7"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.js.br",
+          "length": 3861,
+          "sha256": "629af05d15ca730eaa047c561c981f7d305f26664911c74b58b82c26411cc959"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/launcher.js.gz",
+          "length": 4795,
+          "sha256": "d8a584e032c9c9ca8b4628064e2ad2f351d03ddec066f1410c465b73d911a6dc"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/style.css",
+          "length": 9869,
+          "sha256": "f10d3b88ef89f675d12ad8122144efbcc129052a47bf72c79a632997468734d2"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/style.css.br",
+          "length": 2424,
+          "sha256": "78625ef7060c60abb558adaf32393ccbdd73e760c5159b3890fd9a5aaa9e314e"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/style.css.gz",
+          "length": 2910,
+          "sha256": "0b6bfeaf3f02f86678e78284ab6a189b07b33d41539e86013bc826b9d1d2b86d"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/test-workbench.css",
+          "length": 3642,
+          "sha256": "07bdd2b432f5eae25f1bae41e10b3ca7985f7f4e74bdd5820a289317c3488451"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/test-workbench.css.br",
+          "length": 953,
+          "sha256": "d7079c5313b25a4e80b7c72cf9b397cc94952293f711e866f7c012a831fac92f"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/test-workbench.css.gz",
+          "length": 1153,
+          "sha256": "8c4a964e9c1818a42b9cbea6f0eee0916357949bcde7fd26e080d35e427df31d"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/test-workbench.js",
+          "length": 27555,
+          "sha256": "c1f64805ce30e01aff0e539a0a03e82bae89b6db7264df5eaeabd8d145c5d5ec"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/test-workbench.js.br",
+          "length": 6407,
+          "sha256": "c850b36d5f887cb47d5d5c4814957fe00595b39c83cd86bde414e5c6e7f09852"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/test-workbench.js.gz",
+          "length": 7409,
+          "sha256": "b362810edb9c0d3eb18c9991f4ced6c6bf6e44d97a6a5d8f0553137c57e6ba22"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/workbench.css",
+          "length": 8481,
+          "sha256": "0ebd121f1efece578b1bff012269e46ddc8bd11da84e4a17baf2150daba759d6"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/workbench.css.br",
+          "length": 2121,
+          "sha256": "76bc8c09fb2f36dd1fdeac806a4523792c2e47bd610ce8ebb80428f74e108a6a"
+        },
+        {
+          "path": "tools/net10.0/any/web/wwwroot/workbench.css.gz",
+          "length": 2509,
+          "sha256": "432506aa43ba44adcb905e37db67a526c3b7c0da726bf6b87f86217ec889601b"
+        }
+      ]
+    }
+  ]
+}

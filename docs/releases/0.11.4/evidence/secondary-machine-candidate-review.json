@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "status": "passed-candidate-scope",
+  "productSourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "ifxCommit": "9fd3e267533988a948359b2d3c3b2ad502f9a86a",
+  "archiveSha256": "c6a5e19cdbd12979653c7df522a6f843d1bddb00393447a48863f1344190841d",
+  "archiveMembers": 87,
+  "privateReviewSha256": "466cdfe0d5fb58360f48ff9db431669bd783caa7c12be9f164685f5ab782e330",
+  "differentPhysicalWindowsMachineConfirmed": true,
+  "uiReviews": {
+    "actor": "human",
+    "method": "local-console",
+    "passed": 4
+  },
+  "dailyGate": {
+    "sdk": "10.0.303",
+    "passed": 493,
+    "csharp": 92,
+    "json": 401,
+    "skipped": 0,
+    "missing": 0,
+    "duplicates": 0
+  },
+  "independentAudit": {
+    "status": "passed",
+    "ifxProjects": 105,
+    "includesCliAndEmbeddedWeb": true,
+    "officialDataFetched": true,
+    "packageNetworkFallback": false
+  },
+  "hostEqual": true,
+  "storageScenario": "existing-default-root-fresh-candidate-revision",
+  "defaultStorageWasAbsent": false,
+  "inputFiles": 10034,
+  "inputPayloadChanged": false,
+  "publicationPerformed": false,
+  "limitations": [
+    "This record binds the accepted unpublished b7dd87f/build-08 candidate, not a future main-source package.",
+    "No absent-root first creation or 10.0.300/10.0.403 execution is claimed by this secondary-machine batch."
+  ]
+}
