@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "PUBLISHED_AND_INDEPENDENTLY_VERIFIED",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "sourceDirty": false,
+  "publishingWorkflowCommit": "a818f941ce2d4ee089b5a7955f0ccbd3e16f7440",
+  "requestSha256": "09e7437519ec4457ada40058a0b9ea422807e86de0e5f55b922fab35a48684ff",
+  "activationPr": 50,
+  "activationPrHead": "dfd78d596b2265cc4bd42fce1deca71469b32ab2",
+  "activationPrChecks": {
+    "passed": 13,
+    "failed": 0
+  },
+  "activationMainCi": [
+    {
+      "conclusion": "success",
+      "databaseId": 41171806729,
+      "event": "push",
+      "status": "completed",
+      "workflowName": "Session PATH baseline checks"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 41171806680,
+      "event": "push",
+      "status": "completed",
+      "workflowName": "Trusted Publishing activation safety checks"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 41171806675,
+      "event": "push",
+      "status": "completed",
+      "workflowName": "Unpublished recovery correction candidate"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 41171806638,
+      "event": "push",
+      "status": "completed",
+      "workflowName": "Published NuGet consumer acceptance"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 41171806677,
+      "event": "push",
+      "status": "completed",
+      "workflowName": "ArchSift verification"
+    }
+  ],
+  "runId": 41172412457,
+  "runUrl": "https://github.com/von12549/ArchSift/actions/runs/41172412457",
+  "jobs": [
+    {
+      "name": "preflight",
+      "id": 124452988295,
+      "conclusion": "success"
+    },
+    {
+      "name": "audit",
+      "id": 124453066132,
+      "conclusion": "success"
+    },
+    {
+      "name": "publish",
+      "id": 124453186883,
+      "conclusion": "success"
+    },
+    {
+      "name": "public-verification",
+      "id": 124458968276,
+      "conclusion": "success"
+    }
+  ],
+  "completedUtc": "2026-10-31T05:55:13Z",
+  "independentVerificationUtc": "2026-10-31T06:34:57.920Z",
+  "humanEnvironmentApproval": {
+    "reviewer": "von12549",
+    "reviewerId": 2306937,
+    "state": "approved",
+    "environment": "nuget-release",
+    "historySha256": "b6c162e0fdb379879c12770ec625c85441185b3bff8396be6438d124ecabeb28",
+    "finalApprovalPerformedByAgent": false
+  },
+  "canonicalCandidate": {
+    "id": 13028797577,
+    "runId": 41165227450,
+    "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+    "sha256": "228636e804dd865e6363bd1615ae8454a7a171566f8655797029c888d86ca888",
+    "files": [
+      "build.stderr.log",
+      "build.stdout.log",
+      "checks.json",
+      "pack-ArchUnit.stderr.log",
+      "pack-ArchUnit.stdout.log",
+      "pack-Cli.stderr.log",
+      "pack-Cli.stdout.log",
+      "pack-Contracts.stderr.log",
+      "pack-Contracts.stdout.log",
+      "pack-Core.stderr.log",
+      "pack-Core.stdout.log",
+      "pack-Testing.stderr.log",
+      "pack-Testing.stdout.log",
+      "package-build.json",
+      "packages/ArchSift.ArchUnit.0.11.4.nupkg",
+      "packages/ArchSift.Cli.0.11.4.nupkg",
+      "packages/ArchSift.Contracts.0.11.4.nupkg",
+      "packages/ArchSift.Core.0.11.4.nupkg",
+      "packages/ArchSift.Testing.0.11.4.nupkg",
+      "publish-web.stderr.log",
+      "publish-web.stdout.log",
+      "restore.stderr.log",
+      "restore.stdout.log",
+      "sdk.stderr.log",
+      "sdk.stdout.log",
+      "source-inputs.json"
+    ]
+  },
+  "inputArtifact": {
+    "id": 13032235004,
+    "sha256": "5590d922e5272062db375c8b7ca76ceac83c67b1677728a742ed62885c7f77ea"
+  },
+  "auditArtifact": {
+    "id": 13031304105,
+    "sha256": "a98f7399ea8bb2733752fb429aba5e6c2878352de0f4c253b65bc4636cac8a4e"
+  },
+  "qualificationSha256": "5692d4df8f96f64438e464a01ae47c7b34140456aabbfb8d03c621e014613ef8",
+  "payloadManifestSha256": "a544291cb58105d545e4a0b18653cf756d00d0fa1b560c441f18025e49ff740f",
+  "originalReferenceSha256": "e7f2942af8cdd12489334884a4f0a9fe9aabb4d502d7ef4ea903dc2bae6d3a06",
+  "authorizationSha256": "9ade05d055787b94b58ba5c03f50e3b40e6b6afed3fca63ba072729a34cb1810",
+  "priorOriginalBytePreviewRun": 41169711834,
+  "integratedOriginalBytePreviewAndAuditRun": 41172412457,
+  "audit": {
+    "status": "passed-fresh-source-audit",
+    "completedUtc": "2026-10-31T05:24:34.0846613+00:00",
+    "projects": 12,
+    "packageIdentities": 36,
+    "policy": {
+      "mode": "all",
+      "level": "moderate",
+      "source": "https://data.nuget.org/v3/index.json",
+      "enabled": true,
+      "warningsAsErrors": true
+    },
+    "officialDataFiles": [
+      {
+        "sha256": "dfdf7ac6dd1a557298b0b2a8d93dce95f63be9ec62c8f0b8f7a923e56d5869af",
+        "name": "vuln_data_base.dat"
+      },
+      {
+        "sha256": "17beaf56ff579e68c00c5caf909adeb78147a8adcaeb7ac1bf67bb66edde1fa7",
+        "name": "vuln_data_update.dat"
+      },
+      {
+        "sha256": "1a055bc40e67d967ea141e455375f3a14f6bf33a3b63976a99cdf7bed81d8b73",
+        "name": "vuln_index.dat"
+      }
+    ],
+    "reportSha256": "561012b758255d2a9c4901f982734f3cd5ebdf28a3bf90ab8b9d12f8b39ec04b"
+  },
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "version": "0.11.4",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "submissionSha256": "500b463951f65bf56c912f20bec019e4e8cf8c32ff29a50a8194c1842217a40b",
+      "servedSha256": "b84d5ee9da8e05fff96f57e2fe6843c25e67f900e90092a2e8fd2b156b029d95",
+      "servedArchiveSha512Base64": "fRGsNLHNn2pHdSXHvIMZr0mN60NIWIThXp3epvnA3hPHcqLBCeRHlYiv6O/Lz1i9RVYZSYzIqf1QF9V4qG+a9Q==",
+      "servedBytes": 104958,
+      "signatureEntrySha256": "d9a0ce695ae0c52af8ea45027892fb2215ddff6bf941dc4a39148255c49e05d5",
+      "payloadEntries": 8,
+      "owner": "XiaolongFeng",
+      "ownerVerified": true,
+      "payloadVerified": true,
+      "repositorySignatureVerifiedByHostedJob": 124458968276,
+      "repositorySignatureVerified": true,
+      "signatureVerificationMethod": "Successful exact-main credential-free hosted dotnet nuget verify --all against official repository certificates; independent anonymous owner/full-payload comparison. No local dotnet executed.",
+      "url": "https://www.nuget.org/packages/ArchSift.Contracts/0.11.4"
+    },
+    {
+      "id": "ArchSift.Core",
+      "version": "0.11.4",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "submissionSha256": "d0ed88186e6ac805e4a419e7b40ed2776d215ebcbdc79f7412d01f3ee6269b02",
+      "servedSha256": "9c5aea3d6af98c3ed896b9535a9ec639d0e55f7da90f9f11493234ca9fa933af",
+      "servedArchiveSha512Base64": "dYXwEiiZ+NFjAk2JVcHbQc3FHzdn6klJsAyKE2Gmt7S5bxBMGJwBQy+B2F+UTwA7CmEx/pVU5G7hDWc3mwN7bg==",
+      "servedBytes": 172675,
+      "signatureEntrySha256": "01043f040edaa15676d9d8c9e9cf09bdf209d2c219805dc8fa0628d1cd3235b3",
+      "payloadEntries": 8,
+      "owner": "XiaolongFeng",
+      "ownerVerified": true,
+      "payloadVerified": true,
+      "repositorySignatureVerifiedByHostedJob": 124458968276,
+      "repositorySignatureVerified": true,
+      "signatureVerificationMethod": "Successful exact-main credential-free hosted dotnet nuget verify --all against official repository certificates; independent anonymous owner/full-payload comparison. No local dotnet executed.",
+      "url": "https://www.nuget.org/packages/ArchSift.Core/0.11.4"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "version": "0.11.4",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "submissionSha256": "cb3474474e31c7eaeb37a8590d457802b09a0d46bda999c87aa8bce53594b3f1",
+      "servedSha256": "3d3e58a8f9f7215717dd9229a183144741f708dd227d0f6c84be168a112efe68",
+      "servedArchiveSha512Base64": "zv4S/WLW2pL7RUnaiLNgyaXuB0sWE9fFkQwZbYg+im6wWk8m4EyySoRMy0IufAyYR/lYKok19UIbNgc5Aq0mgA==",
+      "servedBytes": 41505,
+      "signatureEntrySha256": "d3900f19c616cbbd834d5262c1a7f58decc5e7645a8a1183e8222cda48898b2f",
+      "payloadEntries": 8,
+      "owner": "XiaolongFeng",
+      "ownerVerified": true,
+      "payloadVerified": true,
+      "repositorySignatureVerifiedByHostedJob": 124458968276,
+      "repositorySignatureVerified": true,
+      "signatureVerificationMethod": "Successful exact-main credential-free hosted dotnet nuget verify --all against official repository certificates; independent anonymous owner/full-payload comparison. No local dotnet executed.",
+      "url": "https://www.nuget.org/packages/ArchSift.ArchUnit/0.11.4"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "version": "0.11.4",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "submissionSha256": "557c9640178071fb660788c5f63187a342c41eb356635c328bebec1d4442743b",
+      "servedSha256": "891b6bbf30ff202ebb59107aa453d1a137a2ddc34ec4a6166fd2e260c8b99874",
+      "servedArchiveSha512Base64": "DiRBN6JiOeK05pJVUjXOPDr2tjOYwYtfhphrkmL7KnIzohX1JEGlLXokbDniuaBBp8sDhtHsddnsnsvxViqPGw==",
+      "servedBytes": 36796,
+      "signatureEntrySha256": "6a7d3304c79107b85e6b495990391b486a2a1bf14830cfd0c1339b185485d74f",
+      "payloadEntries": 8,
+      "owner": "XiaolongFeng",
+      "ownerVerified": true,
+      "payloadVerified": true,
+      "repositorySignatureVerifiedByHostedJob": 124458968276,
+      "repositorySignatureVerified": true,
+      "signatureVerificationMethod": "Successful exact-main credential-free hosted dotnet nuget verify --all against official repository certificates; independent anonymous owner/full-payload comparison. No local dotnet executed.",
+      "url": "https://www.nuget.org/packages/ArchSift.Testing/0.11.4"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "version": "0.11.4",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "submissionSha256": "27d87a6ec2a0a48d4d20c9b67c4609b0c714ac6575eadf2c06546165c5120335",
+      "servedSha256": "1b37909e611f16161a2813910afbf71a48bd7cdf88fe939f2b8e707a15441bea",
+      "servedArchiveSha512Base64": "T+sU7t0vNgUksvBfpsg17SQkwKlLowTYqMXpGdGA8TGijZhlQr+T8LyldOkE86M26RtXDC8i6eW3/jRnDs+HXg==",
+      "servedBytes": 2926362,
+      "signatureEntrySha256": "cff5470298e6e03d264bcf55834c4574ccede7f40a8089fb548241a4cb087954",
+      "payloadEntries": 115,
+      "owner": "XiaolongFeng",
+      "ownerVerified": true,
+      "payloadVerified": true,
+      "repositorySignatureVerifiedByHostedJob": 124458968276,
+      "repositorySignatureVerified": true,
+      "signatureVerificationMethod": "Successful exact-main credential-free hosted dotnet nuget verify --all against official repository certificates; independent anonymous owner/full-payload comparison. No local dotnet executed.",
+      "url": "https://www.nuget.org/packages/ArchSift.Cli/0.11.4"
+    }
+  ],
+  "operationalSwitch": {
+    "name": "ARCHSIFT_NUGET_PUBLISH_0114",
+    "originallyAbsent": true,
+    "restoredAbsent": true,
+    "closedUtc": "2026-10-31T05:55:20.9383782+00:00",
+    "closeoutSha256": "d487bf8539914b00472ae38a86232bae2d635e10ab5dbb3b7f2ff89dd8c539f9"
+  },
+  "localHost": {
+    "hostEqual": true,
+    "baselineSha256": "2b625d68dc9be74bb86e1d338d2949b71559f1240ffdc714a864e07c259e1e3c",
+    "finalSha256": "2b625d68dc9be74bb86e1d338d2949b71559f1240ffdc714a864e07c259e1e3c",
+    "localDotnetExecutedForPublication": false
+  },
+  "ifx": {
+    "originalCommit": "9fd3e267533988a948359b2d3c3b2ad502f9a86a",
+    "originalClean": true,
+    "mainMerged": false,
+    "liveAdoption": false,
+    "finalPublicOnlyCloneQualified": false
+  },
+  "tagOrReleaseCreated": false,
+  "newInstaller": false,
+  "independentEvidenceManifestSha256": "93590fedb57a0cd0de524e79471057128d525715b9d75890c73b9af9ae0118d2",
+  "limits": [
+    "The separate physical Windows machine executed build-08; its coverage is explicitly retained through exhaustive runtime equivalence and fresh canonical Agent tests, not fresh physical-machine execution of these original archives.",
+    "Canonical root-entry UI used fresh explicit owned storage. The shared-default-cache NU1403 failure is preserved. Public IFX binding must isolate stale private-version caches without deleting user storage.",
+    "No public-only IFX cold-clone acceptance, historical migration/rollback, actual disconnected or future eligible SDK execution is claimed.",
+    "Frozen embedded candidate documents remain byte-identical; this record establishes final published status without rewriting packages."
+  ]
+}
