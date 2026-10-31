@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "ACCEPTED_0114_FINAL_SOURCE_AND_PACKAGE_SCOPE",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "sourceDirty": false,
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "bytes": 91868,
+      "sha256": "500b463951f65bf56c912f20bec019e4e8cf8c32ff29a50a8194c1842217a40b"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "bytes": 159585,
+      "sha256": "d0ed88186e6ac805e4a419e7b40ed2776d215ebcbdc79f7412d01f3ee6269b02"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "bytes": 28414,
+      "sha256": "cb3474474e31c7eaeb37a8590d457802b09a0d46bda999c87aa8bce53594b3f1"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "bytes": 23705,
+      "sha256": "557c9640178071fb660788c5f63187a342c41eb356635c328bebec1d4442743b"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "bytes": 2913272,
+      "sha256": "27d87a6ec2a0a48d4d20c9b67c4609b0c714ac6575eadf2c06546165c5120335"
+    }
+  ],
+  "finalPackageIdentityConfirmed": true,
+  "humanAcceptance": {
+    "status": "skipped-explicit-user-delegation",
+    "performed": false,
+    "finalIdentityConfirmed": false
+  },
+  "agentUiAcceptance": {
+    "status": "passed-agent-delegated",
+    "performedBy": "Codex",
+    "finalIdentityConfirmed": true,
+    "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+    "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+    "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+    "authorizationSha256": "2a7a489d39342ee9b0ec66ba8ca043020f63ea5f404f5662c00cde341a8a4973",
+    "evidenceSha256": "5b89271d70da08c0bd83f9b445c494e4260afb66732ee07ffd60b16de0d5229e"
+  },
+  "evidence": [
+    {
+      "lane": "release-regression",
+      "status": "passed",
+      "review": "docs/releases/0.11.4/evidence/main-ci-closeout.json",
+      "reviewSha256": "c85a08c79bc2e757cccab0b90eb8c78b6048fcdd1c4a24e12248a6ccb3d890fd",
+      "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938"
+    },
+    {
+      "lane": "package-integrity",
+      "status": "passed",
+      "review": "docs/releases/0.11.4/evidence/main-package-review.json",
+      "reviewSha256": "9e00fbd24a752ac74812388b35fef7620322d1e95700c51e2d7b5478919f532a",
+      "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938"
+    },
+    {
+      "lane": "consumer-lifecycle",
+      "status": "passed",
+      "review": "docs/releases/0.11.4/evidence/consumer-lifecycle-review.json",
+      "reviewSha256": "2b04090dd18f86a3f5acd2f419c131289326f3813aa9d60936d30ab89a449721",
+      "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938"
+    },
+    {
+      "lane": "ifx-sdk-matrix",
+      "status": "passed",
+      "review": "docs/releases/0.11.4/evidence/ifx-sdk-matrix-review.json",
+      "reviewSha256": "abc569f37de9aa591a503233d974dc1b8c76af1f96dd0ac2bc9db904126ef6cd",
+      "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938"
+    },
+    {
+      "lane": "ifx-independent-audit",
+      "status": "passed",
+      "review": "docs/releases/0.11.4/evidence/ifx-independent-audit-review.json",
+      "reviewSha256": "c5c86e1bda51031f26c89c74235af47e313568ce43bd6ff62faacf7d0c96b633",
+      "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938"
+    },
+    {
+      "lane": "secondary-machine",
+      "status": "passed",
+      "review": "docs/releases/0.11.4/evidence/secondary-machine-equivalence-review.json",
+      "reviewSha256": "54f9365f4d61311b5dc423a5800d71fb6fb90386123e13e874b5051d07ae49db",
+      "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938"
+    }
+  ],
+  "limits": [
+    "Separate-machine coverage is explicitly retained through runtime equivalence, not a fresh canonical-byte machine execution.",
+    "No independent final-byte human UI execution or usability score.",
+    "The failed shared-default-cache root attempt remains FAIL; canonical root UI used fresh explicit owned storage.",
+    "No public signed-package cold clone, live IFX merge/adoption, migration/rollback or actual disconnected qualification.",
+    "Future stable SDKs satisfying the policy are eligible, not pre-tested.",
+    "Fresh hosted release audit/preview remains required; NuGet trust readback requires the user to complete the expired login."
+  ],
+  "publicationAuthorized": false,
+  "activationAuthorized": false
+}

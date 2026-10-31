@@ -1,0 +1,146 @@
+{
+  "rawPayloadEquality": false,
+  "hostEqual": true,
+  "publicationPerformed": false,
+  "normalizer": "Mono.Cecil/0.11.6",
+  "parserSha256": "831dca77470d85cb6ffbea3072daa7a3df5b7c9fcfd9c3f43674a9be99d4bfcf",
+  "status": "passed-normalized-managed-image-equivalence",
+  "method": "Read complete managed modules with matching portable PDB validation; reserialize without debugging symbols with only MVID and PE timestamp normalized. Independently compare raw native resources. Original code is never executed or written. IL and metadata mutation controls must change the normalized digest.",
+  "negativeMetadataControl": true,
+  "humanPerformed": false,
+  "modules": [
+    {
+      "mainRawSha256": "d76fe150bb4729e06d052643ab89a68bd70469b44f048322887f274aca4ae160",
+      "mainNormalizedSha256": "35811ac454477326477b3efefbf9046aca4b3d8205391c45db557669dfa8db3d",
+      "oldRawSha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "ArchSift.ArchUnit.dll",
+      "oldNormalizedSha256": "35811ac454477326477b3efefbf9046aca4b3d8205391c45db557669dfa8db3d",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "6aec3bc4491093890ebccb364d19ce4b1a69e1187878b71bdb370e1f2f982ad0",
+      "mainNormalizedSha256": "ac394eb6b2cbcd4da9699634068f1e9cbcc29f999db4c2581a6d62eff634fb25",
+      "oldRawSha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "ArchSift.Contracts.dll",
+      "oldNormalizedSha256": "ac394eb6b2cbcd4da9699634068f1e9cbcc29f999db4c2581a6d62eff634fb25",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "68b27024224dc0377bd1ca3aa454c6d0c140d7d57117cb9854412247bd775c36",
+      "mainNormalizedSha256": "218aeb218c155f299e696af86e1525e330647d2f60f833dba98792df573a9958",
+      "oldRawSha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "ArchSift.Core.dll",
+      "oldNormalizedSha256": "218aeb218c155f299e696af86e1525e330647d2f60f833dba98792df573a9958",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "777b9973d9f03b29b4540d00cd21e48483a943f61543cf78a0930d43f661eae2",
+      "mainNormalizedSha256": "ad0181e517c38dfe10855e792ddcbcbe4bf6d3a2447c5e87eb120d82fcaa45cf",
+      "oldRawSha256": "7fc124b06ed35993a907ee6cc643964469682393cefbd15198cff0a8d2669e41",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "archsift.dll",
+      "oldNormalizedSha256": "ad0181e517c38dfe10855e792ddcbcbe4bf6d3a2447c5e87eb120d82fcaa45cf",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "77e3a1319dd09c0433d00d85d6007573cf0228543e2b8f617e801865deac0022",
+      "mainNormalizedSha256": "5714061c278449711dcfb11da8d192cb2d0d81ad33002f77153ab2db942c63e9",
+      "oldRawSha256": "4c2e8b21dcfd10065242a1b721882f5f9b2dd5f9cb46953fa487a7932170aaff",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "ArchSift.TestGate.dll",
+      "oldNormalizedSha256": "5714061c278449711dcfb11da8d192cb2d0d81ad33002f77153ab2db942c63e9",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "f939d612d959fa03baad8c6dbe8158693675b6206827e24ca2a1574c103ca2af",
+      "mainNormalizedSha256": "b27fae28578e7ebaf987e043e51171b78e5815a1b9f4e4b060e25b12cf81c846",
+      "oldRawSha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "ArchSift.Testing.dll",
+      "oldNormalizedSha256": "b27fae28578e7ebaf987e043e51171b78e5815a1b9f4e4b060e25b12cf81c846",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "d76fe150bb4729e06d052643ab89a68bd70469b44f048322887f274aca4ae160",
+      "mainNormalizedSha256": "35811ac454477326477b3efefbf9046aca4b3d8205391c45db557669dfa8db3d",
+      "oldRawSha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.ArchUnit.dll",
+      "oldNormalizedSha256": "35811ac454477326477b3efefbf9046aca4b3d8205391c45db557669dfa8db3d",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "6aec3bc4491093890ebccb364d19ce4b1a69e1187878b71bdb370e1f2f982ad0",
+      "mainNormalizedSha256": "ac394eb6b2cbcd4da9699634068f1e9cbcc29f999db4c2581a6d62eff634fb25",
+      "oldRawSha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.Contracts.dll",
+      "oldNormalizedSha256": "ac394eb6b2cbcd4da9699634068f1e9cbcc29f999db4c2581a6d62eff634fb25",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "68b27024224dc0377bd1ca3aa454c6d0c140d7d57117cb9854412247bd775c36",
+      "mainNormalizedSha256": "218aeb218c155f299e696af86e1525e330647d2f60f833dba98792df573a9958",
+      "oldRawSha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.Core.dll",
+      "oldNormalizedSha256": "218aeb218c155f299e696af86e1525e330647d2f60f833dba98792df573a9958",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "b4279b4258bfa3c3190e4a602aecbdbd8ef810890200bf0072e3ed6a5cdd0ee1",
+      "mainNormalizedSha256": "947a7b4619726d299803521243b35fa677f77a0e255379a286ba516d6f668cbc",
+      "oldRawSha256": "0c84caf155ca8fe79565a3d58378cafc0bff959f7d37e47ead55f6755df516da",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.Setup.dll",
+      "oldNormalizedSha256": "947a7b4619726d299803521243b35fa677f77a0e255379a286ba516d6f668cbc",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "77e3a1319dd09c0433d00d85d6007573cf0228543e2b8f617e801865deac0022",
+      "mainNormalizedSha256": "5714061c278449711dcfb11da8d192cb2d0d81ad33002f77153ab2db942c63e9",
+      "oldRawSha256": "4c2e8b21dcfd10065242a1b721882f5f9b2dd5f9cb46953fa487a7932170aaff",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.TestGate.dll",
+      "oldNormalizedSha256": "5714061c278449711dcfb11da8d192cb2d0d81ad33002f77153ab2db942c63e9",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "f939d612d959fa03baad8c6dbe8158693675b6206827e24ca2a1574c103ca2af",
+      "mainNormalizedSha256": "b27fae28578e7ebaf987e043e51171b78e5815a1b9f4e4b060e25b12cf81c846",
+      "oldRawSha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.Testing.dll",
+      "oldNormalizedSha256": "b27fae28578e7ebaf987e043e51171b78e5815a1b9f4e4b060e25b12cf81c846",
+      "portableSymbolsMatch": true
+    },
+    {
+      "mainRawSha256": "0205790d0e48bb3d530ca389787620ee0fb11f3dfe010dc6634173a12af3229d",
+      "mainNormalizedSha256": "e3b3807ecc8c853ac2d668e114c76b9084b9fff23ae92eb746fcd36f8acc29a1",
+      "oldRawSha256": "4e26735288b2a606c414ada98942e8f2534f3ca3fd633b665821136ab5d186d6",
+      "equal": true,
+      "nativeResourcesEqual": true,
+      "path": "web/ArchSift.Web.dll",
+      "oldNormalizedSha256": "e3b3807ecc8c853ac2d668e114c76b9084b9fff23ae92eb746fcd36f8acc29a1",
+      "portableSymbolsMatch": true
+    }
+  ],
+  "verifierSha256": "adb82f1a071782a6784beb92aeabcbe583332f89952d01747cb5c53a55c6e8b6",
+  "schemaVersion": 1,
+  "negativeIlControl": true
+}

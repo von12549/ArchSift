@@ -18,3 +18,8 @@ docs/releases/0.11.0/nr06-payload-manifest.json -text -diff -merge
 
 # Preserve the hash-pinned R12 payload inventory exactly as independently reviewed.
 docs/releases/0.11.2/package-payload-manifest.json -text -diff -merge
+
+# Preserve independently rehashed 0.11.4 canonical inventories and comparison proofs.
+docs/releases/0.11.4/package-payload-manifest.json -text -diff -merge
+docs/releases/0.11.4/evidence/managed-equivalence.json -text -diff -merge
+docs/releases/0.11.4/evidence/full-package-equivalence.json -text -diff -merge

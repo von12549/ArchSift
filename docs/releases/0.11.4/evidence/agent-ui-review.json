@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+  "status": "passed",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "ifxIsolatedCommit": "97341c0317964086ecd43da265901dd5e2020820",
+  "originalIfxCommit": "9fd3e267533988a948359b2d3c3b2ad502f9a86a",
+  "originalIfxUnchanged": true,
+  "uiArchiveSha256": "8c96a70ccbf5dbff94d1ade89566e5df1582a0ce16b0e464cb2a027e7e81ffea",
+  "uiManifestSha256": "dbbb32395ffef8dc4506936d1881f689427d219a331386908ba14c947b123c18",
+  "nativeQualification": {
+    "file": "ifx-matrix/qualification.json",
+    "sha256": "4b7bdcdf3d84682305b67e7ec424408c034d43b5e946fdbbdda7d1f955123d7d"
+  },
+  "stages": [
+    {
+      "name": "startup-1-launcher",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedMs": 192757,
+      "hostEqual": true
+    },
+    {
+      "name": "startup-2-workbench",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedMs": 276932,
+      "hostEqual": true
+    },
+    {
+      "name": "startup-3-launcher",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedMs": 43404,
+      "hostEqual": true
+    },
+    {
+      "name": "startup-4-workbench",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedMs": 33533,
+      "hostEqual": true
+    }
+  ],
+  "reviewMethod": "Actual browser UI through Cua; project/rules, inventory, no automatic execution and safe close observed in every stage.",
+  "rulesets": 13,
+  "csharpCases": 92,
+  "jsonCases": 401,
+  "loadOrRunClicked": false,
+  "pairedCloseouts": 8,
+  "manifestAndAllMembersIndependentlyRehashed": true,
+  "receiptsIndependentlyValidated": true,
+  "storageScenario": "explicit-owned-root-initially-absent",
+  "defaultStorageTestedHere": false,
+  "publicationPerformed": false,
+  "retainedSetupFailure": {
+    "archive": {
+      "file": "clone-acceptance.zip",
+      "sha256": "094071ab848fdaa52134341564e7f50bb2bd47d3d8e120e1a15751c43432ea18"
+    },
+    "status": "FAIL",
+    "reason": "Strict NU1403 protection rejected earlier private same-version packages in the shared default cache. No cache clearing or persistent host repair.",
+    "replacementScope": "UI-only root-entry harness uses a fresh owned StorageRoot; native matrix is separately bound.",
+    "freshDefaultRootColdCloneClaimed": false
+  }
+}

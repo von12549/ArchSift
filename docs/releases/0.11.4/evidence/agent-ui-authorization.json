@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "authority": "User authorized the 0.11.4 plan with Agent substitution for manual tests, then explicitly authorized main-source integration, exact package comparison, necessary Agent requalification and credential-free preview/audit.",
+  "agentUiDelegated": true,
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+  "publicationAuthorized": false,
+  "credentialsAuthorized": false,
+  "ifxLiveActivationAuthorized": false
+}

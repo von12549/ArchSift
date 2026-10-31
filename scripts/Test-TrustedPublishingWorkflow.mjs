@@ -6,9 +6,11 @@ import { checkWorkflow, checkWorkflowForVersion, parseWorkflow, stringify } from
 import { sha256 } from './nuget-release/model.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const activeWorkflow = fs.readFileSync(path.join(root, '.github/workflows/publish-nuget.yml'), 'utf8');
-checkWorkflowForVersion(activeWorkflow,'0.11.3');
+const activeVersion=parseWorkflow(activeWorkflow).env?.RELEASE_VERSION;
+assert.ok(['0.11.3','0.11.4'].includes(activeVersion));
+checkWorkflowForVersion(activeWorkflow,activeVersion);
 // Reuse the full mutation suite against the canonical version-normalized structure.
-const workflow=activeWorkflow.replaceAll('0.11.3','0.11.2').replaceAll('PUBLISH_0113','PUBLISH_0112');
+const workflow=activeWorkflow.replaceAll(activeVersion,'0.11.2').replaceAll(`PUBLISH_${activeVersion.replaceAll('.', '')}`,'PUBLISH_0112');
 checkWorkflow(workflow);
 const mutations = [
  w => { delete w.jobs.preflight.steps[5].env.RELEASE_SWITCH; },

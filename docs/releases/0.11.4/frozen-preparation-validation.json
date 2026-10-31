@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "FROZEN_PREPARATION_LOCAL_CHECKS_PASSED_HOSTED_PREVIEW_PENDING",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "releaseSafety": {
+    "passed": 300,
+    "failed": 0,
+    "skipped": 0,
+    "logSha256": "7c212668c6f01aa8f425f78a6cbdb55f2ff74127bf91de83a8a31c0baa8919ac"
+  },
+  "workflowBoundary": {
+    "unsafeMutationsRejected": 51,
+    "httpMutationsRejected": 2,
+    "logSha256": "05264b9c727052c6fd14d9a0c3866606657a281f9fdc8794febb81c8605a1661"
+  },
+  "syntheticPreflight": {
+    "passed": 18,
+    "resultSha256": "de947e77bfbc9ad7ad66ea428cb91df91b6806dcaa30bf3d5bb10092c491faf1"
+  },
+  "immutableProofsPreservedByGitAttributes": true,
+  "sourceProductChanged": false,
+  "publicationEnabled": false,
+  "credentialsAcquired": false,
+  "publicationPerformed": false,
+  "ifxOriginalChanged": false,
+  "retainedLocalTestFailure": "The first frozen-profile unhosted assertions expected an internal detail, but the driver correctly emitted its sanitized catch message. Assertions now match that message and independently use exit code 97 to detect any attempted fetch. The complete suite passed.",
+  "next": [
+    "Normal preparation PR and actual-main CI",
+    "Credential-free hosted preflight/preview and fresh audit",
+    "Fresh NuGet trust readback after user login",
+    "Separate final publication confirmation"
+  ]
+}
