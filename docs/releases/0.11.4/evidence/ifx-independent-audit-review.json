@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+  "status": "passed",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "audit": {
+    "expectedToolSourceProjects": 0,
+    "audit": {
+      "enabled": true,
+      "mode": "all",
+      "level": "moderate"
+    },
+    "run": "independent",
+    "sdk": "10.0.303",
+    "cliExternalPackages": [
+      "CycleDetection/2.0.0",
+      "JetBrains.Annotations/2026.2.0",
+      "Mono.Cecil/0.11.6",
+      "Newtonsoft.Json/13.0.4",
+      "TngTech.ArchUnitNET/0.13.4"
+    ],
+    "scopeRecomputed": true,
+    "hostEqual": true,
+    "status": "passed",
+    "officialDataFetched": true,
+    "cliDistributionAuditProjects": 1,
+    "packageNetworkFallback": false,
+    "expectedIfxProjects": 105,
+    "skipped": 0,
+    "actualAuditedProjects": 105
+  },
+  "nativeQualification": {
+    "file": "ifx-matrix/qualification.json",
+    "sha256": "4b7bdcdf3d84682305b67e7ec424408c034d43b5e946fdbbdda7d1f955123d7d"
+  },
+  "ifxIsolatedCommit": "97341c0317964086ecd43da265901dd5e2020820",
+  "auditIsSeparateFromArchitectureGate": true
+}

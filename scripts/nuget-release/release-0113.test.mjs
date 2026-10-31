@@ -91,7 +91,7 @@ for(const [name,mutate] of [
 
 const proposed=fs.readFileSync(path.join(root,'docs/releases/0.11.3/publish-nuget.proposed.yml'),'utf8');
 test('0113 proposed workflow retains strict approval/audit/integrity structure', () => checkWorkflowForVersion(proposed,'0.11.3'));
-test('0113 active workflow selects the reviewed preview profile', () => checkWorkflowForVersion(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'),'0.11.3'));
+test('active workflow selects a reviewed version without changing the historical 0113 proposal', () => {const text=fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8');checkWorkflowForVersion(text,text.includes("RELEASE_VERSION: '0.11.4'")?'0.11.4':'0.11.3');});
 for (const [name, change] of [
   ['old switch', s=>s.replace('PUBLISH_0113','PUBLISH_0112')],
   ['old artifact', s=>s.replace('archsift-0.11.3-reviewed-submissions','archsift-0.11.2-reviewed-submissions')],

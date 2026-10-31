@@ -1,43 +1,42 @@
-# ArchSift 0.11.4 prepublication readiness
+# ArchSift 0.11.4 frozen preparation
 
 Date: 2026-10-31 (Australia/Sydney).
 
-Status: the unpublished product candidate and IFX secondary-machine acceptance passed; final main-source publication inputs are not frozen. This document is a preparation/approval card, not publication authorization.
+The final main-source original submissions are frozen and delegated Agent package, IFX and UI qualification passed. Publication is disabled. Normal PR/main CI and a credential-free hosted preview/audit remain required before the final publication card.
 
-## Accepted candidate
+## Frozen identities
 
-- Product source: `b7dd87f7f8d073a3fde46bd7068c8911b832972d`, tree `d6a861dded687955df61645d6fe50bf17d3713f9`, clean build-08. All five original archives and every internal file were rehashed during this preparation. Full identities are in [candidate inventory](candidate-inventory.json) and [payload manifest](candidate-payload-manifest.json).
-- IFX source: `9fd3e267533988a948359b2d3c3b2ad502f9a86a`; all four jobs in CI run `41157989728` passed. Earlier qualified SDK 10.0.303, 10.0.300 and 10.0.403 lanes each executed all 493 cases; the exact formal lane and separate 105-project/CLI/Web audit passed.
-- The user's secondary Windows machine passed one integrated batch: four human local-console UI reviews, automatic 13-rule/92+401 inventory, 493 native cases with no skip/missing/duplicate, fresh official 105-project/distribution audit and four paired safe closeouts. Its 87-member evidence ZIP is `c6a5e19cdbd12979653c7df522a6f843d1bddb00393447a48863f1344190841d`. [Sanitized review](evidence/secondary-machine-candidate-review.json) preserves the scope and digest.
-- This secondary-machine batch used SDK 10.0.303 and an existing default StorageRoot. Absent-root creation was separately tested in the development qualification. The secondary-machine result does not certify future main-source packages, public acquisition, actual disconnection or every eligible future SDK.
+- Product source: `b7dd87f7f8d073a3fde46bd7068c8911b832972d`, tree `d6a861dded687955df61645d6fe50bf17d3713f9`. Authorized non-forced source integration preserved this accepted commit; PR 47 is merged. Preparation PR 48 merged as `0a925256953c8d80d1e1fa3a3f77d5dff4aa2b31`.
+- Source PR verify `41068122614` and actual-main verify `41165227420` passed. Main candidate run `41165227450`, artifact `13028797577`, ZIP SHA-256 `228636e804dd865e6363bd1615ae8454a7a171566f8655797029c888d86ca888` produced the five originals. See their exact ordered identities in the [reference](trusted-publishing-reference.json) and every payload member in the [manifest](package-payload-manifest.json).
+- The [qualification](qualification.json) binds all six lanes to that source/package set. See [package review](evidence/main-package-review.json), [SDK matrix](evidence/ifx-sdk-matrix-review.json), [independent audit](evidence/ifx-independent-audit-review.json) and [actual UI review](evidence/agent-ui-review.json).
+- Original IFX `9fd3e267533988a948359b2d3c3b2ad502f9a86a` is unchanged. Owned clone `97341c0317964086ecd43da265901dd5e2020820` changes only package bindings/provenance/locks; it is private qualification input, not IFX main or public adoption.
 
-## Closed preparation
+## Executed canonical-byte qualification
 
-The 0.11.4 publishing profile has both `realAssetTransferEnabled=false` and `publicationEnabled=false`. Its state is `AWAITING_MAIN_SOURCE_AND_FINAL_IDENTITIES`; missing final reference, payload digest and hosted candidate identity are intentional. The actual driver rejects before reference/network access in preflight, preview and publish modes. An operational switch alone cannot open these capabilities.
+Packaged synthetic native consumers passed on 10.0.303, 10.0.300 and 10.0.403. Exact mismatch, missing host and unknown fields were rejected; Doctor/Init and four API lifecycle operations passed. The isolated IFX clone then executed daily SDK 10.0.303, 10.0.300 and 10.0.403 in order, followed by the exact formal lane. Each passed all 493 cases (92 C# plus 401 JSON), with no skips, missing cases or duplicates. Its separate fresh official audit passed for 105/105 IFX projects and CLI/embedded Web.
 
-The [proposed workflow](publish-nuget.proposed.yml) retains main-only execution, first-attempt manual dispatch, the protected `nuget-release` environment, fresh credential-free audit, immutable artifact verification, sequential original submissions and independent served signature/owner/payload verification. The active `.github/workflows/publish-nuget.yml` remains on historical 0.11.3.
+Actual Agent browser review exercised root-entry Launcher, direct Workbench and both repeats. Every stage showed the clone, IFX.sln, 13 rules and 92+401 inventory without clicking Load or Run; startup did not execute tests. Four root and four product closeouts passed, locks reopened and host/source guards stayed equal. The UI ZIP's 31 members, receipts and eight closeouts were independently rechecked.
 
-The versioned verifier now accepts 0.11.4 while retaining historical behavior. In addition to regression, package-integrity and consumer-lifecycle evidence, final 0.11.4 qualification requires source/package-bound IFX SDK matrix, independent audit and secondary-machine lanes. A different final package set cannot inherit old proof by relabeling a PASS.
+The first canonical root attempt remains FAIL: shared default storage contained earlier private 0.11.4 packages, so strict locked restore correctly rejected different hashes with NU1403. No cache was cleared or host state repaired. The passing UI-only harness used a fresh explicit owned StorageRoot automatically created by the root entry, separately bound to completed native qualification. It is not the full clone controller or a cold absent OS-default-root test.
 
-## Remaining release blockers
+## Retained physical-machine evidence
 
-1. The current product source is an accepted branch candidate, not the required fresh successful `main` push candidate. PR run `41068122581` has artifact `12984201165`, but its merge-tree name/source identity and `pull_request` event make it ineligible for the protected publication transaction. Keep that restriction.
-2. The final `main` source CI, canonical five submissions, full payload manifest, accepted qualification/reference and version-specific request must be frozen and verified. Never infer ZIP-byte equality from a shared source tree.
-3. The final closed publication workflow must pass normal PR/main CI and a credential-free preview plus a fresh hosted audit. This preparation does not claim that hosted preview has run.
-4. Reconfirm official version absence, protected environment and NuGet account trust immediately before the eventual authorized transaction. The current five 0.11.4 HEAD checks returned 404; the operational switch is absent and the main-only environment has required review and no administrator bypass.
+The immutable original secondary Windows batch passed four human local-console UI reviews, 13-rule/92+401 inventory, all 493 cases, separate 105-project/distribution audit and paired closeouts. Its ZIP is `c6a5e19cdbd12979653c7df522a6f843d1bddb00393447a48863f1344190841d`; see the [original review](evidence/secondary-machine-candidate-review.json).
 
-## Next source-integration approval
+That machine executed build-08, not canonical archives. Raw archives and some payload bytes differ. The [retained-coverage review](evidence/secondary-machine-equivalence-review.json) relies on exhaustive [package comparison](evidence/full-package-equivalence.json), [13 complete normalized managed images](evidence/managed-equivalence.json) with matching symbols/raw native resources, four rejected negative controls and fresh canonical Agent execution. Accounted changes are build/debug identities, identical property-part filenames, opaque relationship IDs, Last-Modified timestamps and recomputed digest inventories. Other runtime/static assets, routes and package members are checked. Normalization is comparison-only; submissions remain immutable.
 
-Request one preparation-only authorization for ArchSift product PR 47 and the separate closed-release-readiness PR: source integration, successful main CI, canonical candidate/payload comparison, necessary Agent requalification, final disabled-publication binding and credential-free hosted preview/audit. IFX PR 32 remains a private candidate until actual served packages are available.
+No fresh physical-machine execution of canonical bytes or final-byte human usability score is claimed. The physical batch used SDK 10.0.303 and an existing default root. This is explicit runtime-equivalence retention within the authorized comparison/Agent-requalification scope, not a repeat waiver or relabeled old PASS. Future eligible SDKs, public signed acquisition, actual disconnection and historical migration/rollback are outside this acceptance.
 
-The preferred source integration preserves the accepted product commit if repository policy permits a non-forced fast-forward from current main `340f68e1939e3beedc9460b09186b623231ff155` to `b7dd87f7f8d073a3fde46bd7068c8911b832972d`. Recheck ancestry and the exact remote tip at execution; do not bypass repository review/rules or force an update. A normal merge producing a different commit requires an explicit new freeze and affected evidence. The release-tooling PR can then follow the normal reviewed merge flow without changing the original product source reference.
+## Closed publication boundary
 
-Download the fresh main artifact and compare all five raw archives and every payload entry with build-08. Reuse evidence only through explicit verified identity or payload-equivalence records; rerun affected tests using the delegated Agent route. Keep old submissions and evidence immutable. A spare-machine round trip is needed only if affected coverage cannot be established by those checks and Agent tests.
+The [profile](publishing-activation.json) is `FINAL_IDENTITIES_FROZEN`: `realAssetTransferEnabled=true` permits authenticated Actions artifact reads and credential-free preview/audit; `publicationEnabled=false` prohibits publication. The active workflow selects 0.11.4 and retains exact-main/first-attempt dispatch, reviewed PR/main CI, the protected `nuget-release` environment, fresh hosted audit, immutable original-artifact verification, sequential submissions and anonymous served signature/owner/payload verification. An operational switch alone cannot publish.
 
-This approval excludes NuGet switch activation, OIDC/login or publishing credentials, NuGet push, tag/GitHub Release creation, IFX main merge, installer changes and live daily cutover. Before those actions, present a final publication card containing literal source/workflow/artifact/request/package digests and fresh preview/audit evidence. Do not approve a guessed future hash.
+After this PR merges and actual-main checks pass, compute exact workflow/request identities, execute preflight and preview, independently rehash submissions/audit artifacts, then issue the final card. Later publication activation requires separate explicit authorization and a reviewed commit; workflow/request identities must be recomputed for that commit without changing packages.
 
-## Publication and IFX completion order
+NuGet's session expired during private trust readback. Cached prior policy is not fresh proof. User login and fresh read-only policy review remain required before publication. No publishing credential, OIDC login, operational switch, package push, tag/Release, installer or live IFX adoption is authorized by preparation.
 
-After separate explicit publication confirmation: activate only the exact 0.11.4 transaction under the existing human environment review, submit the frozen originals in Contracts/Core/ArchUnit/Testing/Cli order, stop on an uncertain response, anonymously verify served signatures/owners/full payloads, and restore the version switch to its originally absent state. Never rebuild or silently retry a possibly published version.
+## Publication and IFX order
 
-Then atomically bind IFX to actual served signed identities (separate submission and served hashes), public-only restore, lock/config/provenance/host contracts, full 493-case CI, independent audit and final root-entry Agent review. Prepare its final PR/activation card from those results. The current local feed and unpublished provenance must not be represented as final public clone-and-run delivery.
+After separate publication confirmation, activate the exact profile through normal PR/CI/merge; use a fresh bound hosted audit/transaction and human environment approval; submit Contracts/Core/ArchUnit/Testing/Cli originals in order; stop on uncertainty; verify served signatures/owners/full payloads; restore the switch to its originally absent state. Never rebuild or silently retry a potentially published version.
+
+Then bind IFX atomically to served signed identities, distinguish submission/served hashes, run public-only restore, full 493-case CI, independent audit and final root-entry Agent review. Present its concrete merge/activation card separately. Local feeds and unpublished provenance do not constitute final public clone-and-run delivery.

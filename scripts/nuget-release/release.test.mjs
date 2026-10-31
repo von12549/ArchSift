@@ -197,9 +197,10 @@ function runWiredInputVerification({mode='publish',switchValue='true',omitSwitch
   const fixtureFile=path.join(directory,'fixture.json');fs.writeFileSync(fixtureFile,JSON.stringify(fixture));
   const child={...process.env,GITHUB_ACTIONS:'true',RUNNER_ENVIRONMENT:'github-hosted',GITHUB_REPOSITORY:p.repository,GITHUB_REPOSITORY_ID:String(p.repositoryId),GITHUB_REPOSITORY_OWNER_ID:String(p.ownerId),GITHUB_REF:'refs/heads/main',GITHUB_SHA:context.sha,GITHUB_RUN_ID:'100',GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_WORKFLOW_REF:`${p.repository}/${p.workflow}@refs/heads/main`,RELEASE_MODE:mode,RELEASE_WORKFLOW_SHA:context.sha,RELEASE_DATA_COMMIT:'b'.repeat(40),RELEASE_REQUEST_SHA256:sha256(requestBytes),ARCHSIFT_RELEASE_TEST_FIXTURE:fixtureFile,NUGET_API_KEY:'',ACTIONS_ID_TOKEN_REQUEST_TOKEN:'',GITHUB_STEP_SUMMARY:path.join(directory,'summary.json')};
   for(const name of ['RELEASE_SWITCH','RELEASE_ARTIFACT_ID','RELEASE_ARTIFACT_SHA256','GH_TOKEN','GITHUB_OUTPUT'])delete child[name];
-  const stepEnv={...parseWorkflow(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8')).jobs.preflight.steps[5].env};
+  const active=parseWorkflow(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'));
+  const stepEnv={...active.jobs.preflight.steps[5].env};
   if(omitSwitch)delete stepEnv.RELEASE_SWITCH;
-  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN','${{ vars.ARCHSIFT_NUGET_PUBLISH_0113 }}':switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
+  const bindings={'${{ github.token }}':'FAKE-GH-TOKEN',['${{ vars.ARCHSIFT_NUGET_PUBLISH_'+active.env.RELEASE_VERSION.replaceAll('.', '')+' }}']:switchValue,'${{ steps.upload.outputs.artifact-id }}':'42','${{ steps.upload.outputs.artifact-digest }}':sha256(raw)};
   for(const [name,expression]of Object.entries(stepEnv)){assert.ok(Object.hasOwn(bindings,expression),'Unknown step binding');child[name]=bindings[expression];}
   changeEnv(child);
   const result=spawnSync(process.execPath,['--import',pathToFileURL(path.join(root,'scripts/nuget-release/test-artifact-fetch.mjs')).href,path.join(root,'scripts/nuget-release/driver.mjs'),'verify-preview'],{cwd:root,env:child,encoding:'utf8',timeout:20000});

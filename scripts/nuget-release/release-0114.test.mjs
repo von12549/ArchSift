@@ -9,9 +9,10 @@ import { checkReference, checkQualification, checkContext, sha256 } from './mode
 import { checkWorkflowForVersion } from './workflow-policy.mjs';
 import { checkCandidateProvenance } from './candidate-inputs.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const draft = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.4/publishing-activation.json')));
+const actual = JSON.parse(fs.readFileSync(path.join(root, 'docs/releases/0.11.4/publishing-activation.json')));
+const draft = {...actual,state:'AWAITING_MAIN_SOURCE_AND_FINAL_IDENTITIES',realAssetTransferEnabled:false,publicationEnabled:false,candidateArtifact:null,originalReferenceSha256:null,payloadManifestSha256:null};
 const frozen = {...draft, state:'FINAL_IDENTITIES_FROZEN', originalReferenceSha256:'a'.repeat(64), payloadManifestSha256:'b'.repeat(64), candidateArtifact:{id:1,runId:2,sourceCommit:'c'.repeat(40),sha256:'d'.repeat(64),files:['packages/synthetic.nupkg']}};
-test('0114 actual preparation remains closed before reading absent final identities', () => {
+test('0114 draft fixture remains closed before reading absent final identities', () => {
   assert.equal(draft.realAssetTransferEnabled, false); assert.equal(draft.publicationEnabled, false);
   assert.equal(draft.candidateArtifact, null); assert.equal(draft.originalReferenceSha256, null);
   assert.throws(() => checkReleaseProfile(draft, '0.11.4'), /identities not frozen/);
@@ -30,10 +31,10 @@ test('0114 unknown next version is rejected',()=>assert.throws(()=>checkReleaseP
 for(const mode of ['preview','publish']) test(`0114 operational true cannot open ${mode} on a closed frozen profile`,()=>{
   assert.throws(()=>checkContext({version:'0.11.4',repository:draft.repository,repositoryId:String(draft.repositoryId),ownerId:String(draft.ownerId),ref:'refs/heads/main',sha:'a'.repeat(40),mainSha:'a'.repeat(40),runAttempt:'1',event:'workflow_dispatch',workflowSha:'a'.repeat(40),dataCommit:'b'.repeat(40),requestSha256:'c'.repeat(64),releaseSwitch:'true'},frozen,mode),/transfer is locked/);
 });
-for(const mode of ['preflight','preview','publish']) test(`0114 actual ${mode} driver stops before reference access or network`,()=>{
-  const denyNetwork='data:text/javascript,'+encodeURIComponent('globalThis.fetch=()=>{throw new Error("UNEXPECTED_NETWORK")};');
-  const r=spawnSync(process.execPath,['--import',denyNetwork,path.join(root,'scripts/nuget-release/driver.mjs'),'prepare'],{cwd:root,env:{...process.env,NODE_OPTIONS:'',RELEASE_VERSION:'0.11.4',RELEASE_MODE:mode,RELEASE_SWITCH:'true',GH_TOKEN:'synthetic-never-use'},encoding:'utf8',timeout:10000});
-  assert.equal(r.status,1);assert.match(r.stderr,/identities not frozen/);assert.doesNotMatch(r.stderr,/UNEXPECTED_NETWORK|ENOENT/);
+for(const mode of ['preflight','preview','publish']) test(`0114 unhosted ${mode} driver stops before network access`,()=>{
+  const denyNetwork='data:text/javascript,'+encodeURIComponent('let calls=0;globalThis.fetch=()=>{calls++;throw new Error("UNEXPECTED_NETWORK")};process.on("exit",()=>{if(calls)process.exitCode=97;});');
+  const r=spawnSync(process.execPath,['--import',denyNetwork,path.join(root,'scripts/nuget-release/driver.mjs'),'prepare'],{cwd:root,env:{...process.env,NODE_OPTIONS:'',GITHUB_ACTIONS:'false',RUNNER_ENVIRONMENT:'local-fixture',NUGET_API_KEY:'',ACTIONS_ID_TOKEN_REQUEST_TOKEN:'',RELEASE_VERSION:'0.11.4',RELEASE_MODE:mode,RELEASE_SWITCH:'true',GH_TOKEN:'synthetic-never-use'},encoding:'utf8',timeout:10000});
+  assert.equal(r.status,1);assert.match(r.stderr,actual.state==='FINAL_IDENTITIES_FROZEN'?/Release safety gate stopped/:/identities not frozen/);assert.doesNotMatch(r.stderr,/UNEXPECTED_NETWORK|ENOENT/);
 });
 function fixture(){
   const r=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.3/trusted-publishing-reference.json')));
@@ -68,8 +69,39 @@ for(const [name,change] of [
   ['mismatched evidence',f=>{f.q.agentUiAcceptance.evidenceSha256='f'.repeat(64);}],
 ]) test(`0114 delegated qualification rejects ${name}`,()=>{const f=delegatedFixture();change(f);assert.throws(()=>verify(f));});
 const proposed=fs.readFileSync(path.join(root,'docs/releases/0.11.4/publish-nuget.proposed.yml'),'utf8');
+
+test('0114 frozen evidence graph preserves reviewed bytes across checkout platforms',()=>{
+  if(actual.state!=='FINAL_IDENTITIES_FROZEN')return;
+  const read=p=>fs.readFileSync(path.join(root,p));
+  const r=JSON.parse(read(actual.originalReference));
+  const q=JSON.parse(read('docs/releases/0.11.4/qualification.json'));
+  for(const e of q.evidence){
+    const bytes=read(e.review);assert.equal(sha256(bytes),e.reviewSha256);
+    const review=JSON.parse(bytes);assert.equal(review.sourceCommit,r.sourceCommit);
+    assert.equal(review.packageSetSha256,sha256(Buffer.from(JSON.stringify(r.packages))));
+  }
+  const base='docs/releases/0.11.4/evidence/';
+  assert.equal(sha256(read(base+'agent-ui-authorization.json')),r.agentUiAcceptance.authorizationSha256);
+  assert.equal(sha256(read(base+'agent-ui-review.json')),r.agentUiAcceptance.evidenceSha256);
+  const retained=JSON.parse(read(base+'secondary-machine-equivalence-review.json'));
+  assert.equal(retained.freshSecondaryMachineExecutionClaimed,false);
+  assert.equal(retained.canonicalArchivesExecutedOnSecondaryMachine,false);
+  assert.equal(sha256(read(retained.originalReview)),retained.originalReviewSha256);
+  const managedBytes=read(base+'managed-equivalence.json'),fullBytes=read(base+'full-package-equivalence.json');
+  assert.equal(sha256(managedBytes),retained.managedReviewSha256);
+  assert.equal(sha256(fullBytes),retained.equivalenceReviewSha256);
+  const managed=JSON.parse(managedBytes),full=JSON.parse(fullBytes);
+  assert.equal(full.managedProofSha256,sha256(managedBytes));
+  assert.equal(managed.verifierSha256,sha256(read('scripts/Compare-ManagedReleaseImages.ps1')));
+  assert.equal(full.verifierSha256,sha256(read('scripts/Compare-ReleasePackageContent.py')));
+  assert.equal(managed.modules.length,13);
+  assert.ok(managed.modules.every(m=>m.equal&&m.nativeResourcesEqual&&m.portableSymbolsMatch));
+  assert.equal(managed.negativeIlControl,true);assert.equal(managed.negativeMetadataControl,true);
+  assert.equal(full.negativeControls.length,4);
+});
 test('0114 proposed workflow retains the exact protected transaction',()=>checkWorkflowForVersion(proposed,'0.11.4'));
-test('0114 preparation leaves the active workflow on historical 0113',()=>checkWorkflowForVersion(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'),'0.11.3'));
+test('0114 active workflow matches the reviewed preparation state',()=>checkWorkflowForVersion(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'),actual.state==='FINAL_IDENTITIES_FROZEN'?'0.11.4':'0.11.3'));
+test('0114 actual preview profile binds final identities while publication remains closed',()=>{assert.equal(actual.publicationEnabled,false);if(actual.state!=='FINAL_IDENTITIES_FROZEN'){assert.equal(actual.realAssetTransferEnabled,false);return;}checkReleaseProfile(actual,'0.11.4');assert.equal(actual.realAssetTransferEnabled,true);const bytes=fs.readFileSync(path.join(root,actual.originalReference));assert.equal(sha256(bytes),actual.originalReferenceSha256);const r=JSON.parse(bytes);checkQualification(fs.readFileSync(path.join(root,'docs/releases/0.11.4/qualification.json')),r);assert.equal(sha256(fs.readFileSync(path.join(root,'docs/releases/0.11.4/package-payload-manifest.json'))),actual.payloadManifestSha256);assert.throws(()=>checkContext({version:'0.11.4',repository:actual.repository,repositoryId:String(actual.repositoryId),ownerId:String(actual.ownerId),ref:'refs/heads/main',sha:'a'.repeat(40),mainSha:'a'.repeat(40),runAttempt:'1',event:'workflow_dispatch',workflowSha:'a'.repeat(40),dataCommit:r.sourceCommit,requestSha256:'b'.repeat(64),releaseSwitch:'true'},actual,'publish'),/Publication remains closed/);});
 for(const [name,change] of [
   ['old switch',s=>s.replaceAll('PUBLISH_0114','PUBLISH_0113')],
   ['old artifact',s=>s.replace('archsift-0.11.4-reviewed-submissions','archsift-0.11.3-reviewed-submissions')],

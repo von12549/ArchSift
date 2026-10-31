@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+  "status": "passed",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "ifxIsolatedCommit": "97341c0317964086ecd43da265901dd5e2020820",
+  "originalIfxCommit": "9fd3e267533988a948359b2d3c3b2ad502f9a86a",
+  "bindingProof": {
+    "file": "ifx-binding.json",
+    "sha256": "6b3db1ad9260965a15044bcf23272327ca2fe375966eb53c136ccc8f409da365"
+  },
+  "nativeQualification": {
+    "file": "ifx-matrix/qualification.json",
+    "sha256": "4b7bdcdf3d84682305b67e7ec424408c034d43b5e946fdbbdda7d1f955123d7d"
+  },
+  "executionOrder": [
+    "daily303",
+    "daily300",
+    "daily403",
+    "formal303",
+    "independent-audit"
+  ],
+  "gates": [
+    {
+      "lane": "daily303",
+      "status": "passed",
+      "sdk": "10.0.303",
+      "cases": 493,
+      "csharp": 92,
+      "json": 401,
+      "skipped": 0,
+      "reportSha256": "646dda35abbd1e5693bfaf475fb36403f109310d741350c585bb1c4ab67db762",
+      "nativeSha256": "9b155fbd50bc234658f4b64ff8b1960a30cd835fb6bf8dffcdb894a473c56858",
+      "missing": 0,
+      "duplicates": 0,
+      "hostEqual": true
+    },
+    {
+      "lane": "daily300",
+      "status": "passed",
+      "sdk": "10.0.300",
+      "cases": 493,
+      "csharp": 92,
+      "json": 401,
+      "skipped": 0,
+      "reportSha256": "cba76c2aa64b81821acf45e387c77ce2bed6c9e9c4e0f1cbd768df5acc5999b9",
+      "nativeSha256": "45740ca9c57680b173498cbe2f07eabe45030451c0b8fae3e842384e0b304de5",
+      "missing": 0,
+      "duplicates": 0,
+      "hostEqual": true
+    },
+    {
+      "lane": "daily403",
+      "status": "passed",
+      "sdk": "10.0.403",
+      "cases": 493,
+      "csharp": 92,
+      "json": 401,
+      "skipped": 0,
+      "reportSha256": "7b1ba9f36797756b4a5a04a434689b6c5041734e213608f96dc5896ae802c80c",
+      "nativeSha256": "7770aa75685679c358d7047276ac52c14ff8d3748731574e205bedf3e3bca3e4",
+      "missing": 0,
+      "duplicates": 0,
+      "hostEqual": true
+    },
+    {
+      "lane": "formal303",
+      "status": "passed",
+      "sdk": "10.0.303",
+      "cases": 493,
+      "csharp": 92,
+      "json": 401,
+      "skipped": 0,
+      "reportSha256": "270c37021a348a61e5938d8329fa53aba53eb425f9663d1ae87032bff113c0c2",
+      "nativeSha256": "0f2738e3357360f66478427569210fec1e4157c6b0af1d3a08429f974fc8b69a",
+      "missing": 0,
+      "duplicates": 0,
+      "hostEqual": true
+    }
+  ],
+  "businessEntrypointsExecuted": false,
+  "originalIfxUnchanged": true,
+  "hostEqual": true
+}

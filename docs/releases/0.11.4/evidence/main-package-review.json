@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+  "status": "passed",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "candidateArtifact": {
+    "id": 13028797577,
+    "runId": 41165227450,
+    "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+    "sha256": "228636e804dd865e6363bd1615ae8454a7a171566f8655797029c888d86ca888",
+    "files": [
+      "build.stderr.log",
+      "build.stdout.log",
+      "checks.json",
+      "pack-ArchUnit.stderr.log",
+      "pack-ArchUnit.stdout.log",
+      "pack-Cli.stderr.log",
+      "pack-Cli.stdout.log",
+      "pack-Contracts.stderr.log",
+      "pack-Contracts.stdout.log",
+      "pack-Core.stderr.log",
+      "pack-Core.stdout.log",
+      "pack-Testing.stderr.log",
+      "pack-Testing.stdout.log",
+      "package-build.json",
+      "packages/ArchSift.ArchUnit.0.11.4.nupkg",
+      "packages/ArchSift.Cli.0.11.4.nupkg",
+      "packages/ArchSift.Contracts.0.11.4.nupkg",
+      "packages/ArchSift.Core.0.11.4.nupkg",
+      "packages/ArchSift.Testing.0.11.4.nupkg",
+      "publish-web.stderr.log",
+      "publish-web.stdout.log",
+      "restore.stderr.log",
+      "restore.stdout.log",
+      "sdk.stderr.log",
+      "sdk.stdout.log",
+      "source-inputs.json"
+    ]
+  },
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "bytes": 91868,
+      "sha256": "500b463951f65bf56c912f20bec019e4e8cf8c32ff29a50a8194c1842217a40b"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "bytes": 159585,
+      "sha256": "d0ed88186e6ac805e4a419e7b40ed2776d215ebcbdc79f7412d01f3ee6269b02"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "bytes": 28414,
+      "sha256": "cb3474474e31c7eaeb37a8590d457802b09a0d46bda999c87aa8bce53594b3f1"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "bytes": 23705,
+      "sha256": "557c9640178071fb660788c5f63187a342c41eb356635c328bebec1d4442743b"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "bytes": 2913272,
+      "sha256": "27d87a6ec2a0a48d4d20c9b67c4609b0c714ac6575eadf2c06546165c5120335"
+    }
+  ],
+  "allArchiveAndPayloadBytesVerified": true,
+  "rawArchiveEqualityWithBuild08": false,
+  "rawPayloadEqualityWithBuild08": false,
+  "equivalenceReview": "docs/releases/0.11.4/evidence/full-package-equivalence.json",
+  "equivalenceReviewSha256": "ade07fef7f4cbb6008f62cd86a5a0a0c68569902b2b79c27aca4750e5a584cf6",
+  "managedReviewSha256": "81e11689b44c92d0dde41c5641d0f886614953b46b2586b5ca5ee79dbc6f1dd0",
+  "freshSecondaryMachineExecutionClaimed": false
+}

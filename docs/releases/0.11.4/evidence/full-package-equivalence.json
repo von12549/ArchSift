@@ -1,0 +1,302 @@
+{
+  "schemaVersion": 1,
+  "status": "passed-accounted-runtime-equivalence",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "oldSubmissionSha256": "045666b4023eafc3370601a79f05988e858dbbe79c8232aaf80386ad49040189",
+      "mainSubmissionSha256": "500b463951f65bf56c912f20bec019e4e8cf8c32ff29a50a8194c1842217a40b",
+      "accountedChangedEntries": [
+        {
+          "path": "_rels/.rels",
+          "basis": "opaque relationship IDs and identical-property-part filename only",
+          "oldSha256": "78da5041a28924001e3d2627ec3d46a7e743e44d69652e2a365da54bda4b8eb7",
+          "mainSha256": "c86c670e42fbb89436c056c0383ce6eb4b71ac71e85e5d8340a603cc242a506f"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.Contracts.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66",
+          "mainSha256": "6aec3bc4491093890ebccb364d19ce4b1a69e1187878b71bdb370e1f2f982ad0"
+        }
+      ],
+      "identicalPropertyPartRenamed": {
+        "old": "package/services/metadata/core-properties/191b531b974e40ebb360dc26454c6d76.psmdcp",
+        "main": "package/services/metadata/core-properties/8796a63fd7d3464e9d49a7b1b50f43ff.psmdcp"
+      },
+      "unchangedEntries": 5
+    },
+    {
+      "id": "ArchSift.Core",
+      "oldSubmissionSha256": "ca2fea3a4d05dd4dd6675a13f3259446106c5778a962ef314d1007169a95ea3b",
+      "mainSubmissionSha256": "d0ed88186e6ac805e4a419e7b40ed2776d215ebcbdc79f7412d01f3ee6269b02",
+      "accountedChangedEntries": [
+        {
+          "path": "_rels/.rels",
+          "basis": "opaque relationship IDs and identical-property-part filename only",
+          "oldSha256": "018c3a44fe791f092ed3171ea29e2b2d22d65c7c9cd57bf5ee9c70771687959e",
+          "mainSha256": "7a73742a044c3933cae58d3dd1dab8b1a1f143927d543eb888712156f95b0128"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.Core.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca",
+          "mainSha256": "68b27024224dc0377bd1ca3aa454c6d0c140d7d57117cb9854412247bd775c36"
+        }
+      ],
+      "identicalPropertyPartRenamed": {
+        "old": "package/services/metadata/core-properties/db20675d1f9f4746b24275a4f5a62fe6.psmdcp",
+        "main": "package/services/metadata/core-properties/ee1d849f9d9f4169b11b9e0090db22f7.psmdcp"
+      },
+      "unchangedEntries": 5
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "oldSubmissionSha256": "8a771969b52b14f55bd693fc79c38ff3acfcfc5f61bc41515ed9c938b6dad63f",
+      "mainSubmissionSha256": "cb3474474e31c7eaeb37a8590d457802b09a0d46bda999c87aa8bce53594b3f1",
+      "accountedChangedEntries": [
+        {
+          "path": "_rels/.rels",
+          "basis": "opaque relationship IDs and identical-property-part filename only",
+          "oldSha256": "894e36c747dc07783b3c80e2bea2c34d6b3edb6f6b444e872cbdf7e5f0d48a32",
+          "mainSha256": "e40569655d9bdd5336a71062315d7cdcb32ca98a1a2aab662cdf7153eb24e459"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.ArchUnit.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6",
+          "mainSha256": "d76fe150bb4729e06d052643ab89a68bd70469b44f048322887f274aca4ae160"
+        }
+      ],
+      "identicalPropertyPartRenamed": {
+        "old": "package/services/metadata/core-properties/cf92fc111a18456a83a72373b9c5545e.psmdcp",
+        "main": "package/services/metadata/core-properties/2ce8d891a9ed4b878cd3dae36a55f055.psmdcp"
+      },
+      "unchangedEntries": 5
+    },
+    {
+      "id": "ArchSift.Testing",
+      "oldSubmissionSha256": "6958f40870ae7de9fbea409088b8a3ff4e10d4fe6f60eb0ff7829d89cc31db15",
+      "mainSubmissionSha256": "557c9640178071fb660788c5f63187a342c41eb356635c328bebec1d4442743b",
+      "accountedChangedEntries": [
+        {
+          "path": "_rels/.rels",
+          "basis": "opaque relationship IDs and identical-property-part filename only",
+          "oldSha256": "851d4c5ba368a0c3534ea93fcb87c6269abd03d4e55a4c8cbeb85e878618c58e",
+          "mainSha256": "5a3e2b067f5f13852d45a19ba144788e61ae1118439fdc0c66bcc1faac7a3d29"
+        },
+        {
+          "path": "lib/net10.0/ArchSift.Testing.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1",
+          "mainSha256": "f939d612d959fa03baad8c6dbe8158693675b6206827e24ca2a1574c103ca2af"
+        }
+      ],
+      "identicalPropertyPartRenamed": {
+        "old": "package/services/metadata/core-properties/cea0870f4adc4815814a8ac2061378c0.psmdcp",
+        "main": "package/services/metadata/core-properties/16e01b0e698b4e86a68f2592f2b3987f.psmdcp"
+      },
+      "unchangedEntries": 5
+    },
+    {
+      "id": "ArchSift.Cli",
+      "oldSubmissionSha256": "0b695adcdbdaab2d709b4a15da8b6bc75516d3af28992148a8dc009d5ddc7727",
+      "mainSubmissionSha256": "27d87a6ec2a0a48d4d20c9b67c4609b0c714ac6575eadf2c06546165c5120335",
+      "accountedChangedEntries": [
+        {
+          "path": "_rels/.rels",
+          "basis": "opaque relationship IDs and identical-property-part filename only",
+          "oldSha256": "4525d3cd880f01780443f09a16c078538171699fae1b7687485e9fc057210355",
+          "mainSha256": "8f236c1b417941f4e39e7144f7fa7fd107f272abc1b1ffd5bb6740aab1b5d7fe"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.ArchUnit.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6",
+          "mainSha256": "d76fe150bb4729e06d052643ab89a68bd70469b44f048322887f274aca4ae160"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.ArchUnit.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "aa00479d40495cd6ac5b74e4a5f5f70999ef1f03a608b1b3c2a0af2b712f5194",
+          "mainSha256": "ca8027d5c9d26cb06682309379b23aedaebf1fb58a4a31923c4845f172709327"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Contracts.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66",
+          "mainSha256": "6aec3bc4491093890ebccb364d19ce4b1a69e1187878b71bdb370e1f2f982ad0"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Contracts.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "51347cf1908cdaf299c7a7c7aea363b2ab810ff18f7db15a24d8258d0335e782",
+          "mainSha256": "2dd0b340dd626794d4cbd9dd6a1287d99d7ed0661a9e57375b99bd336699ad40"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Core.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca",
+          "mainSha256": "68b27024224dc0377bd1ca3aa454c6d0c140d7d57117cb9854412247bd775c36"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Core.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "8271813e3f4356896f81941ff2f89399b16d1401028bd56cf0b7f70a6a1f1507",
+          "mainSha256": "3f2e19f94c643066a4e5e9502e24c5d1e2e11db22d810366cafd94b85db558f5"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.TestGate.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "4c2e8b21dcfd10065242a1b721882f5f9b2dd5f9cb46953fa487a7932170aaff",
+          "mainSha256": "77e3a1319dd09c0433d00d85d6007573cf0228543e2b8f617e801865deac0022"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.TestGate.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "b6ce9abe275321ec0bc0b5fb522a3b9f791c3871f7c7e5e8e759c1847bdc548b",
+          "mainSha256": "ad253615bb6d6f72030da3d76f533b011aa9d3bffebcbbdab6840c15780ba025"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Testing.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1",
+          "mainSha256": "f939d612d959fa03baad8c6dbe8158693675b6206827e24ca2a1574c103ca2af"
+        },
+        {
+          "path": "tools/net10.0/any/ArchSift.Testing.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "a80c82516380943c43f3fcb6180d619b5681ea10bafca6179e569e1346aceefd",
+          "mainSha256": "6813a909457696e670f8dcb5b6bda2d25c073efa07be248833a29f8d04240ae4"
+        },
+        {
+          "path": "tools/net10.0/any/archsift.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "7fc124b06ed35993a907ee6cc643964469682393cefbd15198cff0a8d2669e41",
+          "mainSha256": "777b9973d9f03b29b4540d00cd21e48483a943f61543cf78a0930d43f661eae2"
+        },
+        {
+          "path": "tools/net10.0/any/archsift.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "a2f4f200a78d679b715cb7afcc09e74cf4d0604fa7f5884def46ad9e3397ef2e",
+          "mainSha256": "7e1bcadd85a8c764a7fef6d8f5372b798485ef5eafe01d96bbf5ea97dd7fc8b5"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.ArchUnit.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "0ffa2a60711b82d42f2ff9263511b507b4c17a7279fd684b0a2e0e75ceee61c6",
+          "mainSha256": "d76fe150bb4729e06d052643ab89a68bd70469b44f048322887f274aca4ae160"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.ArchUnit.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "aa00479d40495cd6ac5b74e4a5f5f70999ef1f03a608b1b3c2a0af2b712f5194",
+          "mainSha256": "ca8027d5c9d26cb06682309379b23aedaebf1fb58a4a31923c4845f172709327"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Contracts.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "ddd55d4b1c02409426c040730425ccd9408b1e599901ba712f731206d9a4ab66",
+          "mainSha256": "6aec3bc4491093890ebccb364d19ce4b1a69e1187878b71bdb370e1f2f982ad0"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Contracts.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "51347cf1908cdaf299c7a7c7aea363b2ab810ff18f7db15a24d8258d0335e782",
+          "mainSha256": "2dd0b340dd626794d4cbd9dd6a1287d99d7ed0661a9e57375b99bd336699ad40"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Core.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "9709bacd229658f84d7fb99d79608b01b505ac2f4c60057793c1f55069517bca",
+          "mainSha256": "68b27024224dc0377bd1ca3aa454c6d0c140d7d57117cb9854412247bd775c36"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Core.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "8271813e3f4356896f81941ff2f89399b16d1401028bd56cf0b7f70a6a1f1507",
+          "mainSha256": "3f2e19f94c643066a4e5e9502e24c5d1e2e11db22d810366cafd94b85db558f5"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Setup.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "0c84caf155ca8fe79565a3d58378cafc0bff959f7d37e47ead55f6755df516da",
+          "mainSha256": "b4279b4258bfa3c3190e4a602aecbdbd8ef810890200bf0072e3ed6a5cdd0ee1"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Setup.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "64454266fb08082908d5f1e3a6c86ad81bdeeb94792f149810987a7e130aaa86",
+          "mainSha256": "4a949e7ab45f3f8df77ea5d7a04cae2cedead1c7e9d129ef6bc0d55d27f20708"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.TestGate.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "4c2e8b21dcfd10065242a1b721882f5f9b2dd5f9cb46953fa487a7932170aaff",
+          "mainSha256": "77e3a1319dd09c0433d00d85d6007573cf0228543e2b8f617e801865deac0022"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.TestGate.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "b6ce9abe275321ec0bc0b5fb522a3b9f791c3871f7c7e5e8e759c1847bdc548b",
+          "mainSha256": "ad253615bb6d6f72030da3d76f533b011aa9d3bffebcbbdab6840c15780ba025"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Testing.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "1d8524e8eda33d61b109be625dcceabb7579f998cead326b271e8cb622cf08e1",
+          "mainSha256": "f939d612d959fa03baad8c6dbe8158693675b6206827e24ca2a1574c103ca2af"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Testing.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "a80c82516380943c43f3fcb6180d619b5681ea10bafca6179e569e1346aceefd",
+          "mainSha256": "6813a909457696e670f8dcb5b6bda2d25c073efa07be248833a29f8d04240ae4"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.dll",
+          "basis": "complete normalized managed image and raw native resources equal; matching PDB verified",
+          "oldSha256": "4e26735288b2a606c414ada98942e8f2534f3ca3fd633b665821136ab5d186d6",
+          "mainSha256": "0205790d0e48bb3d530ca389787620ee0fb11f3dfe010dc6634173a12af3229d"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.pdb",
+          "basis": "portable debug documents/identities only; paired full managed image verified",
+          "oldSha256": "c2481440879e5027367b44749a962edb345abd1c21f62e196f612f47a7fbfcb5",
+          "mainSha256": "4361c8c70d58a072ccd645da2f4019964ad06a93ae89a950cd08682f8bd49211"
+        },
+        {
+          "path": "tools/net10.0/any/web/ArchSift.Web.staticwebassets.endpoints.json",
+          "basis": "Last-Modified build timestamps only; routes, bytes, encodings and integrity unchanged",
+          "oldSha256": "20a927b29a1aacca6c4553206a6d0d5cbe9625f7425d5f21695eb5e7917e5e59",
+          "mainSha256": "f5aa76d42884c952a462fbc47959566bd36b26de771416468e4e69cfd961a47c"
+        },
+        {
+          "path": "tools/net10.0/any/web/web-payload.json",
+          "basis": "inventory recomputed from independently accounted actual bytes; source/version/path set unchanged",
+          "oldSha256": "131c9a6a7a44483861a03582206603b9feaa063f54d2375109c4b70b1de4adb7",
+          "mainSha256": "0f322af6b9ee7d50a894c4e63114215cb8056002a121ece50094cc86243a10a7"
+        }
+      ],
+      "identicalPropertyPartRenamed": {
+        "old": "package/services/metadata/core-properties/d6996f2160de4242bb6343d2d9e80f0d.psmdcp",
+        "main": "package/services/metadata/core-properties/fea44f3de2134e18a9dbbb5f4486f3f1.psmdcp"
+      },
+      "unchangedEntries": 85
+    }
+  ],
+  "managedProofSha256": "81e11689b44c92d0dde41c5641d0f886614953b46b2586b5ca5ee79dbc6f1dd0",
+  "verifierSha256": "883c86366edab81adbf20aae5af9ad266584edd00ab2e3dd5bb24dc8d39ad1c6",
+  "negativeControls": [
+    "IL mutation",
+    "assembly metadata mutation",
+    "runtime asset mutation",
+    "runtime route mutation"
+  ],
+  "rawArchiveEquality": false,
+  "rawPayloadEquality": false,
+  "freshSecondaryMachineExecutionClaimed": false,
+  "publicationPerformed": false
+}

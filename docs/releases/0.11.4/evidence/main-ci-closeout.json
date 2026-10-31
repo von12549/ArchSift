@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packageSetSha256": "02862e412e8f3bc73e372dff8721516d55534acf1b5b7fffb116422ef5bf6938",
+  "status": "passed",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "sourceCi": [
+    {
+      "runId": 41068122614,
+      "headSha": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "event": "pull_request"
+    },
+    {
+      "runId": 41165227420,
+      "headSha": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+      "event": "push"
+    }
+  ],
+  "mainVerifyJobs": [
+    {
+      "name": "regression (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "name": "regression (windows-latest)",
+      "conclusion": "success"
+    }
+  ],
+  "rawCi": {
+    "file": "main-source-verify.json",
+    "sha256": "4540b6e246ce962f9a5b298162b20438201e38b3702d6281ea479a894c0abbcb"
+  },
+  "sourceIntegratedWithoutRewrite": true,
+  "productPr": 47,
+  "toolingPr": 48
+}
