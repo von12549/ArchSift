@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "version": "0.11.4",
   "state": "FINAL_IDENTITIES_FROZEN",
-  "authorizedPreparation": "Explicit user authorization: integrate product/readiness source, freeze exact main-source originals, compare and requalify with Agent tests, then execute credential-free hosted preview/audit.",
+  "authorizedPreparation": "Explicit user authorization for the five frozen original 0.11.4 submissions, normal activation PR/CI/merge and fresh exact-bound hosted publication transaction.",
   "realAssetTransferEnabled": true,
-  "publicationEnabled": false,
+  "publicationEnabled": true,
   "repository": "von12549/ArchSift",
   "repositoryId": 1407069697,
   "ownerId": 2306937,
@@ -54,5 +54,5 @@
   },
   "auditMaxAgeHours": 24,
   "newInstaller": false,
-  "futureAuthorization": "Separate final publication confirmation is required for publication profile activation, the version-specific operational switch, OIDC/login/publishing credentials, original-byte NuGet submission and protected human approval. IFX merge/live adoption, tag/Release and installers are excluded."
+  "futureAuthorization": "Public publication is authorized only for the hash-bound original packages through existing protected human nuget-release approval and a fresh hosted transaction/audit. Restore ARCHSIFT_NUGET_PUBLISH_0114 to its originally absent state on completion or stop. IFX main/live adoption, tags/Releases, installers and different submissions remain excluded."
 }
