@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "USER_AUTHORIZED_ORIGINAL_0114_PUBLICATION",
+  "recordedUtc": "2026-10-31T05:01:29.218040+00:00",
+  "authority": "Explicit user confirmation to the immediately preceding final publication question and completed confirmation card.",
+  "userReplySha256": "36f33adaf0942634a8ece1eec4a6f30d44dec73e1ef8704b29d983a57f2e09ae",
+  "approvalCardSha256": "00fd141f450b4230c4104934336ceef3cf6f66f17c0048d86de13bfb5588bc96",
+  "trustReview": "docs/releases/0.11.4/evidence/trusted-publishing-readback.json",
+  "trustReviewSha256": "60e08d00d49652528239e10d23c845c2b527a365f2f1a29fdfc78d8200361c44",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "sourceTree": "d6a861dded687955df61645d6fe50bf17d3713f9",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "bytes": 91868,
+      "sha256": "500b463951f65bf56c912f20bec019e4e8cf8c32ff29a50a8194c1842217a40b"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "bytes": 159585,
+      "sha256": "d0ed88186e6ac805e4a419e7b40ed2776d215ebcbdc79f7412d01f3ee6269b02"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "bytes": 28414,
+      "sha256": "cb3474474e31c7eaeb37a8590d457802b09a0d46bda999c87aa8bce53594b3f1"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "bytes": 23705,
+      "sha256": "557c9640178071fb660788c5f63187a342c41eb356635c328bebec1d4442743b"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "bytes": 2913272,
+      "sha256": "27d87a6ec2a0a48d4d20c9b67c4609b0c714ac6575eadf2c06546165c5120335"
+    }
+  ],
+  "originalReferenceSha256": "e7f2942af8cdd12489334884a4f0a9fe9aabb4d502d7ef4ea903dc2bae6d3a06",
+  "qualificationSha256": "5692d4df8f96f64438e464a01ae47c7b34140456aabbfb8d03c621e014613ef8",
+  "payloadManifestSha256": "a544291cb58105d545e4a0b18653cf756d00d0fa1b560c441f18025e49ff740f",
+  "priorPreview": {
+    "runId": 41169711834,
+    "workflowCommit": "9c84a66112036ad839574bc599eb5a1c61b896de",
+    "requestSha256": "dda7a9bd04574760e64613f4e40690ad56cf64aab23e5cc2e2b833d18fde52a4",
+    "inputArtifact": {
+      "id": 13030398738,
+      "sha256": "47f6b7256616cde63c68e9713dcc54d541da841b4db48015224afc7baa703ca9"
+    },
+    "auditArtifact": {
+      "id": 13030970403,
+      "sha256": "f4944f5194f177041dc043cc2015bac0153155d193738117cdbdcc10961bcc3d"
+    }
+  },
+  "authorized": [
+    "Normal attributed activation PR, full PR/main CI and merge",
+    "Fresh actual activation-workflow and request identity freeze",
+    "Fresh original-byte preview and official audit",
+    "Exact version operational switch for the approved transaction",
+    "Existing human nuget-release environment approval",
+    "Short-lived NuGet Trusted Publishing credentials and sequential frozen original submissions",
+    "Anonymous served signature, owner and full payload verification",
+    "Restore the operational switch to its original absent state on completion or stop"
+  ],
+  "excluded": [
+    "IFX main merge or live daily cutover",
+    "Tag or GitHub Release",
+    "New installer or persisted host changes",
+    "Different, rebuilt or silently retried uncertain submissions"
+  ],
+  "requiredHumanEnvironmentApproval": true,
+  "publicationCompleted": false
+}

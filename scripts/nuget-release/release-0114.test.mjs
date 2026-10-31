@@ -101,7 +101,32 @@ test('0114 frozen evidence graph preserves reviewed bytes across checkout platfo
 });
 test('0114 proposed workflow retains the exact protected transaction',()=>checkWorkflowForVersion(proposed,'0.11.4'));
 test('0114 active workflow matches the reviewed preparation state',()=>checkWorkflowForVersion(fs.readFileSync(path.join(root,'.github/workflows/publish-nuget.yml'),'utf8'),actual.state==='FINAL_IDENTITIES_FROZEN'?'0.11.4':'0.11.3'));
-test('0114 actual preview profile binds final identities while publication remains closed',()=>{assert.equal(actual.publicationEnabled,false);if(actual.state!=='FINAL_IDENTITIES_FROZEN'){assert.equal(actual.realAssetTransferEnabled,false);return;}checkReleaseProfile(actual,'0.11.4');assert.equal(actual.realAssetTransferEnabled,true);const bytes=fs.readFileSync(path.join(root,actual.originalReference));assert.equal(sha256(bytes),actual.originalReferenceSha256);const r=JSON.parse(bytes);checkQualification(fs.readFileSync(path.join(root,'docs/releases/0.11.4/qualification.json')),r);assert.equal(sha256(fs.readFileSync(path.join(root,'docs/releases/0.11.4/package-payload-manifest.json'))),actual.payloadManifestSha256);assert.throws(()=>checkContext({version:'0.11.4',repository:actual.repository,repositoryId:String(actual.repositoryId),ownerId:String(actual.ownerId),ref:'refs/heads/main',sha:'a'.repeat(40),mainSha:'a'.repeat(40),runAttempt:'1',event:'workflow_dispatch',workflowSha:'a'.repeat(40),dataCommit:r.sourceCommit,requestSha256:'b'.repeat(64),releaseSwitch:'true'},actual,'publish'),/Publication remains closed/);});
+test('0114 actual profile binds final identities and requires the exact operational switch',()=>{
+  assert.equal(typeof actual.publicationEnabled,'boolean');
+  if(actual.state!=='FINAL_IDENTITIES_FROZEN'){assert.equal(actual.realAssetTransferEnabled,false);return;}
+  checkReleaseProfile(actual,'0.11.4');assert.equal(actual.realAssetTransferEnabled,true);
+  const bytes=fs.readFileSync(path.join(root,actual.originalReference));assert.equal(sha256(bytes),actual.originalReferenceSha256);
+  const r=JSON.parse(bytes);checkQualification(fs.readFileSync(path.join(root,'docs/releases/0.11.4/qualification.json')),r);
+  assert.equal(sha256(fs.readFileSync(path.join(root,'docs/releases/0.11.4/package-payload-manifest.json'))),actual.payloadManifestSha256);
+  const context={version:'0.11.4',repository:actual.repository,repositoryId:String(actual.repositoryId),ownerId:String(actual.ownerId),ref:'refs/heads/main',sha:'a'.repeat(40),mainSha:'a'.repeat(40),runAttempt:'1',event:'workflow_dispatch',workflowSha:'a'.repeat(40),dataCommit:r.sourceCommit,requestSha256:'b'.repeat(64),releaseSwitch:'true'};
+  assert.throws(()=>checkContext(context,{...actual,publicationEnabled:false},'publish'),/Publication remains closed/);
+  for(const releaseSwitch of ['', 'false','True'])assert.throws(()=>checkContext({...context,releaseSwitch},actual,'publish'),/Publication remains closed/);
+  if(actual.publicationEnabled)assert.doesNotThrow(()=>checkContext(context,actual,'publish'));
+});
+
+test('0114 activated profile requires the explicit original-package publication authorization',()=>{
+  if(!actual.publicationEnabled)return;
+  const r=JSON.parse(fs.readFileSync(path.join(root,actual.originalReference)));
+  const a=JSON.parse(fs.readFileSync(path.join(root,'docs/releases/0.11.4/publication-authorization.json')));
+  assert.equal(a.status,'USER_AUTHORIZED_ORIGINAL_0114_PUBLICATION');assert.equal(a.version,'0.11.4');
+  assert.equal(a.sourceCommit,r.sourceCommit);assert.equal(a.sourceTree,r.sourceTree);assert.deepEqual(a.packages,r.packages);
+  assert.equal(a.originalReferenceSha256,actual.originalReferenceSha256);
+  assert.equal(a.qualificationSha256,r.acceptedPreview.acceptanceSha256);assert.equal(a.payloadManifestSha256,actual.payloadManifestSha256);
+  assert.equal(a.requiredHumanEnvironmentApproval,true);
+  const trustBytes=fs.readFileSync(path.join(root,a.trustReview));assert.equal(sha256(trustBytes),a.trustReviewSha256);
+  const trust=JSON.parse(trustBytes);assert.equal(trust.nugetAccountTrustReadback.status,'passed-fresh-authenticated-readback');
+  assert.deepEqual(trust.packages,r.packages);assert.equal(trust.nugetAccountTrustReadback.policyModified,false);
+});
 for(const [name,change] of [
   ['old switch',s=>s.replaceAll('PUBLISH_0114','PUBLISH_0113')],
   ['old artifact',s=>s.replace('archsift-0.11.4-reviewed-submissions','archsift-0.11.3-reviewed-submissions')],

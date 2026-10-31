@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "READY_FOR_EXPLICIT_PUBLICATION_CONFIRMATION",
+  "observedUtc": "2026-10-31T04:57:18.935Z",
+  "actor": "Codex",
+  "method": "Actual authenticated browser read-only observation after user-completed login",
+  "nugetAccountTrustReadback": {
+    "status": "passed-fresh-authenticated-readback",
+    "account": "XiaolongFeng",
+    "policy": "ArchSift",
+    "active": true,
+    "scope": "Push new packages and package versions",
+    "packageGlob": "ArchSift.*",
+    "publisher": "GitHubActions",
+    "repositoryOwner": "von12549",
+    "ownerId": 2306937,
+    "repository": "ArchSift",
+    "repositoryId": 1407069697,
+    "workflow": "publish-nuget.yml",
+    "environment": "nuget-release",
+    "policyModified": false
+  },
+  "workflowCommit": "9c84a66112036ad839574bc599eb5a1c61b896de",
+  "sourceCommit": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "requestSha256": "dda7a9bd04574760e64613f4e40690ad56cf64aab23e5cc2e2b833d18fde52a4",
+  "packages": [
+    {
+      "id": "ArchSift.Contracts",
+      "file": "ArchSift.Contracts.0.11.4.nupkg",
+      "bytes": 91868,
+      "sha256": "500b463951f65bf56c912f20bec019e4e8cf8c32ff29a50a8194c1842217a40b"
+    },
+    {
+      "id": "ArchSift.Core",
+      "file": "ArchSift.Core.0.11.4.nupkg",
+      "bytes": 159585,
+      "sha256": "d0ed88186e6ac805e4a419e7b40ed2776d215ebcbdc79f7412d01f3ee6269b02"
+    },
+    {
+      "id": "ArchSift.ArchUnit",
+      "file": "ArchSift.ArchUnit.0.11.4.nupkg",
+      "bytes": 28414,
+      "sha256": "cb3474474e31c7eaeb37a8590d457802b09a0d46bda999c87aa8bce53594b3f1"
+    },
+    {
+      "id": "ArchSift.Testing",
+      "file": "ArchSift.Testing.0.11.4.nupkg",
+      "bytes": 23705,
+      "sha256": "557c9640178071fb660788c5f63187a342c41eb356635c328bebec1d4442743b"
+    },
+    {
+      "id": "ArchSift.Cli",
+      "file": "ArchSift.Cli.0.11.4.nupkg",
+      "bytes": 2913272,
+      "sha256": "27d87a6ec2a0a48d4d20c9b67c4609b0c714ac6575eadf2c06546165c5120335"
+    }
+  ],
+  "previewRunId": 41169711834,
+  "priorPreviewRecordSha256": "fff3fba9a53e7e16aae277d69b216b88f785d6845f8ecc8f48744469bb4c4c17",
+  "priorSealedManifestSha256": "1c6a787318662ce0cc5431ef929dfe0aaea134fcdd9f23eea82adfb3043a8ce3",
+  "priorSealedFilesVerified": 17,
+  "priorPendingLoginRecordPreserved": true,
+  "policyAxSha256": "d021a8998a1ec66a7a7da39750180a16c5ee2248773fa018dea2ebbe666fd585",
+  "screenshotSha256": "058ec9015f21dd85472690aa21e718a8bd04c60aa0be7e566da85c6eaa66b8d5",
+  "protectedEnvironmentVerified": true,
+  "requiredHumanReviewer": "von12549",
+  "administratorBypass": false,
+  "branch": "main",
+  "operationalSwitch": "absent",
+  "publicationEnabled": false,
+  "publicationAuthorized": false,
+  "credentialsAcquired": false,
+  "publicPublication": false,
+  "ifxMainMerged": false,
+  "auditCompletedUtc": "2026-10-31T04:44:35.7566608+00:00",
+  "auditValidUntilUtc": "2026-11-01T04:44:35.756660+00:00"
+}

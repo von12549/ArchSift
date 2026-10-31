@@ -73,6 +73,18 @@ assert.equal(sha256(fs.readFileSync(path.join(root, policy.originalReference))),
 const preflight = fs.readFileSync(path.join(root, 'scripts/Test-NuGetReleasePreflight.ps1'), 'utf8');
 assert.doesNotMatch(preflight, /(?:Invoke-Expression|Start-Process|SetEnvironmentVariable|setx\b|ACTIONS_ID_TOKEN|nuget\s+push|NuGet\/login|NUGET_API_KEY)/i);
 const hosted = fs.readFileSync(path.join(root, 'scripts/Invoke-HostedNuGet.ps1'), 'utf8');
+function checkHostedVersionBoundary(text) {
+  const matches=[...text.matchAll(/if\(\$version -cnotin @\(([^)]*)\)\)\{throw 'Unreviewed release version\.'\}/g)];
+  assert.equal(matches.length,1,'Exact hosted-helper version guard required');
+  const versions=[...matches[0][1].matchAll(/'([^']+)'/g)].map(m=>m[1]);
+  assert.equal(new Set(versions).size,versions.length);
+  assert.ok(versions.includes(activeVersion),'Active release cannot reach the hosted NuGet helper');
+  for(const version of versions)assert.ok(['0.11.0','0.11.2','0.11.3','0.11.4'].includes(version),'Unreviewed hosted version');
+}
+checkHostedVersionBoundary(hosted);
+assert.throws(()=>checkHostedVersionBoundary(hosted.replace(`,'${activeVersion}'`,'')));
+assert.throws(()=>checkHostedVersionBoundary(hosted.replace("if($version -cnotin @('0.11.0'","if($version -cnotin @('0.11.5'")));
+console.log('Passed active-workflow/hosted-helper version boundary and 2 rejected mutations.');
 assert.doesNotMatch(hosted, /(?:SetEnvironmentVariable|setx\b|Set-ItemProperty|--api-key|--skip-duplicate)/i);
 assert.match(hosted, /Environment\['DOTNET_ADD_GLOBAL_TOOLS_TO_PATH'\]='0'/);
 assert.match(hosted, /Environment\['DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE'\]='true'/);
