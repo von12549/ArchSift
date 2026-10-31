@@ -8,7 +8,7 @@ export const requireThat = (condition, message) => { if (!condition) throw new E
 const sha = (value, length) => typeof value === 'string' && new RegExp(`^[a-f0-9]{${length}}$`).test(value);
 function delegatedUi(r) {
   const a = r.agentUiAcceptance;
-  return r.version === '0.11.3' && r.humanAcceptance?.status === 'skipped-explicit-user-delegation'
+  return ['0.11.3','0.11.4'].includes(r.version) && r.humanAcceptance?.status === 'skipped-explicit-user-delegation'
     && r.humanAcceptance.performed === false && r.humanAcceptance.finalIdentityConfirmed === false
     && a?.status === 'passed-agent-delegated' && a.performedBy === 'Codex'
     && a.finalIdentityConfirmed === true && a.sourceCommit === r.sourceCommit && a.sourceTree === r.sourceTree
@@ -20,8 +20,8 @@ export function exactKeys(value, keys) {
   assert.deepEqual(Object.keys(value).sort(), [...keys].sort(), 'Unexpected or missing fields');
 }
 export function checkReference(r) {
-  requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2','0.11.3'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
-  if (r.version === '0.11.3') requireThat(r.sourceDirty === false, 'Final committed 0.11.3 source required');
+  requireThat(r.schemaVersion === 1 && ['0.11.0','0.11.2','0.11.3','0.11.4'].includes(r.version) && sha(r.sourceCommit, 40) && sha(r.sourceTree, 40), 'Invalid original source reference');
+  if (['0.11.3','0.11.4'].includes(r.version)) requireThat(r.sourceDirty === false, `Final committed ${r.version} source required`);
   const h = r.humanAcceptance ?? {};
   if (r.agentUiAcceptance) requireThat(delegatedUi(r), 'Agent evidence requires explicit final-byte delegation');
   const confirmed = h.status === 'passed-user-confirmed' && (r.version === '0.11.0' ? h.usabilityScore === 4 : h.finalIdentityConfirmed === true);
@@ -30,15 +30,16 @@ export function checkReference(r) {
   requireThat(r.packages.length === 5, 'Exactly five packages required');
   r.packages.forEach((p, i) => requireThat(p.id === ids[i] && p.file === `${ids[i]}.${r.version}.nupkg` && Number.isSafeInteger(p.bytes) && p.bytes > 0 && sha(p.sha256, 64), 'Invalid package/order'));
   requireThat(r.sourceCi.length === 2 && r.sourceCi[1].headSha === r.sourceCommit, 'Source CI binding missing');
+  if (r.version === '0.11.4') requireThat(r.sourceCi[0].event === 'pull_request' && r.sourceCi[1].event === 'push' && r.sourceCi.every(c => Number.isSafeInteger(c.runId) && c.runId > 0) && r.sourceCi[0].runId !== r.sourceCi[1].runId, 'Final PR/main CI identities required');
 }
 export function checkQualification(bytes, reference) {
-  requireThat(['0.11.2','0.11.3'].includes(reference.version) && sha256(bytes) === reference.acceptedPreview.acceptanceSha256, 'Qualification digest differs');
+  requireThat(['0.11.2','0.11.3','0.11.4'].includes(reference.version) && sha256(bytes) === reference.acceptedPreview.acceptanceSha256, 'Qualification digest differs');
   const q = JSON.parse(bytes.toString('utf8'));
   requireThat(q.schemaVersion === 1 && q.version === reference.version && q.sourceCommit === reference.sourceCommit && q.sourceTree === reference.sourceTree, 'Qualification source differs');
   assert.deepEqual(q.packages,reference.packages,'Qualification packages differ');
-  if (reference.version === '0.11.3') {
+  if (['0.11.3','0.11.4'].includes(reference.version)) {
     checkReference(reference);
-    requireThat(q.status === 'ACCEPTED_0113_FINAL_SOURCE_AND_PACKAGE_SCOPE' && q.sourceDirty === false && q.finalPackageIdentityConfirmed === true, 'Final 0.11.3 qualification incomplete');
+    requireThat(q.status === `ACCEPTED_${reference.version.replaceAll('.', '')}_FINAL_SOURCE_AND_PACKAGE_SCOPE` && q.sourceDirty === false && q.finalPackageIdentityConfirmed === true, `Final ${reference.version} qualification incomplete`);
     if (reference.humanAcceptance.status === 'skipped-explicit-user-delegation') {
       requireThat(delegatedUi(q), 'Final-byte delegated agent UI acceptance missing');
       assert.deepEqual(q.humanAcceptance, reference.humanAcceptance, 'Human delegation status differs');
@@ -47,10 +48,13 @@ export function checkQualification(bytes, reference) {
       requireThat(!q.agentUiAcceptance && !reference.agentUiAcceptance, 'Agent evidence must use the explicit delegation route');
       requireThat(q.humanAcceptance?.status === 'passed-user-confirmed' && q.humanAcceptance.finalIdentityConfirmed === true && sha(q.humanAcceptance.evidenceSha256,64), 'Final-byte human acceptance missing');
     }
-    requireThat(!q.repeatWaiver, 'Prior release waivers do not authorize 0.11.3');
-    for (const lane of ['release-regression','package-integrity','consumer-lifecycle']) {
+    requireThat(!q.repeatWaiver, `Prior release waivers do not authorize ${reference.version}`);
+    const lanes = ['release-regression','package-integrity','consumer-lifecycle'];
+    if (reference.version === '0.11.4') lanes.push('ifx-sdk-matrix','ifx-independent-audit','secondary-machine');
+    for (const lane of lanes) {
       const evidence = q.evidence?.filter(e => e.lane === lane) ?? [];
       requireThat(evidence.length === 1 && evidence[0].status === 'passed' && sha(evidence[0].reviewSha256,64), `Missing final qualification lane: ${lane}`);
+      if (reference.version === '0.11.4') requireThat(evidence[0].sourceCommit === reference.sourceCommit && evidence[0].packageSetSha256 === sha256(Buffer.from(JSON.stringify(reference.packages))), `Final qualification identity differs: ${lane}`);
     }
   }
   if (reference.humanAcceptance.status === 'explicit-user-approved-repeat-waiver') {

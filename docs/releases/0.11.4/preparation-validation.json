@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "version": "0.11.4",
+  "status": "CLOSED_PREPARATION_CHECKS_PASSED_FINAL_MAIN_FREEZE_PENDING",
+  "actor": "Codex",
+  "humanPerformed": false,
+  "tests": {
+    "releaseSafety": {
+      "passed": 298,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "3ad4e070f1bdfc05ed062d18fc2f48fa1125a753b2e6c4cad2f25a69e3429a5f"
+    },
+    "activeWorkflow": {
+      "status": "passed",
+      "unsafeYamlMutationsRejected": 51,
+      "httpBoundaryMutationsRejected": 2
+    }
+  },
+  "hostEqual": true,
+  "packageCandidateSource": "b7dd87f7f8d073a3fde46bd7068c8911b832972d",
+  "packageCandidateRebuilt": false,
+  "privateSecondaryMachineReviewSha256": "466cdfe0d5fb58360f48ff9db431669bd783caa7c12be9f164685f5ab782e330",
+  "officialVersionAvailability": {
+    "checkedUtc": "2026-10-31T03:17:47.3304930+00:00",
+    "packages": [
+      {
+        "id": "archsift.contracts",
+        "status": 404,
+        "version": "0.11.4"
+      },
+      {
+        "id": "archsift.core",
+        "status": 404,
+        "version": "0.11.4"
+      },
+      {
+        "id": "archsift.archunit",
+        "status": 404,
+        "version": "0.11.4"
+      },
+      {
+        "id": "archsift.testing",
+        "status": 404,
+        "version": "0.11.4"
+      },
+      {
+        "id": "archsift.cli",
+        "status": 404,
+        "version": "0.11.4"
+      }
+    ]
+  },
+  "environment": {
+    "status": "verified",
+    "branch": "main",
+    "requiredHumanReviewer": true,
+    "administratorBypass": false,
+    "operationalSwitch": "absent"
+  },
+  "activeWorkflowVersion": "0.11.3",
+  "proposedWorkflowVersion": "0.11.4",
+  "realAssetTransferEnabled": false,
+  "publicationEnabled": false,
+  "mainMergePerformed": false,
+  "credentialsAcquired": false,
+  "publicationPerformed": false,
+  "retainedFailures": [
+    "The first extension run failed one historical exact-message assertion; the version-specific message was restored and the full suite passed."
+  ],
+  "requiredNext": [
+    "Explicit source-integration/preparation scope approval",
+    "Fresh successful main-source artifact and exact submission/payload comparison",
+    "Final qualification/reference/request freeze and credential-free preview/audit",
+    "Separate final publication confirmation"
+  ]
+}

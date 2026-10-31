@@ -30,7 +30,7 @@ jobs:
           try {
             & node ./scripts/Test-TrustedPublishingWorkflow.mjs
             if ($LASTEXITCODE -ne 0) { throw 'Workflow boundary failed' }
-            & node --test ./scripts/nuget-release/release.test.mjs ./scripts/nuget-release/release-0113.test.mjs
+            & node --test ./scripts/nuget-release/release.test.mjs ./scripts/nuget-release/release-0113.test.mjs ./scripts/nuget-release/release-0114.test.mjs
             if ($LASTEXITCODE -ne 0) { throw 'Synthetic release safety cases failed' }
             & ./scripts/Test-NuGetReleasePreflightCases.ps1 -OutputRoot (Join-Path $env:RUNNER_TEMP 'trusted-publishing-tests')
           } finally {
